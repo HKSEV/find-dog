@@ -1,5 +1,5 @@
 import styled, {css} from 'styled-components';
-import { Fixed, FlexBetween, FlexCenter, Fw500, Pointer, Sticky, W100 } from '../common/Common.styles';
+import { Fixed, FlexBetween, FlexCenter, Fw500, IconColor, MainBg, MainColor, MainDarkColor, Pointer, Sticky, W100 } from '../common/Common.styles';
 
 export const Header = styled.header`
 ${Fixed};
@@ -16,21 +16,22 @@ ${Fixed};
   box-sizing: border-box;
   padding: 16px 20px;
   ${FlexBetween};
-  background-color: #fff;
+  ${MainBg};
   border-bottom: 1px solid #eee;
 `;
 
 export const Logo = styled.h4`
   margin: 0;
-  ${Fw500}
-  color: #f28c28;
+  ${Fw500};
+  ${MainColor};
 `;
 
 
 
 export const Back = styled.span`
+width:60px;
 ${Pointer};
-color:#999;
+${MainColor};
 transition:all .5s;
 
 &:hover{
@@ -52,9 +53,8 @@ ${FlexBetween};
   padding-right: 20px;
   margin-bottom: 15px;
   .more-link {
-${FlexCenter};
     font-size: 0.85rem;
-    color: #888;
+    ${IconColor};
     text-decoration: none;
   }
 `;
