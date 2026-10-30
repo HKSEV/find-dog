@@ -8,6 +8,7 @@ import { setEmail, setPassword, submitLogin } from '../redux/loginSlice';
 import styled, { keyframes } from 'styled-components';
 import * as S from '@/assets/css/style.styles';
 import Header from '../components/Header';
+import { CustomAlert } from '../components/CustomAlert';
 
 // ==========================================
 // 💡 1. 애니메이션 Keyframes 정의
@@ -22,9 +23,8 @@ const fadeUp = keyframes`
   to { opacity: 1; transform: translateY(0); }
 `;
 
-// 순차적 등장을 위한 래퍼 컴포넌트
 const AnimItem = styled.div<{ $delay: number; $isSlideDown?: boolean }>`
-  opacity: 0; /* 초기 상태 투명 */
+  opacity: 0;
   animation: ${(props) => (props.$isSlideDown ? slideDown : fadeUp)} 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: ${(props) => props.$delay}s;
   width: 100%;
@@ -41,20 +41,15 @@ const InputWrapper = styled.div`
 const FloatingLabel = styled.label<{ $isActive: boolean }>`
   position: absolute;
   left: 12px;
-  
-  /* 💡 핵심 1: 포커스 시 완전히 top: 0으로 올려서 테두리에 걸치게 함 */
   top: ${(props) => (props.$isActive ? '0' : '50%')};
   transform: translateY(-50%);
-  
-  /* 💡 핵심 2: 라벨 뒤의 인풋 테두리 선을 가리기 위해 흰색 배경 추가 */
   background-color: #ffffff;
   padding: 0 4px;
-  
   font-size: ${(props) => (props.$isActive ? '12px' : '15px')};
   color: ${(props) => (props.$isActive ? '#8a4e4b' : '#999')};
   transition: all 0.2s ease-in-out;
   pointer-events: none;
-  z-index: 2; /* 테두리보다 위로 올라오도록 z-index 부여 */
+  z-index: 2;
 `;
 
 const FloatingInput = styled(S.FormControl)`
@@ -63,19 +58,18 @@ const FloatingInput = styled(S.FormControl)`
   background-color: transparent; 
   
   &::placeholder {
-    color: transparent; /* CSS로 투명 처리 */
+    color: transparent;
   }
   
-  /* 💡 핵심 3: 클릭(포커스) 시 파란색 테두리 방지 */
   &:focus {
     outline: none !important;
     box-shadow: none !important;
-    border: 1px solid #8a4e4b !important; /* 기본 파란색 대신 브랜드 컬러(브라운) 적용 */
+    border: 1px solid #8a4e4b !important;
   }
 `;
 
-// 플로팅 인풋 재사용 컴포넌트
-const AnimatedInput = ({ type, label, value, onChange }: any) => {
+// 💡 AnimatedInput 컴포넌트에 onKeyDown 프롭스 추가 허용
+const AnimatedInput = ({ type, label, value, onChange, onKeyDown }: any) => {
   const [isFocused, setIsFocused] = useState(false);
   const isActive = isFocused || value.length > 0;
 
@@ -86,9 +80,10 @@ const AnimatedInput = ({ type, label, value, onChange }: any) => {
         type={type}
         value={value}
         onChange={onChange}
+        onKeyDown={onKeyDown} // 💡 onKeyDown 이벤트 연결
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        placeholder={label} // 웹 접근성을 위해 남겨두되 CSS로 투명 처리됨
+        placeholder={label}
       />
     </InputWrapper>
   );
@@ -103,19 +98,54 @@ export default function LoginPage() {
 
   const { email, password, isLoading } = useSelector((state: RootState) => state.login);
 
+  const [alertConfig, setAlertConfig] = useState({
+    isOpen: false,
+    message: '',
+    type: 'info' as 'success' | 'error' | 'info',
+    onConfirm: () => {},
+  });
+
+  const closeAlert = () => {
+    setAlertConfig((prev) => ({ ...prev, isOpen: false }));
+  };
+
   const handleLogin = async () => {
     if (!email || !password) {
-      alert('이메일과 비밀번호를 입력해주세요.');
+      setAlertConfig({
+        isOpen: true,
+        message: '이메일과 비밀번호를 입력해주세요.',
+        type: 'error',
+        onConfirm: closeAlert,
+      });
       return;
     }
 
     const resultAction = await dispatch(submitLogin({ email, password }));
 
     if (submitLogin.fulfilled.match(resultAction)) {
-      alert('로그인 성공!');
-      router.push('/');
+      setAlertConfig({
+        isOpen: true,
+        message: '로그인 성공!',
+        type: 'success',
+        onConfirm: () => {
+          closeAlert();
+          router.push('/');
+        },
+      });
     } else {
-      alert(`로그인 실패: ${resultAction.payload}`);
+      setAlertConfig({
+        isOpen: true,
+        message: `로그인 실패: ${resultAction.payload}`,
+        type: 'error',
+        onConfirm: closeAlert,
+      });
+    }
+  };
+
+  // 💡 Enter 키 입력 감지 핸들러
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleLogin();
     }
   };
 
@@ -126,7 +156,6 @@ export default function LoginPage() {
   return (
     <S.AppWrapper>
       <S.Container>
-        {/* 1번: 헤더 (위에서 아래로 슬라이드 다운) */}
         <AnimItem $delay={0} $isSlideDown={true}>
           <Header title="로그인" onBackClick={() => router.back()} />
         </AnimItem>
@@ -134,31 +163,30 @@ export default function LoginPage() {
         <S.Mt70 />
 
         <S.LayOutPadding>
-          {/* 2번: 이메일 창 (아래서 위로 페이드 업) */}
           <AnimItem $delay={0.1}>
             <AnimatedInput
               type="email"
               label="이메일"
               value={email}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => dispatch(setEmail(e.target.value))}
+              onKeyDown={handleKeyDown} // 💡 Enter 입력 감지
             />
           </AnimItem>
 
           <S.HB10 />
 
-          {/* 3번: 비밀번호 창 */}
           <AnimItem $delay={0.2}>
             <AnimatedInput
               type="password"
               label="비밀번호"
               value={password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => dispatch(setPassword(e.target.value))}
+              onKeyDown={handleKeyDown} // 💡 Enter 입력 감지
             />
           </AnimItem>
         </S.LayOutPadding>
 
         <S.BtnBottomWrap>
-          {/* 4번: 로그인 버튼 */}
           <AnimItem $delay={0.3}>
             <S.BaseBtn $variant="primary" onClick={handleLogin} disabled={isLoading}>
               {isLoading ? '로그인 중...' : 'Login'}
@@ -166,7 +194,6 @@ export default function LoginPage() {
           </AnimItem>
           <br />
 
-          {/* 5번: 카카오 로그인 버튼 */}
           <AnimItem $delay={0.4}>
             <S.BaseBtn $variant="kakao" onClick={handleKakaoLogin}>
               카카오톡으로 간편하게 시작하기
@@ -174,12 +201,10 @@ export default function LoginPage() {
           </AnimItem>
           <br />
 
-          {/* 6번: 애플 로그인 버튼 */}
           <AnimItem $delay={0.5}>
             <S.BaseBtn $variant="local">Apple로 로그인</S.BaseBtn>
           </AnimItem>
 
-          {/* 7번: 회원가입 유도 영역 */}
           <AnimItem $delay={0.6}>
             <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '14px', color: '#666' }}>
               아직 계정이 없으시다고요?{' '}
@@ -193,6 +218,13 @@ export default function LoginPage() {
           </AnimItem>
         </S.BtnBottomWrap>
       </S.Container>
+
+      <CustomAlert 
+        isOpen={alertConfig.isOpen} 
+        message={alertConfig.message} 
+        type={alertConfig.type} 
+        onConfirm={alertConfig.onConfirm} 
+      />
     </S.AppWrapper>
   );
 }
