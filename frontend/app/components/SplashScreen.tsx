@@ -10,7 +10,7 @@ export default function SplashScreen() {
   return (
     <S.SplashWrapper>
       {/* 메인 헤더보다 로고 크기를 1.5배 정도 키워서 렌더링 */}
-      <Logo width={270} height={54} />
+      <Logo width={204} height={54} />
     </S.SplashWrapper>
   );
 }
