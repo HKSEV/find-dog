@@ -9,20 +9,22 @@ interface LogoProps {
 }
 
 export default function Logo({ 
-  width = 180, 
+  width = 136,
   height = 36, 
   className, 
   onClick 
 }: LogoProps) {
   // 이미지에서 추출한 따뜻한 캬라멜 브라운 색상과 이목구비 색상
   const brownColor = "#C17F4A"; 
-  const featureColor = "#2C2522"; 
+  const featureColor = "#2C2522";
 
+  // 💡 viewBox는 실제 그려지는 내용(왼쪽 귀 -2.5 ~ 글자 끝 약 129)에 맞춤
+  //    (예전 0 0 180 36은 오른쪽이 비어 있어서 가운데 정렬하면 로고가 왼쪽으로 치우쳐 보였음)
   return (
     <svg 
       width={width} 
       height={height} 
-      viewBox="0 0 180 36" 
+      viewBox="-3 0 136 36"
       fill="none" 
       xmlns="http://www.w3.org/2000/svg"
       className={className}

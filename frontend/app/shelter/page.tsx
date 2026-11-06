@@ -12,7 +12,6 @@ import Footer from '../components/Footer';
 
 //MUI
 import {
-  NotificationsNone as NotificationsNoneIcon,
   NotificationsOutlined as NotificationsIcon,
   TuneOutlined as FilterIcon,
   FmdGood as LocationIcon,

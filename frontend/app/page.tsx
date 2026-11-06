@@ -12,15 +12,12 @@ import {
 
 import SplashScreen from './components/SplashScreen'; // 💡 스플래시 컴포넌트 임포트
 
-import { MDBRow, MDBCol } from 'mdb-react-ui-kit';
 import {
-  NotificationsNone as NotificationsNoneIcon,
-  PetsOutlined as PetsOutlinedIcon,
   PlayArrow as PlayArrowIcon
 } from '@mui/icons-material';
-import { Dog, Cat, Rabbit, MapPin, Heart } from 'lucide-react';
 
 import * as S from '@/assets/css/style.styles';
+import { HomeGrid } from '@/assets/css/client/Home.styles';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
@@ -65,20 +62,19 @@ export default function HomePage() {
 
   // 💡 컴포넌트 마운트 시 세션 스토리지 확인하여 스플래시 제어
   useEffect(() => {
-    const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
-
-    if (!hasSeenSplash) {
-      // 최초 접속 시: 스플래시 보여주고, 세션 스토리지에 기록 남기기
-      setShowSplash(true);
-      sessionStorage.setItem('hasSeenSplash', 'true');
-      
-      const timer = setTimeout(() => {
-        setShowSplash(false);
-      }, 2000); // 2초 후 스플래시 종료
-      
-      return () => clearTimeout(timer); // 언마운트 시 클리어
-    }
     // 이미 본 경우 (hasSeenSplash === 'true') 에는 showSplash 상태가 false 그대로 유지됨
+    if (sessionStorage.getItem('hasSeenSplash')) return;
+
+    // 최초 접속 시: 스플래시 보여주기
+    setShowSplash(true);
+
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+      // 💡 기록은 스플래시가 끝난 뒤에 남김 (StrictMode에서 effect가 두 번 실행돼도 타이머가 다시 걸리도록)
+      sessionStorage.setItem('hasSeenSplash', 'true');
+    }, 2000); // 2초 후 스플래시 종료
+
+    return () => clearTimeout(timer); // 언마운트 시 클리어
   }, []);
 
   // 컴포넌트 마운트 시 데이터 로드
@@ -217,17 +213,17 @@ export default function HomePage() {
             <S.SectionHeader>
               <S.SectionTitle>어서찾아주개 유튜브</S.SectionTitle>
             </S.SectionHeader>
-            <MDBRow className='g-2'>
+            <HomeGrid $cols={2} $gap="1rem">
               {youtubePosts.map((video) => (
-                <MDBCol size="6" key={video.id} className='mb-3'>
+                <div key={video.id}>
                   <S.Thumb>
                     <S.VideoThumb src={video.thumbnailUrl} alt={video.title}/>
                     <S.YoutubePlayIcon/>
                   </S.Thumb>
                   <p>{video.title}</p>
-                </MDBCol>
-              ))}    
-            </MDBRow>
+                </div>
+              ))}
+            </HomeGrid>
           </S.Section>
 
           <S.Divider/>
@@ -236,18 +232,18 @@ export default function HomePage() {
           <S.Section>
             <S.SectionHeader>
               <S.SectionTitle>펠로우 소식</S.SectionTitle>
-              <S.MoreButton>더보기 &gt</S.MoreButton>
+              <S.MoreButton>더보기 &gt;</S.MoreButton>
             </S.SectionHeader>
-            <MDBRow className='g-2'>
+            <HomeGrid $cols={3} $gap=".5rem">
               {fellowNews.map((news) => (
-                <MDBCol size="4" key={news.id} className="mb-2">
+                <div key={news.id}>
                   <S.Thumb>
                     <S.VideoThumb src={news.imageUrl} alt={news.title}/>
                   </S.Thumb>
                   <S.NewsTitle>{news.title}</S.NewsTitle>
-                </MDBCol>
+                </div>
               ))}
-            </MDBRow>
+            </HomeGrid>
           </S.Section>
 
           <S.Divider/>
@@ -258,15 +254,15 @@ export default function HomePage() {
               <S.SectionTitle>도움이 필요해요</S.SectionTitle>
               <S.MoreButton>더보기 &gt;</S.MoreButton>
             </S.SectionHeader>
-            <MDBRow className='g-1'>
+            <HomeGrid $cols={4} $gap=".25rem">
               {needHelps.map((help) => (
-                <MDBCol size="3" key={help.id} className='mb-1'>
+                <div key={help.id}>
                   <S.Thumb>
                     <S.VideoThumb src={help.imageUrl} alt="도움이 필요해요"/>
-                  </S.Thumb>        
-                </MDBCol>
+                  </S.Thumb>
+                </div>
               ))}
-            </MDBRow>
+            </HomeGrid>
           </S.Section>
 
           {/* 통계 */}

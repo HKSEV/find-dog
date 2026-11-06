@@ -34,11 +34,11 @@ export const submitLogin = createAsyncThunk(
       let data: any = {};
       try {
         data = JSON.parse(text);
-      } catch (e) {
+      } catch {
         data = text;
       }
 
-      let token = typeof data === 'string' ? data : data.token;
+      const token =typeof data === 'string' ? data : data.token;
 
       if (!token) {
         return rejectWithValue('유효하지 않은 토큰입니다.');
