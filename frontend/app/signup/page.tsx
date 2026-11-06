@@ -169,7 +169,7 @@ export default function SignupPage() {
       if (!res.ok) throw new Error('서버응답에러');
       if (await res.json()) showAlert('이미 사용 중인 이메일입니다.', 'error');
       else showAlert('사용 가능한 이메일입니다!', 'success');
-    } catch (error) {
+    } catch {
       showAlert('서버와 통신하는 중 문제가 발생했습니다.', 'error');
     }
   };
@@ -181,7 +181,7 @@ export default function SignupPage() {
       if (!res.ok) throw new Error('서버응답에러');
       if (await res.json()) showAlert('이미 누군가 사용 중인 닉네임입니다.', 'error');
       else showAlert('멋진 닉네임이네요! 사용 가능합니다.', 'success');
-    } catch (error) {
+    } catch {
       showAlert('서버와 통신하는 중 문제가 발생했습니다.', 'error');
     }
   };

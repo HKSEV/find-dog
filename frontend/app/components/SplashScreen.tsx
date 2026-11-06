@@ -1,6 +1,5 @@
 "use client";
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
 import Logo from './Logo'; // 앞서 만든 로고 컴포넌트 임포트
 import * as S from "@/assets/css/style.styles";
 

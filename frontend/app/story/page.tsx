@@ -9,10 +9,7 @@ import * as S from '@/assets/css/style.styles';
 
 // MUI 아이콘
 import {
-  NotificationsNone as NotificationsNoneIcon,
-  NotificationsOutlined as NotificationsIcon,
-  TuneOutlined as FilterIcon,
-  ChevronRight as ChevronRightIcon
+  NotificationsOutlined as NotificationsIcon
 } from '@mui/icons-material';
 import { Plus, MessageSquare, Share2, Eye } from 'lucide-react';
 import Header from '../components/Header';

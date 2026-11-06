@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { BgWhite, BoxShadow, FlexColumn, Grid, Ohidden } from '../common/Common.styles';
 
 export const Terms = styled.div`
 max-height: showTerms ? '150px' : '0';

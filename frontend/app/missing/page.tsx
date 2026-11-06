@@ -6,7 +6,6 @@ import { AppDispatch, RootState } from '../store/store'; // 프로젝트 경로�
 import { fetchMissingAnimals } from '../redux/missingSlice';
 
 import { MapPin, Calendar, Plus } from 'lucide-react';
-import { NotificationsNone as NotificationsNoneIcon } from '@mui/icons-material';
 
 import { ModalSingle } from '../modal/ModalSingle';
 import * as S from '@/assets/css/style.styles';

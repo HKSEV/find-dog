@@ -13,11 +13,8 @@ import {
 import SplashScreen from './components/SplashScreen'; // 💡 스플래시 컴포넌트 임포트
 
 import {
-  NotificationsNone as NotificationsNoneIcon,
-  PetsOutlined as PetsOutlinedIcon,
   PlayArrow as PlayArrowIcon
 } from '@mui/icons-material';
-import { Dog, Cat, Rabbit, MapPin, Heart } from 'lucide-react';
 
 import * as S from '@/assets/css/style.styles';
 import { HomeGrid } from '@/assets/css/client/Home.styles';

@@ -13,8 +13,6 @@ import { CustomAlert } from '../components/CustomAlert'; // 💡 커스텀 알�
 
 // 💡 MUI 아이콘 임포트
 import {
-  NotificationsOutlined as NotificationsNoneIcon, 
-  SettingsOutlined as SettingsIcon,
   WorkspacePremiumOutlined as PremiumIcon, 
   EditNoteOutlined as EditNoteIcon, 
   MailOutlined as MailIcon,          
