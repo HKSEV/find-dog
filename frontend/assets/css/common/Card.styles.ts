@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { BgWhite, Ohidden, BoxShadow, W100, Ellipsis, Grid, Fw900, FlexColumn, Nowrap } from "./Common.styles";
+import { BgWhite, Ohidden, BoxShadow, Ellipsis, Grid, Fw900, FlexColumn, Nowrap } from "./Common.styles";
 
 export const Card = styled.div`
   ${BgWhite}
@@ -8,8 +8,8 @@ export const Card = styled.div`
 `;
 
 export const CardImage = styled.img`
-  ${W100}
-  height: 160px;
+  width: auto;
+  height: auto;
   object-fit: cover;
   border-radius: 15px 15px 0 0;
 `;

@@ -17,7 +17,7 @@ const PageTitle = styled.h1`
   font-weight: 500;
   line-height: 1.2;
   margin-bottom: 0 !important;
-  color: #1f2937;
+  color: #1e2939;
 `;
 
 const FormCard = styled(F.Card)`
@@ -42,7 +42,7 @@ const FormSection = styled.div`
 `;
 
 const FieldLabel = styled.label`
-  color: #1f2937;
+  color: #1e2939;
 `;
 
 const CategoryOptions = styled.div`
@@ -111,7 +111,7 @@ const SubmitButton = styled(F.Button)`
 `;
 
 const GuideBody = styled(F.CardBody)`
-  color: #1f2937;
+  color: #1e2939;
 `;
 
 export default function AdoptionCampaignAdmin() {

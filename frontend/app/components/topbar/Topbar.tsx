@@ -19,12 +19,7 @@ import styled from "styled-components";
 
 const AdminTopbar = styled(TopbarContainer)`
   position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
   flex-flow: row nowrap;
-  justify-content: flex-start;
 `;
 
 const MobileMenuButton = styled.button`
@@ -89,7 +84,7 @@ const ProfileName = styled.span`
   @media (min-width: 992px) {
     display: inline !important;
   }
-  color: #4b5563;
+  color: #4a5565;
   font-size: 80%;
   font-weight: 400;
 `;
@@ -140,7 +135,7 @@ const ProfileMenuItem = styled.a`
 const ProfileIcon = styled(I.User)`
   font-size: 0.875em;
   margin-right: 0.5rem !important;
-  color: #9ca3af;
+  color: #99a1af;
 `;
 
 const ProfileMenuDivider = styled.div`
@@ -153,7 +148,7 @@ const ProfileMenuDivider = styled.div`
 const LogoutIcon = styled(I.SignOut)`
   font-size: 0.875em;
   margin-right: 0.5rem !important;
-  color: #9ca3af;
+  color: #99a1af;
 `;
 
 export const Topbar: React.FC = () => {

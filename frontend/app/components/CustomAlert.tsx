@@ -35,7 +35,7 @@ const AlertTextGroup = styled.div`
 `;
 
 const AlertMessage = styled.strong`
-  && {
+  &&& {
     font-size: 1.1rem;
     word-break: keep-all;
     line-height: 1.4;

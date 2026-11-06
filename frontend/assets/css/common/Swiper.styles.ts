@@ -102,6 +102,10 @@ export const ThumTitle = styled.h2`
 // 스와이퍼 바깥 여백 확보 (첫 카드가 살짝 여백을 갖도록)
 export const SwiperContainer = styled.div`
   padding-left: 20px;
+
+  .swiper-slide {
+    width: 140px;
+  }
 `;
 
 export const CardWrapper = styled.div`

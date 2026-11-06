@@ -59,7 +59,7 @@ const MetricValue = styled.div`
   line-height: 1.2;
   margin-bottom: 0 !important;
   font-weight: 700 !important;
-  color: #1f2937;
+  color: #1e2939;
 `;
 
 const MetricIconBox = styled.div`
@@ -73,7 +73,7 @@ const MetricIconBox = styled.div`
 
 const CalendarIcon = styled(I.Calendar)`
   font-size: 2em;
-  color: #d1d5db;
+  color: #d1d5dc;
 `;
 
 const AnnualMetricLabel = styled.div`

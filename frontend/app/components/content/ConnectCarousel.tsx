@@ -5,14 +5,6 @@ import PetsIcon from "@mui/icons-material/Pets";
 // 작성하신 스타일 파일 경로에 맞게 수정해 주세요. (예: style.styles.ts)
 import * as S from "@/assets/css/style.styles";
 
-import styled from "styled-components";
-
-const ConnectSlide = styled(SwiperSlide)`
-  && {
-    width: 140px;
-  }
-`;
-
 // 1. 임시 데이터
 const connectsData = [
   {id: 1, name: "콩이", imageUrl: "/img/dog1.jpg"},
@@ -42,7 +34,7 @@ export default function ConnectsCarousel() {
       >
           {connectsData.map((item) => (
             /* 주의: SwiperSlide는 라이브러리 컴포넌트이므로 S. 를 붙이지 않습니다 */
-            <ConnectSlide key={item.id}>
+            <SwiperSlide key={item.id}>
               <S.CardWrapper>
                 <S.CardImage src={item.imageUrl} alt={item.name}/>
                 <S.TopRightIcon>
@@ -51,7 +43,7 @@ export default function ConnectsCarousel() {
                 <S.GradientOverlay/>
                 <S.NameText>{item.name}</S.NameText>
               </S.CardWrapper>
-            </ConnectSlide>
+            </SwiperSlide>
           ))}
         </Swiper>
       </S.SwiperContainer>
