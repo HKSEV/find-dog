@@ -9,129 +9,91 @@ import { setAdminEmail, setAdminPassword, submitAdminLogin } from '../../redux/a
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { FaUser } from "react-icons/fa";
 import * as S from '@/assets/css/style.styles';
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
 
 export default function LoginPage() {
-const router = useRouter();
-const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
 
-// Redux Store 상태 조회
-const { email, password, isLoading } = useSelector((state: RootState) => state.adminLogin);
+  // Redux Store 상태 조회
+  const {email, password, isLoading} = useSelector((state: RootState) => state.adminLogin);
+  const [showPassword, setShowPassword] = useState(false);
 
-// 로그인 버튼을 누를 때 실행되는 함수
-const handleSubmit = async (e: React.FormEvent) => {
-e.preventDefault();
+  // 로그인 버튼을 누를 때 실행되는 함수
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-if (!email || !password) {
-alert('이메일과 비밀번호를 모두 입력해 주세요');
-return;
-}
+    if (!email || !password) {
+      alert('이메일과 비밀번호를 모두 입력해 주세요');
+      return;
+    };
 
-const resultAction = await dispatch(submitAdminLogin({ email, password }));
+    const resultAction = await dispatch(submitAdminLogin({email, password}));
 
-if (submitAdminLogin.fulfilled.match(resultAction)) {
-const data = resultAction.payload;
-alert(`${data.name}님, ${data.message}`);
-router.push('/admin');
-} else {
-alert(resultAction.payload || '로그인 중 오류가 발생했습니다');
-}
-};
+    if (submitAdminLogin.fulfilled.match(resultAction)) {
+      const data = resultAction.payload;
+      alert(`${data.name}님, ${data.message}`);
+      router.push('/admin');
+    } else {
+      alert(resultAction.payload || '로그인 중 오류가 발생했습니다');
+    };
+  };
 
-return (
-<>
-<S.Background>
-<Container>
-<Row className="justify-content-center">
-<Col xl={10} lg={12} md={9}>
-<Card className="o-hidden border-0 shadow-lg my-5">
-<Card.Body className="p-0">
-<Row>
-<Col lg={6} className="d-none d-lg-block bg-login-image"></Col>
-<Col lg={6}>
-<div className="p-5">
-<div className="text-center">
-<h1 className="h4 text-gray-900 mb-4">
-Welcome Back!
-</h1>
+  return (
+    <S.MemberContainer>
+    <S.MemberCard aria-labelledby="admin-login-title">
+      <S.MemberHeader>
+        <S.MemberIcon aria-hidden="true">
+          <FaUser/>
+        </S.MemberIcon>
+        <S.MemberTitle id="admin-login-title">Welcome Back!</S.MemberTitle>
+        <S.MemberDescription>관리자 계정에 로그인하세요</S.MemberDescription>
+      </S.MemberHeader>
 
-<form className="user" onSubmit={handleSubmit}>
-<div className="form-group mb-3">
-<Form.Control
-type="email"
-className="form-control-user"
-placeholder="Enter Email Address..."
-value={email}
-onChange={(e) => dispatch(setAdminEmail(e.target.value))}
-required
-/>
-</div>
+      <S.MemberForm onSubmit={handleSubmit}>
+        <S.MemberField>
+          <S.MemberInputLabel htmlFor="admin-email">이메일</S.MemberInputLabel>
+          <S.MemberInputWrapper>
+            <FiMail aria-hidden="true"/>
+            <S.MemberInput
+            id="admin-email"
+            name="email"
+            type="email"
+            placeholder="Enter Email Address..."
+            autoComplete="username"
+            value={email}
+            onChange={(e) => dispatch(setAdminEmail(e.target.value))}
+            required/>
+          </S.MemberInputWrapper>
+        </S.MemberField>
 
-<div className="form-group mb-3">
-<Form.Control
-type="password"
-className="form-control-user"
-placeholder="Password"
-value={password}
-onChange={(e) => dispatch(setAdminPassword(e.target.value))}
-required
-/>
-</div>
+        <S.MemberField>
+          <S.MemberInputLabel htmlFor="admin-password">비밀번호</S.MemberInputLabel>
+          <S.MemberInputWrapper>
+            <FiLock aria-hidden="true"/>
+            <S.MemberInput
+            id="admin-password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => dispatch(setAdminPassword(e.target.value))}
+            required/>
+            <S.MemberPasswordToggle
+            type="button"
+            aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+            aria-controls="admin-password"
+            onClick={() => setShowPassword((prev) => !prev)}>
+              {showPassword ? <FiEyeOff aria-hidden="true"/> : <FiEye aria-hidden="true"/>}
+            </S.MemberPasswordToggle>
+          </S.MemberInputWrapper>
+        </S.MemberField>
 
-{/* 기억하기 체크박스 및 로그인 버튼들 */}
-<div className="form-group my-3 ">
-<div className="custom-control custom-checkbox small">
-<input
-type="checkbox"
-className="custom-control-input form-check-input mx-2"
-id="customCheck"
-/>
-<label
-className="custom-control-label"
-htmlFor="customCheck"
->
-Remember Me
-</label>
-
-<Button
-variant="primary"
-type="submit"
-className="btn-user btn-block w-100 my-3"
-disabled={isLoading}
->
-{isLoading ? '로그인 중...' : 'Login'}
-</Button>
-
-<Button
-variant="primary"
-type="button"
-className="btn-user btn-google btn-block w-100 mb-2"
->
-<FontAwesomeIcon icon={faGoogle} className="fa-fw" />
-Login with Google
-</Button>
-
-<Button
-variant="primary"
-type="button"
-className="btn-user btn-facebook btn-block w-100 mb-2"
->
-<FontAwesomeIcon icon={faFacebookF} className="fa-fw" />
-Login with Facebook
-</Button>
-</div>
-</div>
-</form>
-</div>
-</div>
-</Col>
-</Row>
-</Card.Body>
-</Card>
-</Col>
-</Row>
-</Container>
-</S.Background>
-</>
-);
+        <S.MemberButton type="submit" disabled={isLoading}>
+          {isLoading ? "로그인 중..." : "Login"}
+        </S.MemberButton>
+      </S.MemberForm>
+    </S.MemberCard>
+  </S.MemberContainer>
+  );
 };
