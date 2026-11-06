@@ -1,18 +1,24 @@
-'use client';
+"use client";
 import React from "react";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import PetsIcon from '@mui/icons-material/Pets';
+import { Swiper, SwiperSlide } from "swiper/react";
+import PetsIcon from "@mui/icons-material/Pets";
 // 작성하신 스타일 파일 경로에 맞게 수정해 주세요. (예: style.styles.ts)
-import * as S from '@/assets/css/style.styles';
+import * as S from "@/assets/css/style.styles";
 
-import 'swiper/css';
+import styled from "styled-components";
+
+const ConnectSlide = styled(SwiperSlide)`
+  && {
+    width: 140px;
+  }
+`;
 
 // 1. 임시 데이터
 const connectsData = [
-  {id: 1, name: '콩이', imageUrl: '/img/dog1.jpg'},
-  {id: 2, name: '짜요', imageUrl: '/img/dog2.jpg'},
-  {id: 3, name: '경기-양평-2026-...', imageUrl: '/img/dog3.jpg'},
-  {id: 4, name: '삐삐', imageUrl: '/img/dog4.jpg'}
+  {id: 1, name: "콩이", imageUrl: "/img/dog1.jpg"},
+  {id: 2, name: "짜요", imageUrl: "/img/dog2.jpg"},
+  {id: 3, name: "경기-양평-2026-...", imageUrl: "/img/dog3.jpg"},
+  {id: 4, name: "삐삐", imageUrl: "/img/dog4.jpg"}
 ];
 
 export default function ConnectsCarousel() {
@@ -36,7 +42,7 @@ export default function ConnectsCarousel() {
       >
           {connectsData.map((item) => (
             /* 주의: SwiperSlide는 라이브러리 컴포넌트이므로 S. 를 붙이지 않습니다 */
-            <SwiperSlide key={item.id} style={{width: "140px"}}>
+            <ConnectSlide key={item.id}>
               <S.CardWrapper>
                 <S.CardImage src={item.imageUrl} alt={item.name}/>
                 <S.TopRightIcon>
@@ -45,7 +51,7 @@ export default function ConnectsCarousel() {
                 <S.GradientOverlay/>
                 <S.NameText>{item.name}</S.NameText>
               </S.CardWrapper>
-            </SwiperSlide>
+            </ConnectSlide>
           ))}
         </Swiper>
       </S.SwiperContainer>

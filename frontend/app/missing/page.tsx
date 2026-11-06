@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from 'react-redux';
-import { AppDispatch, RootState } from '../store/store'; // 프로젝트 경로에 맞게 수정
-import { fetchMissingAnimals } from '../redux/missingSlice';
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../store/store"; // 프로젝트 경로에 맞게 수정
+import { fetchMissingAnimals } from "../redux/missingSlice";
 
-import { MapPin, Calendar, Plus } from 'lucide-react';
+import { MapPin, Calendar, Plus } from "lucide-react";
 
-import { ModalSingle } from '../modal/ModalSingle';
-import * as S from '@/assets/css/style.styles';
-import Header from '@/app/components/Header';
-import Footer from '@/app/components/Footer';
+import { ModalSingle } from "../modal/ModalSingle";
+import * as S from "@/assets/css/style.styles";
+import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 
 export default function MissingReportPage() {
   const dispatch = useDispatch<AppDispatch>();

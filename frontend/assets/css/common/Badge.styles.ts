@@ -1,12 +1,12 @@
-import styled from 'styled-components';
-import { ColorWhite, Flex, Fw600, Fw700 } from './Common.styles';
+import styled from "styled-components";
+import { ColorWhite, Flex, Fw600, Fw700 } from "./Common.styles";
 
 interface StatusProps {
   status: string;
 }
 
 export const StatusBadge = styled.span<StatusProps>`
-  background-color: ${(props) => (props.status === '실종' ? '#ff4d4f' : '#52c41a')};
+  background-color: ${(props) => (props.status === "실종" ? "#ff4d4f" : "#52c41a")};
   ${ColorWhite}${Fw700}
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
@@ -18,7 +18,7 @@ export const BadgeGroup = styled.div`
   margin-bottom: 6px;
 `;
 
-export const Badge = styled.span<{$type?: 'status' | 'female' | 'male' | 'unknown'}>`
+export const Badge = styled.span<{$type?: "status" | "female" | "male" | "unknown"}>`
   font-size: 0.7rem;
   padding: 2px 7px;
   border-radius: 4px;
@@ -26,16 +26,16 @@ export const Badge = styled.span<{$type?: 'status' | 'female' | 'male' | 'unknow
   ${Fw600};
   ${({$type}) => {
     switch ($type) {
-      case 'status':
-        return 'color: #555; border-color: #ccc; background-color: #fff;';
-      case 'female':
-        return 'color: #ff6b6b; border-color: #ff6b6b; background-color: #fff;';
-      case 'male':
-        return 'color: #4a90e2; border-color: #4a90e2; background-color: #fff;';
-      case 'unknown':
-        return 'color: #555; border-color: #ccc; background-color: #fff;';
+      case "status":
+        return "color: #555; border-color: #ccc; background-color: #fff;";
+      case "female":
+        return "color: #ff6b6b; border-color: #ff6b6b; background-color: #fff;";
+      case "male":
+        return "color: #4a90e2; border-color: #4a90e2; background-color: #fff;";
+      case "unknown":
+        return "color: #555; border-color: #ccc; background-color: #fff;";
       default:
-        return 'color: #555; border-color: #ccc; background-color: #fff;';
+        return "color: #555; border-color: #ccc; background-color: #fff;";
     }
   }}
 `;

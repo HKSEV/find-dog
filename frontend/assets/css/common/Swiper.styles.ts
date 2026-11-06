@@ -2,11 +2,11 @@ import styled from "styled-components";
 
 export const CarouselWrapper = styled.div`
   width: 100%;
-  height: 130px; 
+  height: 130px;
   border-radius: 12px;
   overflow: hidden;
   position: relative;
-  
+
   .swiper-pagination-fraction {
     bottom: 8px;
     left: auto;
@@ -26,8 +26,8 @@ export const SlideContainer = styled.div<{$bgColor?: string}>`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: 130px; 
-  background-color: ${(props) => props.$bgColor || '#E6F4F1'};
+  height: 130px;
+  background-color: ${(props) => props.$bgColor || "#E6F4F1"};
   padding: 0 20px;
   box-sizing: border-box;
 `;
@@ -46,7 +46,7 @@ export const CarouselTitle = styled.h2`
   color: #000;
   margin: 0 0 8px 0;
   line-height: 1.4;
-  white-space: pre-line; 
+  white-space: pre-line;
 `;
 
 // 이름 충돌 방지를 위해 BannerSub -> CarouselSub 로 변경
@@ -61,9 +61,9 @@ export const ImageWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  
+
   img {
-    height: 110px; 
+    height: 110px;
     object-fit: contain;
   }
 `;
@@ -92,7 +92,7 @@ export const ThumTitle = styled.h2`
 
   /* 이미지의 'o' 자리에 들어간 주황색 발바닥 아이콘 구현 */
   .paw-icon {
-    color: #FF8A00; 
+    color: #ff8a00;
     font-size: 20px;
     margin: 0 2px;
     transform: rotate(15deg);
@@ -120,7 +120,7 @@ export const GradientOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 50%;
-  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
   pointer-events: none;
 `;
 
@@ -132,12 +132,12 @@ export const NameText = styled.span`
   font-size: 14px;
   font-weight: 600;
   z-index: 2;
-  
+
   /* 글씨가 길 경우 말줄임표 처리 (예: 경기-양평...) */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 116px; 
+  max-width: 116px;
 `;
 
 // 우측 상단 발바닥 아이콘 (찜하기 기능 등)

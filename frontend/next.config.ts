@@ -1,4 +1,4 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // 💡 [추가] styled-components 클래스명 불일치(Hydration) 에러 완벽 해결
@@ -9,8 +9,8 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/:path*',
-        destination: 'http://localhost:8080/api/:path*'
+        source: "/api/:path*",
+        destination: "http://localhost:8080/api/:path*"
       }
     ];
   }

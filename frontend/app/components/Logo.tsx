@@ -1,5 +1,12 @@
-'use client';
+"use client";
 import React from "react";
+import styled from "styled-components";
+
+const LogoSvg = styled.svg<{$cursor?: React.CSSProperties["cursor"]}>`
+  && {
+    cursor: ${({$cursor}) => $cursor};
+  }
+`;
 
 interface LogoProps {
   width?: number | string;
@@ -10,13 +17,13 @@ interface LogoProps {
 
 export default function Logo({width = 136, height = 36, className, onClick}: LogoProps) {
   // 이미지에서 추출한 따뜻한 캬라멜 브라운 색상과 이목구비 색상
-  const brownColor = '#C17F4A';
-  const featureColor = '#2C2522';
+  const brownColor = "#C17F4A";
+  const featureColor = "#2C2522";
 
   // 💡 viewBox는 실제 그려지는 내용(왼쪽 귀 -2.5 ~ 글자 끝 약 129)에 맞춤
   //    (예전 0 0 180 36은 오른쪽이 비어 있어서 가운데 정렬하면 로고가 왼쪽으로 치우쳐 보였음)
   return (
-    <svg
+    <LogoSvg
     width={width}
     height={height}
     viewBox="-3 0 136 36"
@@ -24,7 +31,7 @@ export default function Logo({width = 136, height = 36, className, onClick}: Log
     xmlns="http://www.w3.org/2000/svg"
     className={className}
     onClick={onClick}
-    style={{cursor: onClick ? "pointer" : "default"}}>
+    $cursor={onClick ? "pointer" : "default"}>
       {/* --- 1. 강아지 심볼 영역 (36x36) --- */}
       <g transform="translate(0, 0)">
         {/* 흰색 얼굴 바탕 */}
@@ -62,6 +69,6 @@ export default function Logo({width = 136, height = 36, className, onClick}: Log
       letterSpacing="-0.5">
         어서찾아주개
       </text>
-    </svg>
+    </LogoSvg>
   );
 };

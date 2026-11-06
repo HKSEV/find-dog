@@ -1,10 +1,41 @@
-'use client';
+"use client";
 
 import React from "react";
-import { useRouter } from 'next/navigation'; // 💡 useRouter 임포트
-import * as S from '@/assets/css/style.styles';
-import { NotificationsOutlined as NotificationsNoneIcon, PersonOutlined as PersonOutlineIcon } from '@mui/icons-material';
-import Logo from './Logo';
+import { useRouter } from "next/navigation"; // 💡 useRouter 임포트
+import * as S from "@/assets/css/style.styles";
+import { NotificationsOutlined as NotificationsNoneIcon, PersonOutlined as PersonOutlineIcon } from "@mui/icons-material";
+import Logo from "./Logo";
+import styled from "styled-components";
+
+const HeaderActions = styled.div`
+  && {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+`;
+
+const AccountIcon = styled(PersonOutlineIcon)`
+  && {
+    cursor: pointer;
+    color: #8a4e4b;
+    font-size: 30px;
+  }
+`;
+
+const NotificationIcon = styled(NotificationsNoneIcon)`
+  && {
+    cursor: pointer;
+    color: #8a4e4b;
+    font-size: 28px;
+  }
+`;
+
+const HeaderSpacer = styled(S.None)`
+  && {
+    width: 60px;
+  }
+`;
 
 interface HeaderProps {
   title?: string;
@@ -30,16 +61,14 @@ export default function Header({title, onBackClick, isMain}: HeaderProps) {
         <Logo onClick={() => router.push("/")}/>
 
         {/* 우측 아이콘 그룹 */}
-        <div style={{display: "flex", alignItems: "center", gap: "12px"}}>
-          <PersonOutlineIcon
-          sx={{cursor: "pointer", color: "#8a4e4b", fontSize: "30px"}}
+        <HeaderActions>
+          <AccountIcon
           onClick={() => router.push("/login")} // 💡 클릭 시 /login 으로 이동
         />
-          <NotificationsNoneIcon
-          sx={{cursor: "pointer", color: "#8a4e4b", fontSize: "28px"}}
+          <NotificationIcon
           onClick={() => router.push("/mypage")} // 필요시 알림 페이지 경로로 수정
         />
-        </div>
+        </HeaderActions>
       </S.Header>
     );
   };
@@ -51,7 +80,7 @@ export default function Header({title, onBackClick, isMain}: HeaderProps) {
 
       <S.H5Bold>{title}</S.H5Bold>
 
-      <S.None style={{width: "60px"}}/>
+      <HeaderSpacer/>
     </S.Header>
   );
 };

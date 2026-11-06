@@ -1,18 +1,18 @@
-import styled from 'styled-components';
-import { FlexColumn, Fw600, MainTitleColor, W100 } from './Common.styles';
+import styled from "styled-components";
+import { FlexColumn, Fw600, MainTitleColor, W100 } from "./Common.styles";
 
 export const Section = styled.section<{$bgLight?: boolean}>`
-padding:16px;
-background-color:${(props) => (props.$bgLight ? '#f8f9fa' : '#fff')};
-margin-top:${(props) => (props.$bgLight ? '8px' : '0')};
+  padding: 16px;
+  background-color: ${(props) => (props.$bgLight ? "#f8f9fa" : "#fff")};
+  margin-top: ${(props) => (props.$bgLight ? "8px" : "0")};
 `;
 
 export const SectionTitle = styled.h3`
-font-size:1.15rem; 
-${MainTitleColor}
-${Fw600};
-letter-spacing:-0.03rem;
-margin-bottom:0.9375rem; 
+  font-size: 1.15rem;
+  ${MainTitleColor}
+  ${Fw600};
+  letter-spacing: -0.03rem;
+  margin-bottom: 0.9375rem;
 `;
 
 export const RecommendSection = styled.section`

@@ -1,23 +1,23 @@
-import styled from 'styled-components';
-import { coolGray, adminCard } from '@/assets/css/admin/Admin.styles'; // 만들어둔 쿨그레이 믹스인 임포트
+import styled from "styled-components";
+import { coolGray, adminCard } from "@/assets/css/admin/Admin.styles"; // 만들어둔 쿨그레이 믹스인 임포트
 
 // ==========================================
 // 💡 1. 사용자 작성 기존 뼈대 코드 (일부 컬러 믹스인 적용)
 // ==========================================
 export const Wrapper = styled.div`
-  display: flex; 
+  display: flex;
   width: 100%;
-  height: 100vh; 
+  height: 100vh;
   overflow: hidden;
 `;
 
 export const ContentWrapper = styled.div`
-  display: flex; 
+  display: flex;
   flex-direction: column;
-  width: 100%; 
+  width: 100%;
   overflow-x: hidden;
   /* 기존 #f8f9fc 대신 쿨그레이 팔레트의 가장 밝은 배경색 적용 */
-  background-color: ${coolGray[50]}; 
+  background-color: ${coolGray[50]};
 `;
 
 export const MainContent = styled.div`
@@ -28,9 +28,9 @@ export const MainContent = styled.div`
 
 export const ContainerFluid = styled.div`
   width: 100%;
-  padding-right: 1.5rem; 
+  padding-right: 1.5rem;
   padding-left: 1.5rem;
-  margin-right: auto; 
+  margin-right: auto;
   margin-left: auto;
 `;
 
@@ -73,13 +73,13 @@ export const NavItem = styled.li<{$active?: boolean}>`
     display: flex;
     align-items: center;
     padding: 12px 16px;
-    color: ${(props) => (props.$active ? '#ffffff' : coolGray[400])};
-    font-weight: ${(props) => (props.$active ? '700' : '600')};
+    color: ${(props) => (props.$active ? "#ffffff" : coolGray[400])};
+    font-weight: ${(props) => (props.$active ? "700" : "600")};
     font-size: 0.85rem;
     border-radius: 6px;
     text-decoration: none;
     transition: all 0.2s;
-    background-color: ${(props) => (props.$active ? coolGray[800] : 'transparent')};
+    background-color: ${(props) => (props.$active ? coolGray[800] : "transparent")};
 
     &:hover {
       color: #ffffff;
@@ -101,7 +101,7 @@ export const Topbar = styled.nav`
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5rem; /* ContainerFluid 패딩과 통일 */
-  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08); 
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
   z-index: 10;
   margin-bottom: 1.5rem; /* 아래 콘텐츠와의 간격 확보 */
 `;
@@ -120,7 +120,7 @@ export const AdminDataCard = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 1.5rem;
-  
+
   .card-header {
     padding: 1rem 1.25rem;
     background-color: ${coolGray[50]}; /* 연한 쿨그레이 바탕 */

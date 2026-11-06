@@ -1,11 +1,11 @@
 // src/redux/shelterSlice.ts
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
 
 export interface Animal {
   id: number;
-  status: 'ACTIVE' | 'COMPLETED';
-  gender: 'MALE' | 'FEMALE' | 'UNKNOWN';
+  status: "ACTIVE" | "COMPLETED";
+  gender: "MALE" | "FEMALE" | "UNKNOWN";
   breed: string;
   noticeNo: string;
   regDate: string;
@@ -22,7 +22,7 @@ interface ShelterState {
 }
 
 const initialState: ShelterState = {
-  activeTab: '보호동물',
+  activeTab: "보호동물",
   isAlertOn: false,
   animals: [],
   loading: false,
@@ -30,20 +30,20 @@ const initialState: ShelterState = {
 };
 
 // 보호 동물 데이터 비동기 조회 Thunk
-export const fetchShelterAnimals = createAsyncThunk('shelter/fetchShelterAnimals', async (_, {rejectWithValue}) => {
+export const fetchShelterAnimals = createAsyncThunk("shelter/fetchShelterAnimals", async (_, {rejectWithValue}) => {
   try {
-    const response = await axios.get('http://localhost:8080/api/shelter-animals');
+    const response = await axios.get("http://localhost:8080/api/shelter-animals");
     return response.data as Animal[];
   } catch (error: unknown) {
     return rejectWithValue(
       (axios.isAxiosError<string | {message?: string}>(error) ? error.response?.data : undefined) ||
-        '동물 데이터를 불러오는데 실패했습니다.'
+        "동물 데이터를 불러오는데 실패했습니다."
     );
   }
 });
 
 export const shelterSlice = createSlice({
-  name: 'shelter',
+  name: "shelter",
   initialState,
   reducers: {
     setActiveTab: (state, action: PayloadAction<string>) => {

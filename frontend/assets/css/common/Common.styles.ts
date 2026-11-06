@@ -1,167 +1,180 @@
-import { css } from 'styled-components';
+import { css } from "styled-components";
 
 export const MainBg = css`
-background: #f8d6cb;
+  background: #f8d6cb;
 `;
 export const MainBottomBg = css`
-background: #f4edea;
+  background: #f4edea;
 `;
 export const MainColor = css`
-color: #665251;
+  color: #665251;
 `;
 export const MainDarkColor = css`
-color: #8c524d;
+  color: #8c524d;
 `;
 export const MainTitleColor = css`
-color: #665251;
+  color: #665251;
 `;
 export const IconColor = css`
-color: #b5a196;
+  color: #b5a196;
 `;
 
 export const FlexCenter = css`
-display:flex;
-justify-content:center;
-align-items:center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 export const FlexBetween = css`
-display:flex;
-justify-content:space-between;
-align-items:center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 export const FlexColumn = css`
-display:flex;
-flex-direction:column;
-align-items:center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 export const FlexAround = css`
-display:flex;
-justify-content:space-around;
-align-items:center;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 `;
 export const FlexStart = css`
-display:flex;
-justify-content:flex-start;
-align-items:center;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 `;
 export const FlexEnd = css`
-display:flex;
-justify-content:flex-end;
-align-items:center;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 `;
 export const Flex = css`
-flex:1;
+  flex: 1;
 `;
 
 export const Fixed = css`
-position: fixed;
+  position: fixed;
 `;
 export const Sticky = css`
-position: sticky
+  position: sticky;
 `;
 export const Absolute = css`
-position:absolute;`;
+  position: absolute;
+`;
 export const Relative = css`
-position:relative;`;
+  position: relative;
+`;
 
 export const BorderNone = css`
-border:none;
+  border: none;
 `;
 export const Circle = css`
-border-radius:50%;`;
+  border-radius: 50%;
+`;
 
 export const MainWhite = css`
-background-color: #f1f3f5;
+  background-color: #f1f3f5;
 `;
 export const Nowrap = css`
-white-space:nowrap;
+  white-space: nowrap;
 `;
 export const Pointer = css`
-cursor:pointer;
+  cursor: pointer;
 `;
 export const BoxShadow = css`
-box-shadow: 0 1px 3px rgba(0,0,0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 `;
 export const TransitionAll = css`
-transition: all 0.2s ease-in-out;`;
+  transition: all 0.2s ease-in-out;
+`;
 
 export const Ellipsis = css`
-white-space:nowrap;
-overflow:hidden;
-text-overflow:ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 export const Fw100 = css`
-font-weight: 100;
+  font-weight: 100;
 `;
 export const Fw200 = css`
-font-weight: 200;
+  font-weight: 200;
 `;
 export const Fw300 = css`
-font-weight: 300;
+  font-weight: 300;
 `;
 export const Fw400 = css`
-font-weight: 400;
+  font-weight: 400;
 `;
 export const Fw500 = css`
-font-weight: 500;
+  font-weight: 500;
 `;
 export const Fw600 = css`
-font-weight: 600;
+  font-weight: 600;
 `;
 export const Fw700 = css`
-font-weight: 700;
+  font-weight: 700;
 `;
 export const Fw800 = css`
-font-weight: 800;
+  font-weight: 800;
 `;
 export const Fw900 = css`
-font-weight: 900;
+  font-weight: 900;
 `;
 
 export const W100 = css`
-width:100%`;
+  width: 100%;
+`;
 export const Vw100 = css`
-width:100vw`;
+  width: 100vw;
+`;
 export const H100 = css`
-height:100%`;
+  height: 100%;
+`;
 export const Vh100 = css`
-height:100vh`;
+  height: 100vh;
+`;
 
 export const Ohidden = css`
-overflow:hidden;`;
+  overflow: hidden;
+`;
 
 export const Grid = css`
-display:grid;
+  display: grid;
 `;
 
 export const BgWhite = css`
-background-color:#fff;
+  background-color: #fff;
 `;
 
 export const ColorWhite = css`
-color:#fff;
+  color: #fff;
 `;
 
 export const WebkitBox = css`
-display: -webkit-box; //플렉스 박스에 초기버전..
--webkit-line-clamp: 2;
--webkit-box-orient: vertical;
+  display: -webkit-box; /* 플렉스 박스의 초기 버전 */
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 `;
 
 export const TextCenter = css`
-text-align:center;
+  text-align: center;
 `;
 
 export const MainMaxWidth = css`
-max-width:480px;
+  max-width: 480px;
 `;
 
 export const Bottom0 = css`
-bottom:0; left:0; right:0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 `;
 export const Top0 = css`
-top:0; left:0; right:0;
+  top: 0;
+  left: 0;
+  right: 0;
 `;
 export const Mauto = css`
-margin:0 auto;
+  margin: 0 auto;
 `;

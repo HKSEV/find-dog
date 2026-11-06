@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { Absolute, Ohidden, Relative, W100, H100 } from './Common.styles';
+import styled from "styled-components";
+import { Absolute, Ohidden, Relative, W100, H100 } from "./Common.styles";
 
 export const RecommendImgBox = styled.div`
   width: 140px;
@@ -8,13 +8,15 @@ export const RecommendImgBox = styled.div`
   ${Ohidden};
   ${Relative};
   background-color: #eee;
-  img { 
-  ${W100} height: 100%; object-fit: cover; }
+  img {
+    ${W100} height: 100%;
+    object-fit: cover;
+  }
   .play-icon {
     ${Absolute};
     bottom: 8px;
     left: 8px;
-    color: rgba(255,255,255,0.9);
+    color: rgba(255, 255, 255, 0.9);
   }
 `;
 
@@ -26,37 +28,44 @@ export const AnimalImgBox = styled.div`
   ${Ohidden};
   background-color: #eee;
   flex-shrink: 0;
-  img { 
+  img {
     ${W100};
     ${H100};
-    object-fit: cover; 
+    object-fit: cover;
   }
 `;
 
 export const BlogImgWrap = styled.div`
-border:1px solid #ddd;
-padding:10px; 
-text-align:center;
-position:relative;
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  position: relative;
 `;
 
 export const NoneImage = styled.div`
-width:100%; height:150px; background-color:#f5f5f5;
-display:flex; align-items:center;
-justify-content:center; 
-margin-bottom:10px;
-color:#999;
+  width: 100%;
+  height: 150px;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  color: #999;
 `;
 
 export const BlogImg = styled.img`
-width:100%; height:200px;
-object-fit:cover;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
 `;
 
 export const MapPreview = styled.div`
-width:100%; height:400px; background-color:#eaeaea;
-display:flex; align-items:center; 
-justify-content:center; 
-border-radius:5px; 
-overflow:hidden;
+  width: 100%;
+  height: 400px;
+  background-color: #eaeaea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  overflow: hidden;
 `;

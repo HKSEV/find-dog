@@ -1,6 +1,6 @@
 // src/redux/missingSlice.ts
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 export interface MissingAnimal {
   id: number;
@@ -27,22 +27,22 @@ const initialState: MissingState = {
 };
 
 // 실종/제보 데이터 비동기 조회 Thunk
-export const fetchMissingAnimals = createAsyncThunk('missing/fetchMissingAnimals', async (_, {rejectWithValue}) => {
+export const fetchMissingAnimals = createAsyncThunk("missing/fetchMissingAnimals", async (_, {rejectWithValue}) => {
   try {
-    const response = await axios.get('http://localhost:8080/api/missing-posts', {
+    const response = await axios.get("http://localhost:8080/api/missing-posts", {
       withCredentials: true
     });
     return response.data as MissingAnimal[];
   } catch (error: unknown) {
     return rejectWithValue(
       (axios.isAxiosError<string | {message?: string}>(error) ? error.response?.data : undefined) ||
-        '실종/제보 데이터를 불러오는데 실패했습니다.'
+        "실종/제보 데이터를 불러오는데 실패했습니다."
     );
   }
 });
 
 export const missingSlice = createSlice({
-  name: 'missing',
+  name: "missing",
   initialState,
   reducers: {},
   extraReducers: (builder) => {

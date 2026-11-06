@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import Link from 'next/link';
-import { useSelector, useDispatch } from 'react-redux';
-import { AppDispatch, RootState } from '../store/store';
-import { loadUserFromStorage, logoutUser } from '../redux/userSlice';
+import Link from "next/link";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
+import { loadUserFromStorage, logoutUser } from "../redux/userSlice";
 
-import * as S from '@/assets/css/style.styles';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import { CustomAlert } from '../components/CustomAlert'; // 💡 커스텀 알럿 임포트
+import * as S from "@/assets/css/style.styles";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import { CustomAlert } from "../components/CustomAlert"; // 💡 커스텀 알럿 임포트
 
 // 💡 MUI 아이콘 임포트
 import {
@@ -26,7 +26,83 @@ import {
   CreateOutlined as PenIcon,
   PlayCircleOutlined as PlayIcon,
   ChevronRight as ChevronRightIcon
-} from '@mui/icons-material';
+} from "@mui/icons-material";
+import styled from "styled-components";
+
+const MembershipIcon = styled(PremiumIcon)`
+  && {
+    color: #ff8c00;
+    font-size: 32px;
+  }
+`;
+
+const ApplicationIcon = styled(EditNoteIcon)`
+  && {
+    color: #ff8c00;
+    font-size: 32px;
+  }
+`;
+
+const MessageIcon = styled(MailIcon)`
+  && {
+    color: #ff8c00;
+    font-size: 32px;
+  }
+`;
+
+const AccountIcon = styled(PersonIcon)`
+  && {
+    color: #666;
+  }
+`;
+
+const FavoriteIcon = styled(PetsIcon)`
+  && {
+    color: #666;
+  }
+`;
+
+const NoticeIcon = styled(InfoIcon)`
+  && {
+    color: #666;
+  }
+`;
+
+const HelpMenuIcon = styled(HelpIcon)`
+  && {
+    color: #666;
+  }
+`;
+
+const ContactIcon = styled(ChatIcon)`
+  && {
+    color: #666;
+  }
+`;
+
+const InstagramIcon = styled(CameraIcon)`
+  && {
+    color: #666;
+  }
+`;
+
+const BlogIcon = styled(PenIcon)`
+  && {
+    color: #666;
+  }
+`;
+
+const VideoIcon = styled(PlayIcon)`
+  && {
+    color: #666;
+  }
+`;
+
+const ListChevron = styled(ChevronRightIcon)`
+  && {
+    color: #999;
+  }
+`;
 
 export default function MyPage() {
   const router = useRouter();
@@ -38,8 +114,8 @@ export default function MyPage() {
   // 💡 커스텀 알럿 상태 관리
   const [alertConfig, setAlertConfig] = useState({
     isOpen: false,
-    message: '',
-    type: 'info' as 'success' | 'error' | 'info',
+    message: "",
+    type: "info" as "success" | "error" | "info",
     onConfirm: () => {}
   });
 
@@ -59,85 +135,83 @@ export default function MyPage() {
     // 💡 기본 alert 대신 CustomAlert 띄우기
     setAlertConfig({
       isOpen: true,
-      message: '로그아웃 되었습니다.',
-      type: 'success',
+      message: "로그아웃 되었습니다.",
+      type: "success",
       onConfirm: () => {
         closeAlert();
-        router.push('/login'); // 확인 버튼을 누르면 이동
+        router.push("/login"); // 확인 버튼을 누르면 이동
       }
     });
   };
 
   return (
-    <>
-      <S.AppWrapper>
-        <Header title="마이메뉴"/>
-        <S.Container>
-          <S.Mt70/>
+    <S.AppWrapper>
+      <Header title="마이메뉴"/>
+      <S.Container>
+        <S.Mt70/>
 
-          <S.LoginLayout>
-            <S.H2Size20>
-              {isLoggedIn ? (
-                <S.LayOutSpaceBetween>
-                  <span>
-                    환영합니다 <span>{nickname}</span>님
-                  </span>
-                  <S.LogOutBtn onClick={handleLogout}>로그아웃</S.LogOutBtn>
-                </S.LayOutSpaceBetween>
-              ) : (
-                <Link href="/login">
-                  <span>로그인</span>을 해주세요
-                </Link>
-              )}
-            </S.H2Size20>
+        <S.LoginLayout>
+          <S.H2Size20>
+            {isLoggedIn ? (
+              <S.LayOutSpaceBetween>
+                <span>
+                  환영합니다 <span>{nickname}</span>님
+                </span>
+                <S.LogOutBtn onClick={handleLogout}>로그아웃</S.LogOutBtn>
+              </S.LayOutSpaceBetween>
+            ) : (
+              <Link href="/login">
+                <span>로그인</span>을 해주세요
+              </Link>
+            )}
+          </S.H2Size20>
 
-            <S.LayOutSpaceBetween>
-              <TopMenuCard icon={<PremiumIcon sx={{color: "#ff8c00", fontSize: 32}}/>} text="맴버십"/>
-              <TopMenuCard icon={<EditNoteIcon sx={{color: "#ff8c00", fontSize: 32}}/>} text="입양신청"/>
-              <TopMenuCard icon={<MailIcon sx={{color: "#ff8c00", fontSize: 32}}/>} text="쪽지함"/>
-            </S.LayOutSpaceBetween>
-          </S.LoginLayout>
+          <S.LayOutSpaceBetween>
+            <TopMenuCard icon={<MembershipIcon/>} text="맴버십"/>
+            <TopMenuCard icon={<ApplicationIcon/>} text="입양신청"/>
+            <TopMenuCard icon={<MessageIcon/>} text="쪽지함"/>
+          </S.LayOutSpaceBetween>
+        </S.LoginLayout>
 
-          <S.Line/>
+        <S.Line/>
 
-          <S.LoginLayout>
-            <S.List>
-              <S.H3Size16>마이메뉴</S.H3Size16>
-              {!isLoggedIn && <ListItem icon={<PersonIcon sx={{color: "#666"}}/>} text="로그인" link="/login"/>}
-              <ListItem icon={<PetsIcon sx={{color: "#666"}}/>} text="관심 유기 동물"/>
-            </S.List>
-          </S.LoginLayout>
+        <S.LoginLayout>
+          <S.List>
+            <S.H3Size16>마이메뉴</S.H3Size16>
+            {!isLoggedIn && <ListItem icon={<AccountIcon/>} text="로그인" link="/login"/>}
+            <ListItem icon={<FavoriteIcon/>} text="관심 유기 동물"/>
+          </S.List>
+        </S.LoginLayout>
 
-          <S.Line/>
+        <S.Line/>
 
-          <S.LoginLayout>
-            <S.List>
-              <S.H3Size16>정보</S.H3Size16>
-              <ListItem icon={<InfoIcon sx={{color: "#666"}}/>} text="공지사항"/>
-              <ListItem icon={<HelpIcon sx={{color: "#666"}}/>} text="자주하는 질문"/>
-              <ListItem icon={<ChatIcon sx={{color: "#666"}}/>} text="문의하기"/>
-            </S.List>
-          </S.LoginLayout>
+        <S.LoginLayout>
+          <S.List>
+            <S.H3Size16>정보</S.H3Size16>
+            <ListItem icon={<NoticeIcon/>} text="공지사항"/>
+            <ListItem icon={<HelpMenuIcon/>} text="자주하는 질문"/>
+            <ListItem icon={<ContactIcon/>} text="문의하기"/>
+          </S.List>
+        </S.LoginLayout>
 
-          <S.LoginLayout>
-            <S.List>
-              <S.H3Size16>SNS</S.H3Size16>
-              <ListItem icon={<CameraIcon sx={{color: "#666"}}/>} text="어서찾아주개 인스타그램"/>
-              <ListItem icon={<PenIcon sx={{color: "#666"}}/>} text="어서찾아주개 블로그"/>
-              <ListItem icon={<PlayIcon sx={{color: "#666"}}/>} text="어서찾아주개 유튜브"/>
-            </S.List>
-          </S.LoginLayout>
-        </S.Container>
-        <Footer/>
+        <S.LoginLayout>
+          <S.List>
+            <S.H3Size16>SNS</S.H3Size16>
+            <ListItem icon={<InstagramIcon/>} text="어서찾아주개 인스타그램"/>
+            <ListItem icon={<BlogIcon/>} text="어서찾아주개 블로그"/>
+            <ListItem icon={<VideoIcon/>} text="어서찾아주개 유튜브"/>
+          </S.List>
+        </S.LoginLayout>
+      </S.Container>
+      <Footer/>
 
-        {/* 💡 커스텀 알럿 렌더링 영역 */}
-        <CustomAlert
-        isOpen={alertConfig.isOpen}
-        message={alertConfig.message}
-        type={alertConfig.type}
-        onConfirm={alertConfig.onConfirm}/>
-      </S.AppWrapper>
-    </>
+      {/* 💡 커스텀 알럿 렌더링 영역 */}
+      <CustomAlert
+      isOpen={alertConfig.isOpen}
+      message={alertConfig.message}
+      type={alertConfig.type}
+      onConfirm={alertConfig.onConfirm}/>
+    </S.AppWrapper>
   );
 };
 
@@ -157,7 +231,7 @@ function ListItem({icon, text, link}: {icon: React.ReactNode; text: string; link
         {icon}
         <S.ListItemText>{text}</S.ListItemText>
       </S.ListItemLeft>
-      <ChevronRightIcon sx={{color: "#999"}}/>
+      <ListChevron/>
     </S.ListItemWrapper>
   );
 

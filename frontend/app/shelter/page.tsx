@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
+import Image from "next/image";
 
 import React, { useEffect } from "react";
-import Link from 'next/link';
-import { useSelector, useDispatch } from 'react-redux';
-import { AppDispatch, RootState } from '../store/store';
-import { fetchShelterAnimals, setActiveTab, toggleAlert } from '../redux/shelterSlice';
+import Link from "next/link";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
+import { fetchShelterAnimals, setActiveTab, toggleAlert } from "../redux/shelterSlice";
 
-import * as A from '@/assets/css/style.styles';
-import Header from '@/app/components/Header';
-import Footer from '../components/Footer';
+import * as A from "@/assets/css/style.styles";
+import Header from "@/app/components/Header";
+import Footer from "../components/Footer";
 
 //MUI
 import {
@@ -19,7 +19,27 @@ import {
   FmdGood as LocationIcon,
   PlayCircleFilled as PlayIcon,
   ChevronRight as ChevronRightIcon
-} from '@mui/icons-material';
+} from "@mui/icons-material";
+import styled from "styled-components";
+
+const FilterIconButton = styled(FilterIcon)`
+  && {
+    font-size: 20px;
+    color: #666;
+  }
+`;
+
+const MoreChevron = styled(ChevronRightIcon)`
+  && {
+    font-size: 18px;
+  }
+`;
+
+const LocationPin = styled(LocationIcon)`
+  && {
+    font-size: 16px;
+  }
+`;
 
 export default function Shelter() {
   const dispatch = useDispatch<AppDispatch>();
@@ -33,142 +53,140 @@ export default function Shelter() {
 
   // 이미지 주소 변환함수
   const getFullImageUrl = (url: string) => {
-    if (!url) return 'http://via.placeholder.com/110';;
-    if (url.startsWith('/uploads/')) {
+    if (!url) return "http://via.placeholder.com/110";
+    if (url.startsWith("/uploads/")) {
       return `http://localhost:8080${url}`;
     };
     return url;
   };
 
   return (
-    <>
-      <A.AppWrapper>
-        <Header title="보호소"/>
+    <A.AppWrapper>
+      <Header title="보호소"/>
 
-        <A.Container>
-          <A.TabContainer>
-            {["보호동물", "보호소 찾기", "추천 입양 동물"].map((tab) => (
-              <A.TabBtn key={tab} $active={activeTab === tab} onClick={() => dispatch(setActiveTab(tab))}>
-                {tab}
-              </A.TabBtn>
-            ))}
-          </A.TabContainer>
+      <A.Container>
+        <A.TabContainer>
+          {["보호동물", "보호소 찾기", "추천 입양 동물"].map((tab) => (
+            <A.TabBtn key={tab} $active={activeTab === tab} onClick={() => dispatch(setActiveTab(tab))}>
+              {tab}
+            </A.TabBtn>
+          ))}
+        </A.TabContainer>
 
-          {/*필터 영역 */}
-          <A.FilterContainer>
-            <A.FilterIconBtn>
-              <FilterIcon sx={{fontSize: 20, color: "#666"}}/>
-            </A.FilterIconBtn>
+        {/*필터 영역 */}
+        <A.FilterContainer>
+          <A.FilterIconBtn>
+            <FilterIconButton/>
+          </A.FilterIconBtn>
 
-            <A.FilterSelect defaultValue="3months">
-              <option value="3months">최근 1개월</option>
-              <option value="3months">최근 2개월</option>
-              <option value="3months">최근 3개월</option>
-            </A.FilterSelect>
+          <A.FilterSelect defaultValue="3months">
+            <option value="3months">최근 1개월</option>
+            <option value="3months">최근 2개월</option>
+            <option value="3months">최근 3개월</option>
+          </A.FilterSelect>
 
-            <A.FilterSelect defaultValue="allArea">
-              <option value="allArea">모든 지역</option>
-              <option value="allArea">서울</option>
-            </A.FilterSelect>
+          <A.FilterSelect defaultValue="allArea">
+            <option value="allArea">모든 지역</option>
+            <option value="allArea">서울</option>
+          </A.FilterSelect>
 
-            <A.FilterSelect defaultValue="allAnimal">
-              <option value="allAnimal">모든 동물</option>
-              <option value="allAnimal">강아지</option>
-            </A.FilterSelect>
-          </A.FilterContainer>
+          <A.FilterSelect defaultValue="allAnimal">
+            <option value="allAnimal">모든 동물</option>
+            <option value="allAnimal">강아지</option>
+          </A.FilterSelect>
+        </A.FilterContainer>
 
-          {/*실시간 알림 토글배너 */}
-          <A.AlertBanner>
-            <A.AlertInfo>
-              <div className="icon-circle">
-                <NotificationsIcon sx={{}}/>
-              </div>
-              <div className="text-group">
-                <strong>이 지역 실시간 알림</strong>
-                <span>새 공고가 올라오면 알려드려요</span>
-              </div>
-            </A.AlertInfo>
-            <A.ToggleBtn $isOn={isAlertOn} onClick={() => dispatch(toggleAlert())}>
-              <div className="handle"/>
-            </A.ToggleBtn>
-          </A.AlertBanner>
+        {/*실시간 알림 토글배너 */}
+        <A.AlertBanner>
+          <A.AlertInfo>
+            <div className="icon-circle">
+              <NotificationsIcon/>
+            </div>
+            <div className="text-group">
+              <strong>이 지역 실시간 알림</strong>
+              <span>새 공고가 올라오면 알려드려요</span>
+            </div>
+          </A.AlertInfo>
+          <A.ToggleBtn $isOn={isAlertOn} onClick={() => dispatch(toggleAlert())}>
+            <div className="handle"/>
+          </A.ToggleBtn>
+        </A.AlertBanner>
 
-          <A.Divider/>
+        <A.Divider/>
 
-          <A.RecommendSection>
-            <A.SectionHeader>
-              <A.H2Size20>이달의 추천 입양 동물</A.H2Size20>
-              <Link href="#more" className="more-link">
-                더보기
-                <ChevronRightIcon sx={{fontSize: 18}}/>
-              </Link>
-            </A.SectionHeader>
+        <A.RecommendSection>
+          <A.SectionHeader>
+            <A.H2Size20>이달의 추천 입양 동물</A.H2Size20>
+            <Link href="#more" className="more-link">
+              더보기
+              <MoreChevron/>
+            </Link>
+          </A.SectionHeader>
 
-            <A.RecommendScroll>
-              <A.RecommendCard>
-                <A.RecommendImgBox>
+          <A.RecommendScroll>
+            <A.RecommendCard>
+              <A.RecommendImgBox>
+                <Image
+                src="https://via.placeholder.com/140"
+                alt="추천동물"
+                width={140}
+                height={140}
+                unoptimized
+                loading="eager"/>
+                <PlayIcon className="play-icon"/>
+              </A.RecommendImgBox>
+              <A.LocationText>
+                <LocationPin/>
+                강원특별자치도..
+              </A.LocationText>
+            </A.RecommendCard>
+          </A.RecommendScroll>
+        </A.RecommendSection>
+
+        <A.Divider/>
+
+        <A.ListSection>
+          {loading ? (
+            <div>데이터를 불러오는 중입니다...</div>
+          ) : animals.length === 0 ? (
+            <div>등록된 보호 동물이 없습니다</div>
+          ) : (
+            animals.map((animal) => (
+              <A.AnimalCard key={animal.id}>
+                <A.AnimalImgBox>
                   <Image
-                  src="https://via.placeholder.com/140"
-                  alt="추천동물"
-                  width={140}
-                  height={140}
+                  src={getFullImageUrl(animal.imageUrl)}
+                  alt={animal.breed}
+                  width={95}
+                  height={95}
                   unoptimized
                   loading="eager"/>
-                  <PlayIcon className="play-icon" sx={{}}/>
-                </A.RecommendImgBox>
-                <A.LocationText>
-                  <LocationIcon sx={{fontSize: 16}}/>
-                  강원특별자치도..
-                </A.LocationText>
-              </A.RecommendCard>
-            </A.RecommendScroll>
-          </A.RecommendSection>
-
-          <A.Divider/>
-
-          <A.ListSection>
-            {loading ? (
-              <div>데이터를 불러오는 중입니다...</div>
-            ) : animals.length === 0 ? (
-              <div>등록된 보호 동물이 없습니다</div>
-            ) : (
-              animals.map((animal) => (
-                <A.AnimalCard key={animal.id}>
-                  <A.AnimalImgBox>
-                    <Image
-                    src={getFullImageUrl(animal.imageUrl)}
-                    alt={animal.breed}
-                    width={95}
-                    height={95}
-                    unoptimized
-                    loading="eager"/>
-                  </A.AnimalImgBox>
-                  <A.AnimalInfo>
-                    <A.BadgeGroup>
-                      <A.Badge $type="status">{animal.status === "COMPLETED" ? "완료" : "공고중"}</A.Badge>
-                      <A.Badge
-                      $type={animal.gender === "FEMALE" ? "female" : animal.gender === "MALE" ? "male" : "unknown"}>
-                        {animal.gender === "MALE" ? "수컷" : animal.gender === "FEMALE" ? "암컷" : "미상"}
-                      </A.Badge>
-                    </A.BadgeGroup>
-                    <A.InfoGrid>
-                      <span className="label">품종</span>
-                      <span className="value">{animal.breed}</span>
-                      <span className="label">공고번호</span>
-                      <span className="value">{animal.noticeNo}</span>
-                      <span className="label">등록날짜</span>
-                      <span className="value">{animal.regDate}</span>
-                      <span className="label">구조장소</span>
-                      <span className="value">{animal.rescueLocation}</span>
-                    </A.InfoGrid>
-                  </A.AnimalInfo>
-                </A.AnimalCard>
-              ))
-            )}
-          </A.ListSection>
-        </A.Container>
-        <Footer/>
-      </A.AppWrapper>
-    </>
+                </A.AnimalImgBox>
+                <A.AnimalInfo>
+                  <A.BadgeGroup>
+                    <A.Badge $type="status">{animal.status === "COMPLETED" ? "완료" : "공고중"}</A.Badge>
+                    <A.Badge
+                    $type={animal.gender === "FEMALE" ? "female" : animal.gender === "MALE" ? "male" : "unknown"}>
+                      {animal.gender === "MALE" ? "수컷" : animal.gender === "FEMALE" ? "암컷" : "미상"}
+                    </A.Badge>
+                  </A.BadgeGroup>
+                  <A.InfoGrid>
+                    <span className="label">품종</span>
+                    <span className="value">{animal.breed}</span>
+                    <span className="label">공고번호</span>
+                    <span className="value">{animal.noticeNo}</span>
+                    <span className="label">등록날짜</span>
+                    <span className="value">{animal.regDate}</span>
+                    <span className="label">구조장소</span>
+                    <span className="value">{animal.rescueLocation}</span>
+                  </A.InfoGrid>
+                </A.AnimalInfo>
+              </A.AnimalCard>
+            ))
+          )}
+        </A.ListSection>
+      </A.Container>
+      <Footer/>
+    </A.AppWrapper>
   );
 };

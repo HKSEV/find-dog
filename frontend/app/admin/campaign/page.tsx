@@ -1,15 +1,118 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
+import Image from "next/image";
 
 import React from "react";
-import { useSelector, useDispatch } from 'react-redux';
-import { AppDispatch, RootState } from '../../store/store';
-import { updateCampaignField, setMediaType, submitCampaign } from '../../redux/campaignAdminSlice';
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../store/store";
+import { updateCampaignField, setMediaType, submitCampaign } from "../../redux/campaignAdminSlice";
 
 import { Layout } from "../../components/layout/Layout";
-import * as A from '@/assets/css/style.styles';
-import { Row, Col, Card, Form, Button } from "react-bootstrap";
+import * as A from "@/assets/css/style.styles";
+import * as F from "@/assets/css/admin/AdminForm.styles";
+import styled from "styled-components";
+
+const PageTitle = styled.h1`
+  font-size: 1.75rem;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-bottom: 0 !important;
+  color: #1f2937;
+`;
+
+const FormCard = styled(F.Card)`
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  margin-bottom: 1.5rem !important;
+`;
+
+const FormCardHeader = styled(F.CardHeader)`
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+`;
+
+const CardTitle = styled.h6`
+  margin: 0 !important;
+  font-weight: 700 !important;
+  color: #007bff !important;
+`;
+
+const FormSection = styled.div`
+  margin-bottom: 1rem;
+  margin-bottom: 1.5rem !important;
+`;
+
+const FieldLabel = styled.label`
+  color: #1f2937;
+`;
+
+const CategoryOptions = styled.div`
+  display: flex !important;
+  gap: 0.75rem;
+  margin-top: 0.5rem !important;
+`;
+
+const RadioOption = styled.div`
+  position: relative;
+  display: block;
+  min-height: 1.5rem;
+  padding-left: 1.5rem;
+  margin-right: 1rem !important;
+`;
+
+const RadioLabel = styled.label`
+  position: relative;
+  margin-bottom: 0;
+  vertical-align: top;
+`;
+
+const FieldColumn = styled(F.Column)`
+  margin-bottom: 1rem;
+  margin-bottom: 1rem !important;
+`;
+
+const EmphasizedLabel = styled.label`
+  font-weight: 700 !important;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 1rem;
+  margin-bottom: 1rem !important;
+`;
+
+const InsetFormGroup = styled.div`
+  margin-bottom: 1rem;
+  margin-bottom: 1rem !important;
+  padding: 1rem !important;
+  background-color: #f8f9fa !important;
+  border-radius: 0.25rem !important;
+`;
+
+const PrimaryLabel = styled.label`
+  font-weight: 700 !important;
+  color: #007bff !important;
+`;
+
+const PreviewBox = styled.div`
+  margin-bottom: 1.5rem !important;
+  text-align: center !important;
+`;
+
+const CampaignPreviewImage = styled(Image)`
+  && {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+  }
+`;
+
+const SubmitButton = styled(F.Button)`
+  display: block;
+  width: 100%;
+`;
+
+const GuideBody = styled(F.CardBody)`
+  color: #1f2937;
+`;
 
 export default function AdoptionCampaignAdmin() {
   const dispatch = useDispatch<AppDispatch>();
@@ -20,7 +123,7 @@ export default function AdoptionCampaignAdmin() {
   // 일반 입력값 변경 핸들러
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const {name, value} = e.target;
-    dispatch(updateCampaignField({name: name as keyof RootState['campaignAdmin']['formData'], value}));
+    dispatch(updateCampaignField({name: name as keyof RootState["campaignAdmin"]["formData"], value}));
   };
 
   // 미디어 타입(라디오버튼) 변경 핸들러
@@ -34,104 +137,101 @@ export default function AdoptionCampaignAdmin() {
     const resultAction = await dispatch(submitCampaign(formData));
 
     if (submitCampaign.fulfilled.match(resultAction)) {
-      alert(resultAction.payload || '입양 캠페인이 성공적으로 등록되었습니다!');
+      alert(resultAction.payload || "입양 캠페인이 성공적으로 등록되었습니다!");
     } else {
-      alert(resultAction.payload || '서버 오류가 발생했습니다. 잠시후 다시 시도해 주세요');
+      alert(resultAction.payload || "서버 오류가 발생했습니다. 잠시후 다시 시도해 주세요");
     };
   };
 
-  const HASHTAG_LIST = ['#제주입양', '#임시보호', '#치료지원', '#입양홍보', '#구조스토리'];
+  const HASHTAG_LIST = ["#제주입양", "#임시보호", "#치료지원", "#입양홍보", "#구조스토리"];
 
   return (
     <Layout>
       <A.PageHeader>
-        <h1 className="h3 mb-0 text-gray-800">입양 캠페인 관리</h1>
+        <PageTitle>입양 캠페인 관리</PageTitle>
       </A.PageHeader>
 
       <A.GridRow>
-        <Col lg={8}>
-          <Card className="shadow mb-4 border-left-primary">
-            <Card.Header className="py-3">
-              <h6 className="m-0 font-weight-bold text-primary">신규 캠페인 등록</h6>
-            </Card.Header>
-            <Card.Body>
+        <F.Column $lg={8}>
+          <FormCard>
+            <FormCardHeader>
+              <CardTitle>신규 캠페인 등록</CardTitle>
+            </FormCardHeader>
+            <F.CardBody>
               <form onSubmit={handleSubmit}>
-                <div className="form-group mb-4">
-                  <label className="font-wieght-bold text-gray-800">미디어 타입 설정</label>
+                <FormSection>
+                  <FieldLabel>미디어 타입 설정</FieldLabel>
 
-                  <div className="d-flex gap-3 mt-2">
-                    <div className="custom-control custom-radio mr-3">
-                      <Form.Check
-                      type="radio"
-                      id="mediaImage"
-                      name="mediaType"
-                      className="custom-control-input"
-                      checked={formData.mediaType === "IMAGE"}
-                      onChange={() => handleMediaTypeChange("IMAGE")}/>
-                      <label className="custom-control-label" htmlFor="mediaImage">
-                        이미지형
-                      </label>
-                    </div>
-                    <div className="custom-control custom-radio mr-3">
-                      <Form.Check
-                      type="radio"
-                      id="mediaYoutube"
-                      name="mediaType"
-                      className="custom-control-input"
-                      checked={formData.mediaType === "YOUTUBE"}
-                      onChange={() => handleMediaTypeChange("YOUTUBE")}/>
-                      <label className="custom-control-label" htmlFor="mediaYoutube">
-                        유튜브 링크형
-                      </label>
-                    </div>
+                  <CategoryOptions>
+                    <RadioOption>
+                      <F.CheckWrapper>
+                        <F.CheckInput
+                        type="radio"
+                        id="mediaImage"
+                        name="mediaType"
+                        checked={formData.mediaType === "IMAGE"}
+                        onChange={() => handleMediaTypeChange("IMAGE")}/>
+                      </F.CheckWrapper>
+                      <RadioLabel htmlFor="mediaImage">이미지형</RadioLabel>
+                    </RadioOption>
+                    <RadioOption>
+                      <F.CheckWrapper>
+                        <F.CheckInput
+                        type="radio"
+                        id="mediaYoutube"
+                        name="mediaType"
+                        checked={formData.mediaType === "YOUTUBE"}
+                        onChange={() => handleMediaTypeChange("YOUTUBE")}/>
+                      </F.CheckWrapper>
+                      <RadioLabel htmlFor="mediaYoutube">유튜브 링크형</RadioLabel>
+                    </RadioOption>
 
-                    <div className="custom-control custom-radio mr-3">
-                      <Form.Check
-                      type="radio"
-                      id="mediaDirect"
-                      name="mediaType"
-                      className="custom-control-input"
-                      checked={formData.mediaType === "DIRECT_VIDEO"}
-                      onChange={() => handleMediaTypeChange("DIRECT_VIDEO")}/>
-                      <label className="custom-control-label" htmlFor="mediaDirect">
-                        서버 직접 업로드형
-                      </label>
-                    </div>
-                  </div>
-                </div>
+                    <RadioOption>
+                      <F.CheckWrapper>
+                        <F.CheckInput
+                        type="radio"
+                        id="mediaDirect"
+                        name="mediaType"
+                        checked={formData.mediaType === "DIRECT_VIDEO"}
+                        onChange={() => handleMediaTypeChange("DIRECT_VIDEO")}/>
+                      </F.CheckWrapper>
+                      <RadioLabel htmlFor="mediaDirect">서버 직접 업로드형</RadioLabel>
+                    </RadioOption>
+                  </CategoryOptions>
+                </FormSection>
 
                 <hr/>
                 {/*해시태그 및 제목 입력 구역 */}
-                <Row>
-                  <Col md={4} className="form-group mb-3">
+                <F.Row>
+                  <FieldColumn $md={4}>
                     <p>
-                      <label className="font-weight-bold">해시태그 (말머리)</label>
+                      <EmphasizedLabel>해시태그 (말머리)</EmphasizedLabel>
                     </p>
-                    <Form.Select name="hashtag" value={formData.hashtag} onChange={handleChange} required>
+                    <F.Select name="hashtag" value={formData.hashtag} onChange={handleChange} required>
                       <option value="">-- 필수 선택 --</option>
                       {HASHTAG_LIST.map((tag, index) => (
                         <option key={index} value={tag}>
                           {tag}
                         </option>
                       ))}
-                    </Form.Select>
-                  </Col>
+                    </F.Select>
+                  </FieldColumn>
 
-                  <Col md={8} className="form-group mb-3">
-                    <label className="font-weight-bold">캠페인 제목</label>
-                    <Form.Control
+                  <FieldColumn $md={8}>
+                    <EmphasizedLabel>캠페인 제목</EmphasizedLabel>
+                    <F.Control
                     name="title"
                     placeholder="목록에 노출될 제목을 적어주세요"
                     value={formData.title}
                     onChange={handleChange}
                     required/>
-                  </Col>
-                </Row>
+                  </FieldColumn>
+                </F.Row>
 
                 {/*상세 내용구역 */}
-                <div className="form-group mb-3">
-                  <label className="font-weight-bold">상세 내용</label>
-                  <Form.Control
+                <FormGroup>
+                  <EmphasizedLabel>상세 내용</EmphasizedLabel>
+                  <F.Control
                   as="textarea"
                   rows={5}
                   name="content"
@@ -139,15 +239,15 @@ export default function AdoptionCampaignAdmin() {
                   value={formData.content}
                   onChange={handleChange}
                   required/>
-                </div>
+                </FormGroup>
 
                 {/*동영상 링크 / 경로 */}
                 {formData.mediaType !== "IMAGE" && (
-                  <div className="form-group mb-3 p-3 bg-light rounded">
-                    <label className="font-weight-bold text-primary">
+                  <InsetFormGroup>
+                    <PrimaryLabel>
                       {formData.mediaType === "YOUTUBE" ? "유튜브 링크(URL)" : "서버동영상 파일경로"}
-                    </label>
-                    <Form.Control
+                    </PrimaryLabel>
+                    <F.Control
                     type="text"
                     name="mediaUrl"
                     placeholder={
@@ -156,48 +256,47 @@ export default function AdoptionCampaignAdmin() {
                     value={formData.mediaUrl}
                     onChange={handleChange}
                     required={formData.mediaType !== "IMAGE"}/>
-                  </div>
+                  </InsetFormGroup>
                 )}
 
                 {/*썸네일 구역 */}
-                <div className="form-group mb-4">
-                  <label className="font-weight-bold">썸네일 이미지 URL(최대 2MB)</label>
-                  <Form.Control
+                <FormSection>
+                  <EmphasizedLabel>썸네일 이미지 URL(최대 2MB)</EmphasizedLabel>
+                  <F.Control
                   type="url"
                   name="thumbnailUrl"
                   placeholder="목록에 보여질 썸네일 주소를 입력하세요"
                   value={formData.thumbnailUrl}
                   onChange={handleChange}
                   required/>
-                </div>
+                </FormSection>
 
                 {/*썸네일 미리보기*/}
                 {formData.thumbnailUrl && (
-                  <div className="mb-4 text-center">
-                    <Image
+                  <PreviewBox>
+                    <CampaignPreviewImage
                     src={formData.thumbnailUrl}
                     alt="썸네일 미리보기"
-                    style={{width: "auto", maxWidth: "100%", height: "auto"}}
                     width={0}
                     height={0}
                     unoptimized
                     loading="eager"/>
-                  </div>
+                  </PreviewBox>
                 )}
-                <Button type="submit" variant="primary" className="btn-block" disabled={isLoading}>
+                <SubmitButton type="submit" $variant="primary" disabled={isLoading}>
                   {isLoading ? "등록 중..." : "캠페인 최종 등록하기"}
-                </Button>
+                </SubmitButton>
               </form>
-            </Card.Body>
-          </Card>
-        </Col>
+            </F.CardBody>
+          </FormCard>
+        </F.Column>
 
-        <Col lg={4}>
-          <Card className="shadow mb-4">
-            <Card.Header className="py-3">
-              <h6 className="m-0 font-weight-bold text-primary">등록 안내 가이드</h6>
-            </Card.Header>
-            <Card.Body className="text-gray-800">
+        <F.Column $lg={4}>
+          <FormCard>
+            <FormCardHeader>
+              <CardTitle>등록 안내 가이드</CardTitle>
+            </FormCardHeader>
+            <GuideBody>
               <p>
                 <strong>1. 해시태그(말머리) 필수:</strong>
                 <br/>
@@ -217,9 +316,9 @@ export default function AdoptionCampaignAdmin() {
                 외부 통제가 불가능한 상황을 대비한 기능입니다 트래픽 폭주를 막기위해 최대 2MB 용량, 30초 이내의 ogg 또는
                 mp4 파일로 변환하여 업로드
               </p>
-            </Card.Body>
-          </Card>
-        </Col>
+            </GuideBody>
+          </FormCard>
+        </F.Column>
       </A.GridRow>
     </Layout>
   );

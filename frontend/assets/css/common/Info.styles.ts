@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { FlexCenter, Nowrap, Ohidden, Ellipsis, W100, FlexColumn, Grid } from './Common.styles';
+import styled from "styled-components";
+import { FlexCenter, Nowrap, Ohidden, Ellipsis, W100, FlexColumn, Grid } from "./Common.styles";
 
 export const InfoRow = styled.div`
   ${FlexCenter}
@@ -16,13 +16,13 @@ export const MetaInfo = styled.div`
 `;
 
 export const MemberInfo = styled.div`
-${W100}
-margin-top:30px;
+  ${W100}
+  margin-top:30px;
 `;
 
 // 💡 4. 우측 정보 영역
 export const AnimalInfo = styled.div`
-${FlexColumn};
+  ${FlexColumn};
   flex: 1;
   min-width: 0;
 `;
@@ -33,23 +33,24 @@ export const InfoGrid = styled.div`
   grid-template-columns: 60px 1fr;
   gap: 3px 6px;
   font-size: 0.8rem;
-  .label { 
-    color: #888; 
+  .label {
+    color: #888;
   }
   .value {
     color: #111;
     font-weight: 500;
-${Ohidden};
-${Ellipsis};
-${Nowrap};
+    ${Ohidden};
+    ${Ellipsis};
+    ${Nowrap};
   }
 `;
 
 export const BottomInfo = styled.div`
-width:100%; height:200px;
-background-color:#f5f5f5;
-display:flex; 
-align-items:center;
-justify-content:center;
-color:#999;
+  width: 100%;
+  height: 200px;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
 `;

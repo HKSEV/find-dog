@@ -1,14 +1,32 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
-import { useRouter } from 'next/navigation';
-import { useSelector, useDispatch } from 'react-redux';
-import { AppDispatch, RootState } from '../store/store';
-import { setEmail, setPassword, submitLogin } from '../redux/loginSlice';
-import styled, { keyframes } from 'styled-components';
-import * as S from '@/assets/css/style.styles';
-import Header from '../components/Header';
-import { CustomAlert } from '../components/CustomAlert';
+import { useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
+import { setEmail, setPassword, submitLogin } from "../redux/loginSlice";
+import styled, { keyframes } from "styled-components";
+import * as S from "@/assets/css/style.styles";
+import Header from "../components/Header";
+import { CustomAlert } from "../components/CustomAlert";
+
+const SignupPrompt = styled.div`
+  && {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 14px;
+    color: #666;
+  }
+`;
+
+const SignupLink = styled.span`
+  && {
+    font-weight: bold;
+    color: #8a4e4b;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+`;
 
 // ==========================================
 // 💡 1. 애니메이션 Keyframes 정의
@@ -41,12 +59,12 @@ const InputWrapper = styled.div`
 const FloatingLabel = styled.label<{$isActive: boolean}>`
   position: absolute;
   left: 12px;
-  top: ${(props) => (props.$isActive ? '0' : '50%')};
+  top: ${(props) => (props.$isActive ? "0" : "50%")};
   transform: translateY(-50%);
   background-color: #ffffff;
   padding: 0 4px;
-  font-size: ${(props) => (props.$isActive ? '12px' : '15px')};
-  color: ${(props) => (props.$isActive ? '#8a4e4b' : '#999')};
+  font-size: ${(props) => (props.$isActive ? "12px" : "15px")};
+  color: ${(props) => (props.$isActive ? "#8a4e4b" : "#999")};
   transition: all 0.2s ease-in-out;
   pointer-events: none;
   z-index: 2;
@@ -54,13 +72,13 @@ const FloatingLabel = styled.label<{$isActive: boolean}>`
 
 const FloatingInput = styled(S.FormControl)`
   width: 100%;
-  padding: 14px 15px; 
-  background-color: transparent; 
-  
+  padding: 14px 15px;
+  background-color: transparent;
+
   &::placeholder {
     color: transparent;
   }
-  
+
   &:focus {
     outline: none !important;
     box-shadow: none !important;
@@ -107,8 +125,8 @@ export default function LoginPage() {
 
   const [alertConfig, setAlertConfig] = useState({
     isOpen: false,
-    message: '',
-    type: 'info' as 'success' | 'error' | 'info',
+    message: "",
+    type: "info" as "success" | "error" | "info",
     onConfirm: () => {}
   });
 
@@ -120,8 +138,8 @@ export default function LoginPage() {
     if (!email || !password) {
       setAlertConfig({
         isOpen: true,
-        message: '이메일과 비밀번호를 입력해주세요.',
-        type: 'error',
+        message: "이메일과 비밀번호를 입력해주세요.",
+        type: "error",
         onConfirm: closeAlert
       });
       return;
@@ -132,18 +150,18 @@ export default function LoginPage() {
     if (submitLogin.fulfilled.match(resultAction)) {
       setAlertConfig({
         isOpen: true,
-        message: '로그인 성공!',
-        type: 'success',
+        message: "로그인 성공!",
+        type: "success",
         onConfirm: () => {
           closeAlert();
-          router.push('/');
+          router.push("/");
         }
       });
     } else {
       setAlertConfig({
         isOpen: true,
         message: `로그인 실패: ${resultAction.payload}`,
-        type: 'error',
+        type: "error",
         onConfirm: closeAlert
       });
     };
@@ -151,13 +169,13 @@ export default function LoginPage() {
 
   // 💡 Enter 키 입력 감지 핸들러
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleLogin();
     };
   };
 
   const handleKakaoLogin = () => {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/kakao';
+    window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
   };
 
   return (
@@ -213,14 +231,10 @@ export default function LoginPage() {
           </AnimItem>
 
           <AnimItem $delay={0.6}>
-            <div style={{textAlign: "center", marginTop: "24px", fontSize: "14px", color: "#666"}}>
+            <SignupPrompt>
               아직 계정이 없으시다고요?{" "}
-              <span
-              style={{fontWeight: "bold", color: "#8a4e4b", cursor: "pointer", textDecoration: "underline"}}
-              onClick={() => router.push("/signup")}>
-                회원가입
-              </span>
-            </div>
+              <SignupLink onClick={() => router.push("/signup")}>회원가입</SignupLink>
+            </SignupPrompt>
           </AnimItem>
         </S.BtnBottomWrap>
       </S.Container>

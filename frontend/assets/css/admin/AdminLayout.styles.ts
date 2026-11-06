@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { coolGray, adminCard } from './Admin.styles'; // 앞서 만든 믹스인 임포트
+import styled from "styled-components";
+import { coolGray, adminCard } from "./Admin.styles"; // 앞서 만든 믹스인 임포트
 
 // 1. 전체 화면 래퍼 (#wrapper 대체)
 export const AdminWrapper = styled.div`
@@ -41,13 +41,13 @@ export const NavItem = styled.li<{$active?: boolean}>`
     display: flex;
     align-items: center;
     padding: 12px 16px;
-    color: ${(props) => (props.$active ? '#ffffff' : coolGray[400])};
-    font-weight: ${(props) => (props.$active ? '700' : '600')};
+    color: ${(props) => (props.$active ? "#ffffff" : coolGray[400])};
+    font-weight: ${(props) => (props.$active ? "700" : "600")};
     font-size: 0.85rem;
     border-radius: 6px;
     text-decoration: none;
     transition: all 0.2s;
-    background-color: ${(props) => (props.$active ? coolGray[800] : 'transparent')};
+    background-color: ${(props) => (props.$active ? coolGray[800] : "transparent")};
 
     &:hover {
       color: #ffffff;
@@ -78,7 +78,7 @@ export const Topbar = styled.nav`
   justify-content: space-between;
   padding: 0 24px;
   /* SB Admin 특유의 하단 그림자를 쿨그레이 톤으로 부드럽게 적용 */
-  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08); 
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
   z-index: 10;
 `;
 
@@ -101,7 +101,7 @@ export const AdminDataCard = styled.div`
   ${adminCard} /* 앞서 만든 카드 믹스인 적용 */
   display: flex;
   flex-direction: column;
-  
+
   .card-header {
     padding: 16px 20px;
     background-color: ${coolGray[50]};

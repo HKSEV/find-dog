@@ -1,14 +1,13 @@
-import styled from 'styled-components';
-import { Fixed, FlexBetween, Fw500, IconColor, MainBg, MainColor, Pointer, Sticky, W100 } from '../common/Common.styles';
+import styled from "styled-components";
+import { Fixed, FlexBetween, Fw500, IconColor, MainBg, MainColor, Pointer, Sticky, W100 } from "../common/Common.styles";
 
 export const Header = styled.header`
-${Fixed};
+  ${Fixed};
 
   top: 0;
-  left:50%;
-  transform:translateX(-50%);
+  left: 50%;
+  transform: translateX(-50%);
 
-  
   margin: 0 auto;
   z-index: 9999;
   ${W100};
@@ -27,27 +26,27 @@ export const Logo = styled.h4`
 `;
 
 export const Back = styled.span`
-width:60px;
-${Pointer};
-${MainColor};
-transition:all .5s;
+  width: 60px;
+  ${Pointer};
+  ${MainColor};
+  transition: all 0.5s;
 
-&:hover{
-color:#333;
-}
+  &:hover {
+    color: #333;
+  }
 `;
 
 export const ShelterHeader = styled.header`
   background-color: #fff;
   padding: 15px 20px;
-${FlexBetween};
-${Sticky};
+  ${FlexBetween};
+  ${Sticky};
   top: 0;
   z-index: 10;
 `;
 
 export const SectionHeader = styled.div`
-${FlexBetween};
+  ${FlexBetween};
   padding-right: 20px;
   margin-bottom: 15px;
   .more-link {

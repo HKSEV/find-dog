@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { TextCenter } from './Common.styles';
+import styled from "styled-components";
+import { TextCenter } from "./Common.styles";
 
 export const LoadingText = styled.div`
   ${TextCenter}

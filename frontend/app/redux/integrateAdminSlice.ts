@@ -1,6 +1,6 @@
 // src/redux/integrateAdminSlice.ts
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
 
 axios.defaults.withCredentials = true;
 
@@ -15,22 +15,22 @@ interface IntegrateFormState {
 }
 
 interface IntegrateAdminState {
-  boardType: 'YOUTUBE' | 'FELLOW' | 'HELP';
+  boardType: "YOUTUBE" | "FELLOW" | "HELP";
   formData: IntegrateFormState;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: IntegrateAdminState = {
-  boardType: 'YOUTUBE',
+  boardType: "YOUTUBE",
   formData: {
-    title: '',
-    content: '',
-    youtubeUrl: '',
-    thumbnailUrl: '',
-    imageUrl: '',
-    videoUrl: '',
-    attachmentUrl: ''
+    title: "",
+    content: "",
+    youtubeUrl: "",
+    thumbnailUrl: "",
+    imageUrl: "",
+    videoUrl: "",
+    attachmentUrl: ""
   },
   isLoading: false,
   error: null
@@ -45,24 +45,24 @@ const extractYoutubeId = (url: string) => {
 
 // 콘텐츠 등록 비동기 Thunk
 export const submitIntegrateContent = createAsyncThunk(
-  'integrateAdmin/submitContent',
+  "integrateAdmin/submitContent",
   async (
-    {boardType, formData}: {boardType: 'YOUTUBE' | 'FELLOW' | 'HELP'; formData: IntegrateFormState},
+    {boardType, formData}: {boardType: "YOUTUBE" | "FELLOW" | "HELP"; formData: IntegrateFormState},
     {rejectWithValue}
   ) => {
     try {
-      let endpoint = '';
+      let endpoint = "";
       let payload = {};
 
-      if (boardType === 'YOUTUBE') {
-        endpoint = 'http://localhost:8080/api/youtube';
+      if (boardType === "YOUTUBE") {
+        endpoint = "http://localhost:8080/api/youtube";
         payload = {
           title: formData.title,
           youtubeUrl: formData.youtubeUrl,
           thumbnailUrl: formData.thumbnailUrl
         };
-      } else if (boardType === 'FELLOW') {
-        endpoint = 'http://localhost:8080/api/fellow-news';
+      } else if (boardType === "FELLOW") {
+        endpoint = "http://localhost:8080/api/fellow-news";
         payload = {
           title: formData.title,
           content: formData.content,
@@ -70,8 +70,8 @@ export const submitIntegrateContent = createAsyncThunk(
           videoUrl: formData.videoUrl,
           attachmentUrl: formData.attachmentUrl
         };
-      } else if (boardType === 'HELP') {
-        endpoint = 'http://localhost:8080/api/need-help';
+      } else if (boardType === "HELP") {
+        endpoint = "http://localhost:8080/api/need-help";
         payload = {
           title: formData.title,
           content: formData.content,
@@ -82,38 +82,38 @@ export const submitIntegrateContent = createAsyncThunk(
       };
 
       const response = await axios.post(endpoint, payload);
-      return response.data || '성공적으로 등록되었습니다';
+      return response.data || "성공적으로 등록되었습니다";
     } catch (error: unknown) {
-      console.error('등록에러 :', error);
+      console.error("등록에러 :", error);
       return rejectWithValue(
         (axios.isAxiosError<string | {message?: string}>(error) ? error.response?.data : undefined) ||
-          '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
+          "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
       );
     }
   }
 );
 
 export const integrateAdminSlice = createSlice({
-  name: 'integrateAdmin',
+  name: "integrateAdmin",
   initialState,
   reducers: {
-    setBoardType: (state, action: PayloadAction<'YOUTUBE' | 'FELLOW' | 'HELP'>) => {
+    setBoardType: (state, action: PayloadAction<"YOUTUBE" | "FELLOW" | "HELP">) => {
       state.boardType = action.payload;
       state.formData = {
-        title: '',
-        content: '',
-        youtubeUrl: '',
-        thumbnailUrl: '',
-        imageUrl: '',
-        videoUrl: '',
-        attachmentUrl: ''
+        title: "",
+        content: "",
+        youtubeUrl: "",
+        thumbnailUrl: "",
+        imageUrl: "",
+        videoUrl: "",
+        attachmentUrl: ""
       };
     },
     updateIntegrateField: (state, action: PayloadAction<{name: keyof IntegrateFormState; value: string}>) => {
       const {name, value} = action.payload;
       state.formData[name] = value;
 
-      if (state.boardType === 'YOUTUBE' && name === 'youtubeUrl') {
+      if (state.boardType === "YOUTUBE" && name === "youtubeUrl") {
         const videoId = extractYoutubeId(value);
         if (videoId) {
           state.formData.thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
@@ -122,13 +122,13 @@ export const integrateAdminSlice = createSlice({
     },
     resetIntegrateForm: (state) => {
       state.formData = {
-        title: '',
-        content: '',
-        youtubeUrl: '',
-        thumbnailUrl: '',
-        imageUrl: '',
-        videoUrl: '',
-        attachmentUrl: ''
+        title: "",
+        content: "",
+        youtubeUrl: "",
+        thumbnailUrl: "",
+        imageUrl: "",
+        videoUrl: "",
+        attachmentUrl: ""
       };
     }
   },
@@ -141,13 +141,13 @@ export const integrateAdminSlice = createSlice({
       .addCase(submitIntegrateContent.fulfilled, (state) => {
         state.isLoading = false;
         state.formData = {
-          title: '',
-          content: '',
-          youtubeUrl: '',
-          thumbnailUrl: '',
-          imageUrl: '',
-          videoUrl: '',
-          attachmentUrl: ''
+          title: "",
+          content: "",
+          youtubeUrl: "",
+          thumbnailUrl: "",
+          imageUrl: "",
+          videoUrl: "",
+          attachmentUrl: ""
         };
       })
       .addCase(submitIntegrateContent.rejected, (state, action) => {

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
 import React from "react";
-import { Sidebar } from '../sidebar/Sidebar';
-import { Topbar } from '../topbar/Topbar';
+import { Sidebar } from "../sidebar/Sidebar";
+import { Topbar } from "../topbar/Topbar";
 // 💡 앞서 쿨그레이 톤으로 만들어둔 스타일 컴포넌트들을 임포트합니다.
 import { Wrapper, ContentWrapper, MainContent, ContainerFluid } from "../../../assets/css/admin/layout.styled";
 

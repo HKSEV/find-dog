@@ -1,8 +1,8 @@
-'use client';
+"use client";
 import React, { useState } from "react";
-import axios from 'axios';
-import { X } from 'lucide-react';
-import * as S from '@/assets/css/style.styles';
+import axios from "axios";
+import { X } from "lucide-react";
+import * as S from "@/assets/css/style.styles";
 
 interface ModalProps {
   isOpen: boolean;
@@ -14,20 +14,20 @@ interface ModalProps {
 
 export const ModalSingle = ({isOpen, onClose, titleText, submitText, onSuccess}: ModalProps) => {
   const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    breed: '',
-    gender: '수컷',
-    age: '',
-    weight: '',
-    color: '',
-    rescueLocation: ''
+    title: "",
+    content: "",
+    breed: "",
+    gender: "수컷",
+    age: "",
+    weight: "",
+    color: "",
+    rescueLocation: ""
   });
 
   // 💡 오타 수정 (seletedFile -> selectedFile)
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  if (!isOpen) return null;;
+  if (!isOpen) return null;
 
   // 입력값 변경 핸들러
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -46,22 +46,22 @@ export const ModalSingle = ({isOpen, onClose, titleText, submitText, onSuccess}:
     e.preventDefault();
 
     // 1. 토큰 존재 여부 확실히 체크
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      alert('로그인이 필요합니다. 다시 로그인해주세요.');
+      alert("로그인이 필요합니다. 다시 로그인해주세요.");
       return;
     };
 
     try {
       const data = new FormData();
-      data.append('dto', new Blob([JSON.stringify(formData)], {type: 'application/json'}));
+      data.append("dto", new Blob([JSON.stringify(formData)], {type: "application/json"}));
 
       if (selectedFile) {
-        data.append('file', selectedFile);
+        data.append("file", selectedFile);
       };
 
       // 2. 백엔드로 명시적인 주소와 헤더 전달
-      const response = await axios.post('http://localhost:8080/api/missing-posts', data, {
+      const response = await axios.post("http://localhost:8080/api/missing-posts", data, {
         headers: {
           Authorization: `Bearer ${token}`
           // 주의: multipart/form-data는 Content-Type을 직접 적지 않아야 브라우저가 boundary를 잡아줍니다.
@@ -69,12 +69,12 @@ export const ModalSingle = ({isOpen, onClose, titleText, submitText, onSuccess}:
         withCredentials: true
       });
 
-      console.log('등록 성공 응답:', response.data);
-      alert('실종 신고가 등록되었습니다.');
+      console.log("등록 성공 응답:", response.data);
+      alert("실종 신고가 등록되었습니다.");
       onSuccess();
       onClose();
     } catch (error: unknown) {
-      console.error('등록 상세 실패 에러:', error);
+      console.error("등록 상세 실패 에러:", error);
       // 백엔드에서 날려준 구체적인 에러 메시지가 있다면 출력
       const errorMsg = axios.isAxiosError<string | {message?: string}>(error)
         ? error.response?.data || error.message

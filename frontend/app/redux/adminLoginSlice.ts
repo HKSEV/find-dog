@@ -1,6 +1,6 @@
 // src/redux/adminLoginSlice.ts
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
 
 interface AdminLoginState {
   email: string;
@@ -10,19 +10,19 @@ interface AdminLoginState {
 }
 
 const initialState: AdminLoginState = {
-  email: '',
-  password: '',
+  email: "",
+  password: "",
   isLoading: false,
   error: null
 };
 
 // 관리자 로그인 비동기 Thunk
 export const submitAdminLogin = createAsyncThunk(
-  'adminLogin/submitAdminLogin',
+  "adminLogin/submitAdminLogin",
   async ({email, password}: {email: string; password: string}, {rejectWithValue}) => {
     try {
       const response = await axios.post(
-        'http://localhost:8080/api/admin/login',
+        "http://localhost:8080/api/admin/login",
         {
           email,
           password
@@ -34,21 +34,21 @@ export const submitAdminLogin = createAsyncThunk(
 
       // 관리자 이름 로컬스토리지 저장
       if (data.name) {
-        localStorage.setItem('userName', data.name);
+        localStorage.setItem("userName", data.name);
       };
 
       return data;
     } catch (error: unknown) {
       if (axios.isAxiosError<{message?: string}>(error) && error.response?.data) {
-        return rejectWithValue(error.response.data.message || '로그인 중 오류가 발생했습니다');
+        return rejectWithValue(error.response.data.message || "로그인 중 오류가 발생했습니다");
       };
-      return rejectWithValue('로그인 중 오류가 발생했습니다');
+      return rejectWithValue("로그인 중 오류가 발생했습니다");
     }
   }
 );
 
 export const adminLoginSlice = createSlice({
-  name: 'adminLogin',
+  name: "adminLogin",
   initialState,
   reducers: {
     setAdminEmail: (state, action: PayloadAction<string>) => {

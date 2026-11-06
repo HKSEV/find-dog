@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { FlexCenter, FlexColumn } from '../common/Common.styles';
+import styled from "styled-components";
+import { FlexCenter, FlexColumn } from "../common/Common.styles";
 
 export const AlertInfo = styled.div`
   ${FlexCenter};
@@ -7,14 +7,21 @@ export const AlertInfo = styled.div`
 
   .icon-circle {
     background-color: #e9ecef;
-    width: 38px; 
+    width: 38px;
     height: 38px;
     border-radius: 50%;
-${FlexCenter};
+    ${FlexCenter};
   }
   .text-group {
-${FlexColumn};
-    strong { font-size: 0.95rem; color: #111; }
-    span { font-size: 0.8rem; color: #888; margin-top: 3px; }
+    ${FlexColumn};
+    strong {
+      font-size: 0.95rem;
+      color: #111;
+    }
+    span {
+      font-size: 0.8rem;
+      color: #888;
+      margin-top: 3px;
+    }
   }
 `;

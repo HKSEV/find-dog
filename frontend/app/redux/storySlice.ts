@@ -1,6 +1,6 @@
 // src/redux/storySlice.ts
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
 
 export interface StoryPost {
   id: number;
@@ -26,8 +26,8 @@ interface StoryState {
 }
 
 const initialState: StoryState = {
-  activeTab: '입양이야기',
-  subTab: '전체',
+  activeTab: "입양이야기",
+  subTab: "전체",
   isAlertOn: false,
   storyList: [],
   loading: true,
@@ -35,21 +35,21 @@ const initialState: StoryState = {
 };
 
 // 스토리 데이터를 가져오는 비동기 Thunk
-export const fetchStories = createAsyncThunk('story/fetchStories', async (_, {rejectWithValue}) => {
+export const fetchStories = createAsyncThunk("story/fetchStories", async (_, {rejectWithValue}) => {
   try {
-    const response = await axios.get('http://localhost:8080/api/stories');
+    const response = await axios.get("http://localhost:8080/api/stories");
     return response.data as StoryPost[];
   } catch (error: unknown) {
     // API 실패 시 테스트용 더미 데이터를 반환하거나 에러 처리
     return rejectWithValue(
       (axios.isAxiosError<string | {message?: string}>(error) ? error.response?.data : undefined) ||
-        '스토리 데이터를 불러오는데 실패했습니다.'
+        "스토리 데이터를 불러오는데 실패했습니다."
     );
   }
 });
 
 export const storySlice = createSlice({
-  name: 'story',
+  name: "story",
   initialState,
   reducers: {
     setActiveTab: (state, action: PayloadAction<string>) => {

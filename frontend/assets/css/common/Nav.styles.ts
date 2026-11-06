@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 import {
   Fixed,
   MainMaxWidth,
@@ -10,14 +10,14 @@ import {
   IconColor,
   Fw600,
   MainBottomBg
-} from './Common.styles';
+} from "./Common.styles";
 
 export const BottomNav = styled.nav`
-${W100};
-${Fixed};
-bottom:0;
-left:50%;
-transform:translateX(-50%);
+  ${W100};
+  ${Fixed};
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
 
   ${MainMaxWidth};
   ${Mauto};
@@ -37,24 +37,24 @@ export const NavItem = styled.div<NavItemProps>`
   gap: 0.0005rem;
   ${Pointer};
 
-color: ${(props) => (props.$active ? '#805c59' : '#ae948f')};
+  color: ${(props) => (props.$active ? "#805c59" : "#ae948f")};
 
-    svg {
-        font-size: 20px;
-        margin-bottom: 0.05px;
-    }
+  svg {
+    font-size: 20px;
+    margin-bottom: 0.05px;
+  }
 
   span {
     font-size: 0.65rem;
-    color: ${(props) => (props.$active ? '#805c59' : '#ae948f')};
-    font-weight: ${(props) => (props.$active ? '700' : '400')};
+    color: ${(props) => (props.$active ? "#805c59" : "#ae948f")};
+    font-weight: ${(props) => (props.$active ? "700" : "400")};
   }
 `;
 
 export const MenuText = styled.div`
-${IconColor};
-font-size:0.6875rem;
-${Fw600};
+  ${IconColor};
+  font-size: 0.6875rem;
+  ${Fw600};
 `;
 
 export const FilterContainer = styled.div`

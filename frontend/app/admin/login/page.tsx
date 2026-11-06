@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
-import { useRouter } from 'next/navigation';
-import { useSelector, useDispatch } from 'react-redux';
-import { AppDispatch, RootState } from '../../store/store';
-import { setAdminEmail, setAdminPassword, submitAdminLogin } from '../../redux/adminLoginSlice';
+import { useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../store/store";
+import { setAdminEmail, setAdminPassword, submitAdminLogin } from "../../redux/adminLoginSlice";
 
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { FaUser } from "react-icons/fa";
-import * as S from '@/assets/css/style.styles';
+import * as S from "@/assets/css/style.styles";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function LoginPage() {
     e.preventDefault();
 
     if (!email || !password) {
-      alert('이메일과 비밀번호를 모두 입력해 주세요');
+      alert("이메일과 비밀번호를 모두 입력해 주세요");
       return;
     };
 
@@ -32,9 +32,9 @@ export default function LoginPage() {
     if (submitAdminLogin.fulfilled.match(resultAction)) {
       const data = resultAction.payload;
       alert(`${data.name}님, ${data.message}`);
-      router.push('/admin');
+      router.push("/admin");
     } else {
-      alert(resultAction.payload || '로그인 중 오류가 발생했습니다');
+      alert(resultAction.payload || "로그인 중 오류가 발생했습니다");
     };
   };
 

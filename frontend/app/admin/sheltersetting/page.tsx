@@ -1,15 +1,126 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
+import Image from "next/image";
 
 import React, { useState } from "react";
-import { useSelector, useDispatch } from 'react-redux';
-import { AppDispatch, RootState } from '../../store/store';
-import { setImageInputType, updateShelterField, submitShelterAnimal } from '../../redux/shelterAdminSlice';
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../store/store";
+import { setImageInputType, updateShelterField, submitShelterAnimal } from "../../redux/shelterAdminSlice";
 
-import { Layout } from '../../components/layout/Layout';
-import * as A from '@/assets/css/style.styles';
-import { Row, Col, Card, Form, Button } from "react-bootstrap";
+import { Layout } from "../../components/layout/Layout";
+import * as A from "@/assets/css/style.styles";
+import * as F from "@/assets/css/admin/AdminForm.styles";
+import styled from "styled-components";
+
+const PageTitle = styled.h1`
+  font-size: 1.75rem;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-bottom: 0 !important;
+  color: #1f2937;
+`;
+
+const FormCard = styled(F.Card)`
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  margin-bottom: 1.5rem !important;
+`;
+
+const FormCardHeader = styled(F.CardHeader)`
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+`;
+
+const WarningCardTitle = styled.h6`
+  margin: 0 !important;
+  font-weight: 700 !important;
+  color: #ffc107 !important;
+`;
+
+const InsetFormGroup = styled.div`
+  margin-bottom: 1rem;
+  margin-bottom: 1.5rem !important;
+  padding: 1rem !important;
+  background-color: #f8f9fa !important;
+  border-radius: 0.25rem !important;
+`;
+
+const FieldLabel = styled.label`
+  font-weight: 700 !important;
+  color: #1f2937;
+`;
+
+const FieldRow = styled(F.Row)`
+  margin-bottom: 1rem !important;
+`;
+
+const FieldColumn = styled(F.Column)`
+  margin-bottom: 1rem;
+`;
+
+const EmphasizedLabel = styled.label`
+  font-weight: 700 !important;
+`;
+
+const FormDivider = styled.hr`
+  margin-top: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 1rem;
+  margin-bottom: 1rem !important;
+`;
+
+const PrimaryLabel = styled.label`
+  font-weight: 700 !important;
+  color: #007bff !important;
+`;
+
+const ImageSourceOptions = styled.div`
+  display: flex !important;
+  gap: 1rem;
+  margin-bottom: 1rem !important;
+  margin-top: 0.5rem !important;
+`;
+
+const PreviewBox = styled.div`
+  margin-bottom: 1.5rem !important;
+  text-align: center !important;
+`;
+
+const ShelterPreviewImage = styled(Image)`
+  padding: 0.25rem;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+  && {
+    width: auto;
+    height: auto;
+    max-height: 200px;
+  }
+`;
+
+const FormSection = styled.div`
+  margin-bottom: 1rem;
+  margin-bottom: 1.5rem !important;
+`;
+
+const SubmitButton = styled(F.Button)`
+  display: block;
+  width: 100%;
+  width: 100% !important;
+  font-weight: 700 !important;
+  padding: 1rem !important;
+  margin-top: 1.5rem !important;
+  color: #343a40 !important;
+`;
+
+const GuideBody = styled(F.CardBody)`
+  color: #1f2937;
+`;
 
 export default function ShelterAdmin() {
   const dispatch = useDispatch<AppDispatch>();
@@ -24,13 +135,13 @@ export default function ShelterAdmin() {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setImageFile(file);
-      dispatch(updateShelterField({name: 'imageUrl', value: ''})); // 파일 업로드 시 링크 초기화
+      dispatch(updateShelterField({name: "imageUrl", value: ""})); // 파일 업로드 시 링크 초기화
     };
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const {name, value} = e.target;
-    dispatch(updateShelterField({name: name as keyof RootState['shelterAdmin']['formData'], value}));
+    dispatch(updateShelterField({name: name as keyof RootState["shelterAdmin"]["formData"], value}));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,112 +149,111 @@ export default function ShelterAdmin() {
     const resultAction = await dispatch(submitShelterAnimal({formData, imageFile}));
 
     if (submitShelterAnimal.fulfilled.match(resultAction)) {
-      alert('보호 동물이 성공적으로 등록되었습니다.');
+      alert("보호 동물이 성공적으로 등록되었습니다.");
       setImageFile(null); // 등록 성공 시 파일 상태 초기화
     } else {
-      alert(resultAction.payload || '서버 오류가 발생했습니다. 잠시후 다시 시도해 주세요');
+      alert(resultAction.payload || "서버 오류가 발생했습니다. 잠시후 다시 시도해 주세요");
     };
   };
 
   return (
     <Layout>
       <A.PageHeader>
-        <h1 className="h3 mb-0 text-gray-800">보호소 데이터 관리</h1>
+        <PageTitle>보호소 데이터 관리</PageTitle>
       </A.PageHeader>
       <A.GridRow>
-        <Col lg={8}>
-          <Card className="shadow mb-4 border-left-warning">
-            <Card.Header className="py-3">
-              <h6 className="m-0 font-weight-bold text-warning">신규 보호 동물 등록</h6>
-            </Card.Header>
-            <Card.Body>
+        <F.Column $lg={8}>
+          <FormCard>
+            <FormCardHeader>
+              <WarningCardTitle>신규 보호 동물 등록</WarningCardTitle>
+            </FormCardHeader>
+            <F.CardBody>
               <form onSubmit={handleSubmit}>
-                <div className="form-group mb-4 p-3 bg-light rounded">
-                  <Row>
-                    <Col md={6}>
-                      <label className="font-weight-bold text-gray-800">공고상태</label>
-                      <Form.Select name="status" value={formData.status} onChange={handleChange}>
+                <InsetFormGroup>
+                  <F.Row>
+                    <F.Column $md={6}>
+                      <FieldLabel>공고상태</FieldLabel>
+                      <F.Select name="status" value={formData.status} onChange={handleChange}>
                         <option value="ACTIVE">공고중 (보호중)</option>
                         <option value="COMPLETED">입양 완료 / 종료</option>
-                      </Form.Select>
-                    </Col>
-                    <Col md={6}>
-                      <label className="font-weight-bold text-gray-800">성별</label>
-                      <Form.Select name="gender" value={formData.gender} onChange={handleChange}>
+                      </F.Select>
+                    </F.Column>
+                    <F.Column $md={6}>
+                      <FieldLabel>성별</FieldLabel>
+                      <F.Select name="gender" value={formData.gender} onChange={handleChange}>
                         <option value="UNKNOWN">성별 미상</option>
                         <option value="MALE">수컷</option>
                         <option value="FEMALE">암컷</option>
-                      </Form.Select>
-                    </Col>
-                  </Row>
-                </div>
+                      </F.Select>
+                    </F.Column>
+                  </F.Row>
+                </InsetFormGroup>
 
                 {/* 2. 기본 정보 입력 */}
-                <Row className="mb-3">
-                  <Col md={6} className="form-group">
-                    <label className="font-weight-bold">품종</label>
-                    <Form.Control
+                <FieldRow>
+                  <FieldColumn $md={6}>
+                    <EmphasizedLabel>품종</EmphasizedLabel>
+                    <F.Control
                     name="breed"
                     placeholder="예: [개] 푸들, [고양이] 코숏"
                     value={formData.breed}
                     onChange={handleChange}
                     required/>
-                  </Col>
-                  <Col md={6} className="form-group">
-                    <label className="font-weight-bold">공고번호</label>
-                    <Form.Control
+                  </FieldColumn>
+                  <FieldColumn $md={6}>
+                    <EmphasizedLabel>공고번호</EmphasizedLabel>
+                    <F.Control
                     name="noticeNo"
                     placeholder="예: 충북 청주-2026-00001"
                     value={formData.noticeNo}
                     onChange={handleChange}
                     required/>
-                  </Col>
-                </Row>
-                <Row className="mb-3">
-                  <Col md={6} className="form-group">
-                    <label className="font-weight-bold">등록날짜</label>
-                    <Form.Control
-                    type="date"
-                    name="regDate"
-                    value={formData.regDate}
-                    onChange={handleChange}
-                    required/>
-                  </Col>
-                  <Col md={6} className="form-group">
-                    <label className="font-weight-bold">구조장소</label>
-                    <Form.Control
+                  </FieldColumn>
+                </FieldRow>
+                <FieldRow>
+                  <FieldColumn $md={6}>
+                    <EmphasizedLabel>등록날짜</EmphasizedLabel>
+                    <F.Control type="date" name="regDate" value={formData.regDate} onChange={handleChange} required/>
+                  </FieldColumn>
+                  <FieldColumn $md={6}>
+                    <EmphasizedLabel>구조장소</EmphasizedLabel>
+                    <F.Control
                     name="rescueLocation"
                     placeholder="예: 용암삼일무지개아파트"
                     value={formData.rescueLocation}
                     onChange={handleChange}
                     required/>
-                  </Col>
-                </Row>
+                  </FieldColumn>
+                </FieldRow>
 
-                <hr className="my-4"/>
+                <FormDivider/>
 
                 {/* 3. 이미지 및 상세 내용 */}
-                <div className="form-group mb-3">
-                  <label className="font-weight-bold text-primary">대표 사진 (필수)</label>
-                  <div className="d-flex gap-4 mb-3 mt-2">
-                    <Form.Check
-                    type="radio"
-                    id="imgLink"
-                    name="imageInputType"
-                    label="URL(링크)로 입력"
-                    checked={imageInputType === "LINK"}
-                    onChange={() => dispatch(setImageInputType("LINK"))}/>
-                    <Form.Check
-                    type="radio"
-                    id="imgUpload"
-                    name="imageInputType"
-                    label="직접 업로드"
-                    checked={imageInputType === "UPLOAD"}
-                    onChange={() => dispatch(setImageInputType("UPLOAD"))}/>
-                  </div>
+                <FormGroup>
+                  <PrimaryLabel>대표 사진 (필수)</PrimaryLabel>
+                  <ImageSourceOptions>
+                    <F.CheckWrapper $hasLabel>
+                      <F.CheckInput
+                      type="radio"
+                      id="imgLink"
+                      name="imageInputType"
+                      checked={imageInputType === "LINK"}
+                      onChange={() => dispatch(setImageInputType("LINK"))}/>
+                      <F.CheckLabel htmlFor="imgLink">URL(링크)로 입력</F.CheckLabel>
+                    </F.CheckWrapper>
+                    <F.CheckWrapper $hasLabel>
+                      <F.CheckInput
+                      type="radio"
+                      id="imgUpload"
+                      name="imageInputType"
+                      checked={imageInputType === "UPLOAD"}
+                      onChange={() => dispatch(setImageInputType("UPLOAD"))}/>
+                      <F.CheckLabel htmlFor="imgUpload">직접 업로드</F.CheckLabel>
+                    </F.CheckWrapper>
+                  </ImageSourceOptions>
 
                   {imageInputType === "LINK" ? (
-                    <Form.Control
+                    <F.Control
                     type="url"
                     name="imageUrl"
                     placeholder="이미지 링크를 붙여 넣어 주세요"
@@ -151,32 +261,30 @@ export default function ShelterAdmin() {
                     onChange={handleChange}
                     required={imageInputType === "LINK"}/>
                   ) : (
-                    <Form.Control
+                    <F.Control
                     type="file"
                     name="imageFile"
                     accept="image/*"
                     onChange={handleFileChange}
                     required={imageInputType === "UPLOAD"}/>
                   )}
-                </div>
+                </FormGroup>
 
                 {(formData.imageUrl || imageFile) && (
-                  <div className="mb-4 text-center">
-                    <Image
+                  <PreviewBox>
+                    <ShelterPreviewImage
                     src={imageFile ? URL.createObjectURL(imageFile) : formData.imageUrl}
                     alt="대표사진 미리보기"
-                    className="img-thumbnail shadow-sm"
-                    style={{width: "auto", height: "auto", maxHeight: "200px"}}
                     width={0}
                     height={0}
                     unoptimized
                     loading="eager"/>
-                  </div>
+                  </PreviewBox>
                 )}
 
-                <div className="form-group mb-4">
-                  <label className="font-weight-bold">특이사항 및 상세 설명</label>
-                  <Form.Control
+                <FormSection>
+                  <EmphasizedLabel>특이사항 및 상세 설명</EmphasizedLabel>
+                  <F.Control
                   as="textarea"
                   rows={5}
                   name="content"
@@ -184,34 +292,33 @@ export default function ShelterAdmin() {
                   value={formData.content}
                   onChange={handleChange}
                   required/>
-                </div>
+                </FormSection>
 
-                <Button
+                <SubmitButton
                 type="submit"
-                variant="warning"
-                className="btn-block w-100 font-weight-bold p-3 mt-4 text-dark"
+                $variant="warning"
                 disabled={isLoading}>
                   {isLoading ? "등록 중..." : "보호 동물 등록하기"}
-                </Button>
+                </SubmitButton>
               </form>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col lg={4}>
-          <Card className="shadow mb-4">
-            <Card.Header className="py-3">
-              <h6 className="m-0 font-weight-bold text-warning">등록 및 관리 안내</h6>
-            </Card.Header>
-            <Card.Body className="text-gray-800">
+            </F.CardBody>
+          </FormCard>
+        </F.Column>
+        <F.Column $lg={4}>
+          <FormCard>
+            <FormCardHeader>
+              <WarningCardTitle>등록 및 관리 안내</WarningCardTitle>
+            </FormCardHeader>
+            <GuideBody>
               <p>
                 <strong>공고 상태 관리</strong>
               </p>
               기본값은 &apos;공고중&apos;입니다. 입양처가 정해지거나 보호가 종료되면 상태를
               <strong>&apos;입양완료&apos;</strong>로 변경해 주세요. 앱 화면에서 회색 &apos;완료&apos; 뱃지로 자동
               전환됩니다.
-            </Card.Body>
-          </Card>
-        </Col>
+            </GuideBody>
+          </FormCard>
+        </F.Column>
       </A.GridRow>
     </Layout>
   );

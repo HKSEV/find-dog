@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 import {
   BgWhite,
   BoxShadow,
@@ -13,115 +13,130 @@ import {
   W100,
   Fw600,
   FlexStart
-} from '../common/Common.styles';
+} from "../common/Common.styles";
 
 export const ModalOverlay = styled.div`
-    ${Fixed};
-    top:0; left:0;
-    ${W100};
-    ${H100};
-    background:rgba(0,0,0, .5);
-    ${FlexCenter};
-    z-index:99999;
-    `;
+  ${Fixed};
+  top: 0;
+  left: 0;
+  ${W100};
+  ${H100};
+  background: rgba(0, 0, 0, 0.5);
+  ${FlexCenter};
+  z-index: 99999;
+`;
 
 export const ModalContent = styled.div`
-    ${BgWhite};
-    padding:24px;
-    border-radius:1rem;
-    width:90%;
-    max-width:500px;
-    max-height:90vh;
-    overflow-y:auto;
-    ${BoxShadow};
-    `;
+  ${BgWhite};
+  padding: 24px;
+  border-radius: 1rem;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  ${BoxShadow};
+`;
 
 export const HeaderRow = styled.div`
-    ${FlexBetween};
-    margin-bottom:1.25rem;
-    h2{
-    font-size:1.125rem;
+  ${FlexBetween};
+  margin-bottom: 1.25rem;
+  h2 {
+    font-size: 1.125rem;
     ${Fw700};
-    color:#333;
-    margin:0;
-    }
-    `;
+    color: #333;
+    margin: 0;
+  }
+`;
 
 export const CloseButton = styled.button`
-    background:none;
-    border:none;
-    cursor:pointer;
-    color:#666;
-    padding:0.25rem;
-    ${FlexCenter};
-    `;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 0.25rem;
+  ${FlexCenter};
+`;
 export const Form = styled.form`
-    ${W100};
-    max-width:450px;
-    ${FlexColumn};
-    gap:0.75rem;
-    `;
+  ${W100};
+  max-width: 450px;
+  ${FlexColumn};
+  gap: 0.75rem;
+`;
 
 export const Select = styled.select`
-    ${W100};
-    padding:0.75rem;
-    border:1px solid #e1e1e1;
-    border-radius:.5rem;
-    font-size:.8rem;
-    ${BgWhite};
-    outline:none;
-    ${Pointer};
-    `;
+  ${W100};
+  padding: 0.75rem;
+  border: 1px solid #e1e1e1;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  ${BgWhite};
+  outline: none;
+  ${Pointer};
+`;
 
 export const SubmitButton = styled.button`
-    ${W100};
-    background: #ff6b6b;
-    color:#fff;
-    padding:.8rem;
-    border:none;
-    border-radius:.5rem;
-    font-size:.95rem;
-    font-weight:bold;
-    ${Pointer};
-    margin-top:8px;
-    ${TransitionAll};
-    &:hover{background: #fa5252;}
-    `;
+  ${W100};
+  background: #ff6b6b;
+  color: #fff;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: bold;
+  ${Pointer};
+  margin-top: 8px;
+  ${TransitionAll};
+  &:hover {
+    background: #fa5252;
+  }
+`;
 
 export const FileInputWrapper = styled.div`
-    ${FlexColumn};
-    gap:0.375rem;
-    label { font-size:.7rem; ${Fw600}; color:#555;}
-    input[type="file"]{
-    padding:.5rem;
-    border:1px solid #e1e1e1;
-    font-size:.8rem;
-    background:#fafafa;
-    }
-    `;
+  ${FlexColumn};
+  gap: 0.375rem;
+  label {
+    font-size: 0.7rem;
+    ${Fw600};
+    color: #555;
+  }
+  input[type="file"] {
+    padding: 0.5rem;
+    border: 1px solid #e1e1e1;
+    font-size: 0.8rem;
+    background: #fafafa;
+  }
+`;
 
 export const ModalBg = styled.div`
-    ${Fixed};
-    top:0; left:0; right:0; bottom:0;
-    background-color:rgba(0,0,0,.6);
-    z-index:999;
-    ${FlexStart};
-    padding:10vh;
-    `;
+  ${Fixed};
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+  ${FlexStart};
+  padding: 10vh;
+`;
 
 export const Modal = styled.div`
-    ${BgWhite};
-    border:1px solid #ccc; padding:10px;
-    margin-top:10px; border-radius:8px;
-    `;
+  ${BgWhite};
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+`;
 
 //다음 우편번호 모달 배경(어둡게 처리)
 export const ModalBackground = styled.div`
-    position:fixed; top:0; left:0;
-    width:100%; height:100%; 
-    background:rgba(0, 0, 0, 0.5);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:999;
-    `;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+`;

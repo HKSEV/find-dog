@@ -1,22 +1,46 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
+import Image from "next/image";
 
 import React from "react";
-import styled from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
-import { AppDispatch, RootState } from '../../store/store';
+import styled from "styled-components";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../store/store";
 import {
   setSourceType,
   updateRecommendedField,
   parseAnimalUrl,
   submitRecommendedAnimal
-} from '../../redux/recommendedAdminSlice';
+} from "../../redux/recommendedAdminSlice";
 
-import { Layout } from '../../components/layout/Layout';
+import { Layout } from "../../components/layout/Layout";
 // 💡 앞서 정의한 쿨그레이 믹스인 및 레이아웃 요소 임포트
-import { coolGray, adminInput, adminPrimaryBtn, adminOutlineBtn } from '@/assets/css/admin/Admin.styles';
-import { PageHeading, AdminDataCard } from '../../../assets/css/admin/layout.styled';
+import { coolGray, adminInput, adminPrimaryBtn, adminOutlineBtn } from "@/assets/css/admin/Admin.styles";
+import { PageHeading, AdminDataCard } from "../../../assets/css/admin/layout.styled";
+
+const FormDivider = styled.hr<{$borderColor?: React.CSSProperties["borderColor"]}>`
+  && {
+    border-color: ${({$borderColor}) => $borderColor};
+    margin: 24px 0;
+  }
+`;
+
+const PreviewBox = styled.div`
+  && {
+    margin-bottom: 24px;
+    text-align: center;
+  }
+`;
+
+const AnimalPreviewImage = styled(Image)<{$border?: React.CSSProperties["border"]}>`
+  && {
+    width: auto;
+    height: auto;
+    max-height: 200px;
+    border-radius: 8px;
+    border: ${({$border}) => $border};
+  }
+`;
 
 // ==========================================
 // 💡 폼(Form) 전용 스타일드 컴포넌트 정의
@@ -42,6 +66,12 @@ const FormLabel = styled.label`
   color: ${coolGray[700]};
   margin-bottom: 8px;
   font-size: 14px;
+`;
+
+const UrlLabel = styled(FormLabel)<{$color?: React.CSSProperties["color"]}>`
+  && {
+    color: ${({$color}) => $color};
+  }
 `;
 
 const FormInput = styled.input`
@@ -133,7 +163,7 @@ const RadioLabel = styled.label`
     &:checked {
       border-color: ${coolGray[800]};
     }
-    
+
     &:checked::before {
       transform: scale(1);
     }
@@ -169,20 +199,20 @@ export default function RecommendedAnimalAdmin() {
 
   const handleParseUrl = async () => {
     if (!formData.sourceUrl) {
-      alert('SNS 주소를 먼저 입력해 주세요!');
+      alert("SNS 주소를 먼저 입력해 주세요!");
       return;
     };
     const resultAction = await dispatch(parseAnimalUrl({url: formData.sourceUrl, sourceType}));
     if (parseAnimalUrl.fulfilled.match(resultAction)) {
-      alert('데이터를 성공적으로 불러왔습니다! 빈칸이나 틀린 부분을 수정해 주세요.');
+      alert("데이터를 성공적으로 불러왔습니다! 빈칸이나 틀린 부분을 수정해 주세요.");
     } else {
-      alert('데이터를 파싱하는 과정에서 기본 예시 데이터가 적용되었습니다.');
+      alert("데이터를 파싱하는 과정에서 기본 예시 데이터가 적용되었습니다.");
     };
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const {name, value} = e.target;
-    dispatch(updateRecommendedField({name: name as keyof RootState['recommendedAdmin']['formData'], value}));
+    dispatch(updateRecommendedField({name: name as keyof RootState["recommendedAdmin"]["formData"], value}));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -190,9 +220,9 @@ export default function RecommendedAnimalAdmin() {
     const resultAction = await dispatch(submitRecommendedAnimal({sourceType, formData}));
 
     if (submitRecommendedAnimal.fulfilled.match(resultAction)) {
-      alert('추천 동물이 성공적으로 등록되었습니다!');
+      alert("추천 동물이 성공적으로 등록되었습니다!");
     } else {
-      alert(resultAction.payload || '등록에 실패했습니다. 다시 시도해 주세요.');
+      alert(resultAction.payload || "등록에 실패했습니다. 다시 시도해 주세요.");
     };
   };
 
@@ -238,12 +268,12 @@ export default function RecommendedAnimalAdmin() {
                   </RadioGroup>
                 </FormGroup>
 
-                <hr style={{borderColor: coolGray[200], margin: "24px 0"}}/>
+                <FormDivider $borderColor={coolGray[200]}/>
 
                 {/* SNS 파싱 인풋 */}
                 {sourceType !== "DIRECT" && (
                   <FormGroup>
-                    <FormLabel style={{color: coolGray[800]}}>SNS 포스팅 URL 주소</FormLabel>
+                    <UrlLabel $color={coolGray[800]}>SNS 포스팅 URL 주소</UrlLabel>
                     <InputGroup>
                       <FormInput
                       type="url"
@@ -308,22 +338,16 @@ export default function RecommendedAnimalAdmin() {
                 </FormGroup>
 
                 {formData.imageUrl && (
-                  <div style={{marginBottom: "24px", textAlign: "center"}}>
-                    <Image
+                  <PreviewBox>
+                    <AnimalPreviewImage
                     src={formData.imageUrl}
                     alt="미리보기"
-                    style={{
-                      width: "auto",
-                      height: "auto",
-                      maxHeight: "200px",
-                      borderRadius: "8px",
-                      border: `1px solid ${coolGray[200]}`
-                    }}
+                    $border={`1px solid ${coolGray[200]}`}
                     width={0}
                     height={0}
                     unoptimized
                     loading="eager"/>
-                  </div>
+                  </PreviewBox>
                 )}
 
                 <SubmitButton type="submit" disabled={isLoading}>

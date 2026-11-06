@@ -1,52 +1,27 @@
-'use client';
+"use client";
 
 import styled, { css } from "styled-components";
 
 const loginColors = {
-  surface: '#FFFFFF',
-  surfaceSubtle: '#F1F5F9',
-  textStrong: '#0F172A',
-  textBody: '#334155',
-  textMuted: '#64748B',
-  textDisabled: '#94A3B8',
-  border: '#E2E8F0',
-  borderStrong: '#CBD5E1',
-  accent: '#2563EB',
-  accentHover: '#1D4ED8',
-  accentSubtle: '#EFF6FF',
-  accentText: '#1E40AF',
-  onAccent: '#FFFFFF'
+  surface: "#FFFFFF",
+  surfaceSubtle: "#F1F5F9",
+  textStrong: "#0F172A",
+  textBody: "#334155",
+  textMuted: "#64748B",
+  textDisabled: "#94A3B8",
+  border: "#E2E8F0",
+  borderStrong: "#CBD5E1",
+  accent: "#2563EB",
+  accentHover: "#1D4ED8",
+  accentSubtle: "#EFF6FF",
+  accentText: "#1E40AF",
+  onAccent: "#FFFFFF"
 };
 
 const loginShadows = {
-  authCard: '0 24px 64px rgba(59, 130, 246, 0.09), 0 4px 16px rgba(15, 23, 42, 0.025)',
-  accent: '0 4px 12px rgba(37, 99, 235, 0.16)'
+  authCard: "0 24px 64px rgba(59, 130, 246, 0.09), 0 4px 16px rgba(15, 23, 42, 0.025)",
+  accent: "0 4px 12px rgba(37, 99, 235, 0.16)"
 };
-
-// ERP에서 사용하는 Pretendard 글꼴
-// const fontVariants = [
-//   {weight: 100, name: "Thin"},
-//   {weight: 200, name: "ExtraLight"},
-//   {weight: 300, name: "Light"},
-//   {weight: 400, name: "Regular"},
-//   {weight: 500, name: "Medium"},
-//   {weight: 600, name: "SemiBold"},
-//   {weight: 700, name: "Bold"},
-//   {weight: 800, name: "ExtraBold"},
-//   {weight: 900, name: "Black"}
-// ] as const;
-
-// export const AdminLoginFonts = createGlobalStyle`
-//   ${fontVariants.map(({weight, name}) => css`
-//     @font-face {
-//       font-family: "AdminLoginPretendard";
-//       src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-${name}.woff2") format("woff2");
-//       font-style: normal;
-//       font-weight: ${weight};
-//       font-display: swap;
-//     }
-//   `)}
-// `;
 
 // 공통 배치
 const FlexCenter = css`
@@ -96,19 +71,15 @@ export const MemberContainer = styled.div`
   min-height: 100dvh;
   padding: 3rem 1.25rem;
   background:
-    radial-gradient(
-      ellipse at 50% 35%,
-      rgba(255, 255, 255, 0.55) 0%,
-      rgba(255, 255, 255, 0) 65%
-    ),
-    linear-gradient(
-      135deg,
-      #DEEFFF 0%,
-      #C4E1FB 50%,
-      #A8CBEE 100%
-    );
+    radial-gradient(ellipse at 50% 35%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 65%),
+    linear-gradient(135deg, #deefff 0%, #c4e1fb 50%, #a8cbee 100%);
   color: ${loginColors.textStrong};
-  font-family: "AdminLoginPretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-family:
+    "AdminLoginPretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    sans-serif;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -156,7 +127,7 @@ export const MemberIcon = styled.div`
   height: 3.25rem;
   margin: 0 auto 1.25rem;
   color: ${loginColors.onAccent};
-  background: linear-gradient(135deg, #3498FF, #2463EB);
+  background: linear-gradient(135deg, #3498ff, #2463eb);
   border-radius: 0.9375rem;
   box-shadow: ${loginShadows.accent};
 
@@ -227,15 +198,15 @@ export const MemberInputWrapper = styled.div<{$disabled?: boolean}>`
   ${({$disabled}) =>
     !$disabled &&
     css`
-    &:hover {
-      border-color: ${loginColors.textDisabled};
-    }
+      &:hover {
+        border-color: ${loginColors.textDisabled};
+      }
 
-    &:focus-within {
-      border-color: ${loginColors.accent};
-      box-shadow: 0 0 0 3px ${loginColors.accentSubtle};
-    }
-  `}
+      &:focus-within {
+        border-color: ${loginColors.accent};
+        box-shadow: 0 0 0 3px ${loginColors.accentSubtle};
+      }
+    `}
 `;
 
 export const MemberInput = styled.input`
