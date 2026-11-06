@@ -42,7 +42,7 @@ export interface NeedHelp {
 interface HomeState {
   animals: Animal[];
   isAnimalsLoading: boolean;
-  
+
   campaigns: Campaign[];
   isCampaignsLoading: boolean;
   activeHashtag: string;
@@ -50,7 +50,7 @@ interface HomeState {
   youtubePosts: YoutubePost[];
   fellowNews: FellowNews[];
   needHelps: NeedHelp[];
-  
+
   error: string | null;
 }
 
@@ -63,38 +63,35 @@ const initialState: HomeState = {
   youtubePosts: [],
   fellowNews: [],
   needHelps: [],
-  error: null,
+  error: null
 };
 
 // 1. 추천 동물 데이터 비동기 Thunk
 export const fetchAnimals = createAsyncThunk('home/fetchAnimals', async () => {
   const res = await fetch('/api/animals/recommended');
-  if (!res.ok) throw new Error('네트워크 응답이 정상이 아닙니다');
+  if (!res.ok) throw new Error('네트워크 응답이 정상이 아닙니다');;
   return (await res.json()) as Animal[];
 });
 
 // 2. 캠페인 데이터 비동기 Thunk (해시태그 파라미터 전달)
-export const fetchCampaigns = createAsyncThunk(
-  'home/fetchCampaigns',
-  async (hashtag: string) => {
-    const res = await fetch(`/api/campaigns?hashtag=${encodeURIComponent(hashtag)}`);
-    if (!res.ok) throw new Error('캠페인 네트워크 응답이 정상이 아닙니다');
-    return (await res.json()) as Campaign[];
-  }
-);
+export const fetchCampaigns = createAsyncThunk('home/fetchCampaigns', async (hashtag: string) => {
+  const res = await fetch(`/api/campaigns?hashtag=${encodeURIComponent(hashtag)}`);
+  if (!res.ok) throw new Error('캠페인 네트워크 응답이 정상이 아닙니다');;
+  return (await res.json()) as Campaign[];
+});
 
 // 3. 유튜브, 펠로우 소식, 도움이 필요해요 데이터 한번에 가져오기 (또는 각각 분리)
 export const fetchHomeExtras = createAsyncThunk('home/fetchHomeExtras', async () => {
   const [youtubeRes, fellowRes, helpRes] = await Promise.all([
     fetch('/api/youtube').then((res) => res.json()),
     fetch('/api/fellow-news').then((res) => res.json()),
-    fetch('/api/need-help').then((res) => res.json()),
+    fetch('/api/need-help').then((res) => res.json())
   ]);
 
   return {
     youtubePosts: youtubeRes,
     fellowNews: fellowRes,
-    needHelps: helpRes,
+    needHelps: helpRes
   };
 });
 
@@ -104,7 +101,7 @@ export const homeSlice = createSlice({
   reducers: {
     setActiveHashtag: (state, action) => {
       state.activeHashtag = action.payload;
-    },
+    }
   },
   extraReducers: (builder) => {
     // 추천 동물
@@ -141,8 +138,8 @@ export const homeSlice = createSlice({
       state.fellowNews = action.payload.fellowNews;
       state.needHelps = action.payload.needHelps;
     });
-  },
+  }
 });
 
-export const { setActiveHashtag } = homeSlice.actions;
+export const {setActiveHashtag} = homeSlice.actions;
 export default homeSlice.reducer;

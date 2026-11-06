@@ -1,5 +1,5 @@
 import { PlayArrow as PlayArrowIcon } from '@mui/icons-material';
-import styled, {css} from 'styled-components';
+import styled from 'styled-components';
 import { Absolute, FlexCenter, FlexColumn } from './Common.styles';
 
 export const MenuIconWrapper = styled.div`

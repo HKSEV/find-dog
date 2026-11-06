@@ -40,60 +40,60 @@ export default function LoginPage() {
 
   return (
     <S.MemberContainer>
-    <S.MemberCard aria-labelledby="admin-login-title">
-      <S.MemberHeader>
-        <S.MemberIcon aria-hidden="true">
-          <FaUser/>
-        </S.MemberIcon>
-        <S.MemberTitle id="admin-login-title">Welcome Back!</S.MemberTitle>
-        <S.MemberDescription>관리자 계정에 로그인하세요</S.MemberDescription>
-      </S.MemberHeader>
+      <S.MemberCard aria-labelledby="admin-login-title">
+        <S.MemberHeader>
+          <S.MemberIcon aria-hidden="true">
+            <FaUser/>
+          </S.MemberIcon>
+          <S.MemberTitle id="admin-login-title">Welcome Back!</S.MemberTitle>
+          <S.MemberDescription>관리자 계정에 로그인하세요</S.MemberDescription>
+        </S.MemberHeader>
 
-      <S.MemberForm onSubmit={handleSubmit}>
-        <S.MemberField>
-          <S.MemberInputLabel htmlFor="admin-email">이메일</S.MemberInputLabel>
-          <S.MemberInputWrapper>
-            <FiMail aria-hidden="true"/>
-            <S.MemberInput
-            id="admin-email"
-            name="email"
-            type="email"
-            placeholder="Enter Email Address..."
-            autoComplete="username"
-            value={email}
-            onChange={(e) => dispatch(setAdminEmail(e.target.value))}
-            required/>
-          </S.MemberInputWrapper>
-        </S.MemberField>
+        <S.MemberForm onSubmit={handleSubmit}>
+          <S.MemberField>
+            <S.MemberInputLabel htmlFor="admin-email">이메일</S.MemberInputLabel>
+            <S.MemberInputWrapper>
+              <FiMail aria-hidden="true"/>
+              <S.MemberInput
+              id="admin-email"
+              name="email"
+              type="email"
+              placeholder="Enter Email Address..."
+              autoComplete="username"
+              value={email}
+              onChange={(e) => dispatch(setAdminEmail(e.target.value))}
+              required/>
+            </S.MemberInputWrapper>
+          </S.MemberField>
 
-        <S.MemberField>
-          <S.MemberInputLabel htmlFor="admin-password">비밀번호</S.MemberInputLabel>
-          <S.MemberInputWrapper>
-            <FiLock aria-hidden="true"/>
-            <S.MemberInput
-            id="admin-password"
-            name="password"
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => dispatch(setAdminPassword(e.target.value))}
-            required/>
-            <S.MemberPasswordToggle
-            type="button"
-            aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
-            aria-controls="admin-password"
-            onClick={() => setShowPassword((prev) => !prev)}>
-              {showPassword ? <FiEyeOff aria-hidden="true"/> : <FiEye aria-hidden="true"/>}
-            </S.MemberPasswordToggle>
-          </S.MemberInputWrapper>
-        </S.MemberField>
+          <S.MemberField>
+            <S.MemberInputLabel htmlFor="admin-password">비밀번호</S.MemberInputLabel>
+            <S.MemberInputWrapper>
+              <FiLock aria-hidden="true"/>
+              <S.MemberInput
+              id="admin-password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => dispatch(setAdminPassword(e.target.value))}
+              required/>
+              <S.MemberPasswordToggle
+              type="button"
+              aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+              aria-controls="admin-password"
+              onClick={() => setShowPassword((prev) => !prev)}>
+                {showPassword ? <FiEyeOff aria-hidden="true"/> : <FiEye aria-hidden="true"/>}
+              </S.MemberPasswordToggle>
+            </S.MemberInputWrapper>
+          </S.MemberField>
 
-        <S.MemberButton type="submit" disabled={isLoading}>
-          {isLoading ? "로그인 중..." : "Login"}
-        </S.MemberButton>
-      </S.MemberForm>
-    </S.MemberCard>
-  </S.MemberContainer>
+          <S.MemberButton type="submit" disabled={isLoading}>
+            {isLoading ? "로그인 중..." : "Login"}
+          </S.MemberButton>
+        </S.MemberForm>
+      </S.MemberCard>
+    </S.MemberContainer>
   );
 };

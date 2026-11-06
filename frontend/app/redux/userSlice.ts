@@ -8,7 +8,7 @@ interface UserState {
 
 const initialState: UserState = {
   isLoggedIn: false,
-  nickname: '회원',
+  nickname: '회원'
 };
 
 export const userSlice = createSlice({
@@ -22,10 +22,10 @@ export const userSlice = createSlice({
 
       if (token) {
         state.isLoggedIn = true;
-      }
+      };
       if (storedNickname) {
         state.nickname = storedNickname;
-      }
+      };
     },
     // 로그아웃 시 상태 초기화 액션
     logoutUser: (state) => {
@@ -33,9 +33,9 @@ export const userSlice = createSlice({
       localStorage.removeItem('nickname');
       state.isLoggedIn = false;
       state.nickname = '회원';
-    },
-  },
+    }
+  }
 });
 
-export const { loadUserFromStorage, logoutUser } = userSlice.actions;
+export const {loadUserFromStorage, logoutUser} = userSlice.actions;
 export default userSlice.reducer;

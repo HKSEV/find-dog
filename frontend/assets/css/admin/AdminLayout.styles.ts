@@ -33,7 +33,7 @@ export const SidebarBrand = styled.div`
   cursor: pointer;
 `;
 
-export const NavItem = styled.li<{ $active?: boolean }>`
+export const NavItem = styled.li<{$active?: boolean}>`
   padding: 0 16px;
   margin-top: 8px;
 

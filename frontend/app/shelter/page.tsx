@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import Image from 'next/image';
+
+import React, { useEffect } from "react";
 import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch, RootState } from '../store/store';
@@ -19,11 +21,11 @@ import {
   ChevronRight as ChevronRightIcon
 } from '@mui/icons-material';
 
-export default function Shelter(){
+export default function Shelter() {
   const dispatch = useDispatch<AppDispatch>();
 
   // Redux Store 상태 조회
-  const { activeTab, isAlertOn, animals, loading } = useSelector((state: RootState) => state.shelter);
+  const {activeTab, isAlertOn, animals, loading} = useSelector((state: RootState) => state.shelter);
 
   useEffect(() => {
     dispatch(fetchShelterAnimals());
@@ -31,29 +33,23 @@ export default function Shelter(){
 
   // 이미지 주소 변환함수
   const getFullImageUrl = (url: string) => {
-    if (!url) return 'http://via.placeholder.com/110';
-    if (url.startsWith('/uploads/')){
+    if (!url) return 'http://via.placeholder.com/110';;
+    if (url.startsWith('/uploads/')) {
       return `http://localhost:8080${url}`;
-    }
+    };
     return url;
   };
 
-  return(
+  return (
     <>
       <A.AppWrapper>
-<Header title="보호소" />
+        <Header title="보호소"/>
 
         <A.Container>
-
-           
           <A.TabContainer>
-            {['보호동물', '보호소 찾기', '추천 입양 동물'].map((tab) =>(
-              <A.TabBtn
-                key={tab}
-                $active={activeTab === tab}
-                onClick={() => dispatch(setActiveTab(tab))}       
-              >
-                {tab}            
+            {["보호동물", "보호소 찾기", "추천 입양 동물"].map((tab) => (
+              <A.TabBtn key={tab} $active={activeTab === tab} onClick={() => dispatch(setActiveTab(tab))}>
+                {tab}
               </A.TabBtn>
             ))}
           </A.TabContainer>
@@ -61,7 +57,7 @@ export default function Shelter(){
           {/*필터 영역 */}
           <A.FilterContainer>
             <A.FilterIconBtn>
-              <FilterIcon sx={{ fontSize:20, color: '#666'}}/>
+              <FilterIcon sx={{fontSize: 20, color: "#666"}}/>
             </A.FilterIconBtn>
 
             <A.FilterSelect defaultValue="3months">
@@ -92,11 +88,8 @@ export default function Shelter(){
                 <span>새 공고가 올라오면 알려드려요</span>
               </div>
             </A.AlertInfo>
-            <A.ToggleBtn
-              $isOn={isAlertOn}
-              onClick={() => dispatch(toggleAlert())}
-            >
-              <div className='handle'/>
+            <A.ToggleBtn $isOn={isAlertOn} onClick={() => dispatch(toggleAlert())}>
+              <div className="handle"/>
             </A.ToggleBtn>
           </A.AlertBanner>
 
@@ -105,19 +98,26 @@ export default function Shelter(){
           <A.RecommendSection>
             <A.SectionHeader>
               <A.H2Size20>이달의 추천 입양 동물</A.H2Size20>
-              <Link href="#more" className='more-link'>
-                더보기<ChevronRightIcon sx={{fontSize:18}}/>
+              <Link href="#more" className="more-link">
+                더보기
+                <ChevronRightIcon sx={{fontSize: 18}}/>
               </Link>
             </A.SectionHeader>
 
             <A.RecommendScroll>
               <A.RecommendCard>
                 <A.RecommendImgBox>
-                  <img src="https://via.placeholder.com/140" alt="추천동물" />
-                  <PlayIcon className='play-icon' sx={{}}/>
+                  <Image
+                  src="https://via.placeholder.com/140"
+                  alt="추천동물"
+                  width={140}
+                  height={140}
+                  unoptimized
+                  loading="eager"/>
+                  <PlayIcon className="play-icon" sx={{}}/>
                 </A.RecommendImgBox>
                 <A.LocationText>
-                  <LocationIcon sx={{fontSize:16}}/>
+                  <LocationIcon sx={{fontSize: 16}}/>
                   강원특별자치도..
                 </A.LocationText>
               </A.RecommendCard>
@@ -132,21 +132,23 @@ export default function Shelter(){
             ) : animals.length === 0 ? (
               <div>등록된 보호 동물이 없습니다</div>
             ) : (
-              animals.map((animal) => (        
+              animals.map((animal) => (
                 <A.AnimalCard key={animal.id}>
                   <A.AnimalImgBox>
-                    <img 
-                      src={getFullImageUrl(animal.imageUrl)} 
-                      alt={animal.breed}
-                    />
+                    <Image
+                    src={getFullImageUrl(animal.imageUrl)}
+                    alt={animal.breed}
+                    width={95}
+                    height={95}
+                    unoptimized
+                    loading="eager"/>
                   </A.AnimalImgBox>
                   <A.AnimalInfo>
                     <A.BadgeGroup>
-                      <A.Badge $type="status">
-                        {animal.status === 'COMPLETED' ? '완료' : '공고중'}
-                      </A.Badge>
-                      <A.Badge $type={animal.gender === 'FEMALE' ? 'female' : animal.gender === 'MALE' ? 'male' : 'unknown'}>
-                        {animal.gender === 'MALE' ? '수컷' : animal.gender === 'FEMALE' ? '암컷' : '미상'}
+                      <A.Badge $type="status">{animal.status === "COMPLETED" ? "완료" : "공고중"}</A.Badge>
+                      <A.Badge
+                      $type={animal.gender === "FEMALE" ? "female" : animal.gender === "MALE" ? "male" : "unknown"}>
+                        {animal.gender === "MALE" ? "수컷" : animal.gender === "FEMALE" ? "암컷" : "미상"}
                       </A.Badge>
                     </A.BadgeGroup>
                     <A.InfoGrid>
@@ -166,7 +168,7 @@ export default function Shelter(){
           </A.ListSection>
         </A.Container>
         <Footer/>
-      </A.AppWrapper>    
+      </A.AppWrapper>
     </>
   );
-}
+};

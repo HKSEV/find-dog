@@ -1,5 +1,5 @@
-import styled, {css} from 'styled-components';
-import { Absolute, FlexCenter, Ohidden, Relative, W100, H100 } from './Common.styles';
+import styled from 'styled-components';
+import { Absolute, Ohidden, Relative, W100, H100 } from './Common.styles';
 
 export const RecommendImgBox = styled.div`
   width: 140px;

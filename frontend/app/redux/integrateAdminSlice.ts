@@ -30,23 +30,26 @@ const initialState: IntegrateAdminState = {
     thumbnailUrl: '',
     imageUrl: '',
     videoUrl: '',
-    attachmentUrl: '',
+    attachmentUrl: ''
   },
   isLoading: false,
-  error: null,
+  error: null
 };
 
 // 유튜브 ID 추출 함수 (shorts 포함)
 const extractYoutubeId = (url: string) => {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
   const match = url.match(regExp);
-  return (match && match[2].length === 11) ? match[2] : null;
+  return match && match[2].length === 11 ? match[2] : null;
 };
 
 // 콘텐츠 등록 비동기 Thunk
 export const submitIntegrateContent = createAsyncThunk(
   'integrateAdmin/submitContent',
-  async ({ boardType, formData }: { boardType: 'YOUTUBE' | 'FELLOW' | 'HELP'; formData: IntegrateFormState }, { rejectWithValue }) => {
+  async (
+    {boardType, formData}: {boardType: 'YOUTUBE' | 'FELLOW' | 'HELP'; formData: IntegrateFormState},
+    {rejectWithValue}
+  ) => {
     try {
       let endpoint = '';
       let payload = {};
@@ -56,7 +59,7 @@ export const submitIntegrateContent = createAsyncThunk(
         payload = {
           title: formData.title,
           youtubeUrl: formData.youtubeUrl,
-          thumbnailUrl: formData.thumbnailUrl,
+          thumbnailUrl: formData.thumbnailUrl
         };
       } else if (boardType === 'FELLOW') {
         endpoint = 'http://localhost:8080/api/fellow-news';
@@ -65,7 +68,7 @@ export const submitIntegrateContent = createAsyncThunk(
           content: formData.content,
           imageUrl: formData.imageUrl,
           videoUrl: formData.videoUrl,
-          attachmentUrl: formData.attachmentUrl,
+          attachmentUrl: formData.attachmentUrl
         };
       } else if (boardType === 'HELP') {
         endpoint = 'http://localhost:8080/api/need-help';
@@ -74,15 +77,18 @@ export const submitIntegrateContent = createAsyncThunk(
           content: formData.content,
           imageUrl: formData.imageUrl,
           videoUrl: formData.videoUrl,
-          attachmentUrl: formData.attachmentUrl,
+          attachmentUrl: formData.attachmentUrl
         };
-      }
+      };
 
       const response = await axios.post(endpoint, payload);
       return response.data || '성공적으로 등록되었습니다';
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('등록에러 :', error);
-      return rejectWithValue(error.response?.data || '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+      return rejectWithValue(
+        (axios.isAxiosError<string | {message?: string}>(error) ? error.response?.data : undefined) ||
+          '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
+      );
     }
   }
 );
@@ -100,19 +106,19 @@ export const integrateAdminSlice = createSlice({
         thumbnailUrl: '',
         imageUrl: '',
         videoUrl: '',
-        attachmentUrl: '',
+        attachmentUrl: ''
       };
     },
-    updateIntegrateField: (state, action: PayloadAction<{ name: keyof IntegrateFormState; value: string }>) => {
-      const { name, value } = action.payload;
+    updateIntegrateField: (state, action: PayloadAction<{name: keyof IntegrateFormState; value: string}>) => {
+      const {name, value} = action.payload;
       state.formData[name] = value;
 
       if (state.boardType === 'YOUTUBE' && name === 'youtubeUrl') {
         const videoId = extractYoutubeId(value);
         if (videoId) {
           state.formData.thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-        }
-      }
+        };
+      };
     },
     resetIntegrateForm: (state) => {
       state.formData = {
@@ -122,9 +128,9 @@ export const integrateAdminSlice = createSlice({
         thumbnailUrl: '',
         imageUrl: '',
         videoUrl: '',
-        attachmentUrl: '',
+        attachmentUrl: ''
       };
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -141,15 +147,15 @@ export const integrateAdminSlice = createSlice({
           thumbnailUrl: '',
           imageUrl: '',
           videoUrl: '',
-          attachmentUrl: '',
+          attachmentUrl: ''
         };
       })
       .addCase(submitIntegrateContent.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });
-  },
+  }
 });
 
-export const { setBoardType, updateIntegrateField, resetIntegrateForm } = integrateAdminSlice.actions;
+export const {setBoardType, updateIntegrateField, resetIntegrateForm} = integrateAdminSlice.actions;
 export default integrateAdminSlice.reducer;

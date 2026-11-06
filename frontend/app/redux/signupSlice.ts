@@ -37,16 +37,16 @@ const initialState: SignupState = {
     phone: '',
     address: '',
     detailAddress: '',
-    userType: 'GENERAL',
+    userType: 'GENERAL'
   },
   isLoading: false,
-  error: null,
+  error: null
 };
 
 // 회원가입 비동기 Thunk
 export const submitSignup = createAsyncThunk(
   'signup/submitSignup',
-  async ({ formData, profileFile }: { formData: SignupState['formData']; profileFile: File | null }, { rejectWithValue }) => {
+  async ({formData, profileFile}: {formData: SignupState['formData']; profileFile: File | null}, {rejectWithValue}) => {
     try {
       let finalImageUrl = '';
 
@@ -57,14 +57,14 @@ export const submitSignup = createAsyncThunk(
 
         const uploadRes = await fetch('http://localhost:8080/api/members/upload-profile', {
           method: 'POST',
-          body: imageFormData,
+          body: imageFormData
         });
 
         if (!uploadRes.ok) {
           throw new Error('이미지 업로드에 실패했습니다.');
-        }
+        };
         finalImageUrl = await uploadRes.text();
-      }
+      };
 
       const fullAddressToSend = formData.detailAddress
         ? `${formData.address} ${formData.detailAddress}`
@@ -73,7 +73,7 @@ export const submitSignup = createAsyncThunk(
       // 2. 회원가입 요청 전송
       const res = await fetch('http://localhost:8080/api/members/signup', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           email: formData.email,
           nickname: formData.nickname,
@@ -84,18 +84,18 @@ export const submitSignup = createAsyncThunk(
           name: formData.name,
           phone: formData.phone,
           address: fullAddressToSend,
-          userType: formData.userType,
-        }),
+          userType: formData.userType
+        })
       });
 
       if (!res.ok) {
         const errorText = await res.text();
         throw new Error(errorText || '회원가입에 실패했습니다.');
-      }
+      };
 
       return true;
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      return rejectWithValue(error instanceof Error ? error.message : '회원가입에 실패했습니다.');
     }
   }
 );
@@ -107,8 +107,11 @@ export const signupSlice = createSlice({
     setStep: (state, action: PayloadAction<number>) => {
       state.step = action.payload;
     },
-    updateFormField: (state, action: PayloadAction<{ field: keyof SignupState['formData']; value: any }>) => {
-      state.formData[action.payload.field] = action.payload.value;
+    updateFormField: (
+      state,
+      action: PayloadAction<{field: keyof SignupState['formData']; value: string | boolean}>
+    ) => {
+      Object.assign(state.formData, {[action.payload.field]: action.payload.value});
     },
     setAllAgreed: (state, action: PayloadAction<boolean>) => {
       const isChecked = action.payload;
@@ -116,7 +119,7 @@ export const signupSlice = createSlice({
       state.formData.agreePrivacy = isChecked;
       state.formData.agreeAge = isChecked;
       state.formData.marketingAgreed = isChecked;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -131,8 +134,8 @@ export const signupSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       });
-  },
+  }
 });
 
-export const { setStep, updateFormField, setAllAgreed } = signupSlice.actions;
+export const {setStep, updateFormField, setAllAgreed} = signupSlice.actions;
 export default signupSlice.reducer;

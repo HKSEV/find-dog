@@ -26,8 +26,8 @@ export const store = configureStore({
     integrateAdmin: integrateAdminReducer,
     adminLogin: adminLoginReducer,
     recommendedAdmin: recommendedAdminReducer,
-    shelterAdmin: shelterAdminReducer, // 👈 추가
-  },
+    shelterAdmin: shelterAdminReducer // 👈 추가
+  }
 });
 
 export type RootState = ReturnType<typeof store.getState>;

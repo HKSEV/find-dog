@@ -1,5 +1,4 @@
-import styled, {css} from 'styled-components';
-import { FlexCenter } from './Common.styles';
+import styled from 'styled-components';
 
 export const Divider = styled.div`
   height: 4px; 

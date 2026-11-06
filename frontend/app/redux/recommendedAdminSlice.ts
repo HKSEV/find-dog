@@ -1,4 +1,5 @@
 // src/redux/recommendedAdminSlice.ts
+// src/redux/recommendedAdminSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 
@@ -31,24 +32,24 @@ const initialState: RecommendedAdminState = {
     birthYear: '',
     gender: 'M',
     weight: '',
-    imageUrl: '',
+    imageUrl: ''
   },
   isParsing: false,
   isLoading: false,
-  error: null,
+  error: null
 };
 
 // URL 파싱 비동기 Thunk
 export const parseAnimalUrl = createAsyncThunk(
   'recommendedAdmin/parseUrl',
-  async ({ url, sourceType }: { url: string; sourceType: string }, { rejectWithValue }) => {
+  async ({url, sourceType}: {url: string; sourceType: string}) => {
     try {
       const response = await axios.post('http://localhost:8080/api/animals/parse-link', {
         url,
-        type: sourceType,
+        type: sourceType
       });
       return response.data;
-    } catch (error: any) {
+    } catch {
       // 에러 발생 시 테스트용 더미 데이터 반환
       return {
         region: '서울시 마포구',
@@ -56,7 +57,7 @@ export const parseAnimalUrl = createAsyncThunk(
         birthYear: '2023',
         gender: 'M',
         weight: '5.5',
-        imageUrl: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=300',
+        imageUrl: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=300'
       };
     }
   }
@@ -65,15 +66,18 @@ export const parseAnimalUrl = createAsyncThunk(
 // 추천 동물 등록 비동기 Thunk
 export const submitRecommendedAnimal = createAsyncThunk(
   'recommendedAdmin/submitAnimal',
-  async ({ sourceType, formData }: { sourceType: string; formData: RecommendedFormState }, { rejectWithValue }) => {
+  async ({sourceType, formData}: {sourceType: string; formData: RecommendedFormState}, {rejectWithValue}) => {
     try {
       const response = await axios.post('http://localhost:8080/api/animals/recommended', {
         sourceType,
-        ...formData,
+        ...formData
       });
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data || '등록에 실패했습니다. 다시 시도해 주세요.');
+    } catch (error: unknown) {
+      return rejectWithValue(
+        (axios.isAxiosError<string | {message?: string}>(error) ? error.response?.data : undefined) ||
+          '등록에 실패했습니다. 다시 시도해 주세요.'
+      );
     }
   }
 );
@@ -85,8 +89,8 @@ export const recommendedAdminSlice = createSlice({
     setSourceType: (state, action: PayloadAction<'DIRECT' | 'FACEBOOK' | 'INSTAGRAM'>) => {
       state.sourceType = action.payload;
     },
-    updateRecommendedField: (state, action: PayloadAction<{ name: keyof RecommendedFormState; value: string }>) => {
-      const { name, value } = action.payload;
+    updateRecommendedField: (state, action: PayloadAction<{name: keyof RecommendedFormState; value: string}>) => {
+      const {name, value} = action.payload;
       state.formData[name] = value;
     },
     resetRecommendedForm: (state) => {
@@ -97,9 +101,9 @@ export const recommendedAdminSlice = createSlice({
         birthYear: '',
         gender: 'M',
         weight: '',
-        imageUrl: '',
+        imageUrl: ''
       };
-    },
+    }
   },
   extraReducers: (builder) => {
     // 파싱 처리
@@ -136,15 +140,15 @@ export const recommendedAdminSlice = createSlice({
           birthYear: '',
           gender: 'M',
           weight: '',
-          imageUrl: '',
+          imageUrl: ''
         };
       })
       .addCase(submitRecommendedAnimal.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });
-  },
+  }
 });
 
-export const { setSourceType, updateRecommendedField, resetRecommendedForm } = recommendedAdminSlice.actions;
+export const {setSourceType, updateRecommendedField, resetRecommendedForm} = recommendedAdminSlice.actions;
 export default recommendedAdminSlice.reducer;

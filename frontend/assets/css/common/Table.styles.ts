@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { W100 } from "./Common.styles";
 
-
 export const TList = styled.table`
 ${W100};
 border-collapse:collapse; 

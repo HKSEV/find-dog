@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { FlexBetween, BgWhite, Pointer, Flex, Fw500 } from "../common/Common.styles";
 
-
 export const GuideBox = styled.div`
   ${FlexBetween}
   ${BgWhite}${Pointer}

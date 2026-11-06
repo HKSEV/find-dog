@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { FlexStart, WebkitBox, Ohidden } from "../common/Common.styles";
 
-
 export const LocationRow = styled.div`
   ${FlexStart}
   gap: 0.25rem;

@@ -1,13 +1,17 @@
-import styled, {css} from 'styled-components';
-import { 
-  Relative, BgWhite, BoxShadow, 
-  FlexBetween, FlexCenter, W100, Fixed, 
-  Ohidden, FlexStart,
-  FlexColumn, 
+import styled from 'styled-components';
+import {
+  Relative,
+  BgWhite,
+  BoxShadow,
+  FlexBetween,
+  FlexCenter,
+  W100,
+  Fixed,
+  Ohidden,
+  FlexStart,
+  FlexColumn,
   Grid
 } from '../common/Common.styles';
-
-
 
 // style.styles.ts 파일 수정
 
@@ -195,4 +199,3 @@ export const GridRow = styled.div`
 display:flex; flex-wrap:wrap;
 margin-right:-0.75rem; margin-left:-0.75rem;
 `;
-

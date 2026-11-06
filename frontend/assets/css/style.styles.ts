@@ -1,12 +1,8 @@
-import styled, {css} from 'styled-components';
-
+import styled from 'styled-components';
 
 export * from './layout/Layout.styles';
 export * from './layout/Header.styles';
 export * from './layout/Quick.styles';
-
-
-
 
 export * from './common/Alert.styles';
 export * from './common/Badge.styles';
@@ -53,11 +49,28 @@ export const AlignItemsContext = styled.div``;
 
 export * from './modal/Modal.styles';
 
-
-export * from './admin/AdminLayout.styles';
-export * from './admin/Sidebar.styled';
-export * from "./admin/AdminLogin.styles";
+export {
+  AdminWrapper,
+  Sidebar,
+  ContentWrapper,
+  Topbar,
+  MainContent,
+  PageHeading,
+  AdminDataCard,
+  SidebarBrand as AdminSidebarBrand,
+  NavItem as AdminNavItem
+} from './admin/AdminLayout.styles';
+export {
+  Wrapper,
+  ContainerFluid,
+  SidebarContainer,
+  BrandText,
+  SidebarBrand,
+  NavLink,
+  ToggleButtonWrapper,
+  ToggleButton,
+  NavItem as SidebarNavItem,
+  Divider as SidebarDivider
+} from './admin/Sidebar.styled';
+export * from './admin/AdminLogin.styles';
 export * from './admin/Topbar.styled';
-
-
-

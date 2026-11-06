@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { FlexCenter, FlexColumn } from '../common/Common.styles';
 
-
 export const AlertInfo = styled.div`
   ${FlexCenter};
   gap: 12px;

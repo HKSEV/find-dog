@@ -1,4 +1,4 @@
-import styled, {css} from 'styled-components';
+import styled from 'styled-components';
 
 export const Banner = styled.section`
 background-color:#e9f7f4;

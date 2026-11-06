@@ -1,7 +1,5 @@
-import styled, {css} from 'styled-components';
-import { BgWhite, FlexBetween, TextCenter } from './Common.styles';
-
-
+import styled from 'styled-components';
+import { BgWhite, FlexBetween } from './Common.styles';
 
 export const StatBox = styled.div`
 ${FlexBetween};

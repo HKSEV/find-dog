@@ -1,20 +1,13 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useSyncExternalStore } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch, RootState } from './store/store';
-import { 
-  fetchAnimals, 
-  fetchCampaigns, 
-  fetchHomeExtras, 
-  setActiveHashtag 
-} from './redux/homeSlice';
+import { fetchAnimals, fetchCampaigns, fetchHomeExtras, setActiveHashtag } from './redux/homeSlice';
 
 import SplashScreen from './components/SplashScreen'; // 💡 스플래시 컴포넌트 임포트
 
-import {
-  PlayArrow as PlayArrowIcon
-} from '@mui/icons-material';
+import { PlayArrow as PlayArrowIcon } from '@mui/icons-material';
 
 import * as S from '@/assets/css/style.styles';
 import { HomeGrid } from '@/assets/css/client/Home.styles';
@@ -33,49 +26,38 @@ import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'; // 
 
 // 2. 렌더링할 메뉴 데이터를 객체 배열로 분리하여 정의합니다.
 const quickMenus = [
-  { name: '소개', icon: <InfoOutlinedIcon style={{ color: '#b5a196' }} /> },
-  { name: '입양 캠페인', icon: <VolunteerActivismOutlinedIcon style={{ color: '#b5a196' }} /> },
-  { name: '어서찾아주개 기부', icon: <SavingsOutlinedIcon style={{ color: '#b5a196' }} /> },
-  { name: '지원/혜택', icon: <CardGiftcardOutlinedIcon style={{ color: '#b5a196' }} /> },
-  { name: '스토어', icon: <StorefrontOutlinedIcon style={{ color: '#b5a196' }} /> },
+  {name: '소개', icon: <InfoOutlinedIcon style={{color: "#b5a196"}}/>},
+  {name: '입양 캠페인', icon: <VolunteerActivismOutlinedIcon style={{color: "#b5a196"}}/>},
+  {name: '어서찾아주개 기부', icon: <SavingsOutlinedIcon style={{color: "#b5a196"}}/>},
+  {name: '지원/혜택', icon: <CardGiftcardOutlinedIcon style={{color: "#b5a196"}}/>},
+  {name: '스토어', icon: <StorefrontOutlinedIcon style={{color: "#b5a196"}}/>}
 ];
 
 const campaignHashtags = ['#제주입양', '#임시보호', '#치료지원'];
 
+// 세션의 스플래시 완료 여부를 구독합니다. 타이머는 언마운트 시 정리합니다.
+const subscribeSplash = (onChange: () => void) => {
+  if (sessionStorage.getItem('hasSeenSplash')) return () => {};;
+
+  const timer = setTimeout(() => {
+    sessionStorage.setItem('hasSeenSplash', 'true');
+    onChange();
+  }, 2000);
+
+  return () => clearTimeout(timer);
+};
+
+const getSplashSnapshot = () => !sessionStorage.getItem('hasSeenSplash');
+
 export default function HomePage() {
   const dispatch = useDispatch<AppDispatch>();
 
-  // 💡 스플래시 노출 여부를 관리하는 상태 (초기값 false로 설정 후 useEffect에서 판별)
-  const [showSplash, setShowSplash] = useState(false);
+  // 서버와 첫 렌더에서는 본문을 표시하고, 접속한 세션에 따라 스플래시를 표시합니다.
+  const showSplash = useSyncExternalStore(subscribeSplash, getSplashSnapshot, () => false);
 
   // Redux Store 상태 조회
-  const {
-    animals,
-    isAnimalsLoading,
-    campaigns,
-    isCampaignsLoading,
-    activeHashtag,
-    youtubePosts,
-    fellowNews,
-    needHelps,
-  } = useSelector((state: RootState) => state.home);
-
-  // 💡 컴포넌트 마운트 시 세션 스토리지 확인하여 스플래시 제어
-  useEffect(() => {
-    // 이미 본 경우 (hasSeenSplash === 'true') 에는 showSplash 상태가 false 그대로 유지됨
-    if (sessionStorage.getItem('hasSeenSplash')) return;
-
-    // 최초 접속 시: 스플래시 보여주기
-    setShowSplash(true);
-
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-      // 💡 기록은 스플래시가 끝난 뒤에 남김 (StrictMode에서 effect가 두 번 실행돼도 타이머가 다시 걸리도록)
-      sessionStorage.setItem('hasSeenSplash', 'true');
-    }, 2000); // 2초 후 스플래시 종료
-
-    return () => clearTimeout(timer); // 언마운트 시 클리어
-  }, []);
+  const {animals, isAnimalsLoading, campaigns, isCampaignsLoading, activeHashtag, youtubePosts, fellowNews, needHelps} =
+    useSelector((state: RootState) => state.home);
 
   // 컴포넌트 마운트 시 데이터 로드
   useEffect(() => {
@@ -94,25 +76,22 @@ export default function HomePage() {
 
   // 💡 showSplash가 true일 때는 스플래시 화면만 렌더링
   if (showSplash) {
-    return <SplashScreen />;
-  }
+    return <SplashScreen/>;
+  };
 
   return (
     <>
-      <S.AppWrapper>    
+      <S.AppWrapper>
         <Header isMain={true}/>
         <S.Container>
-
           <S.Mt70/>
 
           <BannerCarousel/>
-          
+
           <S.QuickMenu>
             {quickMenus.map((menu, idx) => (
               <S.MenuIconWrapper key={idx}>
-                <S.IconCircle>
-                  {menu.icon}
-                </S.IconCircle>
+                <S.IconCircle>{menu.icon}</S.IconCircle>
                 <S.MenuText>{menu.name}</S.MenuText>
               </S.MenuIconWrapper>
             ))}
@@ -130,7 +109,7 @@ export default function HomePage() {
             </S.SectionHeader>
 
             <S.HorizontalScroll>
-              {['강릉시','양양군','밀양시','마포센터','삼척시','화성','노원구','도봉구'].map((region, idx) =>(
+              {["강릉시", "양양군", "밀양시", "마포센터", "삼척시", "화성", "노원구", "도봉구"].map((region, idx) => (
                 <S.RegionCircle key={idx}>
                   <span>{region}</span>
                 </S.RegionCircle>
@@ -143,15 +122,19 @@ export default function HomePage() {
               ) : animals.length === 0 ? (
                 <S.StatusText>추천 동물이 없습니다</S.StatusText>
               ) : (
-                animals.map((animal) =>(
+                animals.map((animal) => (
                   <S.AnimalCard key={animal.id}>
                     <S.CardImage
-                      src={animal.imageUrl || "https://via.placeholder.com/160x160"}
-                      alt={`dog-${animal.id}`}
-                    />
+                    src={animal.imageUrl || "https://via.placeholder.com/160x160"}
+                    alt={`dog-${animal.id}`}/>
                     <S.CardBody>
-                      <S.CardTitle>{animal.region}{animal.noticeNo}</S.CardTitle>
-                      <S.CardDesc>{animal.birthYear}/{animal.gender}/{animal.weight}Kg</S.CardDesc>
+                      <S.CardTitle>
+                        {animal.region}
+                        {animal.noticeNo}
+                      </S.CardTitle>
+                      <S.CardDesc>
+                        {animal.birthYear}/{animal.gender}/{animal.weight}Kg
+                      </S.CardDesc>
                     </S.CardBody>
                   </S.AnimalCard>
                 ))
@@ -165,18 +148,14 @@ export default function HomePage() {
           <S.Section>
             <S.SectionHeader>
               <S.SectionTitle>입양 캠페인</S.SectionTitle>
-              <S.MoreButton>더보기  &gt;</S.MoreButton>   
+              <S.MoreButton>{"더보기  >"}</S.MoreButton>
             </S.SectionHeader>
 
             <S.HashtagScroll>
               {campaignHashtags.map((tag, idx) => (
-                <S.HashtagBtn
-                  key={idx}
-                  $active={activeHashtag === tag}
-                  onClick={() => handleHashtagClick(tag)}
-                >
+                <S.HashtagBtn key={idx} $active={activeHashtag === tag} onClick={() => handleHashtagClick(tag)}>
                   {tag}
-                </S.HashtagBtn>      
+                </S.HashtagBtn>
               ))}
             </S.HashtagScroll>
 
@@ -190,9 +169,9 @@ export default function HomePage() {
                   <S.CampaignCard key={item.id}>
                     <S.CampaignMediaWrap>
                       <S.CampaignImg src={item.thumbnailUrl} alt={item.title}/>
-                      {item.mediaType !== 'IMAGE' && (
+                      {item.mediaType !== "IMAGE" && (
                         <S.PlayIconWrap>
-                          <PlayArrowIcon style={{fontSize:'18px'}}/>
+                          <PlayArrowIcon style={{fontSize: "18px"}}/>
                         </S.PlayIconWrap>
                       )}
                     </S.CampaignMediaWrap>
@@ -200,14 +179,14 @@ export default function HomePage() {
                       <S.CampaignCardTitle>{item.title}</S.CampaignCardTitle>
                       <S.CampaignCardDesc>{item.content}</S.CampaignCardDesc>
                     </S.CampaignTextWrap>
-                  </S.CampaignCard>      
+                  </S.CampaignCard>
                 ))
               )}
             </S.HorizontalScroll>
           </S.Section>
 
           <S.Divider/>
-          
+
           {/* 유튜브 */}
           <S.Section>
             <S.SectionHeader>
@@ -227,7 +206,7 @@ export default function HomePage() {
           </S.Section>
 
           <S.Divider/>
-          
+
           {/* 펠로우 소식 */}
           <S.Section>
             <S.SectionHeader>
@@ -247,7 +226,7 @@ export default function HomePage() {
           </S.Section>
 
           <S.Divider/>
-          
+
           {/* 도움이 필요해요 */}
           <S.Section>
             <S.SectionHeader>
@@ -272,15 +251,21 @@ export default function HomePage() {
               <S.MoreButton>더보기 &gt;</S.MoreButton>
             </S.SectionHeader>
             <S.StatBox>
-              <S.StatItem><S.StatLabel $color="#198754">구조</S.StatLabel>6마리</S.StatItem>
-              <S.StatItem><S.StatLabel $color="#0d6efd">입양률</S.StatLabel>25.2%</S.StatItem>
-              <S.StatItem><S.StatLabel $color="#dc3545">안락사율</S.StatLabel>11.9%</S.StatItem>
+              <S.StatItem>
+                <S.StatLabel $color="#198754">구조</S.StatLabel>6마리
+              </S.StatItem>
+              <S.StatItem>
+                <S.StatLabel $color="#0d6efd">입양률</S.StatLabel>25.2%
+              </S.StatItem>
+              <S.StatItem>
+                <S.StatLabel $color="#dc3545">안락사율</S.StatLabel>11.9%
+              </S.StatItem>
             </S.StatBox>
-          </S.Section> 
+          </S.Section>
 
           <Footer/>
-        </S.Container>  
-      </S.AppWrapper>  
+        </S.Container>
+      </S.AppWrapper>
     </>
   );
-}
+};

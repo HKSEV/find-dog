@@ -1,5 +1,5 @@
-import styled, {css} from 'styled-components';
-import { BgWhite, Ohidden, BoxShadow, W100, Ellipsis,Grid, Fw900, FlexColumn, Nowrap } from './Common.styles';
+import styled from 'styled-components';
+import { BgWhite, Ohidden, BoxShadow, W100, Ellipsis, Grid, Fw900, FlexColumn, Nowrap } from './Common.styles';
 
 export const Card = styled.div`
   ${BgWhite}
@@ -39,7 +39,7 @@ export const CardGrid = styled.div`
   padding: 0 16px;
 `;
 
-export const CampaignCard  = styled.div`
+export const CampaignCard = styled.div`
 min-width:150px; 
 max-width:150px;
 ${FlexColumn};
@@ -112,7 +112,7 @@ color:#4e73df;
 }
 `;
 
-export const StatCard = styled.div<{$borderColor?:string}>`
+export const StatCard = styled.div<{$borderColor?: string}>`
 position:relative;
 display:flex;
 flex-direction:column;
@@ -129,7 +129,6 @@ height:100%;
 padding:0.5rem 0;
 `;
 
-
 export const CardColumn = styled.div`
 flex: 0 0 25%;
 /*
@@ -145,5 +144,3 @@ margin-bottom:1.5rem;
 @media (max-width: 1200px) {flex:0 0 50%; max-width:50%;}
 @media (max-width: 768px) {flex:0 0 100%; max-width:100%;}
 `;
-
-

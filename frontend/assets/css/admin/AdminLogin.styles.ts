@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
-import styled, {css} from "styled-components";
+import styled, { css } from "styled-components";
 
 const loginColors = {
-  surface: "#FFFFFF",
-  surfaceSubtle: "#F1F5F9",
-  textStrong: "#0F172A",
-  textBody: "#334155",
-  textMuted: "#64748B",
-  textDisabled: "#94A3B8",
-  border: "#E2E8F0",
-  borderStrong: "#CBD5E1",
-  accent: "#2563EB",
-  accentHover: "#1D4ED8",
-  accentSubtle: "#EFF6FF",
-  accentText: "#1E40AF",
-  onAccent: "#FFFFFF"
+  surface: '#FFFFFF',
+  surfaceSubtle: '#F1F5F9',
+  textStrong: '#0F172A',
+  textBody: '#334155',
+  textMuted: '#64748B',
+  textDisabled: '#94A3B8',
+  border: '#E2E8F0',
+  borderStrong: '#CBD5E1',
+  accent: '#2563EB',
+  accentHover: '#1D4ED8',
+  accentSubtle: '#EFF6FF',
+  accentText: '#1E40AF',
+  onAccent: '#FFFFFF'
 };
 
 const loginShadows = {
-  authCard: "0 24px 64px rgba(59, 130, 246, 0.09), 0 4px 16px rgba(15, 23, 42, 0.025)",
-  accent: "0 4px 12px rgba(37, 99, 235, 0.16)"
+  authCard: '0 24px 64px rgba(59, 130, 246, 0.09), 0 4px 16px rgba(15, 23, 42, 0.025)',
+  accent: '0 4px 12px rgba(37, 99, 235, 0.16)'
 };
 
 // ERP에서 사용하는 Pretendard 글꼴
@@ -209,9 +209,7 @@ export const MemberInputWrapper = styled.div<{$disabled?: boolean}>`
   min-height: 3rem;
   padding: 0 0.875rem;
   gap: 0.75rem;
-  background-color: ${({$disabled}) => (
-    $disabled ? loginColors.surfaceSubtle : loginColors.surface
-  )};
+  background-color: ${({$disabled}) => ($disabled ? loginColors.surfaceSubtle : loginColors.surface)};
   border: 0.0625rem solid ${loginColors.borderStrong};
   border-radius: 0.625rem;
 
@@ -226,7 +224,9 @@ export const MemberInputWrapper = styled.div<{$disabled?: boolean}>`
     color: ${loginColors.textMuted};
   }
 
-  ${({$disabled}) => !$disabled && css`
+  ${({$disabled}) =>
+    !$disabled &&
+    css`
     &:hover {
       border-color: ${loginColors.textDisabled};
     }

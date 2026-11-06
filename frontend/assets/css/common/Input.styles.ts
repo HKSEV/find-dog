@@ -1,5 +1,15 @@
-import styled, {css} from 'styled-components';
-import { Relative,Pointer,TransitionAll,BgWhite,Circle,Absolute,BoxShadow, W100, FlexCenter } from '../common/Common.styles';
+import styled from 'styled-components';
+import {
+  Relative,
+  Pointer,
+  TransitionAll,
+  BgWhite,
+  Circle,
+  Absolute,
+  BoxShadow,
+  W100,
+  FlexCenter
+} from '../common/Common.styles';
 
 interface ToggleProps {
   active: boolean;
@@ -8,7 +18,7 @@ interface ToggleProps {
 export const ToggleSwitch = styled.div<ToggleProps>`
   width: 2.75rem;
   height: 1.5rem;
-  background-color: ${props => (props.active ? '#ff6b00' : '#e4e5e7')};
+  background-color: ${(props) => (props.active ? '#ff6b00' : '#e4e5e7')};
   border-radius: 0.75rem;
   ${Relative}
   ${Pointer}${TransitionAll}
@@ -20,11 +30,11 @@ export const ToggleThumb = styled.div<ToggleProps>`
   ${BgWhite}
   ${Circle}${Absolute}
   top: 0.125rem;
-  left: ${props => (props.active ? '1.375rem' : '0.125rem')};
+  left: ${(props) => (props.active ? '1.375rem' : '0.125rem')};
   ${TransitionAll}${BoxShadow}
 `;
 
-export const StatLabel = styled.span<{$color:string}>`
+export const StatLabel = styled.span<{$color: string}>`
 font-weight:bold;
 color:${(props) => props.$color};
 margin-right:4px;
@@ -132,7 +142,7 @@ gap:15px;
 
 export const FileUpload = styled.input`
 width:100%; font-size:12px;
-`
+`;
 
 export const TextArea = styled.textarea`
 width:100%;

@@ -26,21 +26,21 @@ const initialState: ShelterState = {
   isAlertOn: false,
   animals: [],
   loading: false,
-  error: null,
+  error: null
 };
 
 // 보호 동물 데이터 비동기 조회 Thunk
-export const fetchShelterAnimals = createAsyncThunk(
-  'shelter/fetchShelterAnimals',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get('http://localhost:8080/api/shelter-animals');
-      return response.data as Animal[];
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data || '동물 데이터를 불러오는데 실패했습니다.');
-    }
+export const fetchShelterAnimals = createAsyncThunk('shelter/fetchShelterAnimals', async (_, {rejectWithValue}) => {
+  try {
+    const response = await axios.get('http://localhost:8080/api/shelter-animals');
+    return response.data as Animal[];
+  } catch (error: unknown) {
+    return rejectWithValue(
+      (axios.isAxiosError<string | {message?: string}>(error) ? error.response?.data : undefined) ||
+        '동물 데이터를 불러오는데 실패했습니다.'
+    );
   }
-);
+});
 
 export const shelterSlice = createSlice({
   name: 'shelter',
@@ -51,7 +51,7 @@ export const shelterSlice = createSlice({
     },
     toggleAlert: (state) => {
       state.isAlertOn = !state.isAlertOn;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -67,8 +67,8 @@ export const shelterSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       });
-  },
+  }
 });
 
-export const { setActiveTab, toggleAlert } = shelterSlice.actions;
+export const {setActiveTab, toggleAlert} = shelterSlice.actions;
 export default shelterSlice.reducer;

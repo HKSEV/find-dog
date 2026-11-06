@@ -1,5 +1,4 @@
-import styled, {css} from 'styled-components';
-import { TextCenter } from './Common.styles';
+import styled from 'styled-components';
 
 export const LogoText = styled.h1`
   color: #ff8c00;

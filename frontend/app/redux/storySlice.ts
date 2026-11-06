@@ -31,22 +31,22 @@ const initialState: StoryState = {
   isAlertOn: false,
   storyList: [],
   loading: true,
-  error: null,
+  error: null
 };
 
 // 스토리 데이터를 가져오는 비동기 Thunk
-export const fetchStories = createAsyncThunk(
-  'story/fetchStories',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get('http://localhost:8080/api/stories');
-      return response.data as StoryPost[];
-    } catch (error: any) {
-      // API 실패 시 테스트용 더미 데이터를 반환하거나 에러 처리
-      return rejectWithValue(error.response?.data || '스토리 데이터를 불러오는데 실패했습니다.');
-    }
+export const fetchStories = createAsyncThunk('story/fetchStories', async (_, {rejectWithValue}) => {
+  try {
+    const response = await axios.get('http://localhost:8080/api/stories');
+    return response.data as StoryPost[];
+  } catch (error: unknown) {
+    // API 실패 시 테스트용 더미 데이터를 반환하거나 에러 처리
+    return rejectWithValue(
+      (axios.isAxiosError<string | {message?: string}>(error) ? error.response?.data : undefined) ||
+        '스토리 데이터를 불러오는데 실패했습니다.'
+    );
   }
-);
+});
 
 export const storySlice = createSlice({
   name: 'story',
@@ -64,7 +64,7 @@ export const storySlice = createSlice({
     // API 에러 발생 시 임시 더미 데이터를 넣어주는 액션
     setDummyStories: (state, action: PayloadAction<StoryPost[]>) => {
       state.storyList = action.payload;
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -80,8 +80,8 @@ export const storySlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       });
-  },
+  }
 });
 
-export const { setActiveTab, setSubTab, toggleAlert, setDummyStories } = storySlice.actions;
+export const {setActiveTab, setSubTab, toggleAlert, setDummyStories} = storySlice.actions;
 export default storySlice.reducer;

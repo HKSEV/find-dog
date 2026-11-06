@@ -1,16 +1,23 @@
-"use client";
-import React from 'react';
+'use client';
+import React from "react";
 
-export default function AdminLogoIcon({ width = 36, height = 36, className }: { width?: number, height?: number, className?: string }) {
+export default function AdminLogoIcon({
+  width = 36,
+  height = 36,
+  className
+}: {
+  width?: number;
+  height?: number;
+  className?: string;
+}) {
   return (
-    <svg 
-      width={width} 
-      height={height} 
-      viewBox="0 0 36 36" 
-      fill="none" 
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
+    <svg
+    width={width}
+    height={height}
+    viewBox="0 0 36 36"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}>
       {/* 흰색 얼굴 바탕 */}
       <ellipse cx="18" cy="18" rx="14" ry="13" fill="#FFFFFF"/>
 
@@ -28,4 +35,4 @@ export default function AdminLogoIcon({ width = 36, height = 36, className }: { 
       <circle cx="23.5" cy="31" r="5.5" fill="#FFFFFF" stroke="#cbd5e1" strokeWidth="1.5"/>
     </svg>
   );
-}
+};

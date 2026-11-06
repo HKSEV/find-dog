@@ -1,5 +1,5 @@
-import styled, {css} from 'styled-components';
-import { Nowrap, TextCenter } from './Common.styles';
+import styled from 'styled-components';
+import { Nowrap } from './Common.styles';
 
 export const HorizontalScroll = styled.div`
 display:flex; 

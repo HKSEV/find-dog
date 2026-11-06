@@ -1,5 +1,16 @@
-import styled, {css} from 'styled-components';
-import { Fixed, MainMaxWidth, Mauto, BgWhite, FlexAround, FlexColumn, Pointer, W100, MainBg, IconColor, Fw600, MainBottomBg } from './Common.styles';
+import styled from 'styled-components';
+import {
+  Fixed,
+  MainMaxWidth,
+  Mauto,
+  FlexAround,
+  FlexColumn,
+  Pointer,
+  W100,
+  IconColor,
+  Fw600,
+  MainBottomBg
+} from './Common.styles';
 
 export const BottomNav = styled.nav`
 ${W100};
@@ -35,8 +46,8 @@ color: ${(props) => (props.$active ? '#805c59' : '#ae948f')};
 
   span {
     font-size: 0.65rem;
-    color: ${props => (props.$active ? '#805c59' : '#ae948f')};
-    font-weight: ${props => (props.$active ? '700' : '400')};
+    color: ${(props) => (props.$active ? '#805c59' : '#ae948f')};
+    font-weight: ${(props) => (props.$active ? '700' : '400')};
   }
 `;
 

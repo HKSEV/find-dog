@@ -1,4 +1,4 @@
-import styled, {css} from 'styled-components';
+import styled from 'styled-components';
 import { TextCenter } from './Common.styles';
 
 export const LoadingText = styled.div`

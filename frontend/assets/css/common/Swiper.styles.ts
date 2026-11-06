@@ -21,7 +21,7 @@ export const CarouselWrapper = styled.div`
   }
 `;
 
-export const SlideContainer = styled.div<{ $bgColor?: string }>`
+export const SlideContainer = styled.div<{$bgColor?: string}>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -99,8 +99,6 @@ export const ThumTitle = styled.h2`
   }
 `;
 
-
-
 // 스와이퍼 바깥 여백 확보 (첫 카드가 살짝 여백을 갖도록)
 export const SwiperContainer = styled.div`
   padding-left: 20px;
@@ -114,8 +112,6 @@ export const CardWrapper = styled.div`
   position: relative;
   background-color: #f0f0f0;
 `;
-
-
 
 // 흰색 텍스트가 잘 보이도록 하단에 어두운 그라데이션 추가
 export const GradientOverlay = styled.div`

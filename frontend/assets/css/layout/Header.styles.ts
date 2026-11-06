@@ -1,5 +1,5 @@
-import styled, {css} from 'styled-components';
-import { Fixed, FlexBetween, FlexCenter, Fw500, IconColor, MainBg, MainColor, MainDarkColor, Pointer, Sticky, W100 } from '../common/Common.styles';
+import styled from 'styled-components';
+import { Fixed, FlexBetween, Fw500, IconColor, MainBg, MainColor, Pointer, Sticky, W100 } from '../common/Common.styles';
 
 export const Header = styled.header`
 ${Fixed};
@@ -25,8 +25,6 @@ export const Logo = styled.h4`
   ${Fw500};
   ${MainColor};
 `;
-
-
 
 export const Back = styled.span`
 width:60px;

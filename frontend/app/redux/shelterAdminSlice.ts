@@ -32,16 +32,16 @@ const initialState: ShelterAdminState = {
     regDate: '',
     rescueLocation: '',
     imageUrl: '',
-    content: '',
+    content: ''
   },
   isLoading: false,
-  error: null,
+  error: null
 };
 
 // 보호 동물 등록 비동기 Thunk (FormData 전송)
 export const submitShelterAnimal = createAsyncThunk(
   'shelterAdmin/submitShelterAnimal',
-  async ({ formData, imageFile }: { formData: ShelterFormState; imageFile: File | null }, { rejectWithValue }) => {
+  async ({formData, imageFile}: {formData: ShelterFormState; imageFile: File | null}, {rejectWithValue}) => {
     try {
       const endpoint = 'http://localhost:8080/api/shelter-animals';
       const submitData = new FormData();
@@ -50,24 +50,27 @@ export const submitShelterAnimal = createAsyncThunk(
       Object.entries(formData).forEach(([key, value]) => {
         if (value !== null && value !== '') {
           submitData.append(key, value);
-        }
+        };
       });
 
       // 파일이 존재하면 추가
       if (imageFile) {
         submitData.append('imageFile', imageFile);
-      }
+      };
 
       const response = await axios.post(endpoint, submitData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+          'Content-Type': 'multipart/form-data'
+        }
       });
 
       return response.data || '보호 동물이 성공적으로 등록되었습니다.';
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('등록에러: ', error);
-      return rejectWithValue(error.response?.data || '서버 오류가 발생했습니다. 잠시후 다시 시도해 주세요');
+      return rejectWithValue(
+        (axios.isAxiosError<string | {message?: string}>(error) ? error.response?.data : undefined) ||
+          '서버 오류가 발생했습니다. 잠시후 다시 시도해 주세요'
+      );
     }
   }
 );
@@ -79,9 +82,9 @@ export const shelterAdminSlice = createSlice({
     setImageInputType: (state, action: PayloadAction<'LINK' | 'UPLOAD'>) => {
       state.imageInputType = action.payload;
     },
-    updateShelterField: (state, action: PayloadAction<{ name: keyof ShelterFormState; value: string }>) => {
-      const { name, value } = action.payload;
-      state.formData[name] = value;
+    updateShelterField: (state, action: PayloadAction<{name: keyof ShelterFormState; value: string}>) => {
+      const {name, value} = action.payload;
+      Object.assign(state.formData, {[name]: value});
     },
     resetShelterForm: (state) => {
       state.formData = {
@@ -92,9 +95,9 @@ export const shelterAdminSlice = createSlice({
         regDate: '',
         rescueLocation: '',
         imageUrl: '',
-        content: '',
+        content: ''
       };
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -112,15 +115,15 @@ export const shelterAdminSlice = createSlice({
           regDate: '',
           rescueLocation: '',
           imageUrl: '',
-          content: '',
+          content: ''
         };
       })
       .addCase(submitShelterAnimal.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });
-  },
+  }
 });
 
-export const { setImageInputType, updateShelterField, resetShelterForm } = shelterAdminSlice.actions;
+export const {setImageInputType, updateShelterField, resetShelterForm} = shelterAdminSlice.actions;
 export default shelterAdminSlice.reducer;

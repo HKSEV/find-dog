@@ -1,5 +1,5 @@
-import styled, {css} from 'styled-components';
-import { Ohidden, Relative,  W100, H100 } from './Common.styles';
+import styled from 'styled-components';
+import { Ohidden, Relative, W100, H100 } from './Common.styles';
 
 //Thumb
 export const Thumb = styled.div`

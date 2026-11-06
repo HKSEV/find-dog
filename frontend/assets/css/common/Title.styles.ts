@@ -1,5 +1,5 @@
-import styled, {css} from 'styled-components';
-import { Fw400, Fw500,Fw600,Fw700,Fw900,MainColor,Nowrap, TextCenter } from './Common.styles';
+import styled from 'styled-components';
+import { Fw400, Fw500, Fw600, Fw700, Fw900, MainColor, Nowrap, TextCenter } from './Common.styles';
 //title
 export const H5Bold = styled.h5`
 flex: 1; 
@@ -37,15 +37,12 @@ ${Nowrap};
 overflow:hidden;
 `;
 
-
-
 export const PhotoUploadBottomText = styled.span`
 font-size:12px; 
 ${Fw400};
 letter-spacing:-0.03rem;
 color:#333;
 `;
-
 
 export const PageTitle = styled.h1`
 font-size:1.75rem; color:#5a5c69;

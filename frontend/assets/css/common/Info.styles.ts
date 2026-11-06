@@ -1,4 +1,4 @@
-import styled, {css} from 'styled-components';
+import styled from 'styled-components';
 import { FlexCenter, Nowrap, Ohidden, Ellipsis, W100, FlexColumn, Grid } from './Common.styles';
 
 export const InfoRow = styled.div`
@@ -6,8 +6,6 @@ export const InfoRow = styled.div`
   gap: 0.375rem;
   margin-bottom: 0.25rem;
 `;
-
-
 
 export const MetaInfo = styled.div`
   font-size: 0.6875rem;

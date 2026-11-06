@@ -1,7 +1,21 @@
-    import styled from 'styled-components';
-    import { BgWhite, BoxShadow, Fixed, FlexBetween, FlexCenter, FlexColumn, Fw700, H100, Pointer, TransitionAll, W100, Fw600, FlexStart } from '../common/Common.styles';
+import styled from 'styled-components';
+import {
+  BgWhite,
+  BoxShadow,
+  Fixed,
+  FlexBetween,
+  FlexCenter,
+  FlexColumn,
+  Fw700,
+  H100,
+  Pointer,
+  TransitionAll,
+  W100,
+  Fw600,
+  FlexStart
+} from '../common/Common.styles';
 
-    export const ModalOverlay = styled.div`
+export const ModalOverlay = styled.div`
     ${Fixed};
     top:0; left:0;
     ${W100};
@@ -11,7 +25,7 @@
     z-index:99999;
     `;
 
-    export const ModalContent = styled.div`
+export const ModalContent = styled.div`
     ${BgWhite};
     padding:24px;
     border-radius:1rem;
@@ -22,7 +36,7 @@
     ${BoxShadow};
     `;
 
-    export const HeaderRow = styled.div`
+export const HeaderRow = styled.div`
     ${FlexBetween};
     margin-bottom:1.25rem;
     h2{
@@ -33,7 +47,7 @@
     }
     `;
 
-    export const CloseButton = styled.button`
+export const CloseButton = styled.button`
     background:none;
     border:none;
     cursor:pointer;
@@ -41,14 +55,14 @@
     padding:0.25rem;
     ${FlexCenter};
     `;
-    export const Form = styled.form`
+export const Form = styled.form`
     ${W100};
     max-width:450px;
     ${FlexColumn};
     gap:0.75rem;
     `;
 
-    export const Select = styled.select`
+export const Select = styled.select`
     ${W100};
     padding:0.75rem;
     border:1px solid #e1e1e1;
@@ -59,7 +73,7 @@
     ${Pointer};
     `;
 
-    export const SubmitButton = styled.button`
+export const SubmitButton = styled.button`
     ${W100};
     background: #ff6b6b;
     color:#fff;
@@ -74,9 +88,7 @@
     &:hover{background: #fa5252;}
     `;
 
-
-
-    export const FileInputWrapper = styled.div`
+export const FileInputWrapper = styled.div`
     ${FlexColumn};
     gap:0.375rem;
     label { font-size:.7rem; ${Fw600}; color:#555;}
@@ -88,7 +100,7 @@
     }
     `;
 
-    export const ModalBg= styled.div`
+export const ModalBg = styled.div`
     ${Fixed};
     top:0; left:0; right:0; bottom:0;
     background-color:rgba(0,0,0,.6);
@@ -97,17 +109,14 @@
     padding:10vh;
     `;
 
-    export const Modal = styled.div`
+export const Modal = styled.div`
     ${BgWhite};
     border:1px solid #ccc; padding:10px;
     margin-top:10px; border-radius:8px;
     `;
 
-
-
-
-    //다음 우편번호 모달 배경(어둡게 처리)
-    export const ModalBackground = styled.div`
+//다음 우편번호 모달 배경(어둡게 처리)
+export const ModalBackground = styled.div`
     position:fixed; top:0; left:0;
     width:100%; height:100%; 
     background:rgba(0, 0, 0, 0.5);

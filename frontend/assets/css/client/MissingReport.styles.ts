@@ -48,7 +48,3 @@ font-size:0.6875rem;
 color:#888;
 margin-top:0.125rem;
 `;
-
-
-
-
