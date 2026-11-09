@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { setStep, updateFormField, setAllAgreed, submitSignup } from "../redux/signupSlice";
 
-import * as S from "@/assets/css/style.styles";
+import * as S from "@/assets/css/Style.styles";
 
 import DaumPostcodeEmbed, { Address } from "react-daum-postcode";
 import Header from "../components/Header";

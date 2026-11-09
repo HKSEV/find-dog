@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { setEmail, setPassword, submitLogin } from "../redux/loginSlice";
 
-import * as S from "@/assets/css/style.styles";
+import * as S from "@/assets/css/Style.styles";
 import Header from "../components/Header";
 import { CustomAlert } from "../components/CustomAlert";
 import {

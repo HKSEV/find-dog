@@ -6,7 +6,7 @@ import { AppDispatch, RootState } from "../../store/store";
 import { setBoardType, updateIntegrateField, submitIntegrateContent } from "../../redux/integrateAdminSlice";
 
 import { Layout } from "../../components/layout/Layout";
-import * as A from "@/assets/css/style.styles";
+import * as A from "@/assets/css/Style.styles";
 import * as F from "@/assets/css/admin/AdminForm.styles";
 import useAdminModal from "@/app/components/contexts/AdminModalContext";
 import {

@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { fetchStories, setActiveTab, setSubTab, toggleAlert, setDummyStories } from "../redux/storySlice";
-import * as S from "@/assets/css/style.styles";
+import * as S from "@/assets/css/Style.styles";
 
 // MUI 아이콘
 import { NotificationsOutlined as NotificationsIcon } from "@mui/icons-material";

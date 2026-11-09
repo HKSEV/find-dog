@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation"; // 💡 useRouter 임포트
-import * as S from "@/assets/css/style.styles";
+import * as S from "@/assets/css/Style.styles";
 
 import Logo from "./Logo";
 import { HeaderActions, AccountIcon, NotificationIcon, HeaderSpacer } from "@/assets/css/layout/HeaderContent.styles";

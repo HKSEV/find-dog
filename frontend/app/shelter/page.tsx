@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { fetchShelterAnimals, setActiveTab, toggleAlert } from "../redux/shelterSlice";
 
-import * as A from "@/assets/css/style.styles";
+import * as A from "@/assets/css/Style.styles";
 import Header from "@/app/components/Header";
 import Footer from "../components/Footer";
 

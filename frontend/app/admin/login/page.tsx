@@ -8,7 +8,7 @@ import { setAdminEmail, setAdminPassword, submitAdminLogin } from "../../redux/a
 
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { FaUser } from "react-icons/fa";
-import * as S from "@/assets/css/style.styles";
+import * as S from "@/assets/css/Style.styles";
 import useAdminModal from "@/app/components/contexts/AdminModalContext";
 
 export default function LoginPage() {

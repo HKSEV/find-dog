@@ -1,6 +1,6 @@
 import Image from "next/image";
 import styled, { keyframes } from "styled-components";
-import * as S from "@/assets/css/style.styles";
+import * as S from "@/assets/css/Style.styles";
 
 export const AuxiliaryButton = styled(S.BaseBtn).attrs({$variant: "primary", $mainColor: "#CCC", $width: "80px"})``;
 

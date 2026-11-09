@@ -1,6 +1,6 @@
 "use client";
 
-import * as S from "@/assets/css/style.styles";
+import * as S from "@/assets/css/Style.styles";
 import {
   AlertContent,
   AlertSummary,

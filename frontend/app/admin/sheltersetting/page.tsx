@@ -6,7 +6,7 @@ import { AppDispatch, RootState } from "../../store/store";
 import { setImageInputType, updateShelterField, submitShelterAnimal } from "../../redux/shelterAdminSlice";
 
 import { Layout } from "../../components/layout/Layout";
-import * as A from "@/assets/css/style.styles";
+import * as A from "@/assets/css/Style.styles";
 import * as F from "@/assets/css/admin/AdminForm.styles";
 import useAdminModal from "@/app/components/contexts/AdminModalContext";
 import {

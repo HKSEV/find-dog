@@ -8,7 +8,7 @@ import { fetchMissingAnimals } from "../redux/missingSlice";
 import { LocationIcon, DateIcon, WriteIcon } from "@/assets/css/client/Missing.styles";
 
 import { ModalSingle } from "../modal/ModalSingle";
-import * as S from "@/assets/css/style.styles";
+import * as S from "@/assets/css/Style.styles";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 

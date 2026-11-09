@@ -1,5 +1,5 @@
 import styled, { keyframes } from "styled-components";
-import * as S from "@/assets/css/style.styles";
+import * as S from "@/assets/css/Style.styles";
 
 export const SignupPrompt = styled.div`
   && {

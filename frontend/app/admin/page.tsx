@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Layout } from "../components/layout/Layout";
-import * as A from "@/assets/css/style.styles";
+import * as A from "@/assets/css/Style.styles";
 import {
   ReportLink,
   ReportIcon,

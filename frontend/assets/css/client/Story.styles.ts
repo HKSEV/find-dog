@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Plus } from "lucide-react";
-import * as S from "@/assets/css/style.styles";
+import * as S from "@/assets/css/Style.styles";
 import styled from "styled-components";
 
 export const StorySubTabs = styled.div`

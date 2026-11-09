@@ -3,7 +3,7 @@
 import React from "react";
 import { SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
-import * as S from "@/assets/css/style.styles";
+import * as S from "@/assets/css/Style.styles";
 import { BannerSwiper, BannerImage, bannerColors } from "@/assets/css/common/BannerCarousel.styles";
 
 const bannerData = [

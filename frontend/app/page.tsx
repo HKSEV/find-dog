@@ -7,7 +7,7 @@ import { fetchAnimals, fetchCampaigns, fetchHomeExtras, setActiveHashtag } from 
 
 import SplashScreen from "./components/SplashScreen"; // 💡 스플래시 컴포넌트 임포트
 
-import * as S from "@/assets/css/style.styles";
+import * as S from "@/assets/css/Style.styles";
 import {
   HomeGrid,
   IntroductionIcon,

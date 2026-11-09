@@ -1,5 +1,5 @@
 import { CheckCircle2, AlertCircle } from "lucide-react";
-import * as S from "@/assets/css/style.styles";
+import * as S from "@/assets/css/Style.styles";
 import styled from "styled-components";
 
 export const AlertContent = styled(S.ModalContent)`
