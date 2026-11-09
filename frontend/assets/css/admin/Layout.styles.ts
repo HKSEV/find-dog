@@ -17,7 +17,9 @@ export const AdminShellWrapper = styled.div`
 export const AdminShellContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  flex: 1;
+  width: 0;
+  min-width: 0;
   overflow-x: hidden;
   /* 기존 #F8F9FC 대신 쿨그레이 팔레트의 가장 밝은 배경색 적용 */
   background-color: ${coolGray[50]};
@@ -25,6 +27,8 @@ export const AdminShellContentWrapper = styled.div`
 
 export const AdminShellMainContent = styled.div`
   flex: 1 0 auto;
+  width: 100%;
+  min-width: 0;
   /* 내용물의 크기를 기본으로 잡되(auto), 화면이 좁아져도 원래 크기보다 줄어들지는 말고(0), 
      만약 화면에 빈 공간이 남는다면 남는 여백을 네가 전부 채워라(1) */
 `;
@@ -35,6 +39,11 @@ export const AdminShellContainerFluid = styled.div`
   padding-left: 1.5rem;
   margin-right: auto;
   margin-left: auto;
+
+  @media (max-width: 767px) {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
 `;
 
 // ==========================================

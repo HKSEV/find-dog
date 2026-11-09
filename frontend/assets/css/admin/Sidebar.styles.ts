@@ -1,10 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import styled from "styled-components";
 import { coolGray } from "@/assets/css/admin/AdminBase.styles";
-
-// 💡 만들어둔 쿨그레이 팔레트 임포트
-// 💡 만들어둔 쿨그레이 팔레트 임포트
 
 export const Wrapper = styled.div`
   display: flex;
@@ -18,24 +16,11 @@ export const SidebarContentWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   overflow-x: hidden;
-  background-color: ${coolGray[50]}; /* 💡 기존 #F8F9FC 대신 쿨그레이 가장 밝은 톤 적용 */
+  background-color: ${coolGray[50]};
 `;
 
 export const SidebarMainContent = styled.div`
   flex: 1 0 auto;
-  /* 내용물의 크기를 기본으로 잡되(auto), 
-  화면이 좁아져도 원래 크기보다 줄어들지는 말고(0), 
-  만약 화면에 빈 공간이 남는다면 남는 여백을 네가 전부 채워라(1)."
-  1 (flex-grow): 늘어나는 비율
-  부모 컨테이너에 남는 여백이 있을 때, 
-  이 요소가 남는 공간을 꽉 채우도록 늘어나라는 뜻입니다. (기본값은 0)
-  0 (flex-shrink): 줄어드는 비율
-  부모 컨테이너의 공간이 부족해질 때, 
-  이 요소의 크기를 절대 줄이지 말라는 뜻입니다. (기본값은 1)
-  auto (flex-basis): 기본 크기
-  요소의 기본 시작 크기를 내부 콘텐츠의 크기나 
-  설정된 width/height 값에 맞추겠다는 뜻입니다.
-  */
 `;
 
 export const ContainerFluid = styled.div`
@@ -46,121 +31,156 @@ export const ContainerFluid = styled.div`
   margin-left: auto;
 `;
 
-// 💡 기존 SB Admin 2 파란색(#4E73DF) 대신 다크 쿨그레이(coolGray[900]) 적용
-export const SidebarContainer = styled.ul<{$isCollapsed?: boolean}>`
-  background-color: ${coolGray[900]};
+export const SidebarContainer = styled.aside<{$isCollapsed?: boolean}>`
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: ${({$isCollapsed}) => ($isCollapsed ? "76px" : "224px")};
   min-height: 100vh;
-  width: ${({$isCollapsed}) => ($isCollapsed ? "90px" : "224px")} !important;
-  transition: width 0.3s ease-in-out;
-  overflow-x: hidden; /* 접혔을 때 텍스트가 삐져나오지 않도록 방어 */
+  overflow: hidden;
+  background-color: ${coolGray[900]};
+  transition: width 0.2s ease;
+
+  @media (max-width: 767px) {
+    width: 64px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
 export const BrandText = styled.div<{$isCollapsed?: boolean}>`
   display: ${({$isCollapsed}) => ($isCollapsed ? "none" : "block")};
-  margin-right: 1rem;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
 `;
 
-export const SidebarBrand = styled.a<{$isCollapsed?: boolean}>`
+export const SidebarBrand = styled(Link)<{$isCollapsed?: boolean}>`
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-direction: ${({$isCollapsed}) => ($isCollapsed ? "column" : "row")};
-  height: 4.5rem;
-  text-decoration: none !important;
-  color: #FFF !important;
-  font-size: ${({$isCollapsed}) => ($isCollapsed ? "0.7rem" : "1.2rem")};
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05rem;
+  justify-content: ${({$isCollapsed}) => ($isCollapsed ? "center" : "flex-start")};
+  height: 72px;
+  padding: ${({$isCollapsed}) => ($isCollapsed ? "0" : "0 24px")};
+  color: #FFFFFF;
+  font-size: 1.25rem;
+  font-weight: 750;
   white-space: nowrap;
-  overflow: hidden;
 
   &:hover {
-    color: #FFF;
-    text-decoration: none;
+    color: #FFFFFF;
   }
 
-  .sidebar-brand-icon {
-    font-size: 2rem;
+  &:focus-visible {
+    outline: 2px solid ${coolGray[400]};
+    outline-offset: -4px;
   }
+
+  @media (max-width: 767px) {
+    justify-content: center;
+    padding: 0;
+  }
+`;
+
+export const SidebarBrandIcon = styled.span`
+  flex-shrink: 0;
 `;
 
 export const SidebarDivider = styled.hr`
-  border-top: 1px solid rgba(255, 255, 255, 0.15); /* 💡 다크 배경에 어울리는 은은한 선으로 변경 */
-  margin: 0 1rem 1rem 1rem;
+  margin: 0 16px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+`;
+
+export const SidebarNavigation = styled.nav`
+  padding-top: 20px;
+`;
+
+export const SidebarMenu = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 `;
 
 export const SidebarNavItem = styled.li`
-  width: 100%;
-  padding: 0 0.5rem; /* 💡 호버 시 배경색이 사이드바 너비를 꽉 채우지 않도록 여백 부여 */
-  margin-bottom: 4px;
+  padding: 0 10px;
 `;
 
-export const NavLink = styled.a<{$isCollapsed?: boolean; $isActive?: boolean}>`
+export const NavLink = styled(Link)<{$isCollapsed?: boolean; $isActive?: boolean}>`
   display: flex;
   align-items: center;
-  width: 100%;
-  border-radius: 6px; /* 💡 버튼형 메뉴처럼 둥근 모서리 적용 */
-
-  /* 💡 활성화(현재 페이지) 상태일 땐 흰색 글씨+배경, 비활성화일 땐 쿨그레이 글씨 */
-  color: ${({$isActive}) => ($isActive ? "#FFFFFF" : coolGray[400])};
-  background-color: ${({$isActive}) => ($isActive ? coolGray[800] : "transparent")};
-  font-weight: ${({$isActive}) => ($isActive ? "700" : "600")};
-  text-decoration: none;
-  transition: all 0.2s;
-
-  /* 사이드 바가 접히면 아이콘 가운데만 정렬되도록 조정 */
   justify-content: ${({$isCollapsed}) => ($isCollapsed ? "center" : "flex-start")};
-  padding: ${({$isCollapsed}) => ($isCollapsed ? "1rem 0" : "1rem 1rem")};
+  gap: 14px;
+  min-height: 46px;
+  padding: ${({$isCollapsed}) => ($isCollapsed ? "12px 0" : "12px 16px")};
+  border-radius: 7px;
+  background-color: ${({$isActive}) => ($isActive ? coolGray[800] : "transparent")};
+  color: ${({$isActive}) => ($isActive ? "#FFFFFF" : coolGray[400])};
+  font-size: 0.875rem;
+  font-weight: ${({$isActive}) => ($isActive ? 650 : 500)};
+  transition: background-color 0.2s, color 0.2s;
+
+  svg {
+    flex-shrink: 0;
+    width: 19px;
+    height: 19px;
+  }
 
   span {
     display: ${({$isCollapsed}) => ($isCollapsed ? "none" : "inline")};
-    margin-left: 10px;
+    white-space: nowrap;
   }
 
   &:hover {
-    color: #FFF;
-    background-color: ${coolGray[800]}; /* 💡 호버 시 다크 쿨그레이 배경 깔림 */
-    text-decoration: none;
+    background-color: ${coolGray[800]};
+    color: #FFFFFF;
   }
 
-  i,
-  svg {
-    margin-right: ${({$isCollapsed}) => ($isCollapsed ? "0" : "10px")}; /* 아이콘과 글자 사이 간격 */
+  &:focus-visible {
+    outline: 2px solid ${coolGray[400]};
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 767px) {
+    justify-content: center;
+    padding: 12px 0;
+
+    span {
+      display: none;
+    }
   }
 `;
 
 export const ToggleButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
-  padding: 1rem 0;
-`;
+  padding: 24px 0;
 
-export const ToggleButton = styled.button<{$isCollapsed?: boolean}>`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: none;
-  color: white;
-  cursor: pointer;
-
-  /* 💡 좀 더 모던하게 투명도 조절 */
-  background-color: rgba(255, 255, 255, 0.1);
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.2);
+  @media (max-width: 767px) {
+    display: none;
   }
 `;
 
-/*
-old style
-text-align:center;
-vertical-align:middle;
+export const ToggleButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: ${coolGray[300]};
+  cursor: pointer;
 
-항상 어디든 가로세로 가운데 정렬은
-display:flex;
-*/
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #FFFFFF;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${coolGray[400]};
+    outline-offset: 3px;
+  }
+`;

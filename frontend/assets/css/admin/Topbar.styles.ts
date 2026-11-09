@@ -12,8 +12,8 @@ export const TopbarContainer = styled.nav`
   padding: 0 1.5rem;
   background-color: #FFFFFF;
 
-  /* 💡 기존 SB Admin의 탁한 그림자(rgba 58,59,69) 대신 쿨그레이 기반의 부드러운 그림자로 교체 */
-  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+  /* 상단 영역과 본문 사이를 쿨그레이 구분선으로 정리 */
+  border-bottom: 1px solid ${coolGray[200]};
   margin-bottom: 1.5rem;
 `;
 
@@ -22,7 +22,10 @@ export const TopbarSearch = styled.form`
   display: flex;
   align-items: center;
   margin-right: auto;
-  margin-left: 1rem;
+  margin-left: 0;
+  min-width: 0;
+  flex: 1;
+  max-width: 400px;
 `;
 
 export const TopbarNavbar = styled.ul`
@@ -60,6 +63,7 @@ export const InputGroup = styled.div`
 // 2. 검색 입력창
 export const SearchInput = styled.input`
   flex: 1;
+  min-width: 0;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   color: ${coolGray[700]};

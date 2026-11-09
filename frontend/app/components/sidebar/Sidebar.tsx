@@ -1,109 +1,67 @@
 "use client";
 
 import React, { useState } from "react";
-// 💡 길게 나열했던 스타일 컴포넌트들을 'S'라는 바구니(별칭) 하나로 깔끔하게 묶어옵니다!
-
-import AdminLogoIcon from "../../components/AdminLogoIcon";
+import { usePathname } from "next/navigation";
+import { FaPaw } from "react-icons/fa";
+import { FiGrid, FiSpeaker, FiLayers, FiHome, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import AdminLogoIcon from "../AdminLogoIcon";
 import * as S from "@/assets/css/Style.styles";
 
+const menuItems = [
+  {href: "/admin", label: "Dashboard", icon: FiGrid},
+  {href: "/admin/pick", label: "추천동물설정", icon: FaPaw},
+  {href: "/admin/campaign", label: "캠페인", icon: FiSpeaker},
+  {href: "/admin/intergrate", label: "통합게시물설정", icon: FiLayers},
+  {href: "/admin/sheltersetting", label: "보호소 설정", icon: FiHome}
+];
+
 export const Sidebar: React.FC = () => {
+  const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const handleToggle = () => {
-    setIsCollapsed(!isCollapsed);
-  };
   return (
-    <S.SidebarContainer $isCollapsed={isCollapsed}>
-      <S.SidebarBrand href="/admin" $isCollapsed={isCollapsed}>
-        <div className="sidebar-brand-icon">
+    <S.SidebarContainer $isCollapsed={isCollapsed} aria-label="관리자 사이드바">
+      <S.SidebarBrand href="/admin" $isCollapsed={isCollapsed} aria-label="관리자 대시보드">
+        <S.SidebarBrandIcon>
           <AdminLogoIcon/>
-        </div>
-        <S.SidebarContentBrandText>
+        </S.SidebarBrandIcon>
+        <S.SidebarContentBrandText $isCollapsed={isCollapsed}>
           Admin <sup>2</sup>
         </S.SidebarContentBrandText>
       </S.SidebarBrand>
-
       <S.BrandDivider/>
 
-      {/* 1. 대시보드 (메인) 링크 */}
-      <S.SidebarNavItem>
-        <S.NavLink href="/admin" $isCollapsed={isCollapsed}>
-          <S.Dashboard/>
-          <span>Dashboard</span>
-        </S.NavLink>
-      </S.SidebarNavItem>
-
-      <S.SidebarDivider/>
-
-      <S.SidebarNavItem>
-        <S.NavLink href="/admin/pick" $isCollapsed={isCollapsed}>
-          <S.Users/>
-          <span>추천동물설정</span>
-        </S.NavLink>
-      </S.SidebarNavItem>
-
-      {/* 2. 각 메뉴별로 NavItem 하나씩 독립적으로 적용 */}
-      <S.SidebarNavItem>
-        <S.NavLink href="/admin/campaign" $isCollapsed={isCollapsed}>
-          <S.Users/>
-          <span>캠페인</span>
-        </S.NavLink>
-      </S.SidebarNavItem>
-
-      <S.SidebarNavItem>
-        <S.NavLink href="/admin/intergrate" $isCollapsed={isCollapsed}>
-          <S.Settings/>
-          <span>통합게시물설정</span>
-        </S.NavLink>
-      </S.SidebarNavItem>
-
-      <S.SidebarNavItem>
-        <S.NavLink href="/admin/sheltersetting" $isCollapsed={isCollapsed}>
-          <S.Image/>
-          <span>보호소 설정</span>
-        </S.NavLink>
-      </S.SidebarNavItem>
-
-      <S.SidebarNavItem>
-        <S.NavLink href="/wearesetting" $isCollapsed={isCollapsed}>
-          <S.Info/>
-          <span>우리는 설정</span>
-        </S.NavLink>
-      </S.SidebarNavItem>
-
-      <S.SidebarNavItem>
-        <S.NavLink href="/worksetting" $isCollapsed={isCollapsed}>
-          <S.Work/>
-          <span>work</span>
-        </S.NavLink>
-      </S.SidebarNavItem>
-
-      <S.SidebarNavItem>
-        <S.NavLink href="/blogsetting" $isCollapsed={isCollapsed}>
-          <S.Blog/>
-          <span>blog</span>
-        </S.NavLink>
-      </S.SidebarNavItem>
-
-      <S.SidebarNavItem>
-        <S.NavLink href="/mapsetting" $isCollapsed={isCollapsed}>
-          <S.Location/>
-          <span>map</span>
-        </S.NavLink>
-      </S.SidebarNavItem>
-
-      <S.SidebarNavItem>
-        <S.NavLink href="/contactsetting" $isCollapsed={isCollapsed}>
-          <S.Contact/>
-          <span>contact</span>
-        </S.NavLink>
-      </S.SidebarNavItem>
-
-      <S.SidebarDivider/>
+      <S.SidebarNavigation id="admin-sidebar-menu" aria-label="관리자 메뉴">
+        <S.SidebarMenu>
+          {menuItems.map(({href, label, icon: Icon}) => {
+            const isActive =
+              href === "/admin" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
+            return (
+              <S.SidebarNavItem key={href}>
+                <S.NavLink
+                href={href}
+                $isCollapsed={isCollapsed}
+                $isActive={isActive}
+                aria-current={isActive ? "page" : undefined}
+                aria-label={label}
+                title={label}>
+                  <Icon aria-hidden="true"/>
+                  <span>{label}</span>
+                </S.NavLink>
+              </S.SidebarNavItem>
+            );
+          })}
+        </S.SidebarMenu>
+      </S.SidebarNavigation>
 
       <S.ToggleButtonWrapper>
-        <S.ToggleButton onClick={handleToggle} $isCollapsed={isCollapsed}>
-          {isCollapsed ? <S.Expand/> : <S.Collapse/>}
+        <S.ToggleButton
+        type="button"
+        onClick={() => setIsCollapsed((previous) => !previous)}
+        aria-label={isCollapsed ? "사이드바 펼치기" : "사이드바 접기"}
+        aria-expanded={!isCollapsed}
+        aria-controls="admin-sidebar-menu">
+          {isCollapsed ? <FiChevronRight aria-hidden="true"/> : <FiChevronLeft aria-hidden="true"/>}
         </S.ToggleButton>
       </S.ToggleButtonWrapper>
     </S.SidebarContainer>

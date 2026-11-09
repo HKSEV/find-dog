@@ -12,6 +12,7 @@ import integrateAdminReducer from "../redux/integrateAdminSlice";
 import adminLoginReducer from "../redux/adminLoginSlice";
 import recommendedAdminReducer from "../redux/recommendedAdminSlice";
 import shelterAdminReducer from "../redux/shelterAdminSlice"; // 👈 추가
+import dashboardAdminReducer from "../redux/dashboardAdminSlice";
 
 export const store = configureStore({
   reducer: {
@@ -26,7 +27,8 @@ export const store = configureStore({
     integrateAdmin: integrateAdminReducer,
     adminLogin: adminLoginReducer,
     recommendedAdmin: recommendedAdminReducer,
-    shelterAdmin: shelterAdminReducer // 👈 추가
+    shelterAdmin: shelterAdminReducer, // 👈 추가
+    dashboardAdmin: dashboardAdminReducer
   }
 });
 
