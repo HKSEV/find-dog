@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FiChevronLeft, FiChevronRight, FiRefreshCw, FiSearch, FiX } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiEdit2, FiRefreshCw, FiSearch, FiTrash2, FiX } from "react-icons/fi";
 import { AppDispatch, RootState } from "../../store/store";
-import { fetchAdminRegistrations } from "../../redux/registrationAdminSlice";
+import { deleteAdminRegistration, fetchAdminRegistration, fetchAdminRegistrations } from "../../redux/registrationAdminSlice";
+import useAdminModal from "../contexts/AdminModalContext";
+import AdminRegistrationEditModal from "./AdminRegistrationEditModal";
 import {
   AdminRegistrationKind,
+  AdminRegistrationRow,
   filterRegistrationRows,
   getRegistrationSources,
   registrationConfigs
@@ -15,10 +18,14 @@ import * as S from "@/assets/css/Style.styles";
 
 export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKind}) {
   const dispatch = useDispatch<AppDispatch>();
+  const {openAlertModal, openConfirmModal} = useAdminModal();
   const {rows, status, failedSources} = useSelector((state: RootState) => state.registrationAdmin[kind]);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [page, setPage] = useState(1);
+  const [editingRow, setEditingRow] = useState<AdminRegistrationRow | null>(null);
+  const [busyKey, setBusyKey] = useState<string | null>(null);
+  const busyRef = useRef(false);
   const id = useId();
   const config = registrationConfigs[kind];
   const sources = getRegistrationSources(kind);
@@ -34,6 +41,41 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
     return () => request.abort();
   }, [dispatch, kind]);
 
+  const handleEdit = async (row: AdminRegistrationRow) => {
+    if (busyRef.current) return;
+    busyRef.current = true;
+    setBusyKey(row.key);
+    const result = await dispatch(fetchAdminRegistration({kind, row}));
+    busyRef.current = false;
+    setBusyKey(null);
+    if (fetchAdminRegistration.fulfilled.match(result)) {
+      setEditingRow(result.payload);
+    } else {
+      openAlertModal(result.payload || "수정할 정보를 불러오지 못했습니다.", undefined, {variant: "error"});
+    };
+  };
+
+  const handleDelete = (row: AdminRegistrationRow) => {
+    if (busyRef.current) return;
+    openConfirmModal(
+      `"${row.cells[0]}" 항목을 삭제하시겠습니까?`,
+      async () => {
+        if (busyRef.current) return;
+        busyRef.current = true;
+        setBusyKey(row.key);
+        const result = await dispatch(deleteAdminRegistration({kind, row}));
+        busyRef.current = false;
+        setBusyKey(null);
+        if (deleteAdminRegistration.fulfilled.match(result)) {
+          openAlertModal("삭제가 완료되었습니다.", undefined, {variant: "success"});
+        } else {
+          openAlertModal(result.payload || "삭제하지 못했습니다. 다시 시도해 주세요.", undefined, {variant: "error"});
+        };
+      },
+      {confirmText: "예", cancelText: "아니오", description: "삭제한 항목은 복구할 수 없습니다."}
+    );
+  };
+
   return (
     <S.AdminListPanel aria-labelledby={`${id}-title`} aria-busy={isLoading}>
       <S.AdminListHeader>
@@ -47,7 +89,7 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
         </div>
         <S.AdminListRefresh
         type="button"
-        disabled={isLoading}
+        disabled={isLoading || busyKey !== null}
         onClick={() => {
           setPage(1);
           dispatch(fetchAdminRegistrations(kind));
@@ -114,12 +156,13 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
                   {column}
                 </th>
               ))}
+              <th scope="col">관리</th>
             </tr>
           </thead>
           <tbody>
             {isLoading || !visibleRows.length ? (
               <tr>
-                <S.AdminListEmpty colSpan={config.columns.length}>
+                <S.AdminListEmpty colSpan={config.columns.length + 1}>
                   {isLoading
                     ? "등록 목록을 불러오는 중입니다."
                     : allFailed
@@ -135,6 +178,27 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
                   {row.cells.map((cell, index) => (
                     <td key={config.columns[index]}>{cell}</td>
                   ))}
+                  <td>
+                    <S.AdminListActions>
+                      <S.AdminListActionButton
+                      type="button"
+                      aria-label={`${row.cells[0]} 수정`}
+                      disabled={busyKey !== null}
+                      onClick={() => handleEdit(row)}>
+                        <FiEdit2 aria-hidden="true"/>
+                        수정
+                      </S.AdminListActionButton>
+                      <S.AdminListActionButton
+                      type="button"
+                      aria-label={`${row.cells[0]} 삭제`}
+                      $danger
+                      disabled={busyKey !== null}
+                      onClick={() => handleDelete(row)}>
+                        <FiTrash2 aria-hidden="true"/>
+                        삭제
+                      </S.AdminListActionButton>
+                    </S.AdminListActions>
+                  </td>
                 </tr>
               ))
             )}
@@ -160,6 +224,9 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
           <FiChevronRight aria-hidden="true"/>
         </S.AdminListPageButton>
       </S.AdminListPagination>
+      {editingRow && (
+        <AdminRegistrationEditModal key={editingRow.key} kind={kind} row={editingRow} onClose={() => setEditingRow(null)}/>
+      )}
     </S.AdminListPanel>
   );
 };

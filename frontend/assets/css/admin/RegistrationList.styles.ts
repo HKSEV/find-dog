@@ -180,3 +180,25 @@ export const AdminListPageButton = styled(AdminListRefresh)`
   width: 34px;
   padding: 6px;
 `;
+
+export const AdminListActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+`;
+
+export const AdminListActionButton = styled(AdminSettingSecondaryButton)<{$danger?: boolean}>`
+  min-height: 34px;
+  padding: 6px 10px;
+  color: ${({$danger}) => ($danger ? adminColors.danger : adminColors.primaryText)};
+
+  &:hover:not(:disabled) {
+    background-color: ${({$danger}) => ($danger ? adminColors.dangerSoft : adminColors.primarySoft)};
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+`;

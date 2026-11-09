@@ -12,6 +12,8 @@ export const AdminShellWrapper = styled.div`
   display: flex;
   width: 100%;
   height: 100vh;
+  height: 100dvh;
+  min-height: 0;
   overflow: hidden;
 `;
 
@@ -21,17 +23,22 @@ export const AdminShellContentWrapper = styled.div`
   flex: 1;
   width: 0;
   min-width: 0;
-  overflow-x: hidden;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
   /* 밝은 블루그레이 배경 */
   background-color: ${coolGray[50]};
 `;
 
 export const AdminShellMainContent = styled.div`
-  flex: 1 0 auto;
+  flex: 1;
   width: 100%;
   min-width: 0;
-  /* 내용물의 크기를 기본으로 잡되(auto), 화면이 좁아져도 원래 크기보다 줄어들지는 말고(0), 
-     만약 화면에 빈 공간이 남는다면 남는 여백을 네가 전부 채워라(1) */
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
 `;
 
 export const AdminShellContainerFluid = styled.div`

@@ -22,6 +22,8 @@ export const adminColors = {
   primaryHover: "#295E9F",
   primarySoft: "#EAF3FF",
   primaryText: "#2E67AF",
+  danger: "#C43D4D",
+  dangerSoft: "#FFF1F3",
   onPrimary: "#FFFFFF",
   header: "#F8FBFF",
   sidebar: "#245181",

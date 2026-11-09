@@ -28,6 +28,65 @@ const initialState: Record<AdminRegistrationKind, RegistrationListState> = {
   shelter: createListState()
 };
 
+interface RegistrationTarget {
+  kind: AdminRegistrationKind;
+  row: AdminRegistrationRow;
+}
+
+const registrationEndpoint = (row: AdminRegistrationRow) => `/api/admin/registrations/${row.source}/${row.id}`;
+
+const registrationError = (error: unknown) => {
+  if (axios.isAxiosError<string | {message?: string}>(error)) {
+    if (error.response?.status === 401) return "관리자로 다시 로그인해 주세요.";
+    const data = error.response?.data;
+    if (typeof data === "string" && data) return data;
+    if (data && typeof data === "object" && data.message) return data.message;
+  };
+  return "요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.";
+};
+
+export const fetchAdminRegistration = createAsyncThunk(
+  "registrationAdmin/fetchOne",
+  async ({kind, row}: RegistrationTarget, {rejectWithValue, signal}) => {
+    try {
+      const response = await axios.get<unknown>(registrationEndpoint(row), {withCredentials: true, timeout: 15000, signal});
+      return createRegistrationRows(kind, row.source, [response.data])[0];
+    } catch (error: unknown) {
+      return rejectWithValue(registrationError(error));
+    }
+  }
+);
+
+export const updateAdminRegistration = createAsyncThunk(
+  "registrationAdmin/update",
+  async (
+    {kind, row, values, imageFile}: RegistrationTarget & {values: Record<string, string>; imageFile: File | null},
+    {rejectWithValue}
+  ) => {
+    try {
+      const data = new FormData();
+      Object.entries(values).forEach(([key, value]) => data.append(key, value));
+      if (imageFile) data.append("imageFile", imageFile);
+      const response = await axios.put<unknown>(registrationEndpoint(row), data, {withCredentials: true, timeout: 30000});
+      return createRegistrationRows(kind, row.source, [response.data])[0];
+    } catch (error: unknown) {
+      return rejectWithValue(registrationError(error));
+    }
+  }
+);
+
+export const deleteAdminRegistration = createAsyncThunk(
+  "registrationAdmin/delete",
+  async ({row}: RegistrationTarget, {rejectWithValue}) => {
+    try {
+      await axios.delete(registrationEndpoint(row), {withCredentials: true, timeout: 15000});
+      return row.key;
+    } catch (error: unknown) {
+      return rejectWithValue(registrationError(error));
+    }
+  }
+);
+
 export const fetchAdminRegistrations = createAsyncThunk(
   "registrationAdmin/fetch",
   async (kind: AdminRegistrationKind, {signal}) => {
@@ -56,6 +115,20 @@ const registrationAdminSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(logoutAdmin.fulfilled, () => initialState)
+      .addCase(updateAdminRegistration.fulfilled, (state, action) => {
+        const list = state[action.meta.arg.kind];
+        const index = list.rows.findIndex(({key}) => key === action.payload.key);
+        if (index !== -1) list.rows[index] = action.payload;
+        list.rows.sort((a, b) => b.timestamp - a.timestamp || b.id - a.id);
+        list.currentRequestId = null;
+        list.status = "succeeded";
+      })
+      .addCase(deleteAdminRegistration.fulfilled, (state, action) => {
+        const list = state[action.meta.arg.kind];
+        list.rows = list.rows.filter(({key}) => key !== action.payload);
+        list.currentRequestId = null;
+        list.status = "succeeded";
+      })
       .addCase(fetchAdminRegistrations.pending, (state, action) => {
         const list = state[action.meta.arg];
         list.status = "loading";

@@ -5,6 +5,8 @@ export type AdminRegistrationKind = "recommended" | "campaign" | "integrate" | "
 export interface AdminRegistrationRow {
   key: string;
   id: number;
+  source: DashboardSource;
+  record: Record<string, unknown>;
   cells: string[];
   category: string;
   searchText: string;
@@ -111,6 +113,8 @@ export const createRegistrationRows = (
     return {
       key: `${source}-${record.id}`,
       id: Number(record.id),
+      source,
+      record,
       cells,
       category,
       searchText: normalizeAdminSearch(cells.join(" ")),

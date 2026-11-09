@@ -9,6 +9,7 @@ export * from "./Layout.styles";
 export * from "./Pick.styles";
 export * from "./Profile.styles";
 export * from "./RegistrationList.styles";
+export * from "./RegistrationEditor.styles";
 export * from "./Sidebar.styles";
 export * from "./SidebarContent.styles";
 export * from "./Topbar.styles";
