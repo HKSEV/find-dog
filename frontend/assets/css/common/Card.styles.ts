@@ -27,7 +27,7 @@ export const CardTitle = styled.p`
 
 export const CardDesc = styled.p`
   font-size: 11px;
-  color: #6c757d;
+  color: #6C757D;
   margin: 0;
   ${Ohidden}${Ellipsis}
 `;
@@ -74,7 +74,7 @@ export const MenuCardBox = styled.div`
   flex: 1;
   ${FlexColumn};
   align-items: center;
-  background-color: #fff7ed;
+  background-color: #FFF7ED;
   padding: 20px 0;
   border-radius: 12px;
   cursor: pointer;
@@ -90,7 +90,7 @@ export const AnimalCard = styled.div`
   max-width: 100% !important;
   min-width: 0 !important;
   flex-shrink: 1 !important; /* 💡 0으로 고정된 것을 풀어줌 */
-  background-color: #fff !important;
+  background-color: #FFF !important;
   border-radius: 12px !important;
   padding: 14px !important;
   box-sizing: border-box !important;
@@ -105,12 +105,12 @@ export const RecommendCard = styled.div`
 export const CardHeader = styled.div`
   padding: 0.75rem 1.25rem;
   margin-bottom: 0;
-  background-color: #f8f9fc;
-  border-bottom: 1px solid #e3e6f0;
+  background-color: #F8F9FC;
+  border-bottom: 1px solid #E3E6F0;
   h6 {
     margin: 0;
     font-weight: bold;
-    color: #4e73df;
+    color: #4E73DF;
   }
 `;
 
@@ -120,11 +120,11 @@ export const StatCard = styled.div<{$borderColor?: string}>`
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #fff;
+  background-color: #FFF;
   background-clip: border-box;
-  border: 1px solid #e3e6f0;
+  border: 1px solid #E3E6F0;
   border-radius: 0.35rem;
-  border-left: 0.25rem solid ${(props) => props.$borderColor || "#e3e6f0"};
+  border-left: 0.25rem solid ${(props) => props.$borderColor || "#E3E6F0"};
   box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
   height: 100%;
   padding: 0.5rem 0;

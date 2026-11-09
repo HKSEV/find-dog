@@ -16,7 +16,7 @@ export const ContentWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   overflow-x: hidden;
-  /* 기존 #f8f9fc 대신 쿨그레이 팔레트의 가장 밝은 배경색 적용 */
+  /* 기존 #F8F9FC 대신 쿨그레이 팔레트의 가장 밝은 배경색 적용 */
   background-color: ${coolGray[50]};
 `;
 
@@ -59,7 +59,7 @@ export const SidebarBrand = styled.div`
   justify-content: center;
   font-size: 1.2rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #FFFFFF;
   letter-spacing: 0.05rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
@@ -73,7 +73,7 @@ export const NavItem = styled.li<{$active?: boolean}>`
     display: flex;
     align-items: center;
     padding: 12px 16px;
-    color: ${(props) => (props.$active ? "#ffffff" : coolGray[400])};
+    color: ${(props) => (props.$active ? "#FFFFFF" : coolGray[400])};
     font-weight: ${(props) => (props.$active ? "700" : "600")};
     font-size: 0.85rem;
     border-radius: 6px;
@@ -82,7 +82,7 @@ export const NavItem = styled.li<{$active?: boolean}>`
     background-color: ${(props) => (props.$active ? coolGray[800] : "transparent")};
 
     &:hover {
-      color: #ffffff;
+      color: #FFFFFF;
       background-color: ${coolGray[800]}; /* 호버 시 강조된 다크 쿨그레이 */
     }
 
@@ -96,7 +96,7 @@ export const NavItem = styled.li<{$active?: boolean}>`
 // 상단 네비게이션 바 (.topbar 대체)
 export const Topbar = styled.nav`
   height: 70px;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: space-between;

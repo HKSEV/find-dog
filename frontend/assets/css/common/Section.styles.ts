@@ -3,7 +3,7 @@ import { FlexColumn, Fw600, MainTitleColor, W100 } from "./Common.styles";
 
 export const Section = styled.section<{$bgLight?: boolean}>`
   padding: 16px;
-  background-color: ${(props) => (props.$bgLight ? "#f8f9fa" : "#fff")};
+  background-color: ${(props) => (props.$bgLight ? "#F8F9FA" : "#FFF")};
   margin-top: ${(props) => (props.$bgLight ? "8px" : "0")};
 `;
 
@@ -16,7 +16,7 @@ export const SectionTitle = styled.h3`
 `;
 
 export const RecommendSection = styled.section`
-  background-color: #fff;
+  background-color: #FFF;
   padding: 25px 0 25px 20px;
 `;
 
@@ -24,7 +24,7 @@ export const RecommendSection = styled.section`
 export const ListSection = styled.section`
   ${FlexColumn};
   ${W100};
-  background-color: #f4f5f7;
+  background-color: #F4F5F7;
   gap: 8px;
   padding: 12px;
   box-sizing: border-box;

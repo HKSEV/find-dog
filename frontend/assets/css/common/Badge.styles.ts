@@ -6,7 +6,7 @@ interface StatusProps {
 }
 
 export const StatusBadge = styled.span<StatusProps>`
-  background-color: ${(props) => (props.status === "실종" ? "#ff4d4f" : "#52c41a")};
+  background-color: ${(props) => (props.status === "실종" ? "#FF4D4F" : "#52C41A")};
   ${ColorWhite}${Fw700}
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
@@ -27,15 +27,15 @@ export const Badge = styled.span<{$type?: "status" | "female" | "male" | "unknow
   ${({$type}) => {
     switch ($type) {
       case "status":
-        return "color: #555; border-color: #ccc; background-color: #fff;";
+        return "color: #555; border-color: #CCC; background-color: #FFF;";
       case "female":
-        return "color: #ff6b6b; border-color: #ff6b6b; background-color: #fff;";
+        return "color: #FF6B6B; border-color: #FF6B6B; background-color: #FFF;";
       case "male":
-        return "color: #4a90e2; border-color: #4a90e2; background-color: #fff;";
+        return "color: #4A90E2; border-color: #4A90E2; background-color: #FFF;";
       case "unknown":
-        return "color: #555; border-color: #ccc; background-color: #fff;";
+        return "color: #555; border-color: #CCC; background-color: #FFF;";
       default:
-        return "color: #555; border-color: #ccc; background-color: #fff;";
+        return "color: #555; border-color: #CCC; background-color: #FFF;";
     }
   }}
 `;

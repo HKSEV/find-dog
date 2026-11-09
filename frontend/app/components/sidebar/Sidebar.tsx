@@ -5,17 +5,7 @@ import React, { useState } from "react";
 import * as S from "../../../assets/css/admin/Sidebar.styled";
 import AdminLogoIcon from "../../components/AdminLogoIcon";
 import * as I from "@/assets/css/admin/AdminIcons.styles";
-import styled from "styled-components";
-
-const BrandText = styled(S.BrandText)`
-  margin-left: 1rem !important;
-  margin-right: 1rem !important;
-`;
-
-const BrandDivider = styled(S.Divider)`
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-`;
+import { BrandText, BrandDivider } from "@/assets/css/admin/SidebarContent.styles";
 
 export const Sidebar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);

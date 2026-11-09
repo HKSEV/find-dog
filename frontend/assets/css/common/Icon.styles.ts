@@ -34,7 +34,7 @@ export const IconCircle = styled.div`
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: #f8f0e5;
+  background-color: #F8F0E5;
   ${FlexCenter};
 `;
 
@@ -42,12 +42,12 @@ export const RegionCircle = styled.div`
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  border: 1px solid #fdfbef;
-  background-color: #fdfbef;
+  border: 1px solid #FDFBEF;
+  background-color: #FDFBEF;
   ${FlexCenter};
   flex-shrink: 0;
   span {
     font-size: 12px;
-    color: #6a695c;
+    color: #6A695C;
   }
 `;

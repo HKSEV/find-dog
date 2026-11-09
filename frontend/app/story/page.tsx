@@ -1,8 +1,6 @@
 "use client";
 
-import Image from "next/image";
-
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
@@ -11,276 +9,42 @@ import * as S from "@/assets/css/style.styles";
 
 // MUI 아이콘
 import { NotificationsOutlined as NotificationsIcon } from "@mui/icons-material";
-import { Plus, MessageSquare, Share2, Eye } from "lucide-react";
+import { MessageSquare, Share2, Eye } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import styled from "styled-components";
-
-const StorySubTabs = styled.div`
-  && {
-    display: flex;
-    gap: 16px;
-    padding: 12px 16px;
-    background-color: #fff;
-    font-size: 14px;
-    font-weight: bold;
-    border-bottom: 1px solid #f1f3f5;
-  }
-`;
-
-const StorySubTab = styled.span<{
-  $color?: React.CSSProperties["color"];
-  $borderBottom?: React.CSSProperties["borderBottom"];
-}>`
-  && {
-    cursor: pointer;
-    color: ${({$color}) => $color};
-    border-bottom: ${({$borderBottom}) => $borderBottom};
-    padding-bottom: 4px;
-  }
-`;
-
-const StoryFilters = styled(S.FilterContainer)`
-  && {
-    border-bottom: none;
-    padding-bottom: 8px;
-  }
-`;
-
-const ViewOptions = styled.div`
-  && {
-    margin-left: auto;
-    display: flex;
-    gap: 6px;
-    color: #888;
-    cursor: pointer;
-  }
-`;
-
-const GridViewIcon = styled.span`
-  && {
-    font-size: 18px;
-  }
-`;
-
-const StoryAlert = styled(S.AlertBanner)`
-  && {
-    margin-top: 4px;
-    margin-bottom: 8px;
-  }
-`;
-
-const StoryList = styled.div`
-  && {
-    padding-bottom: 30px;
-  }
-`;
-
-const LoadingMessage = styled.div`
-  && {
-    text-align: center;
-    padding: 40px;
-    color: #888;
-  }
-`;
-
-const StoryCard = styled.div`
-  && {
-    background-color: #fff;
-    border-bottom: 8px solid #f8f9fa;
-    padding: 16px;
-  }
-`;
-
-const FeaturedCard = styled.div`
-  && {
-    background-color: #fff5eb;
-    border-radius: 12px;
-    padding: 12px;
-    border: 1px solid #ffe8d6;
-  }
-`;
-
-const FeaturedHeader = styled.div`
-  && {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-`;
-
-const FeaturedBadge = styled.span`
-  && {
-    background-color: #ff7a00;
-    color: #fff;
-    font-size: 11px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 4px;
-  }
-`;
-
-const FeaturedTime = styled.span`
-  && {
-    font-size: 11px;
-    color: #888;
-  }
-`;
-
-const FeaturedContent = styled.div`
-  && {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
-`;
-
-const FeaturedImage = styled(Image)`
-  && {
-    width: 70px;
-    height: 70px;
-    border-radius: 8px;
-    object-fit: cover;
-  }
-`;
-
-const FeaturedTitle = styled.div`
-  && {
-    font-size: 14px;
-    font-weight: bold;
-    color: #222;
-    margin-bottom: 4px;
-  }
-`;
-
-const FeaturedDescription = styled.div`
-  && {
-    font-size: 12px;
-    color: #666;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-`;
-
-const FeaturedStats = styled.div`
-  && {
-    font-size: 11px;
-    color: #888;
-    margin-top: 6px;
-  }
-`;
-
-const StoryHeader = styled.div`
-  && {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-`;
-
-const AuthorDetails = styled.div`
-  && {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-`;
-
-const AuthorAvatar = styled.div`
-  && {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: #e4e5e7;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    color: #555;
-  }
-`;
-
-const AuthorName = styled.div`
-  && {
-    font-size: 13px;
-    font-weight: bold;
-    color: #333;
-  }
-`;
-
-const AuthorTime = styled.div`
-  && {
-    font-size: 10px;
-    color: #aaa;
-  }
-`;
-
-const PostMenu = styled.span`
-  && {
-    font-size: 11px;
-    color: #999;
-  }
-`;
-
-const StoryTitle = styled.div`
-  && {
-    font-size: 15px;
-    font-weight: bold;
-    color: #111;
-    margin-bottom: 6px;
-  }
-`;
-
-const StoryDescription = styled.div`
-  && {
-    font-size: 13px;
-    color: #444;
-    line-height: 1.4;
-    margin-bottom: 12px;
-  }
-`;
-
-const StoryImages = styled.div`
-  && {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
-    overflow-x: auto;
-  }
-`;
-
-const StoryImage = styled(Image)`
-  && {
-    width: 90px;
-    height: 90px;
-    border-radius: 8px;
-    object-fit: cover;
-  }
-`;
-
-const StoryActions = styled.div`
-  && {
-    display: flex;
-    gap: 16px;
-    font-size: 12px;
-    color: #888;
-    border-top: 1px solid #f1f3f5;
-    padding-top: 10px;
-  }
-`;
-
-const CommentCount = styled.div`
-  && {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-`;
+import {
+  StorySubTabs,
+  StorySubTab,
+  StoryFilters,
+  ViewOptions,
+  GridViewIcon,
+  StoryAlert,
+  StoryList,
+  LoadingMessage,
+  StoryCard,
+  FeaturedCard,
+  FeaturedHeader,
+  FeaturedBadge,
+  FeaturedTime,
+  FeaturedContent,
+  FeaturedImage,
+  FeaturedTitle,
+  FeaturedDescription,
+  FeaturedStats,
+  StoryHeader,
+  AuthorDetails,
+  AuthorAvatar,
+  AuthorName,
+  AuthorTime,
+  PostMenu,
+  StoryTitle,
+  StoryDescription,
+  StoryImages,
+  StoryImage,
+  StoryActions,
+  CommentCount,
+  WriteIcon
+} from "@/assets/css/client/Story.styles";
 
 export default function StoryPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -349,11 +113,7 @@ export default function StoryPage() {
         {/* 2차 서브 탭 메뉴 */}
         <StorySubTabs>
           {["전체", "입양후기", "일상공유", "고민상담"].map((sub) => (
-            <StorySubTab
-            key={sub}
-            onClick={() => dispatch(setSubTab(sub))}
-            $color={subTab === sub ? "#ff7a00" : "#888"}
-            $borderBottom={subTab === sub ? "2px solid #ff7a00" : "none"}>
+            <StorySubTab key={sub} onClick={() => dispatch(setSubTab(sub))} $active={subTab === sub}>
               {sub}
             </StorySubTab>
           ))}
@@ -475,7 +235,7 @@ export default function StoryPage() {
 
         {/* 글쓰기 플로팅 버튼 */}
         <S.FloatingWriteButton>
-          <Plus size={20} color="#fff"/>
+          <WriteIcon/>
           <span>글쓰기</span>
         </S.FloatingWriteButton>
 

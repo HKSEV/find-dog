@@ -18,7 +18,7 @@ interface ToggleProps {
 export const ToggleSwitch = styled.div<ToggleProps>`
   width: 2.75rem;
   height: 1.5rem;
-  background-color: ${(props) => (props.active ? "#ff6b00" : "#e4e5e7")};
+  background-color: ${(props) => (props.active ? "#FF6B00" : "#E4E5E7")};
   border-radius: 0.75rem;
   ${Relative}
   ${Pointer}${TransitionAll}
@@ -44,7 +44,7 @@ export const StatLabel = styled.span<{$color: string}>`
 export const FormControl = styled.input`
   ${W100};
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #CCC;
   border-radius: 15px;
 `;
 export const LabelGroup = styled.div`
@@ -64,7 +64,7 @@ export const Label = styled.label`
 export const PhotoUpload = styled.div`
   width: 100px;
   height: 100px;
-  background-color: #eee;
+  background-color: #EEE;
   border-radius: 10px;
   margin: 0 auto;
   ${FlexCenter};
@@ -76,9 +76,9 @@ export const FilterSelect = styled.select`
   height: 38px;
   line-height: 36px; /* border 두께를 뺀 높이와 맞춰 수직 중앙 정렬 */
 
-  border: 1px solid #e0e0e0;
+  border: 1px solid #E0E0E0;
   border-radius: 20px;
-  background-color: #fff;
+  background-color: #FFF;
   font-size: 0.9rem;
   color: #333;
   outline: none;
@@ -109,7 +109,7 @@ export const FormGroup = styled.div`
 `;
 export const Input = styled.input`
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #CCC;
   border-radius: 4px;
   font-size: 14px;
   ${W100};
@@ -145,7 +145,7 @@ export const TextArea = styled.textarea`
   width: 100%;
   height: 80px;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #CCC;
   border-radius: 4px;
   resize: none;
 `;

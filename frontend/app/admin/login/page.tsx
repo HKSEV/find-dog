@@ -9,10 +9,12 @@ import { setAdminEmail, setAdminPassword, submitAdminLogin } from "../../redux/a
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { FaUser } from "react-icons/fa";
 import * as S from "@/assets/css/style.styles";
+import useAdminModal from "@/app/components/contexts/AdminModalContext";
 
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
+  const {openAlertModal} = useAdminModal();
 
   // Redux Store 상태 조회
   const {email, password, isLoading} = useSelector((state: RootState) => state.adminLogin);
@@ -23,7 +25,7 @@ export default function LoginPage() {
     e.preventDefault();
 
     if (!email || !password) {
-      alert("이메일과 비밀번호를 모두 입력해 주세요");
+      openAlertModal("이메일과 비밀번호를 모두 입력해 주세요", undefined, {variant: "error"});
       return;
     };
 
@@ -31,10 +33,9 @@ export default function LoginPage() {
 
     if (submitAdminLogin.fulfilled.match(resultAction)) {
       const data = resultAction.payload;
-      alert(`${data.name}님, ${data.message}`);
-      router.push("/admin");
+      openAlertModal(`${data.name}님, ${data.message}`, () => router.push("/admin"), {variant: "success"});
     } else {
-      alert(resultAction.payload || "로그인 중 오류가 발생했습니다");
+      openAlertModal(resultAction.payload || "로그인 중 오류가 발생했습니다", undefined, {variant: "error"});
     };
   };
 

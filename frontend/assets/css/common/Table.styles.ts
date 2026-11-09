@@ -8,8 +8,8 @@ export const TList = styled.table`
 
   thead {
     tr {
-      background-color: #f5f5f5;
-      border-bottom: 2px solid #ddd;
+      background-color: #F5F5F5;
+      border-bottom: 2px solid #DDD;
       text-align: left;
       th {
         padding: 12px 8px;
@@ -19,7 +19,7 @@ export const TList = styled.table`
 
   tbody {
     tr {
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid #EEE;
       td {
         padding: 12px 8px;
         font-size: 14px;
@@ -39,15 +39,15 @@ export const StyledTable = styled.table`
   td {
     padding: 0.75rem;
     vertical-align: top;
-    border: 1px solid #e3e6f0;
+    border: 1px solid #E3E6F0;
   }
 
   th {
-    background-color: #f8f9fc;
+    background-color: #F8F9FC;
     text-align: left;
   }
 
   tbody tr:hover {
-    background-color: #f1f3f6;
+    background-color: #F1F3F6;
   }
 `;

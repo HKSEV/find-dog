@@ -6,7 +6,7 @@ export const AlertInfo = styled.div`
   gap: 12px;
 
   .icon-circle {
-    background-color: #e9ecef;
+    background-color: #E9ECEF;
     width: 38px;
     height: 38px;
     border-radius: 50%;

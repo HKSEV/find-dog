@@ -1,114 +1,30 @@
 "use client";
 
-import Image from "next/image";
-
 import { useRouter } from "next/navigation";
 import React, { useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { setStep, updateFormField, setAllAgreed, submitSignup } from "../redux/signupSlice";
-import styled, { keyframes } from "styled-components";
+
 import * as S from "@/assets/css/style.styles";
 
 import DaumPostcodeEmbed, { Address } from "react-daum-postcode";
 import Header from "../components/Header";
 import { CustomAlert } from "../components/CustomAlert";
-
-const ProfilePreview = styled(Image)`
-  && {
-    width: auto;
-    height: auto;
-  }
-`;
-
-const PhotoHint = styled(S.PhotoUploadBottomText)`
-  margin-top: 1rem !important;
-`;
-
-const HiddenFileInput = styled.input`
-  && {
-    display: none;
-  }
-`;
-
-const SignupSectionHeading = styled(S.AlignItemsCenter)`
-  margin-top: 3rem !important;
-  margin-bottom: 1.5rem !important;
-`;
-
-const PhoneFieldRow = styled(S.AlignItemsCenter)`
-  && {
-    gap: 8px;
-  }
-`;
-// 💡 커스텀 알럿 임포트
-
-// ==========================================
-// 💡 1. 애니메이션 Keyframes 및 래퍼 정의
-// ==========================================
-const slideDown = keyframes`
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-const fadeUp = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-const AnimItem = styled.div<{$delay: number; $isSlideDown?: boolean}>`
-  opacity: 0;
-  animation: ${(props) => (props.$isSlideDown ? slideDown : fadeUp)} 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: ${(props) => props.$delay}s;
-  width: 100%;
-`;
-
-const SignupField = styled(AnimItem)`
-  margin-bottom: 1.5rem !important;
-`;
-
-const FinalSignupField = styled(AnimItem)`
-  margin-bottom: 3rem !important;
-`;
-
-// ==========================================
-// 💡 2. 플로팅 라벨(애니메이션 인풋) 스타일 정의
-// ==========================================
-const InputWrapper = styled.div`
-  position: relative;
-  width: 100%;
-  flex: 1;
-`;
-
-const FloatingLabel = styled.label<{$isActive: boolean}>`
-  position: absolute;
-  left: 12px;
-  top: ${(props) => (props.$isActive ? "0" : "50%")};
-  transform: translateY(-50%);
-  background-color: #ffffff;
-  padding: 0 4px;
-  font-size: ${(props) => (props.$isActive ? "12px" : "15px")};
-  color: ${(props) => (props.$isActive ? "#8a4e4b" : "#999")};
-  transition: all 0.2s ease-in-out;
-  pointer-events: none;
-  z-index: 2;
-`;
-
-const FloatingInput = styled(S.FormControl)`
-  width: 100%;
-  padding: 14px 15px;
-  background-color: transparent;
-
-  &::placeholder {
-    color: transparent;
-  }
-
-  &:focus {
-    outline: none !important;
-    box-shadow: none !important;
-    border: 1px solid #8a4e4b !important;
-  }
-`;
+import {
+  ProfilePreview,
+  PhotoHint,
+  HiddenFileInput,
+  SignupSectionHeading,
+  PhoneFieldRow,
+  AnimItem,
+  SignupField,
+  FinalSignupField,
+  InputWrapper,
+  FloatingLabel,
+  FloatingInput,
+  AuxiliaryButton
+} from "@/assets/css/client/Signup.styles";
 
 interface AnimatedInputProps {
   type?: React.HTMLInputTypeAttribute;
@@ -426,9 +342,7 @@ export default function SignupPage() {
                 label="이메일"
                 value={formData.email}
                 onChange={handleChange}/>
-                <S.BaseBtn onClick={handleCheckEmail} $variant="primary" $mainColor="#ccc" $width="80px">
-                  중복확인
-                </S.BaseBtn>
+                <AuxiliaryButton onClick={handleCheckEmail}>중복확인</AuxiliaryButton>
               </PhoneFieldRow>
             </SignupField>
 
@@ -440,9 +354,7 @@ export default function SignupPage() {
                 label="닉네임"
                 value={formData.nickname}
                 onChange={handleChange}/>
-                <S.BaseBtn onClick={handleCheckNickname} $variant="primary" $mainColor="#ccc" $width="80px">
-                  중복확인
-                </S.BaseBtn>
+                <AuxiliaryButton onClick={handleCheckNickname}>중복확인</AuxiliaryButton>
               </PhoneFieldRow>
             </SignupField>
 
@@ -473,9 +385,7 @@ export default function SignupPage() {
                 value={formData.address}
                 readOnly
                 onClick={() => setIsOpenPostcode(true)}/>
-                <S.BaseBtn onClick={() => setIsOpenPostcode(true)} $variant="primary" $mainColor="#ccc" $width="80px">
-                  주소검색
-                </S.BaseBtn>
+                <AuxiliaryButton onClick={() => setIsOpenPostcode(true)}>주소검색</AuxiliaryButton>
               </PhoneFieldRow>
             </SignupField>
 

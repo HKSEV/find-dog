@@ -1,12 +1,5 @@
 "use client";
-import React from "react";
-import styled from "styled-components";
-
-const LogoSvg = styled.svg<{$cursor?: React.CSSProperties["cursor"]}>`
-  && {
-    cursor: ${({$cursor}) => $cursor};
-  }
-`;
+import { LogoSvg } from "@/assets/css/common/Logo.styles";
 
 interface LogoProps {
   width?: number | string;

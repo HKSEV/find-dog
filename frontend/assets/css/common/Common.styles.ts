@@ -1,22 +1,22 @@
 import { css } from "styled-components";
 
 export const MainBg = css`
-  background: #f8d6cb;
+  background: #F8D6CB;
 `;
 export const MainBottomBg = css`
-  background: #f4edea;
+  background: #F4EDEA;
 `;
 export const MainColor = css`
   color: #665251;
 `;
 export const MainDarkColor = css`
-  color: #8c524d;
+  color: #8C524D;
 `;
 export const MainTitleColor = css`
   color: #665251;
 `;
 export const IconColor = css`
-  color: #b5a196;
+  color: #B5A196;
 `;
 
 export const FlexCenter = css`
@@ -74,7 +74,7 @@ export const Circle = css`
 `;
 
 export const MainWhite = css`
-  background-color: #f1f3f5;
+  background-color: #F1F3F5;
 `;
 export const Nowrap = css`
   white-space: nowrap;
@@ -144,11 +144,11 @@ export const Grid = css`
 `;
 
 export const BgWhite = css`
-  background-color: #fff;
+  background-color: #FFF;
 `;
 
 export const ColorWhite = css`
-  color: #fff;
+  color: #FFF;
 `;
 
 export const WebkitBox = css`

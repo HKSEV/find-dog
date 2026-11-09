@@ -7,60 +7,24 @@ import { fetchAnimals, fetchCampaigns, fetchHomeExtras, setActiveHashtag } from 
 
 import SplashScreen from "./components/SplashScreen"; // 💡 스플래시 컴포넌트 임포트
 
-import { PlayArrow as PlayArrowIcon } from "@mui/icons-material";
-
 import * as S from "@/assets/css/style.styles";
-import { HomeGrid } from "@/assets/css/client/Home.styles";
+import {
+  HomeGrid,
+  IntroductionIcon,
+  AdoptionIcon,
+  DonationIcon,
+  SupportIcon,
+  StoreIcon,
+  CampaignPlayIcon,
+  RescueLabel,
+  AdoptionLabel,
+  EuthanasiaLabel
+} from "@/assets/css/client/Home.styles";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 import BannerCarousel from "./components/content/BannerCarousel";
 import ConnectsCarousel from "./components/content/ConnectCarousel";
-
-// 1. 필요한 MUI 아이콘들을 상단에 import 합니다.
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"; // 소개
-import VolunteerActivismOutlinedIcon from "@mui/icons-material/VolunteerActivismOutlined"; // 입양 캠페인 (손 위에 하트)
-import SavingsOutlinedIcon from "@mui/icons-material/SavingsOutlined"; // 포인기부 (저금통)
-import CardGiftcardOutlinedIcon from "@mui/icons-material/CardGiftcardOutlined"; // 지원/혜택 (선물상자)
-import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
-import styled from "styled-components";
-
-const IntroductionIcon = styled(InfoOutlinedIcon)`
-  && {
-    color: #b5a196;
-  }
-`;
-
-const AdoptionIcon = styled(VolunteerActivismOutlinedIcon)`
-  && {
-    color: #b5a196;
-  }
-`;
-
-const DonationIcon = styled(SavingsOutlinedIcon)`
-  && {
-    color: #b5a196;
-  }
-`;
-
-const SupportIcon = styled(CardGiftcardOutlinedIcon)`
-  && {
-    color: #b5a196;
-  }
-`;
-
-const StoreIcon = styled(StorefrontOutlinedIcon)`
-  && {
-    color: #b5a196;
-  }
-`;
-
-const CampaignPlayIcon = styled(PlayArrowIcon)`
-  && {
-    font-size: 18px;
-  }
-`;
-// 스토어 (상점)
 
 // 2. 렌더링할 메뉴 데이터를 객체 배열로 분리하여 정의합니다.
 const quickMenus = [
@@ -289,13 +253,13 @@ export default function HomePage() {
           </S.SectionHeader>
           <S.StatBox>
             <S.StatItem>
-              <S.StatLabel $color="#198754">구조</S.StatLabel>6마리
+              <RescueLabel>구조</RescueLabel>6마리
             </S.StatItem>
             <S.StatItem>
-              <S.StatLabel $color="#0d6efd">입양률</S.StatLabel>25.2%
+              <AdoptionLabel>입양률</AdoptionLabel>25.2%
             </S.StatItem>
             <S.StatItem>
-              <S.StatLabel $color="#dc3545">안락사율</S.StatLabel>11.9%
+              <EuthanasiaLabel>안락사율</EuthanasiaLabel>11.9%
             </S.StatItem>
           </S.StatBox>
         </S.Section>

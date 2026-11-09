@@ -7,7 +7,7 @@ export const TopbarContainer = styled.nav`
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5rem;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
 
   /* 💡 기존 SB Admin의 탁한 그림자(rgba 58,59,69) 대신 쿨그레이 기반의 부드러운 그림자로 교체 */
   box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
@@ -60,7 +60,7 @@ export const SearchInput = styled.input`
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   color: ${coolGray[700]};
-  background-color: #fff;
+  background-color: #FFF;
   border: 1px solid ${coolGray[300]};
   border-right: none; /* 💡 버튼과 매끄럽게 이어지도록 우측 테두리 제거 */
   border-top-left-radius: 6px;
@@ -87,7 +87,7 @@ export const InputGroupAppend = styled.div`
 // 4. 검색 버튼 (이미지의 <button class="btn btn-primary"> 역할)
 export const SearchButton = styled.button`
   background-color: ${coolGray[800]}; /* 다크 쿨그레이 메인 컬러 */
-  color: #fff;
+  color: #FFF;
   border: 1px solid ${coolGray[800]};
 
   /* 💡 인풋창과 맞닿는 왼쪽은 직각(0), 바깥쪽인 오른쪽은 둥글게(6px) 처리 */

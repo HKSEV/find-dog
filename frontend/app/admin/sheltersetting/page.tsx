@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
@@ -10,120 +8,31 @@ import { setImageInputType, updateShelterField, submitShelterAnimal } from "../.
 import { Layout } from "../../components/layout/Layout";
 import * as A from "@/assets/css/style.styles";
 import * as F from "@/assets/css/admin/AdminForm.styles";
-import styled from "styled-components";
-
-const PageTitle = styled.h1`
-  font-size: 1.75rem;
-  font-weight: 500;
-  line-height: 1.2;
-  margin-bottom: 0 !important;
-  color: #1e2939;
-`;
-
-const FormCard = styled(F.Card)`
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-  margin-bottom: 1.5rem !important;
-`;
-
-const FormCardHeader = styled(F.CardHeader)`
-  padding-top: 1rem !important;
-  padding-bottom: 1rem !important;
-`;
-
-const WarningCardTitle = styled.h6`
-  margin: 0 !important;
-  font-weight: 700 !important;
-  color: #ffc107 !important;
-`;
-
-const InsetFormGroup = styled.div`
-  margin-bottom: 1rem;
-  margin-bottom: 1.5rem !important;
-  padding: 1rem !important;
-  background-color: #f8f9fa !important;
-  border-radius: 0.25rem !important;
-`;
-
-const FieldLabel = styled.label`
-  font-weight: 700 !important;
-  color: #1e2939;
-`;
-
-const FieldRow = styled(F.Row)`
-  margin-bottom: 1rem !important;
-`;
-
-const FieldColumn = styled(F.Column)`
-  margin-bottom: 1rem;
-`;
-
-const EmphasizedLabel = styled.label`
-  font-weight: 700 !important;
-`;
-
-const FormDivider = styled.hr`
-  margin-top: 1.5rem !important;
-  margin-bottom: 1.5rem !important;
-`;
-
-const FormGroup = styled.div`
-  margin-bottom: 1rem;
-  margin-bottom: 1rem !important;
-`;
-
-const PrimaryLabel = styled.label`
-  font-weight: 700 !important;
-  color: #007bff !important;
-`;
-
-const ImageSourceOptions = styled.div`
-  display: flex !important;
-  gap: 1rem;
-  margin-bottom: 1rem !important;
-  margin-top: 0.5rem !important;
-`;
-
-const PreviewBox = styled.div`
-  margin-bottom: 1.5rem !important;
-  text-align: center !important;
-`;
-
-const ShelterPreviewImage = styled(Image)`
-  padding: 0.25rem;
-  background-color: #fff;
-  border: 1px solid #dee2e6;
-  border-radius: 0.25rem;
-  max-width: 100%;
-  height: auto;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
-  && {
-    width: auto;
-    height: auto;
-    max-height: 200px;
-  }
-`;
-
-const FormSection = styled.div`
-  margin-bottom: 1rem;
-  margin-bottom: 1.5rem !important;
-`;
-
-const SubmitButton = styled(F.Button)`
-  display: block;
-  width: 100%;
-  width: 100% !important;
-  font-weight: 700 !important;
-  padding: 1rem !important;
-  margin-top: 1.5rem !important;
-  color: #343a40 !important;
-`;
-
-const GuideBody = styled(F.CardBody)`
-  color: #1e2939;
-`;
+import useAdminModal from "@/app/components/contexts/AdminModalContext";
+import {
+  PageTitle,
+  FormCard,
+  FormCardHeader,
+  WarningCardTitle,
+  InsetFormGroup,
+  FieldLabel,
+  FieldRow,
+  FieldColumn,
+  EmphasizedLabel,
+  FormDivider,
+  FormGroup,
+  PrimaryLabel,
+  ImageSourceOptions,
+  PreviewBox,
+  ShelterPreviewImage,
+  FormSection,
+  SubmitButton,
+  GuideBody
+} from "@/assets/css/admin/ShelterSetting.styles";
 
 export default function ShelterAdmin() {
   const dispatch = useDispatch<AppDispatch>();
+  const {openAlertModal} = useAdminModal();
 
   // Redux Store 상태 조회
   const {imageInputType, formData, isLoading} = useSelector((state: RootState) => state.shelterAdmin);
@@ -149,10 +58,12 @@ export default function ShelterAdmin() {
     const resultAction = await dispatch(submitShelterAnimal({formData, imageFile}));
 
     if (submitShelterAnimal.fulfilled.match(resultAction)) {
-      alert("보호 동물이 성공적으로 등록되었습니다.");
-      setImageFile(null); // 등록 성공 시 파일 상태 초기화
+      // 알림을 확인한 뒤 업로드 파일 상태를 초기화합니다.
+      openAlertModal("보호 동물이 성공적으로 등록되었습니다.", () => setImageFile(null), {variant: "success"});
     } else {
-      alert(resultAction.payload || "서버 오류가 발생했습니다. 잠시후 다시 시도해 주세요");
+      openAlertModal(resultAction.payload || "서버 오류가 발생했습니다. 잠시후 다시 시도해 주세요", undefined, {
+        variant: "error"
+      });
     };
   };
 
@@ -294,10 +205,7 @@ export default function ShelterAdmin() {
                   required/>
                 </FormSection>
 
-                <SubmitButton
-                type="submit"
-                $variant="warning"
-                disabled={isLoading}>
+                <SubmitButton type="submit" $variant="warning" disabled={isLoading}>
                   {isLoading ? "등록 중..." : "보호 동물 등록하기"}
                 </SubmitButton>
               </form>

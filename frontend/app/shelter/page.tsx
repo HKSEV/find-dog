@@ -13,33 +13,8 @@ import Header from "@/app/components/Header";
 import Footer from "../components/Footer";
 
 //MUI
-import {
-  NotificationsOutlined as NotificationsIcon,
-  TuneOutlined as FilterIcon,
-  FmdGood as LocationIcon,
-  PlayCircleFilled as PlayIcon,
-  ChevronRight as ChevronRightIcon
-} from "@mui/icons-material";
-import styled from "styled-components";
-
-const FilterIconButton = styled(FilterIcon)`
-  && {
-    font-size: 20px;
-    color: #666;
-  }
-`;
-
-const MoreChevron = styled(ChevronRightIcon)`
-  && {
-    font-size: 18px;
-  }
-`;
-
-const LocationPin = styled(LocationIcon)`
-  && {
-    font-size: 16px;
-  }
-`;
+import { NotificationsOutlined as NotificationsIcon, PlayCircleFilled as PlayIcon } from "@mui/icons-material";
+import { FilterIconButton, MoreChevron, LocationPin } from "@/assets/css/client/Shelter.styles";
 
 export default function Shelter() {
   const dispatch = useDispatch<AppDispatch>();

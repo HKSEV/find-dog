@@ -1,9 +1,7 @@
 "use client";
 
-import Image from "next/image";
-
 import React from "react";
-import styled from "styled-components";
+
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import {
@@ -15,198 +13,50 @@ import {
 
 import { Layout } from "../../components/layout/Layout";
 // 💡 앞서 정의한 쿨그레이 믹스인 및 레이아웃 요소 임포트
-import { coolGray, adminInput, adminPrimaryBtn, adminOutlineBtn } from "@/assets/css/admin/Admin.styles";
 import { PageHeading, AdminDataCard } from "../../../assets/css/admin/layout.styled";
-
-const FormDivider = styled.hr<{$borderColor?: React.CSSProperties["borderColor"]}>`
-  && {
-    border-color: ${({$borderColor}) => $borderColor};
-    margin: 24px 0;
-  }
-`;
-
-const PreviewBox = styled.div`
-  && {
-    margin-bottom: 24px;
-    text-align: center;
-  }
-`;
-
-const AnimalPreviewImage = styled(Image)<{$border?: React.CSSProperties["border"]}>`
-  && {
-    width: auto;
-    height: auto;
-    max-height: 200px;
-    border-radius: 8px;
-    border: ${({$border}) => $border};
-  }
-`;
-
-// ==========================================
-// 💡 폼(Form) 전용 스타일드 컴포넌트 정의
-// ==========================================
-const GridWrap = styled.div`
-  display: grid;
-  grid-template-columns: 2fr 1fr; /* 좌측 폼 2, 우측 안내 1 비율 */
-  gap: 24px;
-  align-items: start;
-
-  @media (max-width: 992px) {
-    grid-template-columns: 1fr; /* 모바일/태블릿에선 1열 세로 배치 */
-  }
-`;
-
-const FormGroup = styled.div`
-  margin-bottom: 24px;
-`;
-
-const FormLabel = styled.label`
-  display: block;
-  font-weight: 700;
-  color: ${coolGray[700]};
-  margin-bottom: 8px;
-  font-size: 14px;
-`;
-
-const UrlLabel = styled(FormLabel)<{$color?: React.CSSProperties["color"]}>`
-  && {
-    color: ${({$color}) => $color};
-  }
-`;
-
-const FormInput = styled.input`
-  ${adminInput}
-`;
-
-const FormSelect = styled.select`
-  ${adminInput}
-  cursor: pointer;
-`;
-
-// 가로 분할을 위한 내부 그리드
-const InnerGridRow2 = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-`;
-
-const InnerGridRow3 = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-`;
-
-// 인풋창과 버튼이 붙어있는 구조 (URL 입력부)
-const InputGroup = styled.div`
-  display: flex;
-  width: 100%;
-
-  ${FormInput} {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-right: none; /* 겹치는 테두리 제거 */
-  }
-`;
-
-const FetchButton = styled.button`
-  ${adminOutlineBtn}
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  white-space: nowrap;
-  background-color: ${coolGray[50]};
-`;
-
-const SubmitButton = styled.button`
-  ${adminPrimaryBtn}
-  width: 100%;
-  padding: 14px;
-  font-size: 16px;
-  margin-top: 16px;
-`;
-
-// 라디오 버튼 그룹 스타일
-const RadioGroup = styled.div`
-  display: flex;
-  gap: 24px;
-  margin-top: 8px;
-`;
-
-const RadioLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  color: ${coolGray[700]};
-  font-weight: 500;
-
-  input[type="radio"] {
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 2px solid ${coolGray[400]};
-    border-radius: 50%;
-    margin: 0;
-    display: grid;
-    place-content: center;
-
-    &::before {
-      content: "";
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      transform: scale(0);
-      transition: 120ms transform ease-in-out;
-      background-color: ${coolGray[800]}; /* 체크 시 쿨그레이 색상 */
-    }
-
-    &:checked {
-      border-color: ${coolGray[800]};
-    }
-
-    &:checked::before {
-      transform: scale(1);
-    }
-  }
-`;
-
-const HelpText = styled.small`
-  display: block;
-  margin-top: 6px;
-  color: ${coolGray[500]};
-  font-size: 13px;
-`;
-
-const InfoText = styled.p`
-  color: ${coolGray[600]};
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 16px;
-
-  strong {
-    color: ${coolGray[800]};
-    font-weight: 700;
-  }
-`;
+import useAdminModal from "@/app/components/contexts/AdminModalContext";
+import {
+  FormDivider,
+  PreviewBox,
+  AnimalPreviewImage,
+  GridWrap,
+  FormGroup,
+  FormLabel,
+  UrlLabel,
+  FormInput,
+  FormSelect,
+  InnerGridRow2,
+  InnerGridRow3,
+  InputGroup,
+  FetchButton,
+  SubmitButton,
+  RadioGroup,
+  RadioLabel,
+  HelpText,
+  InfoText
+} from "@/assets/css/admin/Pick.styles";
 
 // ==========================================
 // 💡 메인 컴포넌트
 // ==========================================
 export default function RecommendedAnimalAdmin() {
   const dispatch = useDispatch<AppDispatch>();
+  const {openAlertModal} = useAdminModal();
 
   const {sourceType, formData, isParsing, isLoading} = useSelector((state: RootState) => state.recommendedAdmin);
 
   const handleParseUrl = async () => {
     if (!formData.sourceUrl) {
-      alert("SNS 주소를 먼저 입력해 주세요!");
+      openAlertModal("SNS 주소를 먼저 입력해 주세요!");
       return;
     };
     const resultAction = await dispatch(parseAnimalUrl({url: formData.sourceUrl, sourceType}));
     if (parseAnimalUrl.fulfilled.match(resultAction)) {
-      alert("데이터를 성공적으로 불러왔습니다! 빈칸이나 틀린 부분을 수정해 주세요.");
+      openAlertModal("데이터를 성공적으로 불러왔습니다! 빈칸이나 틀린 부분을 수정해 주세요.", undefined, {
+        variant: "success"
+      });
     } else {
-      alert("데이터를 파싱하는 과정에서 기본 예시 데이터가 적용되었습니다.");
+      openAlertModal("데이터를 파싱하는 과정에서 기본 예시 데이터가 적용되었습니다.");
     };
   };
 
@@ -220,9 +70,9 @@ export default function RecommendedAnimalAdmin() {
     const resultAction = await dispatch(submitRecommendedAnimal({sourceType, formData}));
 
     if (submitRecommendedAnimal.fulfilled.match(resultAction)) {
-      alert("추천 동물이 성공적으로 등록되었습니다!");
+      openAlertModal("추천 동물이 성공적으로 등록되었습니다!", undefined, {variant: "success"});
     } else {
-      alert(resultAction.payload || "등록에 실패했습니다. 다시 시도해 주세요.");
+      openAlertModal(resultAction.payload || "등록에 실패했습니다. 다시 시도해 주세요.", undefined, {variant: "error"});
     };
   };
 
@@ -268,12 +118,12 @@ export default function RecommendedAnimalAdmin() {
                   </RadioGroup>
                 </FormGroup>
 
-                <FormDivider $borderColor={coolGray[200]}/>
+                <FormDivider/>
 
                 {/* SNS 파싱 인풋 */}
                 {sourceType !== "DIRECT" && (
                   <FormGroup>
-                    <UrlLabel $color={coolGray[800]}>SNS 포스팅 URL 주소</UrlLabel>
+                    <UrlLabel>SNS 포스팅 URL 주소</UrlLabel>
                     <InputGroup>
                       <FormInput
                       type="url"
@@ -342,7 +192,6 @@ export default function RecommendedAnimalAdmin() {
                     <AnimalPreviewImage
                     src={formData.imageUrl}
                     alt="미리보기"
-                    $border={`1px solid ${coolGray[200]}`}
                     width={0}
                     height={0}
                     unoptimized

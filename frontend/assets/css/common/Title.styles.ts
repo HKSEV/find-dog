@@ -47,6 +47,6 @@ export const PhotoUploadBottomText = styled.span`
 
 export const PageTitle = styled.h1`
   font-size: 1.75rem;
-  color: #5a5c69;
+  color: #5A5C69;
   margin-bottom: 1.5rem;
 `;

@@ -16,7 +16,7 @@ export const Header = styled.header`
   padding: 16px 20px;
   ${FlexBetween};
   ${MainBg};
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #EEE;
 `;
 
 export const Logo = styled.h4`
@@ -37,7 +37,7 @@ export const Back = styled.span`
 `;
 
 export const ShelterHeader = styled.header`
-  background-color: #fff;
+  background-color: #FFF;
   padding: 15px 20px;
   ${FlexBetween};
   ${Sticky};

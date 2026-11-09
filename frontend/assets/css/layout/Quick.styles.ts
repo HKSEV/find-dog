@@ -5,5 +5,5 @@ export const QuickMenu = styled.section`
   ${Grid};
   grid-template-columns: repeat(5, 1fr);
   padding: 16px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #EEE;
 `;

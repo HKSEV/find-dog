@@ -92,7 +92,7 @@ export const ThumTitle = styled.h2`
 
   /* 이미지의 'o' 자리에 들어간 주황색 발바닥 아이콘 구현 */
   .paw-icon {
-    color: #ff8a00;
+    color: #FF8A00;
     font-size: 20px;
     margin: 0 2px;
     transform: rotate(15deg);
@@ -114,7 +114,7 @@ export const CardWrapper = styled.div`
   border-radius: 16px;
   overflow: hidden;
   position: relative;
-  background-color: #f0f0f0;
+  background-color: #F0F0F0;
 `;
 
 // 흰색 텍스트가 잘 보이도록 하단에 어두운 그라데이션 추가
@@ -132,7 +132,7 @@ export const NameText = styled.span`
   position: absolute;
   bottom: 12px;
   left: 12px;
-  color: #ffffff;
+  color: #FFFFFF;
   font-size: 14px;
   font-weight: 600;
   z-index: 2;

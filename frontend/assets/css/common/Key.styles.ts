@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { FlexColumn, TextCenter } from "./Common.styles";
 
 export const DivKey = styled.div`
-  border: 1px solid #ddd;
+  border: 1px solid #DDD;
   padding: 10px;
   ${TextCenter};
 `;

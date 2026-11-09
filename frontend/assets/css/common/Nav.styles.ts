@@ -23,7 +23,7 @@ export const BottomNav = styled.nav`
   ${Mauto};
   height: 3.75rem;
   ${MainBottomBg};
-  border-top: 1px solid #eee;
+  border-top: 1px solid #EEE;
   ${FlexAround};
   z-index: 999999;
 `;
@@ -37,7 +37,7 @@ export const NavItem = styled.div<NavItemProps>`
   gap: 0.0005rem;
   ${Pointer};
 
-  color: ${(props) => (props.$active ? "#805c59" : "#ae948f")};
+  color: ${(props) => (props.$active ? "#805C59" : "#AE948F")};
 
   svg {
     font-size: 20px;
@@ -46,7 +46,7 @@ export const NavItem = styled.div<NavItemProps>`
 
   span {
     font-size: 0.65rem;
-    color: ${(props) => (props.$active ? "#805c59" : "#ae948f")};
+    color: ${(props) => (props.$active ? "#805C59" : "#AE948F")};
     font-weight: ${(props) => (props.$active ? "700" : "400")};
   }
 `;
@@ -62,7 +62,7 @@ export const FilterContainer = styled.div`
   display: flex;
   gap: 10px;
   overflow-x: auto;
-  background-color: #fff;
+  background-color: #FFF;
   &::-webkit-scrollbar {
     display: none;
   }

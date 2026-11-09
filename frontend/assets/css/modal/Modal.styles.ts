@@ -66,7 +66,7 @@ export const Form = styled.form`
 export const Select = styled.select`
   ${W100};
   padding: 0.75rem;
-  border: 1px solid #e1e1e1;
+  border: 1px solid #E1E1E1;
   border-radius: 0.5rem;
   font-size: 0.8rem;
   ${BgWhite};
@@ -76,8 +76,8 @@ export const Select = styled.select`
 
 export const SubmitButton = styled.button`
   ${W100};
-  background: #ff6b6b;
-  color: #fff;
+  background: #FF6B6B;
+  color: #FFF;
   padding: 0.8rem;
   border: none;
   border-radius: 0.5rem;
@@ -87,7 +87,7 @@ export const SubmitButton = styled.button`
   margin-top: 8px;
   ${TransitionAll};
   &:hover {
-    background: #fa5252;
+    background: #FA5252;
   }
 `;
 
@@ -101,9 +101,9 @@ export const FileInputWrapper = styled.div`
   }
   input[type="file"] {
     padding: 0.5rem;
-    border: 1px solid #e1e1e1;
+    border: 1px solid #E1E1E1;
     font-size: 0.8rem;
-    background: #fafafa;
+    background: #FAFAFA;
   }
 `;
 
@@ -121,7 +121,7 @@ export const ModalBg = styled.div`
 
 export const Modal = styled.div`
   ${BgWhite};
-  border: 1px solid #ccc;
+  border: 1px solid #CCC;
   padding: 10px;
   margin-top: 10px;
   border-radius: 8px;

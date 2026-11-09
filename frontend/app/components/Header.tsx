@@ -3,39 +3,9 @@
 import React from "react";
 import { useRouter } from "next/navigation"; // 💡 useRouter 임포트
 import * as S from "@/assets/css/style.styles";
-import { NotificationsOutlined as NotificationsNoneIcon, PersonOutlined as PersonOutlineIcon } from "@mui/icons-material";
+
 import Logo from "./Logo";
-import styled from "styled-components";
-
-const HeaderActions = styled.div`
-  && {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-`;
-
-const AccountIcon = styled(PersonOutlineIcon)`
-  && {
-    cursor: pointer;
-    color: #8a4e4b;
-    font-size: 30px;
-  }
-`;
-
-const NotificationIcon = styled(NotificationsNoneIcon)`
-  && {
-    cursor: pointer;
-    color: #8a4e4b;
-    font-size: 28px;
-  }
-`;
-
-const HeaderSpacer = styled(S.None)`
-  && {
-    width: 60px;
-  }
-`;
+import { HeaderActions, AccountIcon, NotificationIcon, HeaderSpacer } from "@/assets/css/layout/HeaderContent.styles";
 
 interface HeaderProps {
   title?: string;

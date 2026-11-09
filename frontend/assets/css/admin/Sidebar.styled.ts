@@ -15,7 +15,7 @@ export const ContentWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   overflow-x: hidden;
-  background-color: ${coolGray[50]}; /* 💡 기존 #f8f9fc 대신 쿨그레이 가장 밝은 톤 적용 */
+  background-color: ${coolGray[50]}; /* 💡 기존 #F8F9FC 대신 쿨그레이 가장 밝은 톤 적용 */
 `;
 
 export const MainContent = styled.div`
@@ -43,7 +43,7 @@ export const ContainerFluid = styled.div`
   margin-left: auto;
 `;
 
-// 💡 기존 SB Admin 2 파란색(#4e73df) 대신 다크 쿨그레이(coolGray[900]) 적용
+// 💡 기존 SB Admin 2 파란색(#4E73DF) 대신 다크 쿨그레이(coolGray[900]) 적용
 export const SidebarContainer = styled.ul<{$isCollapsed?: boolean}>`
   background-color: ${coolGray[900]};
   min-height: 100vh;
@@ -64,7 +64,7 @@ export const SidebarBrand = styled.a<{$isCollapsed?: boolean}>`
   flex-direction: ${({$isCollapsed}) => ($isCollapsed ? "column" : "row")};
   height: 4.5rem;
   text-decoration: none !important;
-  color: #fff !important;
+  color: #FFF !important;
   font-size: ${({$isCollapsed}) => ($isCollapsed ? "0.7rem" : "1.2rem")};
   font-weight: 800;
   text-transform: uppercase;
@@ -73,7 +73,7 @@ export const SidebarBrand = styled.a<{$isCollapsed?: boolean}>`
   overflow: hidden;
 
   &:hover {
-    color: #fff;
+    color: #FFF;
     text-decoration: none;
   }
 
@@ -100,7 +100,7 @@ export const NavLink = styled.a<{$isCollapsed?: boolean; $isActive?: boolean}>`
   border-radius: 6px; /* 💡 버튼형 메뉴처럼 둥근 모서리 적용 */
 
   /* 💡 활성화(현재 페이지) 상태일 땐 흰색 글씨+배경, 비활성화일 땐 쿨그레이 글씨 */
-  color: ${({$isActive}) => ($isActive ? "#ffffff" : coolGray[400])};
+  color: ${({$isActive}) => ($isActive ? "#FFFFFF" : coolGray[400])};
   background-color: ${({$isActive}) => ($isActive ? coolGray[800] : "transparent")};
   font-weight: ${({$isActive}) => ($isActive ? "700" : "600")};
   text-decoration: none;
@@ -116,7 +116,7 @@ export const NavLink = styled.a<{$isCollapsed?: boolean; $isActive?: boolean}>`
   }
 
   &:hover {
-    color: #fff;
+    color: #FFF;
     background-color: ${coolGray[800]}; /* 💡 호버 시 다크 쿨그레이 배경 깔림 */
     text-decoration: none;
   }

@@ -7,7 +7,7 @@ export const RecommendImgBox = styled.div`
   border-radius: 12px;
   ${Ohidden};
   ${Relative};
-  background-color: #eee;
+  background-color: #EEE;
   img {
     ${W100} height: 100%;
     object-fit: cover;
@@ -26,7 +26,7 @@ export const AnimalImgBox = styled.div`
   height: 95px;
   border-radius: 10px;
   ${Ohidden};
-  background-color: #eee;
+  background-color: #EEE;
   flex-shrink: 0;
   img {
     ${W100};
@@ -36,7 +36,7 @@ export const AnimalImgBox = styled.div`
 `;
 
 export const BlogImgWrap = styled.div`
-  border: 1px solid #ddd;
+  border: 1px solid #DDD;
   padding: 10px;
   text-align: center;
   position: relative;
@@ -45,7 +45,7 @@ export const BlogImgWrap = styled.div`
 export const NoneImage = styled.div`
   width: 100%;
   height: 150px;
-  background-color: #f5f5f5;
+  background-color: #F5F5F5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -62,7 +62,7 @@ export const BlogImg = styled.img`
 export const MapPreview = styled.div`
   width: 100%;
   height: 400px;
-  background-color: #eaeaea;
+  background-color: #EAEAEA;
   display: flex;
   align-items: center;
   justify-content: center;

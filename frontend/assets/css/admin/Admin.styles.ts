@@ -2,16 +2,16 @@ import { css } from "styled-components";
 
 // 1. 관리자 화면에서 공통으로 사용하는 쿨그레이 팔레트
 export const coolGray = {
-  50: "#f8fafc", // 앱 배경색
-  100: "#f1f5f9", // 호버 배경색, 테이블 헤더
-  200: "#e2e8f0", // 구분선, 기본 테두리
-  300: "#cbd5e1", // 비활성화 요소, 인풋 테두리
-  400: "#94a3b8", // 플레이스홀더, 보조 아이콘
-  500: "#64748b", // 보조 텍스트
+  50: "#F8FAFC", // 앱 배경색
+  100: "#F1F5F9", // 호버 배경색, 테이블 헤더
+  200: "#E2E8F0", // 구분선, 기본 테두리
+  300: "#CBD5E1", // 비활성화 요소, 인풋 테두리
+  400: "#94A3B8", // 플레이스홀더, 보조 아이콘
+  500: "#64748B", // 보조 텍스트
   600: "#475569", // 기본 텍스트
   700: "#334155", // 강조 텍스트, 네비게이션 텍스트
-  800: "#1e293b", // 제목, 메인 버튼 (Primary)
-  900: "#0f172a" // 최상위 강조, 다크모드 배경
+  800: "#1E293B", // 제목, 메인 버튼 (Primary)
+  900: "#0F172A" // 최상위 강조, 다크모드 배경
 };
 
 // 2. 어드민 공통 믹스인 정의
@@ -26,7 +26,7 @@ export const adminBaseStyle = css`
 
 // 대시보드 카드/패널 스타일
 export const adminCard = css`
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   border: 1px solid ${coolGray[200]};
   border-radius: 8px;
   /* 쿨그레이 베이스의 은은한 그림자로 깊이감 부여 */
@@ -38,7 +38,7 @@ export const adminCard = css`
 // 메인 액션 버튼 (진한 쿨그레이)
 export const adminPrimaryBtn = css`
   background-color: ${coolGray[800]};
-  color: #ffffff;
+  color: #FFFFFF;
   border: none;
   border-radius: 6px;
   padding: 8px 16px;
@@ -59,7 +59,7 @@ export const adminPrimaryBtn = css`
 
 // 보조 액션 버튼 (아웃라인)
 export const adminOutlineBtn = css`
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   color: ${coolGray[700]};
   border: 1px solid ${coolGray[300]};
   border-radius: 6px;
@@ -82,7 +82,7 @@ export const adminInput = css`
   border: 1px solid ${coolGray[300]};
   border-radius: 6px;
   color: ${coolGray[800]};
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   font-size: 14px;
   transition: all 0.2s ease;
 

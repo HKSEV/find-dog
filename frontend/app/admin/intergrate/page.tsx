@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
@@ -10,127 +8,32 @@ import { setBoardType, updateIntegrateField, submitIntegrateContent } from "../.
 import { Layout } from "../../components/layout/Layout";
 import * as A from "@/assets/css/style.styles";
 import * as F from "@/assets/css/admin/AdminForm.styles";
-import styled from "styled-components";
-
-const PageTitle = styled.h1`
-  font-size: 1.75rem;
-  font-weight: 500;
-  line-height: 1.2;
-  margin-bottom: 0 !important;
-  color: #1e2939;
-`;
-
-const FormCard = styled(F.Card)`
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-  margin-bottom: 1.5rem !important;
-`;
-
-const FormCardHeader = styled(F.CardHeader)`
-  padding-top: 1rem !important;
-  padding-bottom: 1rem !important;
-`;
-
-const CardTitle = styled.h6`
-  margin: 0 !important;
-  font-weight: 700 !important;
-  color: #007bff !important;
-`;
-
-const InsetFormGroup = styled.div`
-  margin-bottom: 1.5rem !important;
-  padding: 1rem !important;
-  background-color: #f8f9fa !important;
-  border-radius: 0.25rem !important;
-`;
-
-const FieldLabel = styled.label`
-  font-weight: 700 !important;
-  color: #1e2939;
-`;
-
-const CategoryOptions = styled.div`
-  display: flex !important;
-  gap: 0.75rem;
-  margin-top: 0.5rem !important;
-`;
-
-const RadioOption = styled.div`
-  position: relative;
-  display: block;
-  min-height: 1.5rem;
-  padding-left: 1.5rem;
-  margin-right: 1rem !important;
-`;
-
-const CategoryLabel = styled.label`
-  position: relative;
-  margin-bottom: 0;
-  vertical-align: top;
-  font-weight: 700 !important;
-  color: #dc3545 !important;
-`;
-
-const FormGroup = styled.div`
-  margin-bottom: 1rem;
-  margin-bottom: 1rem !important;
-`;
-
-const EmphasizedLabel = styled.label`
-  font-weight: 700 !important;
-`;
-
-const HelpText = styled.small`
-  display: block;
-  margin-top: 0.25rem;
-  color: #6c757d !important;
-`;
-
-const FormSection = styled.div`
-  margin-bottom: 1.5rem !important;
-`;
-
-const PreviewBox = styled.div`
-  margin-bottom: 1.5rem !important;
-  text-align: center !important;
-`;
-
-const VideoThumbnail = styled(Image)`
-  padding: 0.25rem;
-  background-color: #fff;
-  border: 1px solid #dee2e6;
-  border-radius: 0.25rem;
-  max-width: 100%;
-  height: auto;
-  && {
-    width: auto;
-    height: auto;
-  }
-`;
-
-const PrimaryLabel = styled.label`
-  font-weight: 700 !important;
-  color: #007bff !important;
-`;
-
-const AttachmentColumn = styled(F.Column)`
-  margin-bottom: 1.5rem !important;
-`;
-
-const SubmitButton = styled(F.Button)`
-  display: block;
-  width: 100%;
-  width: 100% !important;
-  font-weight: 700 !important;
-  padding: 1rem !important;
-  margin-top: 1.5rem !important;
-`;
-
-const GuideBody = styled(F.CardBody)`
-  color: #1e2939;
-`;
+import useAdminModal from "@/app/components/contexts/AdminModalContext";
+import {
+  PageTitle,
+  FormCard,
+  FormCardHeader,
+  CardTitle,
+  InsetFormGroup,
+  FieldLabel,
+  CategoryOptions,
+  RadioOption,
+  CategoryLabel,
+  FormGroup,
+  EmphasizedLabel,
+  HelpText,
+  FormSection,
+  PreviewBox,
+  VideoThumbnail,
+  PrimaryLabel,
+  AttachmentColumn,
+  SubmitButton,
+  GuideBody
+} from "@/assets/css/admin/Integrate.styles";
 
 export default function Intergrate() {
   const dispatch = useDispatch<AppDispatch>();
+  const {openAlertModal} = useAdminModal();
 
   // Redux Store 상태 조회
   const {boardType, formData, isLoading} = useSelector((state: RootState) => state.integrateAdmin);
@@ -149,9 +52,11 @@ export default function Intergrate() {
     const resultAction = await dispatch(submitIntegrateContent({boardType, formData}));
 
     if (submitIntegrateContent.fulfilled.match(resultAction)) {
-      alert(resultAction.payload || "성공적으로 등록되었습니다");
+      openAlertModal(resultAction.payload || "성공적으로 등록되었습니다", undefined, {variant: "success"});
     } else {
-      alert(resultAction.payload || "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+      openAlertModal(resultAction.payload || "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.", undefined, {
+        variant: "error"
+      });
     };
   };
 
@@ -319,10 +224,7 @@ export default function Intergrate() {
                   </>
                 )}
 
-                <SubmitButton
-                type="submit"
-                $variant="primary"
-                disabled={isLoading}>
+                <SubmitButton type="submit" $variant="primary" disabled={isLoading}>
                   {isLoading
                     ? "등록 중..."
                     : boardType === "YOUTUBE"

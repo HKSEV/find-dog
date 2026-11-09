@@ -72,7 +72,7 @@ export const MemberContainer = styled.div`
   padding: 3rem 1.25rem;
   background:
     radial-gradient(ellipse at 50% 35%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 65%),
-    linear-gradient(135deg, #deefff 0%, #c4e1fb 50%, #a8cbee 100%);
+    linear-gradient(135deg, #DEEFFF 0%, #C4E1FB 50%, #A8CBEE 100%);
   color: ${loginColors.textStrong};
   font-family:
     "AdminLoginPretendard",
@@ -127,7 +127,7 @@ export const MemberIcon = styled.div`
   height: 3.25rem;
   margin: 0 auto 1.25rem;
   color: ${loginColors.onAccent};
-  background: linear-gradient(135deg, #3498ff, #2463eb);
+  background: linear-gradient(135deg, #3498FF, #2463EB);
   border-radius: 0.9375rem;
   box-shadow: ${loginShadows.accent};
 

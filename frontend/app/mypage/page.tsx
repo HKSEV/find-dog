@@ -10,99 +10,23 @@ import { loadUserFromStorage, logoutUser } from "../redux/userSlice";
 import * as S from "@/assets/css/style.styles";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { CustomAlert } from "../components/CustomAlert"; // 💡 커스텀 알럿 임포트
+import { CustomAlert } from "../components/CustomAlert";
+import {
+  MembershipIcon,
+  ApplicationIcon,
+  MessageIcon,
+  AccountIcon,
+  FavoriteIcon,
+  NoticeIcon,
+  HelpMenuIcon,
+  ContactIcon,
+  InstagramIcon,
+  BlogIcon,
+  VideoIcon,
+  ListChevron
+} from "@/assets/css/client/MyPage.styles"; // 💡 커스텀 알럿 임포트
 
 // 💡 MUI 아이콘 임포트
-import {
-  WorkspacePremiumOutlined as PremiumIcon,
-  EditNoteOutlined as EditNoteIcon,
-  MailOutlined as MailIcon,
-  PersonOutlined as PersonIcon,
-  PetsOutlined as PetsIcon,
-  InfoOutlined as InfoIcon,
-  HelpOutlined as HelpIcon,
-  ChatBubbleOutlined as ChatIcon,
-  CameraAltOutlined as CameraIcon,
-  CreateOutlined as PenIcon,
-  PlayCircleOutlined as PlayIcon,
-  ChevronRight as ChevronRightIcon
-} from "@mui/icons-material";
-import styled from "styled-components";
-
-const MembershipIcon = styled(PremiumIcon)`
-  && {
-    color: #ff8c00;
-    font-size: 32px;
-  }
-`;
-
-const ApplicationIcon = styled(EditNoteIcon)`
-  && {
-    color: #ff8c00;
-    font-size: 32px;
-  }
-`;
-
-const MessageIcon = styled(MailIcon)`
-  && {
-    color: #ff8c00;
-    font-size: 32px;
-  }
-`;
-
-const AccountIcon = styled(PersonIcon)`
-  && {
-    color: #666;
-  }
-`;
-
-const FavoriteIcon = styled(PetsIcon)`
-  && {
-    color: #666;
-  }
-`;
-
-const NoticeIcon = styled(InfoIcon)`
-  && {
-    color: #666;
-  }
-`;
-
-const HelpMenuIcon = styled(HelpIcon)`
-  && {
-    color: #666;
-  }
-`;
-
-const ContactIcon = styled(ChatIcon)`
-  && {
-    color: #666;
-  }
-`;
-
-const InstagramIcon = styled(CameraIcon)`
-  && {
-    color: #666;
-  }
-`;
-
-const BlogIcon = styled(PenIcon)`
-  && {
-    color: #666;
-  }
-`;
-
-const VideoIcon = styled(PlayIcon)`
-  && {
-    color: #666;
-  }
-`;
-
-const ListChevron = styled(ChevronRightIcon)`
-  && {
-    color: #999;
-  }
-`;
 
 export default function MyPage() {
   const router = useRouter();

@@ -25,19 +25,19 @@ interface BtnProps {
 // 3. Variant별 스타일 객체 매핑
 const variantStyles = {
   kakao: css`
-    background-color: #fee500;
+    background-color: #FEE500;
     color: #000;
-    border: 0px solid #fee500;
+    border: 0px solid #FEE500;
   `,
   local: css`
-    background-color: #fff;
+    background-color: #FFF;
     color: #333;
-    border: 1px solid #ccc;
+    border: 1px solid #CCC;
   `,
   primary: css<BtnProps>`
-    background-color: ${({$mainColor}) => $mainColor || "#eb8a12"};
-    color: #fff;
-    border: 1px solid ${({$mainColor}) => $mainColor || "#eb8a12"};
+    background-color: ${({$mainColor}) => $mainColor || "#EB8A12"};
+    color: #FFF;
+    border: 1px solid ${({$mainColor}) => $mainColor || "#EB8A12"};
   `
 };
 
@@ -108,8 +108,8 @@ export const BtnBottomWrap = styled.div`
 `;
 
 export const HashtagBtn = styled.button<{$active?: boolean}>`
-  background: ${({$active}) => ($active ? "#eb8a12" : "#faf4f2")};
-  color: ${({$active}) => ($active ? "#f7f2d8" : "#c1b6b6")};
+  background: ${({$active}) => ($active ? "#EB8A12" : "#FAF4F2")};
+  color: ${({$active}) => ($active ? "#F7F2D8" : "#C1B6B6")};
   border: none;
   border-radius: 20px;
   padding: 6px 14px;
@@ -132,7 +132,7 @@ export const FloatingWriteButton = styled.button`
   ${Absolute}
   bottom: 5rem;
   right: 1.25rem;
-  background-color: #52c41a;
+  background-color: #52C41A;
   ${ColorWhite}${BorderNone}
   border-radius: 1.875rem;
   padding: 0.6rem 1.2rem;
@@ -164,8 +164,8 @@ export const TabBtn = styled.button<{$active?: boolean}>`
 `;
 
 export const FilterIconBtn = styled.button`
-  background: #fff;
-  border: 1px solid #ddd;
+  background: #FFF;
+  border: 1px solid #DDD;
   border-radius: 50%;
   width: 38px;
   height: 38px;
@@ -179,14 +179,14 @@ export const ToggleBtn = styled.button<{$isOn: boolean}>`
   height: 26px;
   border-radius: 13px;
   border: none;
-  background-color: ${({$isOn}) => ($isOn ? "#ff8c00" : "#ddd")};
+  background-color: ${({$isOn}) => ($isOn ? "#FF8C00" : "#DDD")};
   ${Relative};
   ${Pointer};
   transition: background-color 0.3s;
   .handle {
     width: 22px;
     height: 22px;
-    background-color: #fff;
+    background-color: #FFF;
     border-radius: 50%;
     ${Absolute};
     top: 2px;
@@ -204,7 +204,7 @@ export const Button = styled.button<{variant?: "primary" | "danger" | "success"}
   cursor: pointer;
   font-weight: bold;
 
-  background-color: ${({variant}) => (variant === "danger" ? "#e74a3b" : variant === "success" ? "#1cc88a" : "#4e73df")};
+  background-color: ${({variant}) => (variant === "danger" ? "#E74A3B" : variant === "success" ? "#1CC88A" : "#4E73DF")};
   &:hover {
     opacity: 0.9;
   }
@@ -222,7 +222,7 @@ export const ButtonPrimary = styled.button<{variant?: "primary" | "danger" | "su
   border: none;
   border-radius: 10px;
 
-  background-color: ${({variant}) => (variant === "danger" ? "#e74a3b" : variant === "success" ? "#1cc88a" : "#4e73df")};
+  background-color: ${({variant}) => (variant === "danger" ? "#E74A3B" : variant === "success" ? "#1CC88A" : "#4E73DF")};
   &:hover {
     opacity: 0.9;
   }
@@ -237,7 +237,7 @@ export const Exit = styled.button<{variant?: "primary" | "danger" | "success"}>`
   border: none;
   border-radius: 10px;
 
-  background-color: ${({variant}) => (variant === "danger" ? "#e74a3b" : variant === "success" ? "#1cc88a" : "#4e73df")};
+  background-color: ${({variant}) => (variant === "danger" ? "#E74A3B" : variant === "success" ? "#1CC88A" : "#4E73DF")};
   &:hover {
     opacity: 0.9;
   }
@@ -251,15 +251,15 @@ interface ColorBtnProps {
 const getBgColor = (color?: string) => {
   switch (color) {
     case "red":
-      return "#dc3545";
+      return "#DC3545";
     case "yellow":
-      return "#ffc107";
+      return "#FFC107";
     case "green":
-      return "#28a745";
+      return "#28A745";
     case "purple":
-      return "#6f42c1";
+      return "#6F42C1";
     default:
-      return "#dc3545";
+      return "#DC3545";
   }
 };
 
@@ -271,15 +271,15 @@ interface StatusProps {
 const getStatusColor = (color?: string) => {
   switch (color) {
     case "red":
-      return "#f66a78";
+      return "#F66A78";
     case "yellow":
-      return "#fae299";
+      return "#FAE299";
     case "green":
-      return "#a4f9b8";
+      return "#A4F9B8";
     case "purple":
-      return "#d2c1f2";
+      return "#D2C1F2";
     default:
-      return "#938d8e";
+      return "#938D8E";
   }
 };
 
@@ -294,7 +294,7 @@ export const StatusText = styled.span<StatusProps>`
 // (노란색 배경에는 검정 글씨가 잘 보입니다)
 const getTextColor = (color?: string) => {
   if (color === "yellow") return "#212529";
-  return "#fff";
+  return "#FFF";
 };
 
 export const ColorButton = styled.button<ColorBtnProps>`

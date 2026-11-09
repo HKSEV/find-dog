@@ -4,14 +4,14 @@ export const Terms = styled.div<{$expanded: boolean}>`
   max-height: ${({$expanded}) => ($expanded ? "150px" : "0")};
   overflow: hidden;
   transition: max-height 0.3s ease-in-out;
-  background-color: #f9f9f9;
+  background-color: #F9F9F9;
   border-radius: 4px;
 `;
 export const Privacy = styled.div<{$expanded: boolean}>`
   max-height: ${({$expanded}) => ($expanded ? "150px" : "0")};
   overflow: hidden;
   transition: max-height 0.3s ease-in-out;
-  background-color: #f9f9f9;
+  background-color: #F9F9F9;
   border-radius: 4px;
 `;
 

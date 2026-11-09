@@ -2,6 +2,6 @@ import styled from "styled-components";
 
 export const Divider = styled.div`
   height: 4px;
-  background-color: #f9f2f2;
+  background-color: #F9F2F2;
   width: 100%;
 `;

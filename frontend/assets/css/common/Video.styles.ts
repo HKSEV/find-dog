@@ -20,5 +20,5 @@ export const CampaignMediaWrap = styled.div`
   aspect-ratio: 1 / 1;
   border-radius: 12px;
   ${Ohidden};
-  background-color: #f0f0f0;
+  background-color: #F0F0F0;
 `;

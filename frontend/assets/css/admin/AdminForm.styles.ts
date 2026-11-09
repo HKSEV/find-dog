@@ -38,7 +38,7 @@ export const Card = styled.div`
   flex-direction: column;
   min-width: 0;
   overflow-wrap: break-word;
-  background-color: #fff;
+  background-color: #FFF;
   background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.25rem;
@@ -67,9 +67,9 @@ export const Control = styled.input`
   font-weight: 400;
   line-height: 1.5;
   color: #495057;
-  background-color: #fff;
+  background-color: #FFF;
   background-clip: padding-box;
-  border: 1px solid #ced4da;
+  border: 1px solid #CED4DA;
   border-radius: 0.25rem;
   transition:
     border-color 0.15s ease-in-out,
@@ -77,19 +77,19 @@ export const Control = styled.input`
 
   &:focus {
     color: #495057;
-    background-color: #fff;
-    border-color: #80bdff;
+    background-color: #FFF;
+    border-color: #80BDFF;
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   }
 
   &::placeholder {
-    color: #6c757d;
+    color: #6C757D;
     opacity: 1;
   }
 
   &:disabled {
-    background-color: #e9ecef;
+    background-color: #E9ECEF;
     opacity: 1;
   }
 
@@ -126,12 +126,12 @@ export const CheckLabel = styled.label`
 export const Button = styled.button<{$variant?: "primary" | "warning"}>`
   display: inline-block;
   font-weight: 400;
-  color: ${({$variant}) => ($variant === "warning" ? "#212529" : "#fff")};
+  color: ${({$variant}) => ($variant === "warning" ? "#212529" : "#FFF")};
   text-align: center;
   vertical-align: middle;
   user-select: none;
-  background-color: ${({$variant}) => ($variant === "warning" ? "#ffc107" : "#007bff")};
-  border: 1px solid ${({$variant}) => ($variant === "warning" ? "#ffc107" : "#007bff")};
+  background-color: ${({$variant}) => ($variant === "warning" ? "#FFC107" : "#007BFF")};
+  border: 1px solid ${({$variant}) => ($variant === "warning" ? "#FFC107" : "#007BFF")};
   padding: 0.375rem 0.75rem;
   font-size: 1rem;
   line-height: 1.5;
@@ -144,8 +144,8 @@ export const Button = styled.button<{$variant?: "primary" | "warning"}>`
     box-shadow 0.15s ease-in-out;
 
   &:hover:not(:disabled) {
-    background-color: ${({$variant}) => ($variant === "warning" ? "#e0a800" : "#0069d9")};
-    border-color: ${({$variant}) => ($variant === "warning" ? "#d39e00" : "#0062cc")};
+    background-color: ${({$variant}) => ($variant === "warning" ? "#E0A800" : "#0069D9")};
+    border-color: ${({$variant}) => ($variant === "warning" ? "#D39E00" : "#0062CC")};
   }
 
   &:focus-visible {

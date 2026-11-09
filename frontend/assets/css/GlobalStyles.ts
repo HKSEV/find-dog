@@ -38,7 +38,7 @@ export const GlobalStyle = createGlobalStyle`
 
   body {
     line-height: 1.5;
-    background-color: #6c757d;
+    background-color: #6C757D;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -149,7 +149,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   a:hover {
-    color: #0056b3;
+    color: #0056B3;
   }
 
   ol, ul, li {

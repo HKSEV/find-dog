@@ -28,7 +28,7 @@ export const Container = styled.div`
   ${W100};
   max-width: 480px;
   min-height: 100vh;
-  background-color: #fff;
+  background-color: #FFF;
   ${Relative};
   padding-bottom: 70px;
   ${BoxShadow};
@@ -58,13 +58,13 @@ export const TopFlexBasic = styled.div`
 
   padding: 15px 10px;
   ${FlexBetween};
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #CCC;
   margin-bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
   ${W100};
   box-sizing: border-box;
-  background-color: #fff;
+  background-color: #FFF;
   max-width: 480px;
 
   @media (max-width: 480px) {
@@ -87,7 +87,7 @@ export const TopFlexBasic = styled.div`
 export const ImageContainer = styled.div`
   width: 100%;
   height: 160px;
-  background-color: #eee;
+  background-color: #EEE;
   ${Ohidden};
 `;
 
@@ -115,7 +115,7 @@ export const LayOutSpaceBetween = styled.div`
 export const Line = styled.div`
   width: 100%;
   height: 12px;
-  background-color: #f5f5f5;
+  background-color: #F5F5F5;
 `;
 
 //마이페이지 전용 스타일
@@ -139,8 +139,8 @@ export const Mt70 = styled.div`
 export const TabContainer = styled.div`
   display: flex;
   padding: 0 20px;
-  border-bottom: 1px solid #eee;
-  background-color: #fff;
+  border-bottom: 1px solid #EEE;
+  background-color: #FFF;
 `;
 
 //관리자
@@ -197,7 +197,7 @@ export const PageHeader = styled.div`
   h1 {
     font-size: 1.75rem;
     font-weight: 400;
-    color: #5a5c69;
+    color: #5A5C69;
     margin: 0;
   }
 `;

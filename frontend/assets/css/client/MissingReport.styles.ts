@@ -9,8 +9,8 @@ export const FilterBar = styled.div`
   display: flex;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
+  background-color: #FFF;
+  border-bottom: 1px solid #EEE;
 
   &::-webkit-scrollbar {
     display: none;
@@ -20,7 +20,7 @@ export const FilterBar = styled.div`
 export const FilterButton = styled.button`
   ${FlexCenter}
   gap:0.25rem;
-  background-color: #f1f3f5;
+  background-color: #F1F3F5;
   ${BorderNone}
   border-radius:1.25rem;
   font-size: 0.8125rem;

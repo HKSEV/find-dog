@@ -5,86 +5,18 @@ import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { setEmail, setPassword, submitLogin } from "../redux/loginSlice";
-import styled, { keyframes } from "styled-components";
+
 import * as S from "@/assets/css/style.styles";
 import Header from "../components/Header";
 import { CustomAlert } from "../components/CustomAlert";
-
-const SignupPrompt = styled.div`
-  && {
-    text-align: center;
-    margin-top: 24px;
-    font-size: 14px;
-    color: #666;
-  }
-`;
-
-const SignupLink = styled.span`
-  && {
-    font-weight: bold;
-    color: #8a4e4b;
-    cursor: pointer;
-    text-decoration: underline;
-  }
-`;
-
-// ==========================================
-// 💡 1. 애니메이션 Keyframes 정의
-// ==========================================
-const slideDown = keyframes`
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-const fadeUp = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-const AnimItem = styled.div<{$delay: number; $isSlideDown?: boolean}>`
-  opacity: 0;
-  animation: ${(props) => (props.$isSlideDown ? slideDown : fadeUp)} 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: ${(props) => props.$delay}s;
-  width: 100%;
-`;
-
-// ==========================================
-// 💡 2. 플로팅 라벨(애니메이션 인풋) 스타일 정의
-// ==========================================
-const InputWrapper = styled.div`
-  position: relative;
-  width: 100%;
-`;
-
-const FloatingLabel = styled.label<{$isActive: boolean}>`
-  position: absolute;
-  left: 12px;
-  top: ${(props) => (props.$isActive ? "0" : "50%")};
-  transform: translateY(-50%);
-  background-color: #ffffff;
-  padding: 0 4px;
-  font-size: ${(props) => (props.$isActive ? "12px" : "15px")};
-  color: ${(props) => (props.$isActive ? "#8a4e4b" : "#999")};
-  transition: all 0.2s ease-in-out;
-  pointer-events: none;
-  z-index: 2;
-`;
-
-const FloatingInput = styled(S.FormControl)`
-  width: 100%;
-  padding: 14px 15px;
-  background-color: transparent;
-
-  &::placeholder {
-    color: transparent;
-  }
-
-  &:focus {
-    outline: none !important;
-    box-shadow: none !important;
-    border: 1px solid #8a4e4b !important;
-  }
-`;
+import {
+  SignupPrompt,
+  SignupLink,
+  AnimItem,
+  InputWrapper,
+  FloatingLabel,
+  FloatingInput
+} from "@/assets/css/client/Login.styles";
 
 interface AnimatedInputProps {
   type?: React.HTMLInputTypeAttribute;
@@ -232,8 +164,7 @@ export default function LoginPage() {
 
           <AnimItem $delay={0.6}>
             <SignupPrompt>
-              아직 계정이 없으시다고요?{" "}
-              <SignupLink onClick={() => router.push("/signup")}>회원가입</SignupLink>
+              아직 계정이 없으시다고요? <SignupLink onClick={() => router.push("/signup")}>회원가입</SignupLink>
             </SignupPrompt>
           </AnimItem>
         </S.BtnBottomWrap>

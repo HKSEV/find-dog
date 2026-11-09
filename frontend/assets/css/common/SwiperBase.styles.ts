@@ -15,7 +15,7 @@ export const SwiperBaseStyles = css`
  */
 
   :root {
-    --swiper-theme-color: #007aff;
+    --swiper-theme-color: #007AFF;
     /*
   --swiper-preloader-color: var(--swiper-theme-color);
   --swiper-wrapper-transition-timing-function: initial;
@@ -239,7 +239,7 @@ export const SwiperBaseStyles = css`
     }
   }
   .swiper-lazy-preloader-white {
-    --swiper-preloader-color: #fff;
+    --swiper-preloader-color: #FFF;
   }
   .swiper-lazy-preloader-black {
     --swiper-preloader-color: #000;
