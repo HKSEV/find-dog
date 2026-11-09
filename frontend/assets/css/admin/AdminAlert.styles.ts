@@ -107,8 +107,10 @@ export const AlertDescription = styled.p`
   overflow-wrap: anywhere;
 `;
 
-export const AlertActions = styled.div`
+export const AlertActions = styled.div<{$isConfirm?: boolean}>`
   display: grid;
+  grid-template-columns: ${({$isConfirm}) => ($isConfirm ? "repeat(2, minmax(0, 1fr))" : "minmax(0, 1fr)")};
+  gap: 10px;
   margin-top: 1.75rem;
 `;
 
@@ -133,6 +135,18 @@ export const AdminAlertConfirmButton = styled.button`
   &:focus-visible {
     outline: 2px solid ${alertColors.accent};
     outline-offset: 3px;
+  }
+`;
+
+export const AdminAlertCancelButton = styled(AdminAlertConfirmButton)`
+  color: ${coolGray[600]};
+  background-color: #FFFFFF;
+  border-color: ${coolGray[300]};
+
+  &:hover {
+    color: ${coolGray[800]};
+    background-color: ${coolGray[100]};
+    border-color: ${coolGray[400]};
   }
 `;
 

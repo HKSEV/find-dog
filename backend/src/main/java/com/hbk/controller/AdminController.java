@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,23 +32,60 @@ public class AdminController {
     @PostMapping("/login")
     //프론트엔드에게 상태 코드(200 성공, 401 실패 등)와 함께 데이터
     //?아무 박스나 다 된다는 뜻
-    public ResponseEntity<?> login(@RequestBody AdminRequest request, HttpServletRequest httpRequest){
-try{
-    AdminResponse response  = adminService.authenticate(
-            request.getEmail(),
-            request.getPassword()
-    );
+    public ResponseEntity<?> login(@RequestBody AdminRequest request, HttpServletRequest httpRequest) {
+        try {
+            AdminResponse response = adminService.authenticate(
+                    request.getEmail(),
+                    request.getPassword()
+            );
 
-    // 💡 [여기가 핵심입니다!] 이 두 줄이 무조건 있어야 합니다!!!
-    HttpSession session = httpRequest.getSession(true);
-    session.setAttribute("adminName", response.getName());
+            // 인증된 관리자 계정을 세션에 저장하고 세션 ID를 갱신합니다.
+            HttpSession session = httpRequest.getSession(true);
+            httpRequest.changeSessionId();
+            session.setAttribute("adminName", response.getName());
+            session.setAttribute("adminEmail", request.getEmail());
 
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", e.getMessage()));
+        }
+    }
 
-    return ResponseEntity.ok(response);
-}catch(IllegalArgumentException e){
- return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-         .body(Collections.singletonMap("message", e.getMessage()));
-}
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null || !(session.getAttribute("adminEmail") instanceof String email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", "관리자로 다시 로그인해 주세요."));
+        }
 
+        try {
+            return ResponseEntity.ok(adminService.getProfile(email));
+        } catch (IllegalArgumentException e) {
+            session.invalidate();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        String path = request.getContextPath().isEmpty() ? "/" : request.getContextPath();
+        ResponseCookie cookie = ResponseCookie.from("JSESSIONID", "")
+                .path(path)
+                .httpOnly(true)
+                .sameSite("Lax")
+                .maxAge(0)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(Collections.singletonMap("message", "로그아웃이 완료되었습니다."));
     }
 }

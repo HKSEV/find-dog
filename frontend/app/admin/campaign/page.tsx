@@ -6,6 +6,8 @@ import { AppDispatch, RootState } from "../../store/store";
 import { updateCampaignField, setMediaType, submitCampaign } from "../../redux/campaignAdminSlice";
 
 import { Layout } from "../../components/layout/Layout";
+import AdminRegistrationList from "../../components/admin/AdminRegistrationList";
+import { fetchAdminRegistrations } from "../../redux/registrationAdminSlice";
 
 import useAdminModal from "@/app/components/contexts/AdminModalContext";
 import * as S from "@/assets/css/Style.styles";
@@ -34,6 +36,7 @@ export default function AdoptionCampaignAdmin() {
     const resultAction = await dispatch(submitCampaign(formData));
 
     if (submitCampaign.fulfilled.match(resultAction)) {
+      dispatch(fetchAdminRegistrations("campaign"));
       openAlertModal(resultAction.payload || "입양 캠페인이 성공적으로 등록되었습니다!", undefined, {
         variant: "success"
       });
@@ -51,6 +54,7 @@ export default function AdoptionCampaignAdmin() {
       <S.PageHeader>
         <S.AdminCampaignPageTitle>입양 캠페인 관리</S.AdminCampaignPageTitle>
       </S.PageHeader>
+      <AdminRegistrationList kind="campaign"/>
 
       <S.GridRow>
         <S.AdminFormColumn $lg={8}>

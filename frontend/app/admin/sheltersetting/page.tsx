@@ -6,6 +6,8 @@ import { AppDispatch, RootState } from "../../store/store";
 import { setImageInputType, updateShelterField, submitShelterAnimal } from "../../redux/shelterAdminSlice";
 
 import { Layout } from "../../components/layout/Layout";
+import AdminRegistrationList from "../../components/admin/AdminRegistrationList";
+import { fetchAdminRegistrations } from "../../redux/registrationAdminSlice";
 
 import useAdminModal from "@/app/components/contexts/AdminModalContext";
 import * as S from "@/assets/css/Style.styles";
@@ -38,6 +40,7 @@ export default function ShelterAdmin() {
     const resultAction = await dispatch(submitShelterAnimal({formData, imageFile}));
 
     if (submitShelterAnimal.fulfilled.match(resultAction)) {
+      dispatch(fetchAdminRegistrations("shelter"));
       // 알림을 확인한 뒤 업로드 파일 상태를 초기화합니다.
       openAlertModal("보호 동물이 성공적으로 등록되었습니다.", () => setImageFile(null), {variant: "success"});
     } else {
@@ -52,6 +55,7 @@ export default function ShelterAdmin() {
       <S.PageHeader>
         <S.ShelterSettingPageTitle>보호소 데이터 관리</S.ShelterSettingPageTitle>
       </S.PageHeader>
+      <AdminRegistrationList kind="shelter"/>
       <S.GridRow>
         <S.AdminFormColumn $lg={8}>
           <S.ShelterSettingFormCard>

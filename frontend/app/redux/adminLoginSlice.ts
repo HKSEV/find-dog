@@ -1,6 +1,7 @@
 // src/redux/adminLoginSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
+import { logoutAdmin, resetAdminProfile } from "./adminProfileSlice";
 
 interface AdminLoginState {
   email: string;
@@ -19,10 +20,10 @@ const initialState: AdminLoginState = {
 // 관리자 로그인 비동기 Thunk
 export const submitAdminLogin = createAsyncThunk(
   "adminLogin/submitAdminLogin",
-  async ({email, password}: {email: string; password: string}, {rejectWithValue}) => {
+  async ({email, password}: {email: string; password: string}, {rejectWithValue, dispatch}) => {
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/admin/login",
+        "/api/admin/login",
         {
           email,
           password
@@ -31,11 +32,7 @@ export const submitAdminLogin = createAsyncThunk(
       );
 
       const data = response.data;
-
-      // 관리자 이름 로컬스토리지 저장
-      if (data.name) {
-        localStorage.setItem("userName", data.name);
-      };
+      dispatch(resetAdminProfile());
 
       return data;
     } catch (error: unknown) {
@@ -70,7 +67,8 @@ export const adminLoginSlice = createSlice({
       .addCase(submitAdminLogin.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
-      });
+      })
+      .addCase(logoutAdmin.fulfilled, () => initialState);
   }
 });
 

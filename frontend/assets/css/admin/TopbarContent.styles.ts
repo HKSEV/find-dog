@@ -1,139 +1,175 @@
 "use client";
 
-import styled from "styled-components";
-import { TopbarContainer, TopbarProfile, TopbarNavbar } from "@/assets/css/admin/Topbar.styles";
-import { Search, User, SignOut } from "@/assets/css/admin/AdminIcons.styles";
+import Link from "next/link";
+import styled, { css } from "styled-components";
+import { TopbarContainer } from "@/assets/css/admin/Topbar.styles";
+import { coolGray } from "@/assets/css/admin/AdminBase.styles";
+
+const profileMenuItem = css`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 16px;
+  color: ${coolGray[700]};
+  text-align: left;
+  font-size: 0.8125rem;
+  cursor: pointer;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: ${coolGray[500]};
+  }
+
+  &:hover, &:focus-visible {
+    outline: none;
+    background-color: ${coolGray[100]};
+    color: ${coolGray[900]};
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+`;
 
 export const AdminTopbar = styled(TopbarContainer)`
   position: relative;
-  flex-flow: row nowrap;
+  z-index: 20;
 `;
 
-export const MobileMenuButton = styled.button`
-  display: inline-block;
-  font-weight: 400;
-  color: #212529;
-  text-align: center;
-  vertical-align: middle;
-  user-select: none;
-  background-color: transparent;
-  border: 1px solid transparent;
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  font-weight: 400;
-  color: #007BFF;
-  text-decoration: none;
-  &:hover {
-    color: #0056B3;
-    text-decoration: underline;
+export const AdminTopbarCaption = styled.span`
+  color: ${coolGray[500]};
+  font-size: 0.8125rem;
+  font-weight: 600;
+
+  @media (max-width: 575px) {
+    display: none;
   }
-  @media (min-width: 768px) {
-    display: none !important;
-  }
-  border-radius: 50% !important;
-  margin-right: 1rem !important;
 `;
 
-export const StyledSearch = styled(Search)`
-  font-size: 0.875em;
-`;
-
-export const StyledTopbarNavbar = styled(TopbarNavbar)`
-  margin-left: auto !important;
-`;
-
-export const ProfileMenu = styled.li`
+export const ProfileMenu = styled.div`
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  margin-left: auto;
 `;
 
-export const ProfileTrigger = styled.a`
-  display: block;
-  padding: 0.5rem 1rem;
-  white-space: nowrap;
-  &::after {
-    display: inline-block;
-    margin-left: 0.255em;
-    vertical-align: 0.255em;
-    content: "";
-    border-top: 0.3em solid;
-    border-right: 0.3em solid transparent;
-    border-bottom: 0;
-    border-left: 0.3em solid transparent;
-  }
-`;
-
-export const ProfileName = styled.span`
-  margin-right: 0.5rem !important;
-  display: none !important;
-  @media (min-width: 992px) {
-    display: inline !important;
-  }
-  color: #4A5565;
-  font-size: 80%;
-  font-weight: 400;
-`;
-
-export const StyledTopbarProfile = styled(TopbarProfile)`
-  border-radius: 50% !important;
-`;
-
-export const ProfileDropdown = styled.div`
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: 1000;
-  min-width: 10rem;
-  padding: 0.5rem 0;
-  margin: 0.125rem 0 0;
-  font-size: 1rem;
-  color: #212529;
-  text-align: left;
-  list-style: none;
-  background-color: #FFF;
-  background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 0.25rem;
-  right: 0;
-  left: auto;
-  display: block;
-`;
-
-export const ProfileMenuItem = styled.a`
-  display: block;
-  width: 100%;
-  padding: 0.25rem 1.5rem;
-  clear: both;
-  font-weight: 400;
-  color: #212529;
-  text-align: inherit;
-  white-space: nowrap;
-  background-color: transparent;
-  border: 0;
-  &:hover {
-    color: #16181B;
-    text-decoration: none;
-    background-color: #F8F9FA;
-  }
-`;
-
-export const ProfileIcon = styled(User)`
-  font-size: 0.875em;
-  margin-right: 0.5rem !important;
-  color: #99A1AF;
-`;
-
-export const ProfileMenuDivider = styled.div`
-  height: 0;
-  margin: 0.5rem 0;
+export const ProfileName = styled(Link)`
+  max-width: 240px;
   overflow: hidden;
-  border-top: 1px solid #E9ECEF;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: ${coolGray[700]};
+  font-size: 0.875rem;
+
+  &:hover {
+    color: #4E73DF;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #4E73DF;
+    outline-offset: 4px;
+    border-radius: 3px;
+  }
+
+  @media (max-width: 575px) {
+    max-width: 180px;
+    font-size: 0.8125rem;
+  }
 `;
 
-export const LogoutIcon = styled(SignOut)`
-  font-size: 0.875em;
-  margin-right: 0.5rem !important;
-  color: #99A1AF;
+export const ProfileTrigger = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 4px;
+  border-radius: 24px;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid #4E73DF;
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    cursor: wait;
+    opacity: 0.6;
+  }
+`;
+
+export const ProfileChevron = styled.span<{$open: boolean}>`
+  color: ${coolGray[500]};
+  transform: rotate(${({$open}) => ($open ? "180deg" : "0deg")});
+  transition: transform 0.18s ease;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`;
+
+export const ProfileDropdown = styled.div<{$open: boolean}>`
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 30;
+  width: 260px;
+  max-width: calc(100vw - 96px);
+  padding: 6px 0;
+  border: 1px solid ${coolGray[200]};
+  border-radius: 12px;
+  background-color: #FFFFFF;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  opacity: ${({$open}) => ($open ? 1 : 0)};
+  transform: translateY(${({$open}) => ($open ? "0" : "-6px")}) scale(${({$open}) => ($open ? 1 : 0.98)});
+  transform-origin: top right;
+  visibility: ${({$open}) => ($open ? "visible" : "hidden")};
+  pointer-events: ${({$open}) => ($open ? "auto" : "none")};
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s ${({$open}) => ($open ? "0s" : "0.18s")};
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`;
+
+export const ProfileMenuHeading = styled.div`
+  padding: 10px 16px 12px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid ${coolGray[200]};
+  color: ${coolGray[800]};
+  font-size: 0.875rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+
+  span {
+    display: block;
+    margin-top: 3px;
+    color: ${coolGray[500]};
+    font-size: 0.75rem;
+    font-weight: 400;
+  }
+`;
+
+export const ProfileMenuItem = styled(Link)`
+  ${profileMenuItem}
+`;
+
+export const ProfileMenuAction = styled.button`
+  ${profileMenuItem}
+`;
+
+export const ProfileMenuDivider = styled.hr`
+  margin: 5px 0;
+  border-top: 1px solid ${coolGray[200]};
 `;

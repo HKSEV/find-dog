@@ -7,10 +7,19 @@ interface AdminAlertModalConfig extends AdminAlertModalOptions {
   isOpen: boolean;
   message: string;
   onConfirm?: () => void;
+  onCancel?: () => void;
+  isConfirm?: boolean;
+  cancelText?: string;
+}
+
+interface AdminConfirmModalOptions extends AdminAlertModalOptions {
+  cancelText?: string;
+  onCancel?: () => void;
 }
 
 interface AdminModalContextType {
   openAlertModal: (message: unknown, onConfirm?: () => void, options?: AdminAlertModalOptions) => void;
+  openConfirmModal: (message: unknown, onConfirm: () => void, options?: AdminConfirmModalOptions) => void;
 }
 
 const AdminModalContext = createContext<AdminModalContextType | undefined>(undefined);
@@ -40,16 +49,29 @@ export function AdminModalProvider({children}: {children: React.ReactNode}) {
     []
   );
 
-  const closeAlertModal = useCallback(() => {
+  const openConfirmModal = useCallback(
+    (message: unknown, onConfirm: () => void, options: AdminConfirmModalOptions = {}) => {
+      const config = {...options, isOpen: true, isConfirm: true, message: resolveAlertMessage(message), onConfirm};
+      activeAlertRef.current = config;
+      setAlertModalConfig(config);
+    },
+    []
+  );
+
+  const closeAlertModal = useCallback((confirmed: boolean) => {
     const config = activeAlertRef.current;
     if (!config) return;
 
     activeAlertRef.current = null;
     setAlertModalConfig({isOpen: false, message: ""});
-    config.onConfirm?.();
+    if (!config.isConfirm || confirmed) {
+      config.onConfirm?.();
+    } else {
+      config.onCancel?.();
+    };
   }, []);
 
-  const value = useMemo(() => ({openAlertModal}), [openAlertModal]);
+  const value = useMemo(() => ({openAlertModal, openConfirmModal}), [openAlertModal, openConfirmModal]);
 
   return (
     <AdminModalContext.Provider value={value}>
@@ -60,7 +82,10 @@ export function AdminModalProvider({children}: {children: React.ReactNode}) {
       variant={alertModalConfig.variant}
       description={alertModalConfig.description}
       confirmText={alertModalConfig.confirmText}
-      onClose={closeAlertModal}/>
+      cancelText={alertModalConfig.cancelText}
+      isConfirm={alertModalConfig.isConfirm}
+      onConfirm={() => closeAlertModal(true)}
+      onClose={() => closeAlertModal(false)}/>
     </AdminModalContext.Provider>
   );
 };

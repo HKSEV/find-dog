@@ -6,6 +6,8 @@ import { AppDispatch, RootState } from "../../store/store";
 import { setBoardType, updateIntegrateField, submitIntegrateContent } from "../../redux/integrateAdminSlice";
 
 import { Layout } from "../../components/layout/Layout";
+import AdminRegistrationList from "../../components/admin/AdminRegistrationList";
+import { fetchAdminRegistrations } from "../../redux/registrationAdminSlice";
 
 import useAdminModal from "@/app/components/contexts/AdminModalContext";
 import * as S from "@/assets/css/Style.styles";
@@ -31,6 +33,7 @@ export default function Intergrate() {
     const resultAction = await dispatch(submitIntegrateContent({boardType, formData}));
 
     if (submitIntegrateContent.fulfilled.match(resultAction)) {
+      dispatch(fetchAdminRegistrations("integrate"));
       openAlertModal(resultAction.payload || "성공적으로 등록되었습니다", undefined, {variant: "success"});
     } else {
       openAlertModal(resultAction.payload || "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.", undefined, {
@@ -44,6 +47,7 @@ export default function Intergrate() {
       <S.PageHeader>
         <S.IntegratePageTitle>통합 콘텐츠 등록관리</S.IntegratePageTitle>
       </S.PageHeader>
+      <AdminRegistrationList kind="integrate"/>
 
       <S.GridRow>
         <S.AdminFormColumn $lg={8}>

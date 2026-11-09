@@ -9,6 +9,8 @@ export * from "./Dashboard.styles";
 export * from "./Integrate.styles";
 export * from "./Layout.styles";
 export * from "./Pick.styles";
+export * from "./Profile.styles";
+export * from "./RegistrationList.styles";
 export * from "./ShelterSetting.styles";
 export * from "./Sidebar.styles";
 export * from "./SidebarContent.styles";

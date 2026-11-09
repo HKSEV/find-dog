@@ -12,6 +12,8 @@ import {
 } from "../../redux/recommendedAdminSlice";
 
 import { Layout } from "../../components/layout/Layout";
+import AdminRegistrationList from "../../components/admin/AdminRegistrationList";
+import { fetchAdminRegistrations } from "../../redux/registrationAdminSlice";
 // 💡 앞서 정의한 쿨그레이 믹스인 및 레이아웃 요소 임포트
 
 import useAdminModal from "@/app/components/contexts/AdminModalContext";
@@ -51,6 +53,7 @@ export default function RecommendedAnimalAdmin() {
     const resultAction = await dispatch(submitRecommendedAnimal({sourceType, formData}));
 
     if (submitRecommendedAnimal.fulfilled.match(resultAction)) {
+      dispatch(fetchAdminRegistrations("recommended"));
       openAlertModal("추천 동물이 성공적으로 등록되었습니다!", undefined, {variant: "success"});
     } else {
       openAlertModal(resultAction.payload || "등록에 실패했습니다. 다시 시도해 주세요.", undefined, {variant: "error"});
@@ -60,6 +63,7 @@ export default function RecommendedAnimalAdmin() {
   return (
     <Layout>
       <S.AdminShellPageHeading>추천 입양 동물 관리</S.AdminShellPageHeading>
+      <AdminRegistrationList kind="recommended"/>
 
       <S.PickGridWrap>
         {/* 좌측 폼 영역 */}
