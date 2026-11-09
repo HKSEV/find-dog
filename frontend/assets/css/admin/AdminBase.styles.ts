@@ -1,6 +1,7 @@
 "use client";
 
-import { css } from "styled-components";
+import Image from "next/image";
+import styled, { css } from "styled-components";
 
 // 1. 관리자 화면에서 공통으로 사용하는 블루그레이 팔레트
 export const coolGray = {
@@ -132,5 +133,355 @@ export const adminTable = css`
 
   tbody tr:hover {
     background-color: ${coolGray[50]};
+  }
+`;
+
+// 설정 페이지에서 공통으로 사용하는 레이아웃과 폼 요소
+export const AdminSettingPage = styled.main`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 8px 8px 32px;
+  color: ${coolGray[800]};
+
+  @media (max-width: 767px) {
+    padding: 0 0 24px;
+  }
+`;
+
+export const AdminSettingHeader = styled.header`
+  display: grid;
+  gap: 8px;
+`;
+
+export const AdminSettingCaption = styled.p`
+  margin: 0;
+  color: ${coolGray[500]};
+  font-size: 0.8125rem;
+`;
+
+export const AdminSettingTitle = styled.h1`
+  margin: 0;
+  font-size: 1.875rem;
+  font-weight: 750;
+  letter-spacing: -0.05em;
+  line-height: 1.3;
+
+  @media (max-width: 575px) {
+    font-size: 1.5rem;
+  }
+`;
+
+export const AdminSettingDescription = styled.p`
+  margin: 0;
+  color: ${coolGray[600]};
+  font-size: 0.875rem;
+  line-height: 1.7;
+`;
+
+export const AdminSettingGrid = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+  align-items: start;
+  gap: 24px;
+
+  @media (max-width: 1199px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+`;
+
+export const AdminSettingCard = styled.section`
+  ${adminCard}
+  min-width: 0;
+  border-radius: 12px;
+`;
+
+export const AdminSettingCardHeader = styled.header`
+  padding: 18px 24px;
+  border-bottom: 1px solid ${coolGray[200]};
+  border-radius: 12px 12px 0 0;
+  background-color: ${adminColors.header};
+
+  @media (max-width: 575px) {
+    padding: 16px 18px;
+  }
+`;
+
+export const AdminSettingCardTitle = styled.h2`
+  margin: 0;
+  color: ${coolGray[800]};
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.5;
+`;
+
+export const AdminSettingCardBody = styled.div`
+  padding: 24px;
+
+  @media (max-width: 575px) {
+    padding: 18px;
+  }
+`;
+
+const adminSettingFields = css`
+  display: grid;
+  gap: 22px;
+  min-width: 0;
+`;
+
+export const AdminSettingForm = styled.form`
+  ${adminSettingFields}
+`;
+
+export const AdminSettingFields = styled.div`
+  ${adminSettingFields}
+`;
+
+export const AdminSettingFieldGrid = styled.div<{$columns?: 2 | 3}>`
+  display: grid;
+  grid-template-columns: repeat(${({$columns}) => $columns || 2}, minmax(0, 1fr));
+  gap: 20px;
+  min-width: 0;
+
+  @media (max-width: 767px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+`;
+
+export const AdminSettingField = styled.div`
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+`;
+
+export const AdminSettingLabel = styled.label`
+  color: ${coolGray[700]};
+  font-size: 0.875rem;
+  font-weight: 650;
+  line-height: 1.6;
+`;
+
+const adminSettingControl = css`
+  ${adminInput}
+  display: block;
+  min-width: 0;
+  min-height: 44px;
+  border-color: ${coolGray[200]};
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.875rem;
+  line-height: 1.6;
+
+  &:disabled {
+    background-color: ${coolGray[50]};
+    color: ${coolGray[500]};
+    cursor: not-allowed;
+  }
+`;
+
+export const AdminSettingInput = styled.input`
+  ${adminSettingControl}
+
+  &[type="file"] {
+    padding: 8px 10px;
+  }
+
+  &::file-selector-button {
+    padding: 5px 10px;
+    margin-right: 10px;
+    border: 0;
+    border-radius: 5px;
+    background-color: ${adminColors.primarySoft};
+    color: ${adminColors.primaryText};
+    font: inherit;
+    cursor: pointer;
+  }
+`;
+
+export const AdminSettingSelect = styled.select`
+  ${adminSettingControl}
+  cursor: pointer;
+`;
+
+export const AdminSettingTextarea = styled.textarea`
+  ${adminSettingControl}
+  min-height: 140px;
+  resize: vertical;
+`;
+
+const adminSettingInset = css`
+  min-width: 0;
+  padding: 18px;
+  margin: 0;
+  border: 1px solid ${coolGray[200]};
+  border-radius: 10px;
+  background-color: ${coolGray[50]};
+
+  @media (max-width: 575px) {
+    padding: 14px;
+  }
+`;
+
+export const AdminSettingInset = styled.div`
+  ${adminSettingInset}
+`;
+
+export const AdminSettingChoiceField = styled.fieldset`
+  ${adminSettingInset}
+`;
+
+export const AdminSettingLegend = styled.legend`
+  padding: 0 6px;
+  color: ${coolGray[700]};
+  font-size: 0.875rem;
+  font-weight: 650;
+`;
+
+export const AdminSettingOptions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+`;
+
+export const AdminSettingOption = styled.label`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid ${coolGray[200]};
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  color: ${coolGray[600]};
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+
+  &:hover {
+    border-color: ${coolGray[400]};
+  }
+
+  &:has(input:checked) {
+    border-color: ${adminColors.primary};
+    background-color: ${adminColors.primarySoft};
+    color: ${adminColors.primaryText};
+  }
+
+  &:focus-within {
+    outline: 2px solid ${adminColors.primary};
+    outline-offset: 3px;
+  }
+
+  input[type="radio"] {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: ${adminColors.primary};
+    cursor: inherit;
+  }
+
+  @media (max-width: 575px) {
+    width: 100%;
+  }
+`;
+
+export const AdminSettingHelp = styled.small`
+  color: ${coolGray[500]};
+  font-size: 0.8125rem;
+  line-height: 1.7;
+`;
+
+export const AdminSettingSubmit = styled.button`
+  ${adminPrimaryBtn}
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+
+  &:focus-visible {
+    outline: 2px solid ${adminColors.primary};
+    outline-offset: 3px;
+  }
+`;
+
+export const AdminSettingSecondaryButton = styled.button`
+  ${adminOutlineBtn}
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  border-color: ${coolGray[200]};
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+
+  &:focus-visible {
+    outline: 2px solid ${adminColors.primary};
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+export const AdminSettingPreview = styled.div`
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  padding: 20px;
+  border: 1px dashed ${coolGray[300]};
+  border-radius: 10px;
+  background-color: ${coolGray[50]};
+`;
+
+export const AdminSettingPreviewImage = styled(Image)`
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 240px;
+  border-radius: 8px;
+  object-fit: contain;
+`;
+
+export const AdminSettingGuide = styled(AdminSettingCard).attrs({as: "aside"})``;
+
+export const AdminSettingGuideBody = styled(AdminSettingCardBody)`
+  color: ${coolGray[600]};
+  font-size: 0.875rem;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+
+  p {
+    margin: 0;
+  }
+
+  p + p {
+    margin-top: 18px;
+  }
+
+  strong {
+    color: ${coolGray[800]};
+    font-weight: 650;
+  }
+
+  hr {
+    margin: 18px 0;
+    border: 0;
+    border-top: 1px solid ${coolGray[200]};
   }
 `;

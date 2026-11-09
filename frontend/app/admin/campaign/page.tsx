@@ -51,180 +51,163 @@ export default function AdoptionCampaignAdmin() {
 
   return (
     <Layout>
-      <S.PageHeader>
-        <S.AdminCampaignPageTitle>입양 캠페인 관리</S.AdminCampaignPageTitle>
-      </S.PageHeader>
-      <AdminRegistrationList kind="campaign"/>
+      <S.AdminSettingPage>
+        <S.AdminSettingHeader>
+          <S.AdminSettingCaption>관리자 / 캠페인 설정</S.AdminSettingCaption>
+          <S.AdminSettingTitle>입양 캠페인 관리</S.AdminSettingTitle>
+          <S.AdminSettingDescription>입양 캠페인의 내용과 미디어를 등록하고 게시 현황을 확인하세요.</S.AdminSettingDescription>
+        </S.AdminSettingHeader>
 
-      <S.GridRow>
-        <S.AdminFormColumn $lg={8}>
-          <S.AdminCampaignFormCard>
-            <S.AdminCampaignFormCardHeader>
-              <S.AdminCampaignCardTitle>신규 캠페인 등록</S.AdminCampaignCardTitle>
-            </S.AdminCampaignFormCardHeader>
-            <S.AdminFormCardBody>
-              <form onSubmit={handleSubmit}>
-                <S.AdminCampaignFormSection>
-                  <S.AdminCampaignFieldLabel>미디어 타입 설정</S.AdminCampaignFieldLabel>
+        <S.AdminSettingGrid>
+          <S.AdminSettingCard aria-labelledby="campaign-form-title">
+            <S.AdminSettingCardHeader>
+              <S.AdminSettingCardTitle id="campaign-form-title">신규 캠페인 등록</S.AdminSettingCardTitle>
+            </S.AdminSettingCardHeader>
+            <S.AdminSettingCardBody>
+              <S.AdminSettingForm onSubmit={handleSubmit}>
+                <S.AdminSettingChoiceField>
+                  <S.AdminSettingLegend>미디어 타입 설정</S.AdminSettingLegend>
+                  <S.AdminSettingOptions>
+                    <S.AdminSettingOption>
+                      <input
+                      type="radio"
+                      name="mediaType"
+                      checked={formData.mediaType === "IMAGE"}
+                      onChange={() => handleMediaTypeChange("IMAGE")}/>
+                      이미지형
+                    </S.AdminSettingOption>
+                    <S.AdminSettingOption>
+                      <input
+                      type="radio"
+                      name="mediaType"
+                      checked={formData.mediaType === "YOUTUBE"}
+                      onChange={() => handleMediaTypeChange("YOUTUBE")}/>
+                      유튜브 링크형
+                    </S.AdminSettingOption>
+                    <S.AdminSettingOption>
+                      <input
+                      type="radio"
+                      name="mediaType"
+                      checked={formData.mediaType === "DIRECT_VIDEO"}
+                      onChange={() => handleMediaTypeChange("DIRECT_VIDEO")}/>
+                      서버 직접 업로드형
+                    </S.AdminSettingOption>
+                  </S.AdminSettingOptions>
+                </S.AdminSettingChoiceField>
 
-                  <S.AdminCampaignCategoryOptions>
-                    <S.AdminCampaignRadioOption>
-                      <S.CheckWrapper>
-                        <S.CheckInput
-                        type="radio"
-                        id="mediaImage"
-                        name="mediaType"
-                        checked={formData.mediaType === "IMAGE"}
-                        onChange={() => handleMediaTypeChange("IMAGE")}/>
-                      </S.CheckWrapper>
-                      <S.AdminCampaignRadioLabel htmlFor="mediaImage">이미지형</S.AdminCampaignRadioLabel>
-                    </S.AdminCampaignRadioOption>
-                    <S.AdminCampaignRadioOption>
-                      <S.CheckWrapper>
-                        <S.CheckInput
-                        type="radio"
-                        id="mediaYoutube"
-                        name="mediaType"
-                        checked={formData.mediaType === "YOUTUBE"}
-                        onChange={() => handleMediaTypeChange("YOUTUBE")}/>
-                      </S.CheckWrapper>
-                      <S.AdminCampaignRadioLabel htmlFor="mediaYoutube">유튜브 링크형</S.AdminCampaignRadioLabel>
-                    </S.AdminCampaignRadioOption>
-
-                    <S.AdminCampaignRadioOption>
-                      <S.CheckWrapper>
-                        <S.CheckInput
-                        type="radio"
-                        id="mediaDirect"
-                        name="mediaType"
-                        checked={formData.mediaType === "DIRECT_VIDEO"}
-                        onChange={() => handleMediaTypeChange("DIRECT_VIDEO")}/>
-                      </S.CheckWrapper>
-                      <S.AdminCampaignRadioLabel htmlFor="mediaDirect">서버 직접 업로드형</S.AdminCampaignRadioLabel>
-                    </S.AdminCampaignRadioOption>
-                  </S.AdminCampaignCategoryOptions>
-                </S.AdminCampaignFormSection>
-
-                <hr/>
-                {/*해시태그 및 제목 입력 구역 */}
-                <S.Row>
-                  <S.AdminCampaignFieldColumn $md={4}>
-                    <p>
-                      <S.AdminCampaignEmphasizedLabel>해시태그 (말머리)</S.AdminCampaignEmphasizedLabel>
-                    </p>
-                    <S.AdminFormSelect name="hashtag" value={formData.hashtag} onChange={handleChange} required>
+                <S.CampaignTitleFields>
+                  <S.AdminSettingField>
+                    <S.AdminSettingLabel htmlFor="campaign-hashtag">해시태그 (말머리)</S.AdminSettingLabel>
+                    <S.AdminSettingSelect id="campaign-hashtag" name="hashtag" value={formData.hashtag} onChange={handleChange} required>
                       <option value="">-- 필수 선택 --</option>
-                      {HASHTAG_LIST.map((tag, index) => (
-                        <option key={index} value={tag}>
+                      {HASHTAG_LIST.map((tag) => (
+                        <option key={tag} value={tag}>
                           {tag}
                         </option>
                       ))}
-                    </S.AdminFormSelect>
-                  </S.AdminCampaignFieldColumn>
-
-                  <S.AdminCampaignFieldColumn $md={8}>
-                    <S.AdminCampaignEmphasizedLabel>캠페인 제목</S.AdminCampaignEmphasizedLabel>
-                    <S.Control
+                    </S.AdminSettingSelect>
+                  </S.AdminSettingField>
+                  <S.AdminSettingField>
+                    <S.AdminSettingLabel htmlFor="campaign-title">캠페인 제목</S.AdminSettingLabel>
+                    <S.AdminSettingInput
+                    id="campaign-title"
                     name="title"
                     placeholder="목록에 노출될 제목을 적어주세요"
                     value={formData.title}
                     onChange={handleChange}
                     required/>
-                  </S.AdminCampaignFieldColumn>
-                </S.Row>
+                  </S.AdminSettingField>
+                </S.CampaignTitleFields>
 
-                {/*상세 내용구역 */}
-                <S.AdminCampaignFormGroup>
-                  <S.AdminCampaignEmphasizedLabel>상세 내용</S.AdminCampaignEmphasizedLabel>
-                  <S.Control
-                  as="textarea"
+                <S.AdminSettingField>
+                  <S.AdminSettingLabel htmlFor="campaign-content">상세 내용</S.AdminSettingLabel>
+                  <S.AdminSettingTextarea
+                  id="campaign-content"
                   rows={5}
                   name="content"
                   placeholder="캠페인의 자세한 사연이나 설명을 적어주세요"
                   value={formData.content}
                   onChange={handleChange}
                   required/>
-                </S.AdminCampaignFormGroup>
+                </S.AdminSettingField>
 
-                {/*동영상 링크 / 경로 */}
                 {formData.mediaType !== "IMAGE" && (
-                  <S.AdminCampaignInsetFormGroup>
-                    <S.AdminCampaignPrimaryLabel>
-                      {formData.mediaType === "YOUTUBE" ? "유튜브 링크(URL)" : "서버동영상 파일경로"}
-                    </S.AdminCampaignPrimaryLabel>
-                    <S.Control
-                    type="text"
-                    name="mediaUrl"
-                    placeholder={
-                      formData.mediaType === "YOUTUBE" ? "https://youtube.com/.." : "/uploads/videos/campaign_"
-                    }
-                    value={formData.mediaUrl}
-                    onChange={handleChange}
-                    required={formData.mediaType !== "IMAGE"}/>
-                  </S.AdminCampaignInsetFormGroup>
+                  <S.AdminSettingInset>
+                    <S.AdminSettingField>
+                      <S.AdminSettingLabel htmlFor="campaign-media-url">
+                        {formData.mediaType === "YOUTUBE" ? "유튜브 링크(URL)" : "서버 동영상 파일 경로"}
+                      </S.AdminSettingLabel>
+                      <S.AdminSettingInput
+                      id="campaign-media-url"
+                      type="text"
+                      name="mediaUrl"
+                      placeholder={formData.mediaType === "YOUTUBE" ? "https://youtube.com/.." : "/uploads/videos/campaign_"}
+                      value={formData.mediaUrl}
+                      onChange={handleChange}
+                      required/>
+                    </S.AdminSettingField>
+                  </S.AdminSettingInset>
                 )}
 
-                {/*썸네일 구역 */}
-                <S.AdminCampaignFormSection>
-                  <S.AdminCampaignEmphasizedLabel>썸네일 이미지 URL(최대 2MB)</S.AdminCampaignEmphasizedLabel>
-                  <S.Control
+                <S.AdminSettingField>
+                  <S.AdminSettingLabel htmlFor="campaign-thumbnail">썸네일 이미지 URL(최대 2MB)</S.AdminSettingLabel>
+                  <S.AdminSettingInput
+                  id="campaign-thumbnail"
                   type="url"
                   name="thumbnailUrl"
                   placeholder="목록에 보여질 썸네일 주소를 입력하세요"
                   value={formData.thumbnailUrl}
                   onChange={handleChange}
                   required/>
-                </S.AdminCampaignFormSection>
+                </S.AdminSettingField>
 
-                {/*썸네일 미리보기*/}
                 {formData.thumbnailUrl && (
-                  <S.AdminCampaignPreviewBox>
-                    <S.CampaignPreviewImage
+                  <S.AdminSettingPreview>
+                    <S.AdminSettingPreviewImage
                     src={formData.thumbnailUrl}
                     alt="썸네일 미리보기"
                     width={0}
                     height={0}
                     unoptimized
                     loading="eager"/>
-                  </S.AdminCampaignPreviewBox>
+                  </S.AdminSettingPreview>
                 )}
-                <S.AdminCampaignSubmitButton type="submit" $variant="primary" disabled={isLoading}>
-                  {isLoading ? "등록 중..." : "캠페인 최종 등록하기"}
-                </S.AdminCampaignSubmitButton>
-              </form>
-            </S.AdminFormCardBody>
-          </S.AdminCampaignFormCard>
-        </S.AdminFormColumn>
 
-        <S.AdminFormColumn $lg={4}>
-          <S.AdminCampaignFormCard>
-            <S.AdminCampaignFormCardHeader>
-              <S.AdminCampaignCardTitle>등록 안내 가이드</S.AdminCampaignCardTitle>
-            </S.AdminCampaignFormCardHeader>
-            <S.AdminCampaignGuideBody>
+                <S.AdminSettingSubmit type="submit" disabled={isLoading}>
+                  {isLoading ? "등록 중..." : "캠페인 최종 등록하기"}
+                </S.AdminSettingSubmit>
+              </S.AdminSettingForm>
+            </S.AdminSettingCardBody>
+          </S.AdminSettingCard>
+
+          <S.AdminSettingGuide aria-labelledby="campaign-guide-title">
+            <S.AdminSettingCardHeader>
+              <S.AdminSettingCardTitle id="campaign-guide-title">등록 안내 가이드</S.AdminSettingCardTitle>
+            </S.AdminSettingCardHeader>
+            <S.AdminSettingGuideBody>
               <p>
-                <strong>1. 해시태그(말머리) 필수:</strong>
+                <strong>1. 해시태그(말머리) 필수</strong>
                 <br/>
-                말머리를 정확히 선택해야 사용자 페이지에서 해당 카테고리로 묶여서 노출됩니다.
+                말머리를 선택하면 사용자 페이지에서 해당 카테고리로 묶여 노출됩니다.
               </p>
               <hr/>
               <p>
-                <strong>2. 유튜브 링크 활용:</strong>
+                <strong>2. 유튜브 링크 활용</strong>
                 <br/>
-                서버 트래픽 절감 및 원활한 스트리밍을 위해 가급적 유튜브 링크 연동을 권장합니다. 상세 페이지에서
-                Iframe으로 노출됩니다.
+                원활한 동영상 재생을 위해 가급적 유튜브 링크 연동을 권장합니다.
               </p>
               <hr/>
               <p>
-                <strong>3. 직접 동영상 업로드 시 주의:</strong>
+                <strong>3. 직접 동영상 업로드 시 주의</strong>
                 <br/>
-                외부 통제가 불가능한 상황을 대비한 기능입니다 트래픽 폭주를 막기위해 최대 2MB 용량, 30초 이내의 ogg 또는
-                mp4 파일로 변환하여 업로드
+                최대 2MB 용량, 30초 이내의 ogg 또는 mp4 파일로 변환한 뒤 업로드 경로를 입력해 주세요.
               </p>
-            </S.AdminCampaignGuideBody>
-          </S.AdminCampaignFormCard>
-        </S.AdminFormColumn>
-      </S.GridRow>
+            </S.AdminSettingGuideBody>
+          </S.AdminSettingGuide>
+        </S.AdminSettingGrid>
+
+        <AdminRegistrationList kind="campaign"/>
+      </S.AdminSettingPage>
     </Layout>
   );
 };

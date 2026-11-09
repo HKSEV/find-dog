@@ -38,7 +38,7 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
     <S.AdminListPanel aria-labelledby={`${id}-title`} aria-busy={isLoading}>
       <S.AdminListHeader>
         <div>
-          <S.AdminListTitle id={`${id}-title`}>{config.title}</S.AdminListTitle>
+          <S.AdminSettingCardTitle id={`${id}-title`}>{config.title}</S.AdminSettingCardTitle>
           <S.AdminListCount aria-live="polite">
             {isLoading
               ? "목록을 불러오는 중입니다."

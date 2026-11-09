@@ -14,14 +14,10 @@ import {
 import { Layout } from "../../components/layout/Layout";
 import AdminRegistrationList from "../../components/admin/AdminRegistrationList";
 import { fetchAdminRegistrations } from "../../redux/registrationAdminSlice";
-// 💡 앞서 정의한 쿨그레이 믹스인 및 레이아웃 요소 임포트
 
 import useAdminModal from "@/app/components/contexts/AdminModalContext";
 import * as S from "@/assets/css/Style.styles";
 
-// ==========================================
-// 💡 메인 컴포넌트
-// ==========================================
 export default function RecommendedAnimalAdmin() {
   const dispatch = useDispatch<AppDispatch>();
   const {openAlertModal} = useAdminModal();
@@ -62,158 +58,161 @@ export default function RecommendedAnimalAdmin() {
 
   return (
     <Layout>
-      <S.AdminShellPageHeading>추천 입양 동물 관리</S.AdminShellPageHeading>
-      <AdminRegistrationList kind="recommended"/>
+      <S.AdminSettingPage>
+        <S.AdminSettingHeader>
+          <S.AdminSettingCaption>관리자 / 추천 동물 설정</S.AdminSettingCaption>
+          <S.AdminSettingTitle>추천 입양 동물 관리</S.AdminSettingTitle>
+          <S.AdminSettingDescription>추천 동물을 등록하고 입양 홍보에 필요한 정보를 관리하세요.</S.AdminSettingDescription>
+        </S.AdminSettingHeader>
 
-      <S.PickGridWrap>
-        {/* 좌측 폼 영역 */}
-        <div>
-          <S.AdminShellDataCard>
-            <div className="card-header">신규 추천 동물 등록</div>
-            <div className="card-body">
-              <form onSubmit={handleSubmit}>
-                {/* 라디오 버튼 그룹 */}
-                <S.PickFormGroup>
-                  <S.FormLabel>등록 출처 선택</S.FormLabel>
-                  <S.PickRadioGroup>
-                    <S.PickRadioLabel>
+        <S.AdminSettingGrid>
+          <S.AdminSettingCard aria-labelledby="recommended-form-title">
+            <S.AdminSettingCardHeader>
+              <S.AdminSettingCardTitle id="recommended-form-title">신규 추천 동물 등록</S.AdminSettingCardTitle>
+            </S.AdminSettingCardHeader>
+            <S.AdminSettingCardBody>
+              <S.AdminSettingForm onSubmit={handleSubmit}>
+                <S.AdminSettingChoiceField>
+                  <S.AdminSettingLegend>등록 출처 선택</S.AdminSettingLegend>
+                  <S.AdminSettingOptions>
+                    <S.AdminSettingOption>
                       <input
                       type="radio"
                       name="sourceType"
                       checked={sourceType === "DIRECT"}
                       onChange={() => dispatch(setSourceType("DIRECT"))}/>
                       자체 직접 등록
-                    </S.PickRadioLabel>
-                    <S.PickRadioLabel>
+                    </S.AdminSettingOption>
+                    <S.AdminSettingOption>
                       <input
                       type="radio"
                       name="sourceType"
                       checked={sourceType === "FACEBOOK"}
                       onChange={() => dispatch(setSourceType("FACEBOOK"))}/>
                       페이스북 링크
-                    </S.PickRadioLabel>
-                    <S.PickRadioLabel>
+                    </S.AdminSettingOption>
+                    <S.AdminSettingOption>
                       <input
                       type="radio"
                       name="sourceType"
                       checked={sourceType === "INSTAGRAM"}
                       onChange={() => dispatch(setSourceType("INSTAGRAM"))}/>
                       인스타그램 링크
-                    </S.PickRadioLabel>
-                  </S.PickRadioGroup>
-                </S.PickFormGroup>
+                    </S.AdminSettingOption>
+                  </S.AdminSettingOptions>
+                </S.AdminSettingChoiceField>
 
-                <S.PickFormDivider/>
-
-                {/* SNS 파싱 인풋 */}
                 {sourceType !== "DIRECT" && (
-                  <S.PickFormGroup>
-                    <S.UrlLabel>SNS 포스팅 URL 주소</S.UrlLabel>
-                    <S.PickInputGroup>
-                      <S.FormInput
-                      type="url"
-                      name="sourceUrl"
-                      placeholder={`${sourceType === "FACEBOOK" ? "페이스북" : "인스타그램"} 주소를 입력하세요`}
-                      value={formData.sourceUrl}
-                      onChange={handleChange}
-                      required/>
-                      <S.FetchButton type="button" onClick={handleParseUrl} disabled={isParsing}>
-                        {isParsing ? "분석 중..." : "데이터 자동 불러오기 ⚡"}
-                      </S.FetchButton>
-                    </S.PickInputGroup>
-                    <S.PickHelpText>
-                      주소를 입력하고 불러오기 버튼을 누르면 아래 정보가 자동으로 채워집니다.
-                    </S.PickHelpText>
-                  </S.PickFormGroup>
+                  <S.AdminSettingInset>
+                    <S.AdminSettingField>
+                      <S.AdminSettingLabel htmlFor="recommended-source-url">SNS 포스팅 URL 주소</S.AdminSettingLabel>
+                      <S.PickInputGroup>
+                        <S.AdminSettingInput
+                        id="recommended-source-url"
+                        type="url"
+                        name="sourceUrl"
+                        placeholder={`${sourceType === "FACEBOOK" ? "페이스북" : "인스타그램"} 주소를 입력하세요`}
+                        value={formData.sourceUrl}
+                        onChange={handleChange}
+                        required/>
+                        <S.PickFetchButton type="button" onClick={handleParseUrl} disabled={isParsing}>
+                          {isParsing ? "분석 중..." : "데이터 자동 불러오기"}
+                        </S.PickFetchButton>
+                      </S.PickInputGroup>
+                      <S.AdminSettingHelp>주소를 입력하고 불러오기 버튼을 누르면 아래 정보가 자동으로 채워집니다.</S.AdminSettingHelp>
+                    </S.AdminSettingField>
+                  </S.AdminSettingInset>
                 )}
 
-                {/* 동물 정보 입력 */}
-                <S.InnerGridRow2>
-                  <S.PickFormGroup>
-                    <S.FormLabel>지역 (예: 강릉시)</S.FormLabel>
-                    <S.FormInput name="region" value={formData.region} onChange={handleChange} required/>
-                  </S.PickFormGroup>
-                  <S.PickFormGroup>
-                    <S.FormLabel>공고번호 / 이름</S.FormLabel>
-                    <S.FormInput name="noticeNo" value={formData.noticeNo} onChange={handleChange} required/>
-                  </S.PickFormGroup>
-                </S.InnerGridRow2>
+                <S.AdminSettingFieldGrid>
+                  <S.AdminSettingField>
+                    <S.AdminSettingLabel htmlFor="recommended-region">지역 (예: 강릉시)</S.AdminSettingLabel>
+                    <S.AdminSettingInput id="recommended-region" name="region" value={formData.region} onChange={handleChange} required/>
+                  </S.AdminSettingField>
+                  <S.AdminSettingField>
+                    <S.AdminSettingLabel htmlFor="recommended-notice">공고번호 / 이름</S.AdminSettingLabel>
+                    <S.AdminSettingInput id="recommended-notice" name="noticeNo" value={formData.noticeNo} onChange={handleChange} required/>
+                  </S.AdminSettingField>
+                </S.AdminSettingFieldGrid>
 
-                <S.InnerGridRow3>
-                  <S.PickFormGroup>
-                    <S.FormLabel>출생년도 (예: 2023)</S.FormLabel>
-                    <S.FormInput name="birthYear" value={formData.birthYear} onChange={handleChange} required/>
-                  </S.PickFormGroup>
-                  <S.PickFormGroup>
-                    <S.FormLabel>성별</S.FormLabel>
-                    <S.FormSelect name="gender" value={formData.gender} onChange={handleChange}>
+                <S.AdminSettingFieldGrid $columns={3}>
+                  <S.AdminSettingField>
+                    <S.AdminSettingLabel htmlFor="recommended-birth-year">출생년도 (예: 2023)</S.AdminSettingLabel>
+                    <S.AdminSettingInput id="recommended-birth-year" name="birthYear" value={formData.birthYear} onChange={handleChange} required/>
+                  </S.AdminSettingField>
+                  <S.AdminSettingField>
+                    <S.AdminSettingLabel htmlFor="recommended-gender">성별</S.AdminSettingLabel>
+                    <S.AdminSettingSelect id="recommended-gender" name="gender" value={formData.gender} onChange={handleChange}>
                       <option value="M">수컷 (M)</option>
                       <option value="F">암컷 (F)</option>
-                    </S.FormSelect>
-                  </S.PickFormGroup>
-                  <S.PickFormGroup>
-                    <S.FormLabel>체중 (kg)</S.FormLabel>
-                    <S.FormInput
+                    </S.AdminSettingSelect>
+                  </S.AdminSettingField>
+                  <S.AdminSettingField>
+                    <S.AdminSettingLabel htmlFor="recommended-weight">체중 (kg)</S.AdminSettingLabel>
+                    <S.AdminSettingInput
+                    id="recommended-weight"
                     type="number"
                     step="0.1"
                     name="weight"
                     value={formData.weight}
                     onChange={handleChange}
                     required/>
-                  </S.PickFormGroup>
-                </S.InnerGridRow3>
+                  </S.AdminSettingField>
+                </S.AdminSettingFieldGrid>
 
-                <S.PickFormGroup>
-                  <S.FormLabel>동물 사진 URL</S.FormLabel>
-                  <S.FormInput
+                <S.AdminSettingField>
+                  <S.AdminSettingLabel htmlFor="recommended-image-url">동물 사진 URL</S.AdminSettingLabel>
+                  <S.AdminSettingInput
+                  id="recommended-image-url"
                   type="url"
                   name="imageUrl"
                   placeholder="https://..."
                   value={formData.imageUrl}
                   onChange={handleChange}
                   required/>
-                </S.PickFormGroup>
+                </S.AdminSettingField>
 
                 {formData.imageUrl && (
-                  <S.PickPreviewBox>
-                    <S.AnimalPreviewImage
+                  <S.AdminSettingPreview>
+                    <S.AdminSettingPreviewImage
                     src={formData.imageUrl}
                     alt="미리보기"
                     width={0}
                     height={0}
                     unoptimized
                     loading="eager"/>
-                  </S.PickPreviewBox>
+                  </S.AdminSettingPreview>
                 )}
 
-                <S.PickSubmitButton type="submit" disabled={isLoading}>
+                <S.AdminSettingSubmit type="submit" disabled={isLoading}>
                   {isLoading ? "등록 중..." : "최종 등록하기"}
-                </S.PickSubmitButton>
-              </form>
-            </div>
-          </S.AdminShellDataCard>
-        </div>
+                </S.AdminSettingSubmit>
+              </S.AdminSettingForm>
+            </S.AdminSettingCardBody>
+          </S.AdminSettingCard>
 
-        {/* 우측 안내 영역 */}
-        <div>
-          <S.AdminShellDataCard>
-            <div className="card-header">등록 안내</div>
-            <div className="card-body">
-              <S.InfoText>
-                <strong>직접등록:</strong>
+          <S.AdminSettingGuide aria-labelledby="recommended-guide-title">
+            <S.AdminSettingCardHeader>
+              <S.AdminSettingCardTitle id="recommended-guide-title">등록 안내</S.AdminSettingCardTitle>
+            </S.AdminSettingCardHeader>
+            <S.AdminSettingGuideBody>
+              <p>
+                <strong>직접 등록</strong>
                 <br/>
-                센터에서 보호중인 동물을 직접 등록합니다.
-              </S.InfoText>
-              <S.InfoText>
-                <strong>페이스북 / 인스타:</strong>
+                센터에서 보호 중인 동물의 정보를 직접 입력해 등록합니다.
+              </p>
+              <hr/>
+              <p>
+                <strong>페이스북 / 인스타그램</strong>
                 <br/>
-                외부 SNS에서 화제가 된 입양 홍보글을 연동할 때 사용합니다. 추후 사용자 화면에서 해당 동물을 클릭하면
-                입력하신 SNS 주소로 이동하도록 개발할 수 있습니다.
-              </S.InfoText>
-            </div>
-          </S.AdminShellDataCard>
-        </div>
-      </S.PickGridWrap>
+                외부 SNS의 입양 홍보글을 불러올 때 사용합니다. 불러온 사진과 동물 정보를 등록 전에 확인해 주세요.
+              </p>
+            </S.AdminSettingGuideBody>
+          </S.AdminSettingGuide>
+        </S.AdminSettingGrid>
+
+        <AdminRegistrationList kind="recommended"/>
+      </S.AdminSettingPage>
     </Layout>
   );
 };

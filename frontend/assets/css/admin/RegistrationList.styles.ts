@@ -1,19 +1,13 @@
 "use client";
 
 import styled from "styled-components";
-import { coolGray, adminColors } from "@/assets/css/admin/AdminBase.styles";
+import { coolGray, adminColors, AdminSettingCard, AdminSettingSecondaryButton, AdminSettingSelect } from "@/assets/css/admin/AdminBase.styles";
 
-export const AdminListPanel = styled.section`
-  min-width: 0;
-  padding: 22px;
-  margin-bottom: 26px;
-  border: 1px solid ${coolGray[200]};
-  border-radius: 12px;
-  background-color: #FFFFFF;
-  color: ${coolGray[800]};
+export const AdminListPanel = styled(AdminSettingCard)`
+  padding: 24px;
 
   @media (max-width: 575px) {
-    padding: 16px;
+    padding: 18px;
   }
 `;
 
@@ -26,43 +20,19 @@ export const AdminListHeader = styled.div`
   margin-bottom: 18px;
 `;
 
-export const AdminListTitle = styled.h2`
-  margin: 0;
-  font-size: 1.0625rem;
-  font-weight: 700;
-`;
-
 export const AdminListCount = styled.p`
   margin: 6px 0 0;
   color: ${coolGray[500]};
   font-size: 0.75rem;
 `;
 
-export const AdminListRefresh = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+export const AdminListRefresh = styled(AdminSettingSecondaryButton)`
   min-height: 36px;
   padding: 7px 12px;
-  border: 1px solid ${coolGray[200]};
-  border-radius: 7px;
   color: ${coolGray[600]};
-  font-size: 0.8125rem;
-  cursor: pointer;
 
   &:hover:not(:disabled) {
     background-color: ${coolGray[100]};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${adminColors.primary};
-    outline-offset: 3px;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: default;
   }
 
   svg {
@@ -85,10 +55,10 @@ export const AdminListSearch = styled.div`
   flex: 1 1 260px;
   max-width: 480px;
   gap: 10px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 8px 12px;
   border: 1px solid ${coolGray[200]};
-  border-radius: 7px;
+  border-radius: 8px;
   background-color: ${coolGray[50]};
 
   > svg {
@@ -100,7 +70,7 @@ export const AdminListSearch = styled.div`
 
   &:focus-within {
     border-color: ${adminColors.primary};
-    box-shadow: 0 0 0 2px #EFF6FF;
+    box-shadow: ${adminColors.focusRing};
   }
 `;
 
@@ -126,18 +96,10 @@ export const AdminListInput = styled.input`
   }
 `;
 
-export const AdminListFilter = styled.select`
-  min-height: 40px;
+export const AdminListFilter = styled(AdminSettingSelect)`
+  width: auto;
   padding: 8px 12px;
-  border: 1px solid ${coolGray[200]};
-  border-radius: 7px;
-  color: ${coolGray[700]};
   font-size: 0.8125rem;
-
-  &:focus-visible {
-    outline: 2px solid ${adminColors.primary};
-    outline-offset: 3px;
-  }
 `;
 
 export const AdminListClear = styled(AdminListRefresh)`
