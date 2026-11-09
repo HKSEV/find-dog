@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FiChevronLeft, FiChevronRight, FiEdit2, FiRefreshCw, FiSearch, FiTrash2, FiX } from "react-icons/fi";
 import { AppDispatch, RootState } from "../../store/store";
@@ -35,11 +35,6 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
   const currentPage = Math.min(page, totalPages);
   const visibleRows = filteredRows.slice((currentPage - 1) * 10, currentPage * 10);
   const allFailed = failedSources.length === sources.length;
-
-  useEffect(() => {
-    const request = dispatch(fetchAdminRegistrations(kind));
-    return () => request.abort();
-  }, [dispatch, kind]);
 
   const handleEdit = async (row: AdminRegistrationRow) => {
     if (busyRef.current) return;
@@ -149,20 +144,24 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
       )}
       <S.AdminListTableScroll>
         <S.AdminListTable aria-label={config.title}>
+          <colgroup>
+            <S.AdminListPrimaryColumn/>
+            <S.AdminListDetailColumn/>
+            <S.AdminListActionColumn/>
+            <S.AdminListActionColumn/>
+          </colgroup>
           <thead>
             <tr>
-              {config.columns.map((column) => (
-                <th key={column} scope="col">
-                  {column}
-                </th>
-              ))}
-              <th scope="col">관리</th>
+              <th scope="col">{config.columns[0]}</th>
+              <th scope="col">상세 정보</th>
+              <th scope="col">수정</th>
+              <th scope="col">삭제</th>
             </tr>
           </thead>
           <tbody>
             {isLoading || !visibleRows.length ? (
               <tr>
-                <S.AdminListEmpty colSpan={config.columns.length + 1}>
+                <S.AdminListEmpty colSpan={4}>
                   {isLoading
                     ? "등록 목록을 불러오는 중입니다."
                     : allFailed
@@ -175,29 +174,37 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
             ) : (
               visibleRows.map((row) => (
                 <tr key={row.key}>
-                  {row.cells.map((cell, index) => (
-                    <td key={config.columns[index]}>{cell}</td>
-                  ))}
+                  <td>{row.cells[0]}</td>
                   <td>
-                    <S.AdminListActions>
-                      <S.AdminListActionButton
-                      type="button"
-                      aria-label={`${row.cells[0]} 수정`}
-                      disabled={busyKey !== null}
-                      onClick={() => handleEdit(row)}>
-                        <FiEdit2 aria-hidden="true"/>
-                        수정
-                      </S.AdminListActionButton>
-                      <S.AdminListActionButton
-                      type="button"
-                      aria-label={`${row.cells[0]} 삭제`}
-                      $danger
-                      disabled={busyKey !== null}
-                      onClick={() => handleDelete(row)}>
-                        <FiTrash2 aria-hidden="true"/>
-                        삭제
-                      </S.AdminListActionButton>
-                    </S.AdminListActions>
+                    <S.AdminListDetails>
+                      {row.cells.slice(1).map((cell, index) => (
+                        <S.AdminListDetail key={config.columns[index + 1]}>
+                          <dt>{config.columns[index + 1]}</dt>
+                          <dd>{cell}</dd>
+                        </S.AdminListDetail>
+                      ))}
+                    </S.AdminListDetails>
+                  </td>
+                  <td>
+                    <S.AdminListActionButton
+                    type="button"
+                    aria-label={`${row.cells[0]} 수정`}
+                    disabled={busyKey !== null}
+                    onClick={() => handleEdit(row)}>
+                      <FiEdit2 aria-hidden="true"/>
+                      수정
+                    </S.AdminListActionButton>
+                  </td>
+                  <td>
+                    <S.AdminListActionButton
+                    type="button"
+                    aria-label={`${row.cells[0]} 삭제`}
+                    $danger
+                    disabled={busyKey !== null}
+                    onClick={() => handleDelete(row)}>
+                      <FiTrash2 aria-hidden="true"/>
+                      삭제
+                    </S.AdminListActionButton>
                   </td>
                 </tr>
               ))

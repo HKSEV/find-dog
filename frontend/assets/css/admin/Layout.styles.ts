@@ -11,10 +11,9 @@ export const AdminShellWrapper = styled.div`
   color: ${coolGray[700]};
   display: flex;
   width: 100%;
-  height: 100vh;
-  height: 100dvh;
-  min-height: 0;
-  overflow: hidden;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: clip;
 `;
 
 export const AdminShellContentWrapper = styled.div`
@@ -23,9 +22,6 @@ export const AdminShellContentWrapper = styled.div`
   flex: 1;
   width: 0;
   min-width: 0;
-  height: 100%;
-  min-height: 0;
-  overflow: hidden;
   /* 밝은 블루그레이 배경 */
   background-color: ${coolGray[50]};
 `;
@@ -34,11 +30,6 @@ export const AdminShellMainContent = styled.div`
   flex: 1;
   width: 100%;
   min-width: 0;
-  min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior-y: contain;
-  scrollbar-gutter: stable;
 `;
 
 export const AdminShellContainerFluid = styled.div`

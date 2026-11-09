@@ -3,6 +3,7 @@ export * from "./AdminBase.styles";
 export * from "./AdminIcons.styles";
 export * from "./AdminLayout.styles";
 export * from "./AdminLogin.styles";
+export * from "./AdminLoading.styles";
 export * from "./Campaign.styles";
 export * from "./Dashboard.styles";
 export * from "./Layout.styles";

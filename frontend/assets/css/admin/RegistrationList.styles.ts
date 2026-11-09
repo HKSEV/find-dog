@@ -124,8 +124,9 @@ export const AdminListTableScroll = styled.div`
 
 export const AdminListTable = styled.table`
   width: 100%;
-  min-width: 640px;
+  min-width: 720px;
   border-collapse: collapse;
+  border: 1px solid ${coolGray[200]};
   text-align: left;
   font-size: 0.8125rem;
 
@@ -135,6 +136,15 @@ export const AdminListTable = styled.table`
     color: ${coolGray[600]};
     font-weight: 600;
     white-space: nowrap;
+  }
+
+  th, td {
+    border: 1px solid ${coolGray[200]};
+    vertical-align: middle;
+  }
+
+  th:nth-last-child(-n + 2), td:nth-last-child(-n + 2) {
+    text-align: center;
   }
 
   td {
@@ -148,12 +158,44 @@ export const AdminListTable = styled.table`
     font-weight: 500;
   }
 
-  tr:last-child td {
-    border-bottom: none;
-  }
-
   tbody tr:hover {
     background-color: ${coolGray[50]};
+  }
+`;
+
+export const AdminListPrimaryColumn = styled.col`
+  width: 26%;
+`;
+
+export const AdminListDetailColumn = styled.col`
+  width: auto;
+`;
+
+export const AdminListActionColumn = styled.col`
+  width: 100px;
+`;
+
+export const AdminListDetails = styled.dl`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 18px;
+  margin: 0;
+`;
+
+export const AdminListDetail = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  min-width: 0;
+
+  dt {
+    color: ${coolGray[500]};
+    font-weight: 400;
+  }
+
+  dd {
+    margin: 0;
+    color: ${coolGray[700]};
   }
 `;
 
@@ -179,13 +221,6 @@ export const AdminListPagination = styled.nav`
 export const AdminListPageButton = styled(AdminListRefresh)`
   width: 34px;
   padding: 6px;
-`;
-
-export const AdminListActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
 `;
 
 export const AdminListActionButton = styled(AdminSettingSecondaryButton)<{$danger?: boolean}>`

@@ -1,8 +1,10 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 import { Sidebar } from "../sidebar/Sidebar";
 import { Topbar } from "../topbar/Topbar";
+import AdminPageDataBoundary from "../admin/AdminPageDataBoundary";
 import * as S from "@/assets/css/Style.styles";
 // 💡 앞서 쿨그레이 톤으로 만들어둔 스타일 컴포넌트들을 임포트합니다.
 
@@ -28,6 +30,7 @@ React.ReactNode는 React가 화면에 그릴 수 있는
 */
 
 export const Layout: React.FC<LayoutProps> = ({children}) => {
+  const pathname = usePathname();
   return (
     <S.AdminShellWrapper id="wrapper">
       {/* 좌측 고정 사이드바 */}
@@ -35,14 +38,16 @@ export const Layout: React.FC<LayoutProps> = ({children}) => {
 
       {/* 우측 전체 콘텐츠 영역 (쿨그레이 배경) */}
       <S.AdminShellContentWrapper id="content-wrapper">
-        {/* 상하단 여백 및 콘텐츠 크기 자동 조절 영역 */}
-        <S.AdminShellMainContent id="content">
-          {/* 상단 고정 네비게이션 바 */}
-          <Topbar/>
+        <AdminPageDataBoundary key={pathname} pathname={pathname}>
+          {/* 상하단 여백 및 콘텐츠 크기 자동 조절 영역 */}
+          <S.AdminShellMainContent id="content">
+            {/* 상단 네비게이션 바 */}
+            <Topbar/>
 
-          {/* 실제 각 페이지의 내용이 주입되는 래퍼 */}
-          <S.AdminShellContainerFluid>{children}</S.AdminShellContainerFluid>
-        </S.AdminShellMainContent>
+            {/* 실제 각 페이지의 내용이 주입되는 래퍼 */}
+            <S.AdminShellContainerFluid>{children}</S.AdminShellContainerFluid>
+          </S.AdminShellMainContent>
+        </AdminPageDataBoundary>
       </S.AdminShellContentWrapper>
     </S.AdminShellWrapper>
   );

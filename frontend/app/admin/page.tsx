@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaPaw } from "react-icons/fa";
 import { FiCalendar, FiChevronRight, FiDownload, FiFileText, FiHome, FiRefreshCw, FiSpeaker } from "react-icons/fi";
@@ -51,11 +51,6 @@ export default function DashBoard() {
     .map(({label}) => label)
     .join(", ");
   const date = getDashboardDate(updatedAt);
-
-  useEffect(() => {
-    const request = dispatch(fetchDashboard());
-    return () => request.abort();
-  }, [dispatch]);
 
   const getX = (index: number) => (trend.length === 1 ? 372 : 48 + index * (648 / Math.max(1, trend.length - 1)));
   const getY = (count: number) => 202 - (count / chartMax) * 174;

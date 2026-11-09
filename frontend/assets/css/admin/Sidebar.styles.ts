@@ -36,12 +36,8 @@ export const SidebarContainer = styled.aside<{$isCollapsed?: boolean}>`
   flex-direction: column;
   flex-shrink: 0;
   width: ${({$isCollapsed}) => ($isCollapsed ? "76px" : "224px")};
-  height: 100%;
-  min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
+  min-height: 100vh;
+  overflow: hidden;
   background-color: ${adminColors.sidebar};
   transition: width 0.2s ease;
 
@@ -64,7 +60,6 @@ export const BrandText = styled.div<{$isCollapsed?: boolean}>`
 
 export const SidebarBrand = styled(Link)<{$isCollapsed?: boolean}>`
   display: flex;
-  flex-shrink: 0;
   align-items: center;
   justify-content: ${({$isCollapsed}) => ($isCollapsed ? "center" : "flex-start")};
   height: 72px;
@@ -99,7 +94,6 @@ export const SidebarDivider = styled.hr`
 `;
 
 export const SidebarNavigation = styled.nav`
-  flex-shrink: 0;
   padding-top: 20px;
 `;
 

@@ -21,11 +21,6 @@ export const Topbar: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const request = dispatch(fetchAdminProfile());
-    return () => request.abort();
-  }, [dispatch]);
-
-  useEffect(() => {
     if (!isDropdownOpen) return;
     dropdownRef.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
 
