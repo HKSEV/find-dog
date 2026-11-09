@@ -145,15 +145,15 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
       <S.AdminListTableScroll>
         <S.AdminListTable aria-label={config.title}>
           <colgroup>
-            <S.AdminListPrimaryColumn/>
-            <S.AdminListDetailColumn/>
+            {config.columns.map((column) => <col key={column}/>)}
             <S.AdminListActionColumn/>
             <S.AdminListActionColumn/>
           </colgroup>
           <thead>
             <tr>
-              <th scope="col">{config.columns[0]}</th>
-              <th scope="col">상세 정보</th>
+              {config.columns.map((column) => (
+                <th key={column} scope="col">{column}</th>
+              ))}
               <th scope="col">수정</th>
               <th scope="col">삭제</th>
             </tr>
@@ -161,7 +161,7 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
           <tbody>
             {isLoading || !visibleRows.length ? (
               <tr>
-                <S.AdminListEmpty colSpan={4}>
+                <S.AdminListEmpty colSpan={config.columns.length + 2}>
                   {isLoading
                     ? "등록 목록을 불러오는 중입니다."
                     : allFailed
@@ -174,17 +174,9 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
             ) : (
               visibleRows.map((row) => (
                 <tr key={row.key}>
-                  <td>{row.cells[0]}</td>
-                  <td>
-                    <S.AdminListDetails>
-                      {row.cells.slice(1).map((cell, index) => (
-                        <S.AdminListDetail key={config.columns[index + 1]}>
-                          <dt>{config.columns[index + 1]}</dt>
-                          <dd>{cell}</dd>
-                        </S.AdminListDetail>
-                      ))}
-                    </S.AdminListDetails>
-                  </td>
+                  {row.cells.map((cell, index) => (
+                    <td key={config.columns[index]}>{cell}</td>
+                  ))}
                   <td>
                     <S.AdminListActionButton
                     type="button"

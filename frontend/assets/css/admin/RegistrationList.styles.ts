@@ -163,40 +163,8 @@ export const AdminListTable = styled.table`
   }
 `;
 
-export const AdminListPrimaryColumn = styled.col`
-  width: 26%;
-`;
-
-export const AdminListDetailColumn = styled.col`
-  width: auto;
-`;
-
 export const AdminListActionColumn = styled.col`
   width: 100px;
-`;
-
-export const AdminListDetails = styled.dl`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px 18px;
-  margin: 0;
-`;
-
-export const AdminListDetail = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 8px;
-  min-width: 0;
-
-  dt {
-    color: ${coolGray[500]};
-    font-weight: 400;
-  }
-
-  dd {
-    margin: 0;
-    color: ${coolGray[700]};
-  }
 `;
 
 export const AdminListEmpty = styled.td`
