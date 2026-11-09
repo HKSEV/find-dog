@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import styled from "styled-components";
-import { coolGray, adminInput, adminPrimaryBtn, adminOutlineBtn } from "@/assets/css/admin/AdminBase.styles";
+import { coolGray, adminInput, adminPrimaryBtn, adminOutlineBtn, adminColors } from "@/assets/css/admin/AdminBase.styles";
 
 export const PickFormDivider = styled.hr`
   && {
@@ -143,11 +143,11 @@ export const PickRadioLabel = styled.label`
       border-radius: 50%;
       transform: scale(0);
       transition: 120ms transform ease-in-out;
-      background-color: ${coolGray[800]}; /* 체크 시 쿨그레이 색상 */
+      background-color: ${adminColors.primary};
     }
 
     &:checked {
-      border-color: ${coolGray[800]};
+      border-color: ${adminColors.primary};
     }
 
     &:checked::before {

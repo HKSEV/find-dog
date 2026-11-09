@@ -8,6 +8,7 @@ export const dashboardSources = [
 ] as const;
 
 export type DashboardSource = (typeof dashboardSources)[number]["key"];
+export type DashboardPeriod = 7 | 30 | "all";
 
 export interface DashboardRecord {
   id: number;
@@ -89,28 +90,46 @@ export const getDashboardPosts = (data: DashboardData) =>
     )
     .sort((a, b) => b.timestamp - a.timestamp || b.id - a.id);
 
-export const getDashboardTrend = (data: DashboardData, days: number, referenceDate: string) => {
+export const getDashboardTrend = (data: DashboardData, period: DashboardPeriod, referenceDate: string) => {
   const end = getDashboardDate(referenceDate);
   if (!end) return [];
 
-  const endTime = new Date(`${end}T00:00:00Z`).getTime();
-  const points = Array.from({length: days}, (_, index) => ({
-    date: new Date(endTime - (days - index - 1) * 86400000).toISOString().slice(0, 10),
-    posts: 0,
-    animals: 0
-  }));
-  const byDate = new Map(points.map((point) => [point.date, point]));
+  const records = [
+    ...dashboardPostSources.flatMap((source) =>
+      data[source].map((record) => ({date: getDashboardDate(record.insertDt), series: "posts" as const}))
+    ),
+    ...data.shelterAnimals.map((record) => ({date: getDashboardDate(record.createdAt), series: "animals" as const}))
+  ].filter(({date}) => date && date <= end);
+  const points: {date: string; posts: number; animals: number}[] = [];
 
-  for (const source of dashboardPostSources) {
-    for (const record of data[source]) {
-      const point = byDate.get(getDashboardDate(record.insertDt));
-      if (point) point.posts++;
+  if (period === "all") {
+    if (!records.length) return [];
+    const first = records.reduce((earliest, {date}) => (date < earliest ? date : earliest), end);
+    const [firstYear, firstMonth] = first.split("-").map(Number);
+    const [lastYear, lastMonth] = end.split("-").map(Number);
+    const start = firstYear * 12 + firstMonth - 1;
+    const finish = lastYear * 12 + lastMonth - 1;
+
+    for (let month = start; month <= finish; month++) {
+      const year = String(Math.floor(month / 12)).padStart(4, "0");
+      const label = String((month % 12) + 1).padStart(2, "0");
+      points.push({date: `${year}-${label}`, posts: 0, animals: 0});
     }
-  }
+  } else {
+    const endTime = new Date(`${end}T00:00:00Z`).getTime();
+    for (let index = 0; index < period; index++) {
+      points.push({
+        date: new Date(endTime - (period - index - 1) * 86400000).toISOString().slice(0, 10),
+        posts: 0,
+        animals: 0
+      });
+    }
+  };
 
-  for (const record of data.shelterAnimals) {
-    const point = byDate.get(getDashboardDate(record.createdAt));
-    if (point) point.animals++;
+  const byDate = new Map(points.map((point) => [point.date, point]));
+  for (const {date, series} of records) {
+    const point = byDate.get(period === "all" ? date.slice(0, 7) : date);
+    if (point) point[series]++;
   }
 
   return points;
@@ -120,7 +139,7 @@ export const createDashboardReport = (
   data: DashboardData,
   failedSources: DashboardSource[],
   referenceDate: string,
-  days: number
+  period: DashboardPeriod
 ) => {
   const rows: (string | number)[][] = [
     ["어서찾아주개 관리자 운영 현황"],
@@ -137,9 +156,10 @@ export const createDashboardReport = (
   if (![...dashboardPostSources, "shelterAnimals" as const].some((source) => failedSources.includes(source))) {
     rows.push(
       [],
-      [`최근 ${days}일 등록 현황`],
-      ["날짜", "게시물", "보호 동물"],
-      ...getDashboardTrend(data, days, referenceDate).map(({date, posts, animals}) => [date, posts, animals])
+      [period === "all" ? "전체 기간 등록 현황 (월별)" : `최근 ${period}일 등록 현황`],
+      ["집계 기준", "등록일이 확인된 항목"],
+      [period === "all" ? "월" : "날짜", "게시물", "보호 동물"],
+      ...getDashboardTrend(data, period, referenceDate).map(({date, posts, animals}) => [date, posts, animals])
     );
   };
 

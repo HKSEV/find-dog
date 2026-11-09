@@ -9,6 +9,7 @@ import { fetchDashboard } from "../redux/dashboardAdminSlice";
 import { Layout } from "../components/layout/Layout";
 import {
   createDashboardReport,
+  DashboardPeriod,
   dashboardPostSources,
   dashboardSources,
   getDashboardDate,
@@ -30,7 +31,7 @@ const metricIcons = [FaPaw, FiSpeaker, FiFileText, FiHome];
 export default function DashBoard() {
   const dispatch = useDispatch<AppDispatch>();
   const {data, status, failedSources, updatedAt} = useSelector((state: RootState) => state.dashboardAdmin);
-  const [period, setPeriod] = useState(30);
+  const [period, setPeriod] = useState<DashboardPeriod>(30);
   const isLoading = status === "idle" || status === "loading";
   const metrics = getDashboardMetrics(data, failedSources);
   const recentPosts = useMemo(() => getDashboardPosts(data).slice(0, 4), [data]);
@@ -39,8 +40,12 @@ export default function DashBoard() {
     failedSources.includes(source)
   );
   const chartHasData = trend.some(({posts, animals}) => posts || animals);
-  const chartStep = Math.max(1, Math.ceil(Math.max(0, ...trend.flatMap(({posts, animals}) => [posts, animals])) / 4));
+  const chartStep = Math.max(
+    1,
+    Math.ceil(trend.reduce((maximum, {posts, animals}) => Math.max(maximum, posts, animals), 0) / 4)
+  );
   const chartMax = chartStep * 4;
+  const chartLabelStep = Math.max(1, Math.ceil((trend.length - 1) / 6));
   const failedLabels = dashboardSources
     .filter(({key}) => failedSources.includes(key))
     .map(({label}) => label)
@@ -52,7 +57,7 @@ export default function DashBoard() {
     return () => request.abort();
   }, [dispatch]);
 
-  const getX = (index: number) => 48 + index * (648 / Math.max(1, trend.length - 1));
+  const getX = (index: number) => (trend.length === 1 ? 372 : 48 + index * (648 / Math.max(1, trend.length - 1)));
   const getY = (count: number) => 202 - (count / chartMax) * 174;
 
   const handleDownload = () => {
@@ -127,17 +132,20 @@ export default function DashBoard() {
           <S.DashboardPanel aria-labelledby="registration-title" aria-busy={isLoading}>
             <S.DashboardPanelHeader>
               <div>
-                <S.DashboardPanelTitle id="registration-title">최근 등록 현황</S.DashboardPanelTitle>
+                <S.DashboardPanelTitle id="registration-title">등록 현황</S.DashboardPanelTitle>
                 <S.DashboardPanelDescription>
-                  최근 {period}일간의 게시물·보호 동물 등록 추이
+                  {period === "all"
+                    ? "전체 기간의 월별 게시물·보호 동물 등록 추이"
+                    : `최근 ${period}일간의 게시물·보호 동물 등록 추이`}
                 </S.DashboardPanelDescription>
               </div>
               <S.DashboardPeriod
               aria-label="등록 현황 조회 기간"
               value={period}
-              onChange={(e) => setPeriod(Number(e.target.value))}>
+              onChange={(e) => setPeriod(e.target.value === "all" ? "all" : Number(e.target.value) === 7 ? 7 : 30)}>
                 <option value={7}>최근 7일</option>
                 <option value={30}>최근 30일</option>
+                <option value="all">전체 기간</option>
               </S.DashboardPeriod>
             </S.DashboardPanelHeader>
             {isLoading || chartUnavailable || !chartHasData ? (
@@ -164,9 +172,11 @@ export default function DashBoard() {
                 viewBox="0 0 720 244"
                 role="img"
                 aria-labelledby="registration-chart-title registration-chart-description">
-                  <title id="registration-chart-title">{`최근 ${period}일 등록 현황`}</title>
+                  <title id="registration-chart-title">
+                    {period === "all" ? "전체 기간 등록 현황" : `최근 ${period}일 등록 현황`}
+                  </title>
                   <desc id="registration-chart-description">
-                    파랑은 게시물, 초록은 보호 동물의 날짜별 등록 수입니다. 상세 수치는 보고서에서 확인할 수 있습니다.
+                    {`파랑은 게시물, 초록은 보호 동물의 ${period === "all" ? "월별" : "일별"} 등록 수입니다. 상세 수치는 보고서에서 확인할 수 있습니다.`}
                   </desc>
                   {[0, 1, 2, 3, 4].map((index) => (
                     <g key={index}>
@@ -194,9 +204,9 @@ export default function DashBoard() {
                       <S.DashboardChartDot $series="animals" cx={getX(index)} cy={getY(point.animals)} r={2.75}>
                         <title>{`${point.date} 보호 동물 ${point.animals}마리`}</title>
                       </S.DashboardChartDot>
-                      {(index % Math.ceil((period - 1) / 6) === 0 || index === trend.length - 1) && (
+                      {(index % chartLabelStep === 0 || index === trend.length - 1) && (
                         <S.DashboardAxisLabel x={getX(index)} y={229} textAnchor="middle">
-                          {point.date.slice(5).replace("-", ".")}
+                          {period === "all" ? point.date.replace("-", ".") : point.date.slice(5).replace("-", ".")}
                         </S.DashboardAxisLabel>
                       )}
                     </g>
@@ -208,6 +218,7 @@ export default function DashBoard() {
               <S.DashboardLegendItem $series="posts">게시물</S.DashboardLegendItem>
               <S.DashboardLegendItem $series="animals">보호 동물</S.DashboardLegendItem>
             </S.DashboardLegend>
+            <S.DashboardChartNote>등록일 기준 집계 · 등록일이 없는 항목은 추이에서 제외됩니다.</S.DashboardChartNote>
           </S.DashboardPanel>
 
           <S.DashboardPanel aria-labelledby="quick-title">

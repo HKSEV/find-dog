@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import styled from "styled-components";
+import { coolGray, adminColors } from "@/assets/css/admin/AdminBase.styles";
 import {
   AdminFormCard,
   AdminFormCardHeader,
@@ -17,11 +18,11 @@ export const ShelterSettingPageTitle = styled.h1`
   font-weight: 500;
   line-height: 1.2;
   margin-bottom: 0 !important;
-  color: #1E2939;
+  color: ${coolGray[800]};
 `;
 
 export const ShelterSettingFormCard = styled(AdminFormCard)`
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  box-shadow: ${adminColors.cardShadow} !important;
   margin-bottom: 1.5rem !important;
 `;
 
@@ -33,20 +34,20 @@ export const ShelterSettingFormCardHeader = styled(AdminFormCardHeader)`
 export const WarningCardTitle = styled.h6`
   margin: 0 !important;
   font-weight: 700 !important;
-  color: #FFC107 !important;
+  color: ${adminColors.primary} !important;
 `;
 
 export const ShelterSettingInsetFormGroup = styled.div`
   margin-bottom: 1rem;
   margin-bottom: 1.5rem !important;
   padding: 1rem !important;
-  background-color: #F8F9FA !important;
+  background-color: ${coolGray[50]} !important;
   border-radius: 0.25rem !important;
 `;
 
 export const ShelterSettingFieldLabel = styled.label`
   font-weight: 700 !important;
-  color: #1E2939;
+  color: ${coolGray[800]};
 `;
 
 export const FieldRow = styled(Row)`
@@ -73,7 +74,7 @@ export const ShelterSettingFormGroup = styled.div`
 
 export const ShelterSettingPrimaryLabel = styled.label`
   font-weight: 700 !important;
-  color: #007BFF !important;
+  color: ${adminColors.primary} !important;
 `;
 
 export const ImageSourceOptions = styled.div`
@@ -91,7 +92,7 @@ export const ShelterSettingPreviewBox = styled.div`
 export const ShelterPreviewImage = styled(Image)`
   padding: 0.25rem;
   background-color: #FFF;
-  border: 1px solid #DEE2E6;
+  border: 1px solid ${coolGray[200]};
   border-radius: 0.25rem;
   max-width: 100%;
   height: auto;
@@ -115,9 +116,9 @@ export const ShelterSettingSubmitButton = styled(AdminFormButton)`
   font-weight: 700 !important;
   padding: 1rem !important;
   margin-top: 1.5rem !important;
-  color: #343A40 !important;
+  color: ${adminColors.onPrimary} !important;
 `;
 
 export const ShelterSettingGuideBody = styled(AdminFormCardBody)`
-  color: #1E2939;
+  color: ${coolGray[800]};
 `;

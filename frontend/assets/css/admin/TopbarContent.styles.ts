@@ -3,7 +3,7 @@
 import Link from "next/link";
 import styled, { css } from "styled-components";
 import { TopbarContainer } from "@/assets/css/admin/Topbar.styles";
-import { coolGray } from "@/assets/css/admin/AdminBase.styles";
+import { coolGray, adminColors } from "@/assets/css/admin/AdminBase.styles";
 
 const profileMenuItem = css`
   display: flex;
@@ -69,11 +69,11 @@ export const ProfileName = styled(Link)`
   font-size: 0.875rem;
 
   &:hover {
-    color: #4E73DF;
+    color: ${adminColors.primary};
   }
 
   &:focus-visible {
-    outline: 2px solid #4E73DF;
+    outline: 2px solid ${adminColors.primary};
     outline-offset: 4px;
     border-radius: 3px;
   }
@@ -94,7 +94,7 @@ export const ProfileTrigger = styled.button`
   cursor: pointer;
 
   &:focus-visible {
-    outline: 2px solid #4E73DF;
+    outline: 2px solid ${adminColors.primary};
     outline-offset: 3px;
   }
 
@@ -130,7 +130,7 @@ export const ProfileDropdown = styled.div<{$open: boolean}>`
   border: 1px solid ${coolGray[200]};
   border-radius: 12px;
   background-color: #FFFFFF;
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 12px 32px rgba(39, 81, 133, 0.12);
   opacity: ${({$open}) => ($open ? 1 : 0)};
   transform: translateY(${({$open}) => ($open ? "0" : "-6px")}) scale(${({$open}) => ($open ? 1 : 0.98)});
   transform-origin: top right;

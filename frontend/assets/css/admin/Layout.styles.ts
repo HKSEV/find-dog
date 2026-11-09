@@ -1,13 +1,14 @@
 "use client";
 
 import styled from "styled-components";
-import { coolGray, adminCard } from "@/assets/css/admin/AdminBase.styles";
+import { coolGray, adminCard, adminColors } from "@/assets/css/admin/AdminBase.styles";
 // 만들어둔 쿨그레이 믹스인 임포트
 
 // ==========================================
 // 💡 1. 사용자 작성 기존 뼈대 코드 (일부 컬러 믹스인 적용)
 // ==========================================
 export const AdminShellWrapper = styled.div`
+  color: ${coolGray[700]};
   display: flex;
   width: 100%;
   height: 100vh;
@@ -21,7 +22,7 @@ export const AdminShellContentWrapper = styled.div`
   width: 0;
   min-width: 0;
   overflow-x: hidden;
-  /* 기존 #F8F9FC 대신 쿨그레이 팔레트의 가장 밝은 배경색 적용 */
+  /* 밝은 블루그레이 배경 */
   background-color: ${coolGray[50]};
 `;
 
@@ -53,7 +54,7 @@ export const AdminShellContainerFluid = styled.div`
 // 좌측 사이드바 (.sidebar 대체)
 export const AdminShellSidebar = styled.ul`
   width: 224px;
-  background-color: ${coolGray[900]}; /* 다크 쿨그레이 */
+  background-color: ${adminColors.sidebar}; /* 차분한 블루 */
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -85,17 +86,17 @@ export const AdminShellNavItem = styled.li<{$active?: boolean}>`
     display: flex;
     align-items: center;
     padding: 12px 16px;
-    color: ${(props) => (props.$active ? "#FFFFFF" : coolGray[400])};
+    color: ${(props) => (props.$active ? "#FFFFFF" : adminColors.sidebarText)};
     font-weight: ${(props) => (props.$active ? "700" : "600")};
     font-size: 0.85rem;
     border-radius: 6px;
     text-decoration: none;
     transition: all 0.2s;
-    background-color: ${(props) => (props.$active ? coolGray[800] : "transparent")};
+    background-color: ${(props) => (props.$active ? adminColors.sidebarActive : "transparent")};
 
     &:hover {
       color: #FFFFFF;
-      background-color: ${coolGray[800]}; /* 호버 시 강조된 다크 쿨그레이 */
+      background-color: ${adminColors.sidebarActive}; /* 호버 시 강조된 블루 */
     }
 
     svg {
@@ -108,12 +109,12 @@ export const AdminShellNavItem = styled.li<{$active?: boolean}>`
 // 상단 네비게이션 바 (.topbar 대체)
 export const AdminShellTopbar = styled.nav`
   height: 70px;
-  background-color: #FFFFFF;
+  background-color: ${adminColors.header};
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5rem; /* ContainerFluid 패딩과 통일 */
-  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 2px 4px rgba(39, 81, 133, 0.06);
   z-index: 10;
   margin-bottom: 1.5rem; /* 아래 콘텐츠와의 간격 확보 */
 `;

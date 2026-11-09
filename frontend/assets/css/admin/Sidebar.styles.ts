@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import styled from "styled-components";
-import { coolGray } from "@/assets/css/admin/AdminBase.styles";
+import { coolGray, adminColors } from "@/assets/css/admin/AdminBase.styles";
 
 export const Wrapper = styled.div`
   display: flex;
@@ -38,7 +38,7 @@ export const SidebarContainer = styled.aside<{$isCollapsed?: boolean}>`
   width: ${({$isCollapsed}) => ($isCollapsed ? "76px" : "224px")};
   min-height: 100vh;
   overflow: hidden;
-  background-color: ${coolGray[900]};
+  background-color: ${adminColors.sidebar};
   transition: width 0.2s ease;
 
   @media (max-width: 767px) {
@@ -115,8 +115,8 @@ export const NavLink = styled(Link)<{$isCollapsed?: boolean; $isActive?: boolean
   min-height: 46px;
   padding: ${({$isCollapsed}) => ($isCollapsed ? "12px 0" : "12px 16px")};
   border-radius: 7px;
-  background-color: ${({$isActive}) => ($isActive ? coolGray[800] : "transparent")};
-  color: ${({$isActive}) => ($isActive ? "#FFFFFF" : coolGray[400])};
+  background-color: ${({$isActive}) => ($isActive ? adminColors.sidebarActive : "transparent")};
+  color: ${({$isActive}) => ($isActive ? "#FFFFFF" : adminColors.sidebarText)};
   font-size: 0.875rem;
   font-weight: ${({$isActive}) => ($isActive ? 650 : 500)};
   transition: background-color 0.2s, color 0.2s;
@@ -133,7 +133,7 @@ export const NavLink = styled(Link)<{$isCollapsed?: boolean; $isActive?: boolean
   }
 
   &:hover {
-    background-color: ${coolGray[800]};
+    background-color: ${adminColors.sidebarActive};
     color: #FFFFFF;
   }
 

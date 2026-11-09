@@ -1,7 +1,7 @@
 "use client";
 
 import styled from "styled-components";
-import { coolGray } from "@/assets/css/admin/AdminBase.styles";
+import { coolGray, adminColors } from "@/assets/css/admin/AdminBase.styles";
 
 export const AdminListPanel = styled.section`
   min-width: 0;
@@ -56,7 +56,7 @@ export const AdminListRefresh = styled.button`
   }
 
   &:focus-visible {
-    outline: 2px solid #4E73DF;
+    outline: 2px solid ${adminColors.primary};
     outline-offset: 3px;
   }
 
@@ -99,7 +99,7 @@ export const AdminListSearch = styled.div`
   }
 
   &:focus-within {
-    border-color: #4E73DF;
+    border-color: ${adminColors.primary};
     box-shadow: 0 0 0 2px #EFF6FF;
   }
 `;
@@ -135,7 +135,7 @@ export const AdminListFilter = styled.select`
   font-size: 0.8125rem;
 
   &:focus-visible {
-    outline: 2px solid #4E73DF;
+    outline: 2px solid ${adminColors.primary};
     outline-offset: 3px;
   }
 `;

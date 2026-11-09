@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import styled from "styled-components";
-import { coolGray } from "@/assets/css/admin/AdminBase.styles";
+import { coolGray, adminColors } from "@/assets/css/admin/AdminBase.styles";
 
 export const AdminAvatarImage = styled.img<{$large: boolean}>`
   display: block;
@@ -136,7 +136,7 @@ export const AdminProfileLink = styled(Link)`
   }
 
   &:focus-visible {
-    outline: 2px solid #4E73DF;
+    outline: 2px solid ${adminColors.primary};
     outline-offset: 3px;
   }
 `;
@@ -145,13 +145,13 @@ export const AdminProfileRetry = styled.button`
   min-height: 38px;
   padding: 8px 14px;
   border-radius: 7px;
-  background-color: ${coolGray[800]};
+  background-color: ${adminColors.primary};
   color: #FFFFFF;
   font-size: 0.8125rem;
   cursor: pointer;
 
   &:focus-visible {
-    outline: 2px solid #4E73DF;
+    outline: 2px solid ${adminColors.primary};
     outline-offset: 3px;
   }
 `;

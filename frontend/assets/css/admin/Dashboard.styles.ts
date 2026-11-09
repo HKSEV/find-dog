@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import styled, { css } from "styled-components";
-import { coolGray } from "@/assets/css/admin/AdminBase.styles";
+import { coolGray, adminColors } from "@/assets/css/admin/AdminBase.styles";
 
 type DashboardSeries = "posts" | "animals";
 
 const dashboardFocus = css`
   &:focus-visible {
-    outline: 2px solid #4E73DF;
+    outline: 2px solid ${adminColors.primary};
     outline-offset: 3px;
   }
 `;
@@ -89,9 +89,9 @@ export const DashboardDownload = styled.button`
   gap: 8px;
   min-height: 38px;
   padding: 8px 14px;
-  border: 1px solid ${coolGray[800]};
+  border: 1px solid ${adminColors.primary};
   border-radius: 7px;
-  background-color: ${coolGray[800]};
+  background-color: ${adminColors.primary};
   color: #FFFFFF;
   font-size: 0.8125rem;
   font-weight: 600;
@@ -100,7 +100,7 @@ export const DashboardDownload = styled.button`
   transition: background-color 0.2s;
 
   &:hover:not(:disabled) {
-    background-color: ${coolGray[700]};
+    background-color: ${adminColors.primaryHover};
   }
 
   &:disabled {
@@ -134,7 +134,7 @@ export const DashboardRetry = styled.button`
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #4E73DF;
+  color: ${adminColors.primary};
   font-weight: 600;
   cursor: pointer;
 `;
@@ -162,7 +162,7 @@ export const DashboardMetricCard = styled.article`
   border: 1px solid ${coolGray[200]};
   border-radius: 11px;
   background-color: #FFFFFF;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.025);
+  box-shadow: ${adminColors.cardShadow};
 `;
 
 export const DashboardMetricLabel = styled.h2`
@@ -183,7 +183,7 @@ export const DashboardMetricIcon = styled.span<{$tone: "blue" | "green" | "gray"
   height: 40px;
   border-radius: 9px;
   background-color: ${({$tone}) => ($tone === "blue" ? "#EFF6FF" : $tone === "green" ? "#ECFDF5" : coolGray[100])};
-  color: ${({$tone}) => ($tone === "blue" ? "#007BFF" : $tone === "green" ? "#1A996A" : coolGray[500])};
+  color: ${({$tone}) => ($tone === "blue" ? adminColors.primary : $tone === "green" ? "#1A996A" : coolGray[500])};
 
   svg {
     width: 21px;
@@ -233,7 +233,7 @@ export const DashboardPanel = styled.section`
   border: 1px solid ${coolGray[200]};
   border-radius: 11px;
   background-color: #FFFFFF;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.025);
+  box-shadow: ${adminColors.cardShadow};
 
   @media (max-width: 575px) {
     padding: 18px;
@@ -304,7 +304,7 @@ export const DashboardAxisLabel = styled.text`
 
 export const DashboardChartLine = styled.polyline.attrs<{$series: DashboardSeries}>(({$series}) => ({
   fill: "none",
-  stroke: $series === "posts" ? "#007BFF" : "#1CC88A",
+  stroke: $series === "posts" ? adminColors.primary : "#1CC88A",
   strokeWidth: 2,
   strokeLinecap: "round",
   strokeLinejoin: "round",
@@ -313,7 +313,7 @@ export const DashboardChartLine = styled.polyline.attrs<{$series: DashboardSerie
 
 export const DashboardChartDot = styled.circle.attrs<{$series: DashboardSeries}>(({$series}) => ({
   fill: "#FFFFFF",
-  stroke: $series === "posts" ? "#007BFF" : "#1CC88A",
+  stroke: $series === "posts" ? adminColors.primary : "#1CC88A",
   strokeWidth: 1.75,
   vectorEffect: "non-scaling-stroke"
 }))``;
@@ -349,6 +349,13 @@ export const DashboardLegend = styled.div`
   margin-top: 8px;
 `;
 
+export const DashboardChartNote = styled.p`
+  margin: 10px 0 0;
+  color: ${coolGray[500]};
+  font-size: 0.6875rem;
+  text-align: center;
+`;
+
 export const DashboardLegendItem = styled.span<{$series: DashboardSeries}>`
   display: inline-flex;
   align-items: center;
@@ -362,7 +369,7 @@ export const DashboardLegendItem = styled.span<{$series: DashboardSeries}>`
     width: 15px;
     height: 3px;
     border-radius: 2px;
-    background-color: ${({$series}) => ($series === "posts" ? "#007BFF" : "#1CC88A")};
+    background-color: ${({$series}) => ($series === "posts" ? adminColors.primary : "#1CC88A")};
   }
 `;
 
@@ -428,7 +435,7 @@ export const DashboardMoreLink = styled(Link)`
   align-items: center;
   gap: 4px;
   padding: 3px 0;
-  color: #4E73DF;
+  color: ${adminColors.primary};
   font-size: 0.8125rem;
   font-weight: 600;
   white-space: nowrap;

@@ -1,15 +1,15 @@
 "use client";
 
 import styled, { keyframes } from "styled-components";
-import { coolGray } from "@/assets/css/admin/AdminBase.styles";
+import { coolGray, adminColors } from "@/assets/css/admin/AdminBase.styles";
 
 export type AdminAlertVariant = "info" | "success" | "error";
 
 const alertColors = {
   surface: "#FFFFFF",
-  accent: "#2563EB",
-  accentHover: "#1D4ED8",
-  accentSubtle: "#EFF6FF",
+  accent: adminColors.primary,
+  accentHover: adminColors.primaryHover,
+  accentSubtle: adminColors.primarySoft,
   danger: "#DC2626",
   dangerSubtle: "#FEF2F2"
 };
@@ -39,7 +39,7 @@ export const AlertBox = styled.dialog`
   border: 1px solid ${coolGray[200]};
   border-radius: 1.25rem;
   outline: none;
-  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.18);
+  box-shadow: 0 24px 64px rgba(39, 81, 133, 0.16);
   overflow-y: auto;
   overscroll-behavior: contain;
   font: inherit;
@@ -50,7 +50,7 @@ export const AlertBox = styled.dialog`
   }
 
   &::backdrop {
-    background: rgba(15, 23, 42, 0.4);
+    background: rgba(24, 52, 86, 0.32);
     backdrop-filter: blur(4px);
   }
 

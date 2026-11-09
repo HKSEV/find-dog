@@ -1,20 +1,21 @@
 "use client";
 
 import styled, { css } from "styled-components";
+import { coolGray, adminColors } from "@/assets/css/admin/AdminBase.styles";
 
 const loginColors = {
   surface: "#FFFFFF",
-  surfaceSubtle: "#F1F5F9",
-  textStrong: "#0F172A",
-  textBody: "#334155",
-  textMuted: "#64748B",
-  textDisabled: "#94A3B8",
-  border: "#E2E8F0",
-  borderStrong: "#CBD5E1",
-  accent: "#2563EB",
-  accentHover: "#1D4ED8",
-  accentSubtle: "#EFF6FF",
-  accentText: "#1E40AF",
+  surfaceSubtle: coolGray[100],
+  textStrong: coolGray[900],
+  textBody: coolGray[700],
+  textMuted: coolGray[500],
+  textDisabled: coolGray[400],
+  border: coolGray[200],
+  borderStrong: coolGray[300],
+  accent: adminColors.primary,
+  accentHover: adminColors.primaryHover,
+  accentSubtle: adminColors.primarySoft,
+  accentText: adminColors.primaryText,
   onAccent: "#FFFFFF"
 };
 
@@ -72,7 +73,7 @@ export const MemberContainer = styled.div`
   padding: 3rem 1.25rem;
   background:
     radial-gradient(ellipse at 50% 35%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 65%),
-    linear-gradient(135deg, #DEEFFF 0%, #C4E1FB 50%, #A8CBEE 100%);
+    linear-gradient(135deg, #E5F2FF 0%, #D1E6FB 50%, #B8D7F3 100%);
   color: ${loginColors.textStrong};
   font-family:
     "AdminLoginPretendard",
@@ -127,7 +128,7 @@ export const MemberIcon = styled.div`
   height: 3.25rem;
   margin: 0 auto 1.25rem;
   color: ${loginColors.onAccent};
-  background: linear-gradient(135deg, #3498FF, #2463EB);
+  background: linear-gradient(135deg, #5593DB, ${adminColors.primary});
   border-radius: 0.9375rem;
   box-shadow: ${loginShadows.accent};
 

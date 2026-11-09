@@ -21,12 +21,16 @@ export const Sidebar: React.FC = () => {
 
   return (
     <S.SidebarContainer $isCollapsed={isCollapsed} aria-label="관리자 사이드바">
-      <S.SidebarBrand href="/admin" $isCollapsed={isCollapsed} aria-label="관리자 대시보드">
+      <S.SidebarBrand
+      href="/admin"
+      $isCollapsed={isCollapsed}
+      aria-label="어서찾아주개 관리자 페이지"
+      title="어서찾아주개 관리자 페이지">
         <S.SidebarBrandIcon>
           <AdminLogoIcon/>
         </S.SidebarBrandIcon>
         <S.SidebarContentBrandText $isCollapsed={isCollapsed}>
-          Admin <sup>2</sup>
+          어서찾아주개 <span>관리자 페이지</span>
         </S.SidebarContentBrandText>
       </S.SidebarBrand>
       <S.BrandDivider/>

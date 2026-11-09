@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import styled from "styled-components";
+import { coolGray, adminColors } from "@/assets/css/admin/AdminBase.styles";
 import {
   AdminFormCard,
   AdminFormCardHeader,
@@ -16,11 +17,11 @@ export const IntegratePageTitle = styled.h1`
   font-weight: 500;
   line-height: 1.2;
   margin-bottom: 0 !important;
-  color: #1E2939;
+  color: ${coolGray[800]};
 `;
 
 export const IntegrateFormCard = styled(AdminFormCard)`
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  box-shadow: ${adminColors.cardShadow} !important;
   margin-bottom: 1.5rem !important;
 `;
 
@@ -32,19 +33,19 @@ export const IntegrateFormCardHeader = styled(AdminFormCardHeader)`
 export const IntegrateCardTitle = styled.h6`
   margin: 0 !important;
   font-weight: 700 !important;
-  color: #007BFF !important;
+  color: ${adminColors.primary} !important;
 `;
 
 export const IntegrateInsetFormGroup = styled.div`
   margin-bottom: 1.5rem !important;
   padding: 1rem !important;
-  background-color: #F8F9FA !important;
+  background-color: ${coolGray[50]} !important;
   border-radius: 0.25rem !important;
 `;
 
 export const IntegrateFieldLabel = styled.label`
   font-weight: 700 !important;
-  color: #1E2939;
+  color: ${coolGray[800]};
 `;
 
 export const IntegrateCategoryOptions = styled.div`
@@ -66,7 +67,7 @@ export const CategoryLabel = styled.label`
   margin-bottom: 0;
   vertical-align: top;
   font-weight: 700 !important;
-  color: #DC3545 !important;
+  color: ${adminColors.primary} !important;
 `;
 
 export const IntegrateFormGroup = styled.div`
@@ -81,7 +82,7 @@ export const IntegrateEmphasizedLabel = styled.label`
 export const IntegrateHelpText = styled.small`
   display: block;
   margin-top: 0.25rem;
-  color: #6C757D !important;
+  color: ${coolGray[500]} !important;
 `;
 
 export const IntegrateFormSection = styled.div`
@@ -96,7 +97,7 @@ export const IntegratePreviewBox = styled.div`
 export const VideoThumbnail = styled(Image)`
   padding: 0.25rem;
   background-color: #FFF;
-  border: 1px solid #DEE2E6;
+  border: 1px solid ${coolGray[200]};
   border-radius: 0.25rem;
   max-width: 100%;
   height: auto;
@@ -108,7 +109,7 @@ export const VideoThumbnail = styled(Image)`
 
 export const IntegratePrimaryLabel = styled.label`
   font-weight: 700 !important;
-  color: #007BFF !important;
+  color: ${adminColors.primary} !important;
 `;
 
 export const AttachmentColumn = styled(AdminFormColumn)`
@@ -125,5 +126,5 @@ export const IntegrateSubmitButton = styled(AdminFormButton)`
 `;
 
 export const IntegrateGuideBody = styled(AdminFormCardBody)`
-  color: #1E2939;
+  color: ${coolGray[800]};
 `;

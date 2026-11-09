@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import styled from "styled-components";
+import { coolGray, adminColors } from "@/assets/css/admin/AdminBase.styles";
 import {
   AdminFormCard,
   AdminFormCardHeader,
@@ -16,11 +17,11 @@ export const AdminCampaignPageTitle = styled.h1`
   font-weight: 500;
   line-height: 1.2;
   margin-bottom: 0 !important;
-  color: #1E2939;
+  color: ${coolGray[800]};
 `;
 
 export const AdminCampaignFormCard = styled(AdminFormCard)`
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  box-shadow: ${adminColors.cardShadow} !important;
   margin-bottom: 1.5rem !important;
 `;
 
@@ -32,7 +33,7 @@ export const AdminCampaignFormCardHeader = styled(AdminFormCardHeader)`
 export const AdminCampaignCardTitle = styled.h6`
   margin: 0 !important;
   font-weight: 700 !important;
-  color: #007BFF !important;
+  color: ${adminColors.primary} !important;
 `;
 
 export const AdminCampaignFormSection = styled.div`
@@ -41,7 +42,7 @@ export const AdminCampaignFormSection = styled.div`
 `;
 
 export const AdminCampaignFieldLabel = styled.label`
-  color: #1E2939;
+  color: ${coolGray[800]};
 `;
 
 export const AdminCampaignCategoryOptions = styled.div`
@@ -82,13 +83,13 @@ export const AdminCampaignInsetFormGroup = styled.div`
   margin-bottom: 1rem;
   margin-bottom: 1rem !important;
   padding: 1rem !important;
-  background-color: #F8F9FA !important;
+  background-color: ${coolGray[50]} !important;
   border-radius: 0.25rem !important;
 `;
 
 export const AdminCampaignPrimaryLabel = styled.label`
   font-weight: 700 !important;
-  color: #007BFF !important;
+  color: ${adminColors.primary} !important;
 `;
 
 export const AdminCampaignPreviewBox = styled.div`
@@ -110,5 +111,5 @@ export const AdminCampaignSubmitButton = styled(AdminFormButton)`
 `;
 
 export const AdminCampaignGuideBody = styled(AdminFormCardBody)`
-  color: #1E2939;
+  color: ${coolGray[800]};
 `;

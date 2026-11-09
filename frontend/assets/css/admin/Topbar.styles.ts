@@ -1,7 +1,7 @@
 "use client";
 
 import styled from "styled-components";
-import { coolGray } from "@/assets/css/admin/AdminBase.styles";
+import { coolGray, adminColors } from "@/assets/css/admin/AdminBase.styles";
 
 export const TopbarContainer = styled.nav`
   display: flex;
@@ -11,7 +11,7 @@ export const TopbarContainer = styled.nav`
   padding: 0 32px;
   margin-bottom: 24px;
   border-bottom: 1px solid ${coolGray[200]};
-  background-color: #FFFFFF;
+  background-color: ${adminColors.header};
 
   @media (max-width: 767px) {
     padding: 0 16px;

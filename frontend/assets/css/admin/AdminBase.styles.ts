@@ -2,18 +2,32 @@
 
 import { css } from "styled-components";
 
-// 1. 관리자 화면에서 공통으로 사용하는 쿨그레이 팔레트
+// 1. 관리자 화면에서 공통으로 사용하는 블루그레이 팔레트
 export const coolGray = {
-  50: "#F8FAFC", // 앱 배경색
-  100: "#F1F5F9", // 호버 배경색, 테이블 헤더
-  200: "#E2E8F0", // 구분선, 기본 테두리
-  300: "#CBD5E1", // 비활성화 요소, 인풋 테두리
-  400: "#94A3B8", // 플레이스홀더, 보조 아이콘
-  500: "#64748B", // 보조 텍스트
-  600: "#475569", // 기본 텍스트
-  700: "#334155", // 강조 텍스트, 네비게이션 텍스트
-  800: "#1E293B", // 제목, 메인 버튼 (Primary)
-  900: "#0F172A" // 최상위 강조, 다크모드 배경
+  50: "#F3F8FF", // 앱 배경색
+  100: "#EAF2FC", // 호버 배경색, 테이블 헤더
+  200: "#D6E4F5", // 구분선, 기본 테두리
+  300: "#B7CDE6", // 비활성화 요소, 인풋 테두리
+  400: "#7F9CBE", // 플레이스홀더, 보조 아이콘
+  500: "#5B7596", // 보조 텍스트
+  600: "#425F84", // 기본 텍스트
+  700: "#2E4C74", // 강조 텍스트, 네비게이션 텍스트
+  800: "#213E65", // 제목
+  900: "#183456" // 최상위 강조
+};
+
+export const adminColors = {
+  primary: "#356FBC",
+  primaryHover: "#295E9F",
+  primarySoft: "#EAF3FF",
+  primaryText: "#2E67AF",
+  onPrimary: "#FFFFFF",
+  header: "#F8FBFF",
+  sidebar: "#245181",
+  sidebarActive: "#3A6EA7",
+  sidebarText: "#D5E6FA",
+  cardShadow: "0 4px 16px rgba(39, 81, 133, 0.06)",
+  focusRing: "0 0 0 3px rgba(53, 111, 188, 0.14)"
 };
 
 // 2. 어드민 공통 믹스인 정의
@@ -31,15 +45,12 @@ export const adminCard = css`
   background-color: #FFFFFF;
   border: 1px solid ${coolGray[200]};
   border-radius: 8px;
-  /* 쿨그레이 베이스의 은은한 그림자로 깊이감 부여 */
-  box-shadow:
-    0 1px 3px rgba(15, 23, 42, 0.05),
-    0 1px 2px rgba(15, 23, 42, 0.1);
+  box-shadow: ${adminColors.cardShadow};
 `;
 
-// 메인 액션 버튼 (진한 쿨그레이)
+// 메인 액션 버튼
 export const adminPrimaryBtn = css`
-  background-color: ${coolGray[800]};
+  background-color: ${adminColors.primary};
   color: #FFFFFF;
   border: none;
   border-radius: 6px;
@@ -50,7 +61,7 @@ export const adminPrimaryBtn = css`
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: ${coolGray[700]};
+    background-color: ${adminColors.primaryHover};
   }
 
   &:disabled {
@@ -94,9 +105,8 @@ export const adminInput = css`
 
   &:focus {
     outline: none;
-    border-color: ${coolGray[600]};
-    /* 포커스 시 쿨그레이 톤의 링(Ring) 효과 */
-    box-shadow: 0 0 0 2px rgba(71, 85, 105, 0.15);
+    border-color: ${adminColors.primary};
+    box-shadow: ${adminColors.focusRing};
   }
 `;
 
