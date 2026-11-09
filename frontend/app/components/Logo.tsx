@@ -1,5 +1,5 @@
 "use client";
-import { LogoSvg } from "@/assets/css/common/Logo.styles";
+import * as S from "@/assets/css/Style.styles";
 
 interface LogoProps {
   width?: number | string;
@@ -16,7 +16,7 @@ export default function Logo({width = 136, height = 36, className, onClick}: Log
   // 💡 viewBox는 실제 그려지는 내용(왼쪽 귀 -2.5 ~ 글자 끝 약 129)에 맞춤
   //    (예전 0 0 180 36은 오른쪽이 비어 있어서 가운데 정렬하면 로고가 왼쪽으로 치우쳐 보였음)
   return (
-    <LogoSvg
+    <S.LogoSvg
     width={width}
     height={height}
     viewBox="-3 0 136 36"
@@ -62,6 +62,6 @@ export default function Logo({width = 136, height = 36, className, onClick}: Log
       letterSpacing="-0.5">
         어서찾아주개
       </text>
-    </LogoSvg>
+    </S.LogoSvg>
   );
 };

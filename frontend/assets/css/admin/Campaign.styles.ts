@@ -1,8 +1,17 @@
-import Image from "next/image";
-import * as F from "@/assets/css/admin/AdminForm.styles";
-import styled from "styled-components";
+"use client";
 
-export const PageTitle = styled.h1`
+import Image from "next/image";
+
+import styled from "styled-components";
+import {
+  AdminFormCard,
+  AdminFormCardHeader,
+  AdminFormColumn,
+  AdminFormButton,
+  AdminFormCardBody
+} from "@/assets/css/admin/AdminForm.styles";
+
+export const AdminCampaignPageTitle = styled.h1`
   font-size: 1.75rem;
   font-weight: 500;
   line-height: 1.2;
@@ -10,38 +19,38 @@ export const PageTitle = styled.h1`
   color: #1E2939;
 `;
 
-export const FormCard = styled(F.Card)`
+export const AdminCampaignFormCard = styled(AdminFormCard)`
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
   margin-bottom: 1.5rem !important;
 `;
 
-export const FormCardHeader = styled(F.CardHeader)`
+export const AdminCampaignFormCardHeader = styled(AdminFormCardHeader)`
   padding-top: 1rem !important;
   padding-bottom: 1rem !important;
 `;
 
-export const CardTitle = styled.h6`
+export const AdminCampaignCardTitle = styled.h6`
   margin: 0 !important;
   font-weight: 700 !important;
   color: #007BFF !important;
 `;
 
-export const FormSection = styled.div`
+export const AdminCampaignFormSection = styled.div`
   margin-bottom: 1rem;
   margin-bottom: 1.5rem !important;
 `;
 
-export const FieldLabel = styled.label`
+export const AdminCampaignFieldLabel = styled.label`
   color: #1E2939;
 `;
 
-export const CategoryOptions = styled.div`
+export const AdminCampaignCategoryOptions = styled.div`
   display: flex !important;
   gap: 0.75rem;
   margin-top: 0.5rem !important;
 `;
 
-export const RadioOption = styled.div`
+export const AdminCampaignRadioOption = styled.div`
   position: relative;
   display: block;
   min-height: 1.5rem;
@@ -49,27 +58,27 @@ export const RadioOption = styled.div`
   margin-right: 1rem !important;
 `;
 
-export const RadioLabel = styled.label`
+export const AdminCampaignRadioLabel = styled.label`
   position: relative;
   margin-bottom: 0;
   vertical-align: top;
 `;
 
-export const FieldColumn = styled(F.Column)`
+export const AdminCampaignFieldColumn = styled(AdminFormColumn)`
   margin-bottom: 1rem;
   margin-bottom: 1rem !important;
 `;
 
-export const EmphasizedLabel = styled.label`
+export const AdminCampaignEmphasizedLabel = styled.label`
   font-weight: 700 !important;
 `;
 
-export const FormGroup = styled.div`
+export const AdminCampaignFormGroup = styled.div`
   margin-bottom: 1rem;
   margin-bottom: 1rem !important;
 `;
 
-export const InsetFormGroup = styled.div`
+export const AdminCampaignInsetFormGroup = styled.div`
   margin-bottom: 1rem;
   margin-bottom: 1rem !important;
   padding: 1rem !important;
@@ -77,12 +86,12 @@ export const InsetFormGroup = styled.div`
   border-radius: 0.25rem !important;
 `;
 
-export const PrimaryLabel = styled.label`
+export const AdminCampaignPrimaryLabel = styled.label`
   font-weight: 700 !important;
   color: #007BFF !important;
 `;
 
-export const PreviewBox = styled.div`
+export const AdminCampaignPreviewBox = styled.div`
   margin-bottom: 1.5rem !important;
   text-align: center !important;
 `;
@@ -95,11 +104,11 @@ export const CampaignPreviewImage = styled(Image)`
   }
 `;
 
-export const SubmitButton = styled(F.Button)`
+export const AdminCampaignSubmitButton = styled(AdminFormButton)`
   display: block;
   width: 100%;
 `;
 
-export const GuideBody = styled(F.CardBody)`
+export const AdminCampaignGuideBody = styled(AdminFormCardBody)`
   color: #1E2939;
 `;

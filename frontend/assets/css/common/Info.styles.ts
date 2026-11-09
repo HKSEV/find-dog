@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { FlexCenter, Nowrap, Ohidden, Ellipsis, W100, FlexColumn, Grid } from "./Common.styles";
+import { FlexCenter, Nowrap, Ohidden, Ellipsis, W100, FlexColumn, Grid } from "@/assets/css/common/CommonBase.styles";
 
 export const InfoRow = styled.div`
   ${FlexCenter}

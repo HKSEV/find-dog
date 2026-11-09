@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { FlexColumn, Fw600, MainTitleColor, W100 } from "./Common.styles";
+import { FlexColumn, Fw600, MainTitleColor, W100 } from "@/assets/css/common/CommonBase.styles";
 
 export const Section = styled.section<{$bgLight?: boolean}>`
   padding: 16px;

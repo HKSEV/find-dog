@@ -1,15 +1,17 @@
+"use client";
+
 import Image from "next/image";
 import styled from "styled-components";
-import { coolGray, adminInput, adminPrimaryBtn, adminOutlineBtn } from "@/assets/css/admin/Admin.styles";
+import { coolGray, adminInput, adminPrimaryBtn, adminOutlineBtn } from "@/assets/css/admin/AdminBase.styles";
 
-export const FormDivider = styled.hr`
+export const PickFormDivider = styled.hr`
   && {
     border-color: ${coolGray[200]};
     margin: 24px 0;
   }
 `;
 
-export const PreviewBox = styled.div`
+export const PickPreviewBox = styled.div`
   && {
     margin-bottom: 24px;
     text-align: center;
@@ -29,7 +31,7 @@ export const AnimalPreviewImage = styled(Image)`
 // ==========================================
 // 💡 폼(Form) 전용 스타일드 컴포넌트 정의
 // ==========================================
-export const GridWrap = styled.div`
+export const PickGridWrap = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr; /* 좌측 폼 2, 우측 안내 1 비율 */
   gap: 24px;
@@ -40,7 +42,7 @@ export const GridWrap = styled.div`
   }
 `;
 
-export const FormGroup = styled.div`
+export const PickFormGroup = styled.div`
   margin-bottom: 24px;
 `;
 
@@ -81,7 +83,7 @@ export const InnerGridRow3 = styled.div`
 `;
 
 // 인풋창과 버튼이 붙어있는 구조 (URL 입력부)
-export const InputGroup = styled.div`
+export const PickInputGroup = styled.div`
   display: flex;
   width: 100%;
 
@@ -100,7 +102,7 @@ export const FetchButton = styled.button`
   background-color: ${coolGray[50]};
 `;
 
-export const SubmitButton = styled.button`
+export const PickSubmitButton = styled.button`
   ${adminPrimaryBtn}
   width: 100%;
   padding: 14px;
@@ -109,13 +111,13 @@ export const SubmitButton = styled.button`
 `;
 
 // 라디오 버튼 그룹 스타일
-export const RadioGroup = styled.div`
+export const PickRadioGroup = styled.div`
   display: flex;
   gap: 24px;
   margin-top: 8px;
 `;
 
-export const RadioLabel = styled.label`
+export const PickRadioLabel = styled.label`
   display: flex;
   align-items: center;
   gap: 8px;
@@ -154,7 +156,7 @@ export const RadioLabel = styled.label`
   }
 `;
 
-export const HelpText = styled.small`
+export const PickHelpText = styled.small`
   display: block;
   margin-top: 6px;
   color: ${coolGray[500]};

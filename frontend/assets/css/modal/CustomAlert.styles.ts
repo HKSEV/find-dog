@@ -1,8 +1,12 @@
-import { CheckCircle2, AlertCircle } from "lucide-react";
-import * as S from "@/assets/css/Style.styles";
-import styled from "styled-components";
+"use client";
 
-export const AlertContent = styled(S.ModalContent)`
+import { CheckCircle2, AlertCircle } from "lucide-react";
+
+import styled from "styled-components";
+import { ModalContent, SubmitButton } from "@/assets/css/modal/ModalBase.styles";
+import { AlertInfo } from "@/assets/css/common/Alert.styles";
+
+export const AlertContent = styled(ModalContent)`
   && {
     max-width: 320px;
     text-align: center;
@@ -10,7 +14,7 @@ export const AlertContent = styled(S.ModalContent)`
   }
 `;
 
-export const AlertSummary = styled(S.AlertInfo)`
+export const AlertSummary = styled(AlertInfo)`
   && {
     margin-bottom: 24px;
     flex-direction: column;
@@ -43,7 +47,7 @@ export const AlertMessage = styled.strong`
   }
 `;
 
-export const ConfirmButton = styled(S.SubmitButton)`
+export const CustomAlertConfirmButton = styled(SubmitButton)`
   && {
     background-color: #8A4E4B;
     margin: 0;

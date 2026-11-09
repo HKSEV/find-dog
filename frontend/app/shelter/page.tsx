@@ -8,13 +8,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { fetchShelterAnimals, setActiveTab, toggleAlert } from "../redux/shelterSlice";
 
-import * as A from "@/assets/css/Style.styles";
 import Header from "@/app/components/Header";
 import Footer from "../components/Footer";
 
 //MUI
 import { NotificationsOutlined as NotificationsIcon, PlayCircleFilled as PlayIcon } from "@mui/icons-material";
-import { FilterIconButton, MoreChevron, LocationPin } from "@/assets/css/client/Shelter.styles";
+import * as S from "@/assets/css/Style.styles";
 
 export default function Shelter() {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,44 +35,44 @@ export default function Shelter() {
   };
 
   return (
-    <A.AppWrapper>
+    <S.AppWrapper>
       <Header title="보호소"/>
 
-      <A.Container>
-        <A.TabContainer>
+      <S.Container>
+        <S.TabContainer>
           {["보호동물", "보호소 찾기", "추천 입양 동물"].map((tab) => (
-            <A.TabBtn key={tab} $active={activeTab === tab} onClick={() => dispatch(setActiveTab(tab))}>
+            <S.TabBtn key={tab} $active={activeTab === tab} onClick={() => dispatch(setActiveTab(tab))}>
               {tab}
-            </A.TabBtn>
+            </S.TabBtn>
           ))}
-        </A.TabContainer>
+        </S.TabContainer>
 
         {/*필터 영역 */}
-        <A.FilterContainer>
-          <A.FilterIconBtn>
-            <FilterIconButton/>
-          </A.FilterIconBtn>
+        <S.FilterContainer>
+          <S.FilterIconBtn>
+            <S.FilterIconButton/>
+          </S.FilterIconBtn>
 
-          <A.FilterSelect defaultValue="3months">
+          <S.FilterSelect defaultValue="3months">
             <option value="3months">최근 1개월</option>
             <option value="3months">최근 2개월</option>
             <option value="3months">최근 3개월</option>
-          </A.FilterSelect>
+          </S.FilterSelect>
 
-          <A.FilterSelect defaultValue="allArea">
+          <S.FilterSelect defaultValue="allArea">
             <option value="allArea">모든 지역</option>
             <option value="allArea">서울</option>
-          </A.FilterSelect>
+          </S.FilterSelect>
 
-          <A.FilterSelect defaultValue="allAnimal">
+          <S.FilterSelect defaultValue="allAnimal">
             <option value="allAnimal">모든 동물</option>
             <option value="allAnimal">강아지</option>
-          </A.FilterSelect>
-        </A.FilterContainer>
+          </S.FilterSelect>
+        </S.FilterContainer>
 
         {/*실시간 알림 토글배너 */}
-        <A.AlertBanner>
-          <A.AlertInfo>
+        <S.AlertBanner>
+          <S.AlertInfo>
             <div className="icon-circle">
               <NotificationsIcon/>
             </div>
@@ -81,26 +80,26 @@ export default function Shelter() {
               <strong>이 지역 실시간 알림</strong>
               <span>새 공고가 올라오면 알려드려요</span>
             </div>
-          </A.AlertInfo>
-          <A.ToggleBtn $isOn={isAlertOn} onClick={() => dispatch(toggleAlert())}>
+          </S.AlertInfo>
+          <S.ToggleBtn $isOn={isAlertOn} onClick={() => dispatch(toggleAlert())}>
             <div className="handle"/>
-          </A.ToggleBtn>
-        </A.AlertBanner>
+          </S.ToggleBtn>
+        </S.AlertBanner>
 
-        <A.Divider/>
+        <S.Divider/>
 
-        <A.RecommendSection>
-          <A.SectionHeader>
-            <A.H2Size20>이달의 추천 입양 동물</A.H2Size20>
+        <S.RecommendSection>
+          <S.SectionHeader>
+            <S.H2Size20>이달의 추천 입양 동물</S.H2Size20>
             <Link href="#more" className="more-link">
               더보기
-              <MoreChevron/>
+              <S.MoreChevron/>
             </Link>
-          </A.SectionHeader>
+          </S.SectionHeader>
 
-          <A.RecommendScroll>
-            <A.RecommendCard>
-              <A.RecommendImgBox>
+          <S.RecommendScroll>
+            <S.RecommendCard>
+              <S.RecommendImgBox>
                 <Image
                 src="https://via.placeholder.com/140"
                 alt="추천동물"
@@ -109,26 +108,26 @@ export default function Shelter() {
                 unoptimized
                 loading="eager"/>
                 <PlayIcon className="play-icon"/>
-              </A.RecommendImgBox>
-              <A.LocationText>
-                <LocationPin/>
+              </S.RecommendImgBox>
+              <S.LocationText>
+                <S.LocationPin/>
                 강원특별자치도..
-              </A.LocationText>
-            </A.RecommendCard>
-          </A.RecommendScroll>
-        </A.RecommendSection>
+              </S.LocationText>
+            </S.RecommendCard>
+          </S.RecommendScroll>
+        </S.RecommendSection>
 
-        <A.Divider/>
+        <S.Divider/>
 
-        <A.ListSection>
+        <S.ListSection>
           {loading ? (
             <div>데이터를 불러오는 중입니다...</div>
           ) : animals.length === 0 ? (
             <div>등록된 보호 동물이 없습니다</div>
           ) : (
             animals.map((animal) => (
-              <A.AnimalCard key={animal.id}>
-                <A.AnimalImgBox>
+              <S.AnimalCard key={animal.id}>
+                <S.AnimalImgBox>
                   <Image
                   src={getFullImageUrl(animal.imageUrl)}
                   alt={animal.breed}
@@ -136,16 +135,16 @@ export default function Shelter() {
                   height={95}
                   unoptimized
                   loading="eager"/>
-                </A.AnimalImgBox>
-                <A.AnimalInfo>
-                  <A.BadgeGroup>
-                    <A.Badge $type="status">{animal.status === "COMPLETED" ? "완료" : "공고중"}</A.Badge>
-                    <A.Badge
+                </S.AnimalImgBox>
+                <S.AnimalInfo>
+                  <S.BadgeGroup>
+                    <S.Badge $type="status">{animal.status === "COMPLETED" ? "완료" : "공고중"}</S.Badge>
+                    <S.Badge
                     $type={animal.gender === "FEMALE" ? "female" : animal.gender === "MALE" ? "male" : "unknown"}>
                       {animal.gender === "MALE" ? "수컷" : animal.gender === "FEMALE" ? "암컷" : "미상"}
-                    </A.Badge>
-                  </A.BadgeGroup>
-                  <A.InfoGrid>
+                    </S.Badge>
+                  </S.BadgeGroup>
+                  <S.InfoGrid>
                     <span className="label">품종</span>
                     <span className="value">{animal.breed}</span>
                     <span className="label">공고번호</span>
@@ -154,14 +153,14 @@ export default function Shelter() {
                     <span className="value">{animal.regDate}</span>
                     <span className="label">구조장소</span>
                     <span className="value">{animal.rescueLocation}</span>
-                  </A.InfoGrid>
-                </A.AnimalInfo>
-              </A.AnimalCard>
+                  </S.InfoGrid>
+                </S.AnimalInfo>
+              </S.AnimalCard>
             ))
           )}
-        </A.ListSection>
-      </A.Container>
+        </S.ListSection>
+      </S.Container>
       <Footer/>
-    </A.AppWrapper>
+    </S.AppWrapper>
   );
 };

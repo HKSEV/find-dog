@@ -1,3 +1,5 @@
+"use client";
+
 import styled from "styled-components";
 
 export const Row = styled.div`
@@ -7,7 +9,7 @@ export const Row = styled.div`
   margin-left: -15px;
 `;
 
-export const Column = styled.div<{$md?: number; $lg?: number}>`
+export const AdminFormColumn = styled.div<{$md?: number; $lg?: number}>`
   position: relative;
   width: 100%;
   padding-right: 15px;
@@ -32,7 +34,7 @@ export const Column = styled.div<{$md?: number; $lg?: number}>`
   `}
 `;
 
-export const Card = styled.div`
+export const AdminFormCard = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -44,7 +46,7 @@ export const Card = styled.div`
   border-radius: 0.25rem;
 `;
 
-export const CardHeader = styled.div`
+export const AdminFormCardHeader = styled.div`
   padding: 0.75rem 1.25rem;
   margin-bottom: 0;
   background-color: rgba(0, 0, 0, 0.03);
@@ -52,7 +54,7 @@ export const CardHeader = styled.div`
   border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
 `;
 
-export const CardBody = styled.div`
+export const AdminFormCardBody = styled.div`
   flex: 1 1 auto;
   min-height: 1px;
   padding: 1.25rem;
@@ -98,7 +100,7 @@ export const Control = styled.input`
   }
 `;
 
-export const Select = styled.select`
+export const AdminFormSelect = styled.select`
   max-width: 100%;
   font: inherit;
   color: inherit;
@@ -123,7 +125,7 @@ export const CheckLabel = styled.label`
   margin-bottom: 0;
 `;
 
-export const Button = styled.button<{$variant?: "primary" | "warning"}>`
+export const AdminFormButton = styled.button<{$variant?: "primary" | "warning"}>`
   display: inline-block;
   font-weight: 400;
   color: ${({$variant}) => ($variant === "warning" ? "#212529" : "#FFF")};

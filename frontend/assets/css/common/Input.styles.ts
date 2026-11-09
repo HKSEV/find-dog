@@ -1,3 +1,5 @@
+"use client";
+
 import styled from "styled-components";
 import {
   Relative,
@@ -9,7 +11,7 @@ import {
   BoxShadow,
   W100,
   FlexCenter
-} from "../common/Common.styles";
+} from "@/assets/css/common/CommonBase.styles";
 
 interface ToggleProps {
   active: boolean;

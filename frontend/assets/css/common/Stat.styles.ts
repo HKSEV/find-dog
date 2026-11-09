@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { BgWhite, FlexBetween } from "./Common.styles";
+import { BgWhite, FlexBetween } from "@/assets/css/common/CommonBase.styles";
 
 export const StatBox = styled.div`
   ${FlexBetween};

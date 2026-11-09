@@ -6,29 +6,9 @@ import { AppDispatch, RootState } from "../../store/store";
 import { setImageInputType, updateShelterField, submitShelterAnimal } from "../../redux/shelterAdminSlice";
 
 import { Layout } from "../../components/layout/Layout";
-import * as A from "@/assets/css/Style.styles";
-import * as F from "@/assets/css/admin/AdminForm.styles";
+
 import useAdminModal from "@/app/components/contexts/AdminModalContext";
-import {
-  PageTitle,
-  FormCard,
-  FormCardHeader,
-  WarningCardTitle,
-  InsetFormGroup,
-  FieldLabel,
-  FieldRow,
-  FieldColumn,
-  EmphasizedLabel,
-  FormDivider,
-  FormGroup,
-  PrimaryLabel,
-  ImageSourceOptions,
-  PreviewBox,
-  ShelterPreviewImage,
-  FormSection,
-  SubmitButton,
-  GuideBody
-} from "@/assets/css/admin/ShelterSetting.styles";
+import * as S from "@/assets/css/Style.styles";
 
 export default function ShelterAdmin() {
   const dispatch = useDispatch<AppDispatch>();
@@ -69,102 +49,102 @@ export default function ShelterAdmin() {
 
   return (
     <Layout>
-      <A.PageHeader>
-        <PageTitle>보호소 데이터 관리</PageTitle>
-      </A.PageHeader>
-      <A.GridRow>
-        <F.Column $lg={8}>
-          <FormCard>
-            <FormCardHeader>
-              <WarningCardTitle>신규 보호 동물 등록</WarningCardTitle>
-            </FormCardHeader>
-            <F.CardBody>
+      <S.PageHeader>
+        <S.ShelterSettingPageTitle>보호소 데이터 관리</S.ShelterSettingPageTitle>
+      </S.PageHeader>
+      <S.GridRow>
+        <S.AdminFormColumn $lg={8}>
+          <S.ShelterSettingFormCard>
+            <S.ShelterSettingFormCardHeader>
+              <S.WarningCardTitle>신규 보호 동물 등록</S.WarningCardTitle>
+            </S.ShelterSettingFormCardHeader>
+            <S.AdminFormCardBody>
               <form onSubmit={handleSubmit}>
-                <InsetFormGroup>
-                  <F.Row>
-                    <F.Column $md={6}>
-                      <FieldLabel>공고상태</FieldLabel>
-                      <F.Select name="status" value={formData.status} onChange={handleChange}>
+                <S.ShelterSettingInsetFormGroup>
+                  <S.Row>
+                    <S.AdminFormColumn $md={6}>
+                      <S.ShelterSettingFieldLabel>공고상태</S.ShelterSettingFieldLabel>
+                      <S.AdminFormSelect name="status" value={formData.status} onChange={handleChange}>
                         <option value="ACTIVE">공고중 (보호중)</option>
                         <option value="COMPLETED">입양 완료 / 종료</option>
-                      </F.Select>
-                    </F.Column>
-                    <F.Column $md={6}>
-                      <FieldLabel>성별</FieldLabel>
-                      <F.Select name="gender" value={formData.gender} onChange={handleChange}>
+                      </S.AdminFormSelect>
+                    </S.AdminFormColumn>
+                    <S.AdminFormColumn $md={6}>
+                      <S.ShelterSettingFieldLabel>성별</S.ShelterSettingFieldLabel>
+                      <S.AdminFormSelect name="gender" value={formData.gender} onChange={handleChange}>
                         <option value="UNKNOWN">성별 미상</option>
                         <option value="MALE">수컷</option>
                         <option value="FEMALE">암컷</option>
-                      </F.Select>
-                    </F.Column>
-                  </F.Row>
-                </InsetFormGroup>
+                      </S.AdminFormSelect>
+                    </S.AdminFormColumn>
+                  </S.Row>
+                </S.ShelterSettingInsetFormGroup>
 
                 {/* 2. 기본 정보 입력 */}
-                <FieldRow>
-                  <FieldColumn $md={6}>
-                    <EmphasizedLabel>품종</EmphasizedLabel>
-                    <F.Control
+                <S.FieldRow>
+                  <S.ShelterSettingFieldColumn $md={6}>
+                    <S.ShelterSettingEmphasizedLabel>품종</S.ShelterSettingEmphasizedLabel>
+                    <S.Control
                     name="breed"
                     placeholder="예: [개] 푸들, [고양이] 코숏"
                     value={formData.breed}
                     onChange={handleChange}
                     required/>
-                  </FieldColumn>
-                  <FieldColumn $md={6}>
-                    <EmphasizedLabel>공고번호</EmphasizedLabel>
-                    <F.Control
+                  </S.ShelterSettingFieldColumn>
+                  <S.ShelterSettingFieldColumn $md={6}>
+                    <S.ShelterSettingEmphasizedLabel>공고번호</S.ShelterSettingEmphasizedLabel>
+                    <S.Control
                     name="noticeNo"
                     placeholder="예: 충북 청주-2026-00001"
                     value={formData.noticeNo}
                     onChange={handleChange}
                     required/>
-                  </FieldColumn>
-                </FieldRow>
-                <FieldRow>
-                  <FieldColumn $md={6}>
-                    <EmphasizedLabel>등록날짜</EmphasizedLabel>
-                    <F.Control type="date" name="regDate" value={formData.regDate} onChange={handleChange} required/>
-                  </FieldColumn>
-                  <FieldColumn $md={6}>
-                    <EmphasizedLabel>구조장소</EmphasizedLabel>
-                    <F.Control
+                  </S.ShelterSettingFieldColumn>
+                </S.FieldRow>
+                <S.FieldRow>
+                  <S.ShelterSettingFieldColumn $md={6}>
+                    <S.ShelterSettingEmphasizedLabel>등록날짜</S.ShelterSettingEmphasizedLabel>
+                    <S.Control type="date" name="regDate" value={formData.regDate} onChange={handleChange} required/>
+                  </S.ShelterSettingFieldColumn>
+                  <S.ShelterSettingFieldColumn $md={6}>
+                    <S.ShelterSettingEmphasizedLabel>구조장소</S.ShelterSettingEmphasizedLabel>
+                    <S.Control
                     name="rescueLocation"
                     placeholder="예: 용암삼일무지개아파트"
                     value={formData.rescueLocation}
                     onChange={handleChange}
                     required/>
-                  </FieldColumn>
-                </FieldRow>
+                  </S.ShelterSettingFieldColumn>
+                </S.FieldRow>
 
-                <FormDivider/>
+                <S.ShelterSettingFormDivider/>
 
                 {/* 3. 이미지 및 상세 내용 */}
-                <FormGroup>
-                  <PrimaryLabel>대표 사진 (필수)</PrimaryLabel>
-                  <ImageSourceOptions>
-                    <F.CheckWrapper $hasLabel>
-                      <F.CheckInput
+                <S.ShelterSettingFormGroup>
+                  <S.ShelterSettingPrimaryLabel>대표 사진 (필수)</S.ShelterSettingPrimaryLabel>
+                  <S.ImageSourceOptions>
+                    <S.CheckWrapper $hasLabel>
+                      <S.CheckInput
                       type="radio"
                       id="imgLink"
                       name="imageInputType"
                       checked={imageInputType === "LINK"}
                       onChange={() => dispatch(setImageInputType("LINK"))}/>
-                      <F.CheckLabel htmlFor="imgLink">URL(링크)로 입력</F.CheckLabel>
-                    </F.CheckWrapper>
-                    <F.CheckWrapper $hasLabel>
-                      <F.CheckInput
+                      <S.CheckLabel htmlFor="imgLink">URL(링크)로 입력</S.CheckLabel>
+                    </S.CheckWrapper>
+                    <S.CheckWrapper $hasLabel>
+                      <S.CheckInput
                       type="radio"
                       id="imgUpload"
                       name="imageInputType"
                       checked={imageInputType === "UPLOAD"}
                       onChange={() => dispatch(setImageInputType("UPLOAD"))}/>
-                      <F.CheckLabel htmlFor="imgUpload">직접 업로드</F.CheckLabel>
-                    </F.CheckWrapper>
-                  </ImageSourceOptions>
+                      <S.CheckLabel htmlFor="imgUpload">직접 업로드</S.CheckLabel>
+                    </S.CheckWrapper>
+                  </S.ImageSourceOptions>
 
                   {imageInputType === "LINK" ? (
-                    <F.Control
+                    <S.Control
                     type="url"
                     name="imageUrl"
                     placeholder="이미지 링크를 붙여 넣어 주세요"
@@ -172,30 +152,30 @@ export default function ShelterAdmin() {
                     onChange={handleChange}
                     required={imageInputType === "LINK"}/>
                   ) : (
-                    <F.Control
+                    <S.Control
                     type="file"
                     name="imageFile"
                     accept="image/*"
                     onChange={handleFileChange}
                     required={imageInputType === "UPLOAD"}/>
                   )}
-                </FormGroup>
+                </S.ShelterSettingFormGroup>
 
                 {(formData.imageUrl || imageFile) && (
-                  <PreviewBox>
-                    <ShelterPreviewImage
+                  <S.ShelterSettingPreviewBox>
+                    <S.ShelterPreviewImage
                     src={imageFile ? URL.createObjectURL(imageFile) : formData.imageUrl}
                     alt="대표사진 미리보기"
                     width={0}
                     height={0}
                     unoptimized
                     loading="eager"/>
-                  </PreviewBox>
+                  </S.ShelterSettingPreviewBox>
                 )}
 
-                <FormSection>
-                  <EmphasizedLabel>특이사항 및 상세 설명</EmphasizedLabel>
-                  <F.Control
+                <S.ShelterSettingFormSection>
+                  <S.ShelterSettingEmphasizedLabel>특이사항 및 상세 설명</S.ShelterSettingEmphasizedLabel>
+                  <S.Control
                   as="textarea"
                   rows={5}
                   name="content"
@@ -203,31 +183,31 @@ export default function ShelterAdmin() {
                   value={formData.content}
                   onChange={handleChange}
                   required/>
-                </FormSection>
+                </S.ShelterSettingFormSection>
 
-                <SubmitButton type="submit" $variant="warning" disabled={isLoading}>
+                <S.ShelterSettingSubmitButton type="submit" $variant="warning" disabled={isLoading}>
                   {isLoading ? "등록 중..." : "보호 동물 등록하기"}
-                </SubmitButton>
+                </S.ShelterSettingSubmitButton>
               </form>
-            </F.CardBody>
-          </FormCard>
-        </F.Column>
-        <F.Column $lg={4}>
-          <FormCard>
-            <FormCardHeader>
-              <WarningCardTitle>등록 및 관리 안내</WarningCardTitle>
-            </FormCardHeader>
-            <GuideBody>
+            </S.AdminFormCardBody>
+          </S.ShelterSettingFormCard>
+        </S.AdminFormColumn>
+        <S.AdminFormColumn $lg={4}>
+          <S.ShelterSettingFormCard>
+            <S.ShelterSettingFormCardHeader>
+              <S.WarningCardTitle>등록 및 관리 안내</S.WarningCardTitle>
+            </S.ShelterSettingFormCardHeader>
+            <S.ShelterSettingGuideBody>
               <p>
                 <strong>공고 상태 관리</strong>
               </p>
               기본값은 &apos;공고중&apos;입니다. 입양처가 정해지거나 보호가 종료되면 상태를
               <strong>&apos;입양완료&apos;</strong>로 변경해 주세요. 앱 화면에서 회색 &apos;완료&apos; 뱃지로 자동
               전환됩니다.
-            </GuideBody>
-          </FormCard>
-        </F.Column>
-      </A.GridRow>
+            </S.ShelterSettingGuideBody>
+          </S.ShelterSettingFormCard>
+        </S.AdminFormColumn>
+      </S.GridRow>
     </Layout>
   );
 };

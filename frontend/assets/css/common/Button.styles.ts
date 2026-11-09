@@ -1,3 +1,5 @@
+"use client";
+
 import styled, { css } from "styled-components";
 import {
   Absolute,
@@ -13,7 +15,7 @@ import {
   Nowrap,
   Fw200,
   IconColor
-} from "./Common.styles";
+} from "@/assets/css/common/CommonBase.styles";
 
 type ButtonVariant = "kakao" | "local" | "primary";
 //컴포넌트가 받을 Props 정의

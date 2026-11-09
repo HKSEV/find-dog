@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { Grid } from "../common/Common.styles";
+import { Grid } from "@/assets/css/common/CommonBase.styles";
 
 export const QuickMenu = styled.section`
   ${Grid};

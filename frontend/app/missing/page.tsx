@@ -5,12 +5,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store"; // 프로젝트 경로에 맞게 수정
 import { fetchMissingAnimals } from "../redux/missingSlice";
 
-import { LocationIcon, DateIcon, WriteIcon } from "@/assets/css/client/Missing.styles";
-
 import { ModalSingle } from "../modal/ModalSingle";
-import * as S from "@/assets/css/Style.styles";
+
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
+import * as S from "@/assets/css/Style.styles";
 
 export default function MissingReportPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -58,11 +57,11 @@ export default function MissingReportPage() {
                   {item.gender} {item.age ? `| ${item.age}` : ""} {item.weight ? `| ${item.weight}` : ""}
                 </S.MetaInfo>
                 <S.LocationRow>
-                  <LocationIcon/>
+                  <S.LocationIcon/>
                   <S.LocationText>{item.rescueLocation}</S.LocationText>
                 </S.LocationRow>
                 <S.DateRow>
-                  <DateIcon/>
+                  <S.DateIcon/>
                   <S.DateText>{item.createdAt ? item.createdAt.substring(0, 10) : ""}</S.DateText>
                 </S.DateRow>
               </S.CardBody>
@@ -73,7 +72,7 @@ export default function MissingReportPage() {
 
       {/* 글쓰기 플로팅 버튼 */}
       <S.FloatingWriteButton onClick={() => setIsModalOpen(true)}>
-        <WriteIcon/>
+        <S.MissingWriteIcon/>
         <span>글쓰기</span>
       </S.FloatingWriteButton>
 

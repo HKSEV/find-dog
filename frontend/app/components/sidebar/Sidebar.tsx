@@ -2,10 +2,9 @@
 
 import React, { useState } from "react";
 // 💡 길게 나열했던 스타일 컴포넌트들을 'S'라는 바구니(별칭) 하나로 깔끔하게 묶어옵니다!
-import * as S from "../../../assets/css/admin/Sidebar.styled";
+
 import AdminLogoIcon from "../../components/AdminLogoIcon";
-import * as I from "@/assets/css/admin/AdminIcons.styles";
-import { BrandText, BrandDivider } from "@/assets/css/admin/SidebarContent.styles";
+import * as S from "@/assets/css/Style.styles";
 
 export const Sidebar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -19,92 +18,92 @@ export const Sidebar: React.FC = () => {
         <div className="sidebar-brand-icon">
           <AdminLogoIcon/>
         </div>
-        <BrandText>
+        <S.SidebarContentBrandText>
           Admin <sup>2</sup>
-        </BrandText>
+        </S.SidebarContentBrandText>
       </S.SidebarBrand>
 
-      <BrandDivider/>
+      <S.BrandDivider/>
 
       {/* 1. 대시보드 (메인) 링크 */}
-      <S.NavItem>
+      <S.SidebarNavItem>
         <S.NavLink href="/admin" $isCollapsed={isCollapsed}>
-          <I.Dashboard/>
+          <S.Dashboard/>
           <span>Dashboard</span>
         </S.NavLink>
-      </S.NavItem>
+      </S.SidebarNavItem>
 
-      <S.Divider/>
+      <S.SidebarDivider/>
 
-      <S.NavItem>
+      <S.SidebarNavItem>
         <S.NavLink href="/admin/pick" $isCollapsed={isCollapsed}>
-          <I.Users/>
+          <S.Users/>
           <span>추천동물설정</span>
         </S.NavLink>
-      </S.NavItem>
+      </S.SidebarNavItem>
 
       {/* 2. 각 메뉴별로 NavItem 하나씩 독립적으로 적용 */}
-      <S.NavItem>
+      <S.SidebarNavItem>
         <S.NavLink href="/admin/campaign" $isCollapsed={isCollapsed}>
-          <I.Users/>
+          <S.Users/>
           <span>캠페인</span>
         </S.NavLink>
-      </S.NavItem>
+      </S.SidebarNavItem>
 
-      <S.NavItem>
+      <S.SidebarNavItem>
         <S.NavLink href="/admin/intergrate" $isCollapsed={isCollapsed}>
-          <I.Settings/>
+          <S.Settings/>
           <span>통합게시물설정</span>
         </S.NavLink>
-      </S.NavItem>
+      </S.SidebarNavItem>
 
-      <S.NavItem>
+      <S.SidebarNavItem>
         <S.NavLink href="/admin/sheltersetting" $isCollapsed={isCollapsed}>
-          <I.Image/>
+          <S.Image/>
           <span>보호소 설정</span>
         </S.NavLink>
-      </S.NavItem>
+      </S.SidebarNavItem>
 
-      <S.NavItem>
+      <S.SidebarNavItem>
         <S.NavLink href="/wearesetting" $isCollapsed={isCollapsed}>
-          <I.Info/>
+          <S.Info/>
           <span>우리는 설정</span>
         </S.NavLink>
-      </S.NavItem>
+      </S.SidebarNavItem>
 
-      <S.NavItem>
+      <S.SidebarNavItem>
         <S.NavLink href="/worksetting" $isCollapsed={isCollapsed}>
-          <I.Work/>
+          <S.Work/>
           <span>work</span>
         </S.NavLink>
-      </S.NavItem>
+      </S.SidebarNavItem>
 
-      <S.NavItem>
+      <S.SidebarNavItem>
         <S.NavLink href="/blogsetting" $isCollapsed={isCollapsed}>
-          <I.Blog/>
+          <S.Blog/>
           <span>blog</span>
         </S.NavLink>
-      </S.NavItem>
+      </S.SidebarNavItem>
 
-      <S.NavItem>
+      <S.SidebarNavItem>
         <S.NavLink href="/mapsetting" $isCollapsed={isCollapsed}>
-          <I.Location/>
+          <S.Location/>
           <span>map</span>
         </S.NavLink>
-      </S.NavItem>
+      </S.SidebarNavItem>
 
-      <S.NavItem>
+      <S.SidebarNavItem>
         <S.NavLink href="/contactsetting" $isCollapsed={isCollapsed}>
-          <I.Contact/>
+          <S.Contact/>
           <span>contact</span>
         </S.NavLink>
-      </S.NavItem>
+      </S.SidebarNavItem>
 
-      <S.Divider/>
+      <S.SidebarDivider/>
 
       <S.ToggleButtonWrapper>
         <S.ToggleButton onClick={handleToggle} $isCollapsed={isCollapsed}>
-          {isCollapsed ? <I.Expand/> : <I.Collapse/>}
+          {isCollapsed ? <S.Expand/> : <S.Collapse/>}
         </S.ToggleButton>
       </S.ToggleButtonWrapper>
     </S.SidebarContainer>

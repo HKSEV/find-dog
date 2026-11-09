@@ -1,5 +1,8 @@
+"use client";
+
 import styled from "styled-components";
-import { coolGray, adminCard } from "./Admin.styles"; // 앞서 만든 믹스인 임포트
+import { coolGray, adminCard } from "@/assets/css/admin/AdminBase.styles";
+// 앞서 만든 믹스인 임포트
 
 // 1. 전체 화면 래퍼 (#wrapper 대체)
 export const AdminWrapper = styled.div`
@@ -20,7 +23,7 @@ export const Sidebar = styled.ul`
   list-style: none;
 `;
 
-export const SidebarBrand = styled.div`
+export const AdminSidebarBrand = styled.div`
   height: 70px;
   display: flex;
   align-items: center;
@@ -33,7 +36,7 @@ export const SidebarBrand = styled.div`
   cursor: pointer;
 `;
 
-export const NavItem = styled.li<{$active?: boolean}>`
+export const AdminNavItem = styled.li<{$active?: boolean}>`
   padding: 0 16px;
   margin-top: 8px;
 

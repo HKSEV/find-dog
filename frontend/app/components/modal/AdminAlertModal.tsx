@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef } from "react";
 import { FiCheck, FiInfo, FiAlertCircle, FiX } from "react-icons/fi";
 import { lockModalScroll } from "@/lib/modalScrollLock";
-import * as S from "@/assets/css/admin/AdminAlert.styles";
+import * as S from "@/assets/css/Style.styles";
 
 export interface AdminAlertModalOptions {
   variant?: S.AdminAlertVariant;
@@ -67,18 +67,18 @@ export default function AdminAlertModal({
       e.preventDefault();
       handleClose();
     }}>
-      <S.CloseButton type="button" aria-label="알림 닫기" onClick={handleClose}>
+      <S.AdminAlertCloseButton type="button" aria-label="알림 닫기" onClick={handleClose}>
         <FiX aria-hidden="true"/>
-      </S.CloseButton>
+      </S.AdminAlertCloseButton>
       <S.AlertIcon $variant={variant} aria-hidden="true">
         <Icon/>
       </S.AlertIcon>
       <S.AlertText id={`${id}-title`}>{message}</S.AlertText>
       {description && <S.AlertDescription id={`${id}-description`}>{description}</S.AlertDescription>}
       <S.AlertActions>
-        <S.ConfirmButton ref={confirmRef} type="button" onClick={handleClose}>
+        <S.AdminAlertConfirmButton ref={confirmRef} type="button" onClick={handleClose}>
           {confirmText}
-        </S.ConfirmButton>
+        </S.AdminAlertConfirmButton>
       </S.AlertActions>
     </S.AlertBox>
   );

@@ -1,6 +1,9 @@
-import styled from "styled-components";
+"use client";
 
-import { coolGray } from "@/assets/css/admin/Admin.styles"; // 💡 만들어둔 쿨그레이 팔레트 임포트
+import styled from "styled-components";
+import { coolGray } from "@/assets/css/admin/AdminBase.styles";
+
+// 💡 만들어둔 쿨그레이 팔레트 임포트
 // 💡 만들어둔 쿨그레이 팔레트 임포트
 
 export const Wrapper = styled.div`
@@ -10,7 +13,7 @@ export const Wrapper = styled.div`
   overflow: hidden;
 `;
 
-export const ContentWrapper = styled.div`
+export const SidebarContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -18,7 +21,7 @@ export const ContentWrapper = styled.div`
   background-color: ${coolGray[50]}; /* 💡 기존 #F8F9FC 대신 쿨그레이 가장 밝은 톤 적용 */
 `;
 
-export const MainContent = styled.div`
+export const SidebarMainContent = styled.div`
   flex: 1 0 auto;
   /* 내용물의 크기를 기본으로 잡되(auto), 
   화면이 좁아져도 원래 크기보다 줄어들지는 말고(0), 
@@ -82,12 +85,12 @@ export const SidebarBrand = styled.a<{$isCollapsed?: boolean}>`
   }
 `;
 
-export const Divider = styled.hr`
+export const SidebarDivider = styled.hr`
   border-top: 1px solid rgba(255, 255, 255, 0.15); /* 💡 다크 배경에 어울리는 은은한 선으로 변경 */
   margin: 0 1rem 1rem 1rem;
 `;
 
-export const NavItem = styled.li`
+export const SidebarNavItem = styled.li`
   width: 100%;
   padding: 0 0.5rem; /* 💡 호버 시 배경색이 사이드바 너비를 꽉 채우지 않도록 여백 부여 */
   margin-bottom: 4px;

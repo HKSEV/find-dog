@@ -2,55 +2,44 @@
 
 import React from "react";
 import { Layout } from "../components/layout/Layout";
-import * as A from "@/assets/css/Style.styles";
-import {
-  ReportLink,
-  ReportIcon,
-  MonthlyMetricLabel,
-  MetricValue,
-  MetricIconBox,
-  CalendarIcon,
-  AnnualMetricLabel,
-  MonthlyStatCard,
-  AnnualStatCard
-} from "@/assets/css/admin/Dashboard.styles";
+import * as S from "@/assets/css/Style.styles";
 
 export default function DashBoard() {
   return (
     <Layout>
-      <A.PageHeader>
+      <S.PageHeader>
         <h1>Dashboard</h1>
-        <ReportLink href="#">
-          <ReportIcon/>
+        <S.ReportLink href="#">
+          <S.ReportIcon/>
           Generate Report
-        </ReportLink>
-      </A.PageHeader>
-      <A.GridRow>
-        <A.CardColumn>
-          <MonthlyStatCard>
-            <A.CardBody>
+        </S.ReportLink>
+      </S.PageHeader>
+      <S.GridRow>
+        <S.CardColumn>
+          <S.MonthlyStatCard>
+            <S.CardBody>
               <div>
-                <MonthlyMetricLabel>Earnings (Monthly)</MonthlyMetricLabel>
-                <MetricValue>$40,000</MetricValue>
-                <MetricIconBox>
-                  <CalendarIcon/>
-                </MetricIconBox>
+                <S.MonthlyMetricLabel>Earnings (Monthly)</S.MonthlyMetricLabel>
+                <S.MetricValue>$40,000</S.MetricValue>
+                <S.MetricIconBox>
+                  <S.CalendarIcon/>
+                </S.MetricIconBox>
               </div>
-            </A.CardBody>
-          </MonthlyStatCard>
-        </A.CardColumn>
+            </S.CardBody>
+          </S.MonthlyStatCard>
+        </S.CardColumn>
 
-        <A.CardColumn>
-          <AnnualStatCard>
-            <A.CardBody>
+        <S.CardColumn>
+          <S.AnnualStatCard>
+            <S.CardBody>
               <div>
-                <AnnualMetricLabel>Earnings (Annual)</AnnualMetricLabel>
-                <MetricValue>$215,000</MetricValue>
+                <S.AnnualMetricLabel>Earnings (Annual)</S.AnnualMetricLabel>
+                <S.MetricValue>$215,000</S.MetricValue>
               </div>
-            </A.CardBody>
-          </AnnualStatCard>
-        </A.CardColumn>
-      </A.GridRow>
+            </S.CardBody>
+          </S.AnnualStatCard>
+        </S.CardColumn>
+      </S.GridRow>
     </Layout>
   );
 };

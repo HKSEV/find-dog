@@ -1,5 +1,17 @@
+"use client";
+
 import styled from "styled-components";
-import { Fixed, FlexBetween, Fw500, IconColor, MainBg, MainColor, Pointer, Sticky, W100 } from "../common/Common.styles";
+import {
+  Fixed,
+  FlexBetween,
+  Fw500,
+  IconColor,
+  MainBg,
+  MainColor,
+  Pointer,
+  Sticky,
+  W100
+} from "@/assets/css/common/CommonBase.styles";
 
 export const Header = styled.header`
   ${Fixed};

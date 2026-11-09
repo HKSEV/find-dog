@@ -1,5 +1,8 @@
+"use client";
+
 import styled from "styled-components";
-import { coolGray } from "@/assets/css/admin/Admin.styles"; // 💡 쿨그레이 팔레트 임포트
+import { coolGray } from "@/assets/css/admin/AdminBase.styles";
+// 💡 쿨그레이 팔레트 임포트
 
 export const TopbarContainer = styled.nav`
   height: 4.375rem; /* 70px */

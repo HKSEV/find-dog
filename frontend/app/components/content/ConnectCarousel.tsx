@@ -2,8 +2,8 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import PetsIcon from "@mui/icons-material/Pets";
-// 작성하신 스타일 파일 경로에 맞게 수정해 주세요. (예: style.styles.ts)
 import * as S from "@/assets/css/Style.styles";
+// 작성하신 스타일 파일 경로에 맞게 수정해 주세요. (예: Style.styles.ts)
 
 // 1. 임시 데이터
 const connectsData = [

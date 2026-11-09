@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { Ohidden, Relative, W100, H100 } from "./Common.styles";
+import { Ohidden, Relative, W100, H100 } from "@/assets/css/common/CommonBase.styles";
 
 //Thumb
 export const Thumb = styled.div`

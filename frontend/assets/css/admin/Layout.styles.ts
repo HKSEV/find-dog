@@ -1,17 +1,20 @@
+"use client";
+
 import styled from "styled-components";
-import { coolGray, adminCard } from "@/assets/css/admin/Admin.styles"; // 만들어둔 쿨그레이 믹스인 임포트
+import { coolGray, adminCard } from "@/assets/css/admin/AdminBase.styles";
+// 만들어둔 쿨그레이 믹스인 임포트
 
 // ==========================================
 // 💡 1. 사용자 작성 기존 뼈대 코드 (일부 컬러 믹스인 적용)
 // ==========================================
-export const Wrapper = styled.div`
+export const AdminShellWrapper = styled.div`
   display: flex;
   width: 100%;
   height: 100vh;
   overflow: hidden;
 `;
 
-export const ContentWrapper = styled.div`
+export const AdminShellContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -20,13 +23,13 @@ export const ContentWrapper = styled.div`
   background-color: ${coolGray[50]};
 `;
 
-export const MainContent = styled.div`
+export const AdminShellMainContent = styled.div`
   flex: 1 0 auto;
   /* 내용물의 크기를 기본으로 잡되(auto), 화면이 좁아져도 원래 크기보다 줄어들지는 말고(0), 
      만약 화면에 빈 공간이 남는다면 남는 여백을 네가 전부 채워라(1) */
 `;
 
-export const ContainerFluid = styled.div`
+export const AdminShellContainerFluid = styled.div`
   width: 100%;
   padding-right: 1.5rem;
   padding-left: 1.5rem;
@@ -39,7 +42,7 @@ export const ContainerFluid = styled.div`
 // ==========================================
 
 // 좌측 사이드바 (.sidebar 대체)
-export const Sidebar = styled.ul`
+export const AdminShellSidebar = styled.ul`
   width: 224px;
   background-color: ${coolGray[900]}; /* 다크 쿨그레이 */
   display: flex;
@@ -52,7 +55,7 @@ export const Sidebar = styled.ul`
   overflow-y: auto; /* 메뉴가 길어지면 스크롤 생성 */
 `;
 
-export const SidebarBrand = styled.div`
+export const AdminShellSidebarBrand = styled.div`
   height: 70px;
   display: flex;
   align-items: center;
@@ -65,7 +68,7 @@ export const SidebarBrand = styled.div`
   cursor: pointer;
 `;
 
-export const NavItem = styled.li<{$active?: boolean}>`
+export const AdminShellNavItem = styled.li<{$active?: boolean}>`
   padding: 0 16px;
   margin-top: 8px;
 
@@ -94,7 +97,7 @@ export const NavItem = styled.li<{$active?: boolean}>`
 `;
 
 // 상단 네비게이션 바 (.topbar 대체)
-export const Topbar = styled.nav`
+export const AdminShellTopbar = styled.nav`
   height: 70px;
   background-color: #FFFFFF;
   display: flex;
@@ -107,7 +110,7 @@ export const Topbar = styled.nav`
 `;
 
 // 페이지 제목 (.h3.mb-4 대체)
-export const PageHeading = styled.h1`
+export const AdminShellPageHeading = styled.h1`
   font-size: 1.5rem;
   font-weight: 700;
   color: ${coolGray[800]};
@@ -115,7 +118,7 @@ export const PageHeading = styled.h1`
 `;
 
 // 데이터 카드 (.card.shadow 대체)
-export const AdminDataCard = styled.div`
+export const AdminShellDataCard = styled.div`
   ${adminCard} /* 앞서 정의한 쿨그레이 그림자+테두리 믹스인 적용 */
   display: flex;
   flex-direction: column;

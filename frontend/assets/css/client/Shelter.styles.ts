@@ -1,3 +1,5 @@
+"use client";
+
 import {
   TuneOutlined as FilterIcon,
   FmdGood as LocationIcon,

@@ -1,3 +1,5 @@
+"use client";
+
 import styled, { keyframes } from "styled-components";
 
 // 2초에 맞춰 서서히 투명해지는 애니메이션

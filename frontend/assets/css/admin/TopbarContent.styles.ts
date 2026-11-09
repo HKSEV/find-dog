@@ -1,6 +1,8 @@
-import { TopbarContainer, TopbarProfile, TopbarNavbar } from "@/assets/css/admin/Topbar.styled";
-import * as I from "@/assets/css/admin/AdminIcons.styles";
+"use client";
+
 import styled from "styled-components";
+import { TopbarContainer, TopbarProfile, TopbarNavbar } from "@/assets/css/admin/Topbar.styles";
+import { Search, User, SignOut } from "@/assets/css/admin/AdminIcons.styles";
 
 export const AdminTopbar = styled(TopbarContainer)`
   position: relative;
@@ -35,7 +37,7 @@ export const MobileMenuButton = styled.button`
   margin-right: 1rem !important;
 `;
 
-export const StyledSearch = styled(I.Search)`
+export const StyledSearch = styled(Search)`
   font-size: 0.875em;
 `;
 
@@ -117,7 +119,7 @@ export const ProfileMenuItem = styled.a`
   }
 `;
 
-export const ProfileIcon = styled(I.User)`
+export const ProfileIcon = styled(User)`
   font-size: 0.875em;
   margin-right: 0.5rem !important;
   color: #99A1AF;
@@ -130,7 +132,7 @@ export const ProfileMenuDivider = styled.div`
   border-top: 1px solid #E9ECEF;
 `;
 
-export const LogoutIcon = styled(I.SignOut)`
+export const LogoutIcon = styled(SignOut)`
   font-size: 0.875em;
   margin-right: 0.5rem !important;
   color: #99A1AF;

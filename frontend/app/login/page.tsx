@@ -6,17 +6,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { setEmail, setPassword, submitLogin } from "../redux/loginSlice";
 
-import * as S from "@/assets/css/Style.styles";
 import Header from "../components/Header";
 import { CustomAlert } from "../components/CustomAlert";
-import {
-  SignupPrompt,
-  SignupLink,
-  AnimItem,
-  InputWrapper,
-  FloatingLabel,
-  FloatingInput
-} from "@/assets/css/client/Login.styles";
+import * as S from "@/assets/css/Style.styles";
 
 interface AnimatedInputProps {
   type?: React.HTMLInputTypeAttribute;
@@ -32,9 +24,9 @@ const AnimatedInput = ({type, label, value, onChange, onKeyDown}: AnimatedInputP
   const isActive = isFocused || value.length > 0;
 
   return (
-    <InputWrapper>
-      <FloatingLabel $isActive={isActive}>{label}</FloatingLabel>
-      <FloatingInput
+    <S.LoginInputWrapper>
+      <S.LoginFloatingLabel $isActive={isActive}>{label}</S.LoginFloatingLabel>
+      <S.LoginFloatingInput
       type={type}
       value={value}
       onChange={onChange}
@@ -42,7 +34,7 @@ const AnimatedInput = ({type, label, value, onChange, onKeyDown}: AnimatedInputP
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
       placeholder={label}/>
-    </InputWrapper>
+    </S.LoginInputWrapper>
   );
 };
 
@@ -113,14 +105,14 @@ export default function LoginPage() {
   return (
     <S.AppWrapper>
       <S.Container>
-        <AnimItem $delay={0} $isSlideDown={true}>
+        <S.LoginAnimItem $delay={0} $isSlideDown={true}>
           <Header title="로그인" onBackClick={() => router.back()}/>
-        </AnimItem>
+        </S.LoginAnimItem>
 
         <S.Mt70/>
 
         <S.LayOutPadding>
-          <AnimItem $delay={0.1}>
+          <S.LoginAnimItem $delay={0.1}>
             <AnimatedInput
             type="email"
             label="이메일"
@@ -128,11 +120,11 @@ export default function LoginPage() {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => dispatch(setEmail(e.target.value))}
             onKeyDown={handleKeyDown} // 💡 Enter 입력 감지
           />
-          </AnimItem>
+          </S.LoginAnimItem>
 
           <S.HB10/>
 
-          <AnimItem $delay={0.2}>
+          <S.LoginAnimItem $delay={0.2}>
             <AnimatedInput
             type="password"
             label="비밀번호"
@@ -140,33 +132,33 @@ export default function LoginPage() {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => dispatch(setPassword(e.target.value))}
             onKeyDown={handleKeyDown} // 💡 Enter 입력 감지
           />
-          </AnimItem>
+          </S.LoginAnimItem>
         </S.LayOutPadding>
 
         <S.BtnBottomWrap>
-          <AnimItem $delay={0.3}>
+          <S.LoginAnimItem $delay={0.3}>
             <S.BaseBtn $variant="primary" onClick={handleLogin} disabled={isLoading}>
               {isLoading ? "로그인 중..." : "Login"}
             </S.BaseBtn>
-          </AnimItem>
+          </S.LoginAnimItem>
           <br/>
 
-          <AnimItem $delay={0.4}>
+          <S.LoginAnimItem $delay={0.4}>
             <S.BaseBtn $variant="kakao" onClick={handleKakaoLogin}>
               카카오톡으로 간편하게 시작하기
             </S.BaseBtn>
-          </AnimItem>
+          </S.LoginAnimItem>
           <br/>
 
-          <AnimItem $delay={0.5}>
+          <S.LoginAnimItem $delay={0.5}>
             <S.BaseBtn $variant="local">Apple로 로그인</S.BaseBtn>
-          </AnimItem>
+          </S.LoginAnimItem>
 
-          <AnimItem $delay={0.6}>
-            <SignupPrompt>
-              아직 계정이 없으시다고요? <SignupLink onClick={() => router.push("/signup")}>회원가입</SignupLink>
-            </SignupPrompt>
-          </AnimItem>
+          <S.LoginAnimItem $delay={0.6}>
+            <S.SignupPrompt>
+              아직 계정이 없으시다고요? <S.SignupLink onClick={() => router.push("/signup")}>회원가입</S.SignupLink>
+            </S.SignupPrompt>
+          </S.LoginAnimItem>
         </S.BtnBottomWrap>
       </S.Container>
 

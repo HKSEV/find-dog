@@ -1,3 +1,5 @@
+"use client";
+
 import styled from "styled-components";
 import {
   Fixed,
@@ -10,7 +12,7 @@ import {
   IconColor,
   Fw600,
   MainBottomBg
-} from "./Common.styles";
+} from "@/assets/css/common/CommonBase.styles";
 
 export const BottomNav = styled.nav`
   ${W100};

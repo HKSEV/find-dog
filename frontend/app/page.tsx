@@ -7,32 +7,20 @@ import { fetchAnimals, fetchCampaigns, fetchHomeExtras, setActiveHashtag } from 
 
 import SplashScreen from "./components/SplashScreen"; // 💡 스플래시 컴포넌트 임포트
 
-import * as S from "@/assets/css/Style.styles";
-import {
-  HomeGrid,
-  IntroductionIcon,
-  AdoptionIcon,
-  DonationIcon,
-  SupportIcon,
-  StoreIcon,
-  CampaignPlayIcon,
-  RescueLabel,
-  AdoptionLabel,
-  EuthanasiaLabel
-} from "@/assets/css/client/Home.styles";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 import BannerCarousel from "./components/content/BannerCarousel";
 import ConnectsCarousel from "./components/content/ConnectCarousel";
+import * as S from "@/assets/css/Style.styles";
 
 // 2. 렌더링할 메뉴 데이터를 객체 배열로 분리하여 정의합니다.
 const quickMenus = [
-  {name: "소개", icon: <IntroductionIcon/>},
-  {name: "입양 캠페인", icon: <AdoptionIcon/>},
-  {name: "어서찾아주개 기부", icon: <DonationIcon/>},
-  {name: "지원/혜택", icon: <SupportIcon/>},
-  {name: "스토어", icon: <StoreIcon/>}
+  {name: "소개", icon: <S.IntroductionIcon/>},
+  {name: "입양 캠페인", icon: <S.AdoptionIcon/>},
+  {name: "어서찾아주개 기부", icon: <S.DonationIcon/>},
+  {name: "지원/혜택", icon: <S.SupportIcon/>},
+  {name: "스토어", icon: <S.StoreIcon/>}
 ];
 
 const campaignHashtags = ["#제주입양", "#임시보호", "#치료지원"];
@@ -172,7 +160,7 @@ export default function HomePage() {
                     <S.CampaignImg src={item.thumbnailUrl} alt={item.title}/>
                     {item.mediaType !== "IMAGE" && (
                       <S.PlayIconWrap>
-                        <CampaignPlayIcon/>
+                        <S.CampaignPlayIcon/>
                       </S.PlayIconWrap>
                     )}
                   </S.CampaignMediaWrap>
@@ -193,7 +181,7 @@ export default function HomePage() {
           <S.SectionHeader>
             <S.SectionTitle>어서찾아주개 유튜브</S.SectionTitle>
           </S.SectionHeader>
-          <HomeGrid $cols={2} $gap="1rem">
+          <S.HomeGrid $cols={2} $gap="1rem">
             {youtubePosts.map((video) => (
               <div key={video.id}>
                 <S.Thumb>
@@ -203,7 +191,7 @@ export default function HomePage() {
                 <p>{video.title}</p>
               </div>
             ))}
-          </HomeGrid>
+          </S.HomeGrid>
         </S.Section>
 
         <S.Divider/>
@@ -214,7 +202,7 @@ export default function HomePage() {
             <S.SectionTitle>펠로우 소식</S.SectionTitle>
             <S.MoreButton>더보기 &gt;</S.MoreButton>
           </S.SectionHeader>
-          <HomeGrid $cols={3} $gap=".5rem">
+          <S.HomeGrid $cols={3} $gap=".5rem">
             {fellowNews.map((news) => (
               <div key={news.id}>
                 <S.Thumb>
@@ -223,7 +211,7 @@ export default function HomePage() {
                 <S.NewsTitle>{news.title}</S.NewsTitle>
               </div>
             ))}
-          </HomeGrid>
+          </S.HomeGrid>
         </S.Section>
 
         <S.Divider/>
@@ -234,7 +222,7 @@ export default function HomePage() {
             <S.SectionTitle>도움이 필요해요</S.SectionTitle>
             <S.MoreButton>더보기 &gt;</S.MoreButton>
           </S.SectionHeader>
-          <HomeGrid $cols={4} $gap=".25rem">
+          <S.HomeGrid $cols={4} $gap=".25rem">
             {needHelps.map((help) => (
               <div key={help.id}>
                 <S.Thumb>
@@ -242,7 +230,7 @@ export default function HomePage() {
                 </S.Thumb>
               </div>
             ))}
-          </HomeGrid>
+          </S.HomeGrid>
         </S.Section>
 
         {/* 통계 */}
@@ -253,13 +241,13 @@ export default function HomePage() {
           </S.SectionHeader>
           <S.StatBox>
             <S.StatItem>
-              <RescueLabel>구조</RescueLabel>6마리
+              <S.RescueLabel>구조</S.RescueLabel>6마리
             </S.StatItem>
             <S.StatItem>
-              <AdoptionLabel>입양률</AdoptionLabel>25.2%
+              <S.AdoptionLabel>입양률</S.AdoptionLabel>25.2%
             </S.StatItem>
             <S.StatItem>
-              <EuthanasiaLabel>안락사율</EuthanasiaLabel>11.9%
+              <S.EuthanasiaLabel>안락사율</S.EuthanasiaLabel>11.9%
             </S.StatItem>
           </S.StatBox>
         </S.Section>

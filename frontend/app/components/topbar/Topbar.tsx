@@ -4,29 +4,7 @@
 //상태관리를 위해 useState와 useEffect를 추가로 불러옵니다
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-  TopbarSearch,
-  InputGroup,
-  SearchInput,
-  InputGroupAppend,
-  SearchButton
-} from "../../../assets/css/admin/Topbar.styled";
-import * as I from "@/assets/css/admin/AdminIcons.styles";
-import {
-  AdminTopbar,
-  MobileMenuButton,
-  StyledSearch,
-  StyledTopbarNavbar,
-  ProfileMenu,
-  ProfileTrigger,
-  ProfileName,
-  StyledTopbarProfile,
-  ProfileDropdown,
-  ProfileMenuItem,
-  ProfileIcon,
-  ProfileMenuDivider,
-  LogoutIcon
-} from "@/assets/css/admin/TopbarContent.styles";
+import * as S from "@/assets/css/Style.styles";
 
 export const Topbar: React.FC = () => {
   //페이지 이동 함수를 navigate라는 이름으로 사용할수있게 준비 ..
@@ -64,29 +42,29 @@ export const Topbar: React.FC = () => {
   };
 
   return (
-    <AdminTopbar>
+    <S.AdminTopbar>
       {/*Sidebar Toggle(Mobile) */}
-      <MobileMenuButton>
-        <I.Menu/>
-      </MobileMenuButton>
+      <S.MobileMenuButton>
+        <S.Menu/>
+      </S.MobileMenuButton>
 
-      <TopbarSearch>
-        <InputGroup>
-          <SearchInput type="text" placeholder="검색어를 입력하세요..."/>
-          <InputGroupAppend>
-            <SearchButton type="button">
-              <StyledSearch/>
+      <S.TopbarSearch>
+        <S.InputGroup>
+          <S.SearchInput type="text" placeholder="검색어를 입력하세요..."/>
+          <S.InputGroupAppend>
+            <S.SearchButton type="button">
+              <S.StyledSearch/>
               Search
-            </SearchButton>
-          </InputGroupAppend>
-        </InputGroup>
-      </TopbarSearch>
+            </S.SearchButton>
+          </S.InputGroupAppend>
+        </S.InputGroup>
+      </S.TopbarSearch>
 
       {/*Topbar Navbar */}
-      <StyledTopbarNavbar>
+      <S.StyledTopbarNavbar>
         {/*User Information */}
-        <ProfileMenu>
-          <ProfileTrigger
+        <S.ProfileMenu>
+          <S.ProfileTrigger
           href="#"
           id="userDropdown"
           onClick={(e) => {
@@ -95,31 +73,31 @@ export const Topbar: React.FC = () => {
           }}>
             {" "}
             {/*a태그의 기본 클릭이벤트 (페이지 최상단으로 올라가는 현상을 )막기위해 */}
-            <ProfileName>{userName}</ProfileName>
-            <StyledTopbarProfile src="http://localhost:3000/img/profile.jpg" alt="프로필이미지"/>
-          </ProfileTrigger>
+            <S.ProfileName>{userName}</S.ProfileName>
+            <S.StyledTopbarProfile src="http://localhost:3000/img/profile.jpg" alt="프로필이미지"/>
+          </S.ProfileTrigger>
 
           {isDropdownOpen && (
-            <ProfileDropdown aria-labelledby="userDropdown">
-              <ProfileMenuItem href="#" onClick={(e) => e.preventDefault()}>
-                <ProfileIcon/>
-              </ProfileMenuItem>
+            <S.ProfileDropdown aria-labelledby="userDropdown">
+              <S.ProfileMenuItem href="#" onClick={(e) => e.preventDefault()}>
+                <S.ProfileIcon/>
+              </S.ProfileMenuItem>
 
-              <ProfileMenuDivider/>
+              <S.ProfileMenuDivider/>
 
-              <ProfileMenuItem
+              <S.ProfileMenuItem
               href="#"
               onClick={(e) => {
                 e.preventDefault();
                 handleLogout();
               }}>
-                <LogoutIcon/>
+                <S.LogoutIcon/>
                 로그아웃
-              </ProfileMenuItem>
-            </ProfileDropdown>
+              </S.ProfileMenuItem>
+            </S.ProfileDropdown>
           )}
-        </ProfileMenu>
-      </StyledTopbarNavbar>
-    </AdminTopbar>
+        </S.ProfileMenu>
+      </S.StyledTopbarNavbar>
+    </S.AdminTopbar>
   );
 };

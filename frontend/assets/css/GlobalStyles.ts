@@ -1,6 +1,6 @@
 "use client";
 import { createGlobalStyle } from "styled-components";
-import { SwiperBaseStyles } from "./common/SwiperBase.styles";
+import { SwiperBaseStyles } from "@/assets/css/common/SwiperBase.styles";
 
 export const GlobalStyle = createGlobalStyle`
   *, *::before, *::after {

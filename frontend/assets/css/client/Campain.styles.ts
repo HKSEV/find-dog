@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { FlexColumn, W100 } from "../common/Common.styles";
+import { FlexColumn, W100 } from "@/assets/css/common/CommonBase.styles";
 
 export const CampaignTextWrap = styled.div`
   ${FlexColumn};

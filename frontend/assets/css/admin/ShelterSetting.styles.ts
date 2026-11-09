@@ -1,8 +1,18 @@
-import Image from "next/image";
-import * as F from "@/assets/css/admin/AdminForm.styles";
-import styled from "styled-components";
+"use client";
 
-export const PageTitle = styled.h1`
+import Image from "next/image";
+
+import styled from "styled-components";
+import {
+  AdminFormCard,
+  AdminFormCardHeader,
+  Row,
+  AdminFormColumn,
+  AdminFormButton,
+  AdminFormCardBody
+} from "@/assets/css/admin/AdminForm.styles";
+
+export const ShelterSettingPageTitle = styled.h1`
   font-size: 1.75rem;
   font-weight: 500;
   line-height: 1.2;
@@ -10,12 +20,12 @@ export const PageTitle = styled.h1`
   color: #1E2939;
 `;
 
-export const FormCard = styled(F.Card)`
+export const ShelterSettingFormCard = styled(AdminFormCard)`
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
   margin-bottom: 1.5rem !important;
 `;
 
-export const FormCardHeader = styled(F.CardHeader)`
+export const ShelterSettingFormCardHeader = styled(AdminFormCardHeader)`
   padding-top: 1rem !important;
   padding-bottom: 1rem !important;
 `;
@@ -26,7 +36,7 @@ export const WarningCardTitle = styled.h6`
   color: #FFC107 !important;
 `;
 
-export const InsetFormGroup = styled.div`
+export const ShelterSettingInsetFormGroup = styled.div`
   margin-bottom: 1rem;
   margin-bottom: 1.5rem !important;
   padding: 1rem !important;
@@ -34,34 +44,34 @@ export const InsetFormGroup = styled.div`
   border-radius: 0.25rem !important;
 `;
 
-export const FieldLabel = styled.label`
+export const ShelterSettingFieldLabel = styled.label`
   font-weight: 700 !important;
   color: #1E2939;
 `;
 
-export const FieldRow = styled(F.Row)`
+export const FieldRow = styled(Row)`
   margin-bottom: 1rem !important;
 `;
 
-export const FieldColumn = styled(F.Column)`
+export const ShelterSettingFieldColumn = styled(AdminFormColumn)`
   margin-bottom: 1rem;
 `;
 
-export const EmphasizedLabel = styled.label`
+export const ShelterSettingEmphasizedLabel = styled.label`
   font-weight: 700 !important;
 `;
 
-export const FormDivider = styled.hr`
+export const ShelterSettingFormDivider = styled.hr`
   margin-top: 1.5rem !important;
   margin-bottom: 1.5rem !important;
 `;
 
-export const FormGroup = styled.div`
+export const ShelterSettingFormGroup = styled.div`
   margin-bottom: 1rem;
   margin-bottom: 1rem !important;
 `;
 
-export const PrimaryLabel = styled.label`
+export const ShelterSettingPrimaryLabel = styled.label`
   font-weight: 700 !important;
   color: #007BFF !important;
 `;
@@ -73,7 +83,7 @@ export const ImageSourceOptions = styled.div`
   margin-top: 0.5rem !important;
 `;
 
-export const PreviewBox = styled.div`
+export const ShelterSettingPreviewBox = styled.div`
   margin-bottom: 1.5rem !important;
   text-align: center !important;
 `;
@@ -93,12 +103,12 @@ export const ShelterPreviewImage = styled(Image)`
   }
 `;
 
-export const FormSection = styled.div`
+export const ShelterSettingFormSection = styled.div`
   margin-bottom: 1rem;
   margin-bottom: 1.5rem !important;
 `;
 
-export const SubmitButton = styled(F.Button)`
+export const ShelterSettingSubmitButton = styled(AdminFormButton)`
   display: block;
   width: 100%;
   width: 100% !important;
@@ -108,6 +118,6 @@ export const SubmitButton = styled(F.Button)`
   color: #343A40 !important;
 `;
 
-export const GuideBody = styled(F.CardBody)`
+export const ShelterSettingGuideBody = styled(AdminFormCardBody)`
   color: #1E2939;
 `;

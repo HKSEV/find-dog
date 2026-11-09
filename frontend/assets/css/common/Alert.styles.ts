@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { FlexCenter, FlexColumn } from "../common/Common.styles";
+import { FlexCenter, FlexColumn } from "@/assets/css/common/CommonBase.styles";
 
 export const AlertInfo = styled.div`
   ${FlexCenter};

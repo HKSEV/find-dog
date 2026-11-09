@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { Swiper } from "swiper/react";
 import styled from "styled-components";
@@ -11,7 +13,7 @@ export const BannerSwiper = styled(Swiper)`
   }
 `;
 
-export const BannerImage = styled(Image)`
+export const CarouselBannerImage = styled(Image)`
   && {
     width: auto;
   }

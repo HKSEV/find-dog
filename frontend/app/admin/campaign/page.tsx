@@ -6,29 +6,9 @@ import { AppDispatch, RootState } from "../../store/store";
 import { updateCampaignField, setMediaType, submitCampaign } from "../../redux/campaignAdminSlice";
 
 import { Layout } from "../../components/layout/Layout";
-import * as A from "@/assets/css/Style.styles";
-import * as F from "@/assets/css/admin/AdminForm.styles";
+
 import useAdminModal from "@/app/components/contexts/AdminModalContext";
-import {
-  PageTitle,
-  FormCard,
-  FormCardHeader,
-  CardTitle,
-  FormSection,
-  FieldLabel,
-  CategoryOptions,
-  RadioOption,
-  RadioLabel,
-  FieldColumn,
-  EmphasizedLabel,
-  FormGroup,
-  InsetFormGroup,
-  PrimaryLabel,
-  PreviewBox,
-  CampaignPreviewImage,
-  SubmitButton,
-  GuideBody
-} from "@/assets/css/admin/Campaign.styles";
+import * as S from "@/assets/css/Style.styles";
 
 export default function AdoptionCampaignAdmin() {
   const dispatch = useDispatch<AppDispatch>();
@@ -68,91 +48,91 @@ export default function AdoptionCampaignAdmin() {
 
   return (
     <Layout>
-      <A.PageHeader>
-        <PageTitle>입양 캠페인 관리</PageTitle>
-      </A.PageHeader>
+      <S.PageHeader>
+        <S.AdminCampaignPageTitle>입양 캠페인 관리</S.AdminCampaignPageTitle>
+      </S.PageHeader>
 
-      <A.GridRow>
-        <F.Column $lg={8}>
-          <FormCard>
-            <FormCardHeader>
-              <CardTitle>신규 캠페인 등록</CardTitle>
-            </FormCardHeader>
-            <F.CardBody>
+      <S.GridRow>
+        <S.AdminFormColumn $lg={8}>
+          <S.AdminCampaignFormCard>
+            <S.AdminCampaignFormCardHeader>
+              <S.AdminCampaignCardTitle>신규 캠페인 등록</S.AdminCampaignCardTitle>
+            </S.AdminCampaignFormCardHeader>
+            <S.AdminFormCardBody>
               <form onSubmit={handleSubmit}>
-                <FormSection>
-                  <FieldLabel>미디어 타입 설정</FieldLabel>
+                <S.AdminCampaignFormSection>
+                  <S.AdminCampaignFieldLabel>미디어 타입 설정</S.AdminCampaignFieldLabel>
 
-                  <CategoryOptions>
-                    <RadioOption>
-                      <F.CheckWrapper>
-                        <F.CheckInput
+                  <S.AdminCampaignCategoryOptions>
+                    <S.AdminCampaignRadioOption>
+                      <S.CheckWrapper>
+                        <S.CheckInput
                         type="radio"
                         id="mediaImage"
                         name="mediaType"
                         checked={formData.mediaType === "IMAGE"}
                         onChange={() => handleMediaTypeChange("IMAGE")}/>
-                      </F.CheckWrapper>
-                      <RadioLabel htmlFor="mediaImage">이미지형</RadioLabel>
-                    </RadioOption>
-                    <RadioOption>
-                      <F.CheckWrapper>
-                        <F.CheckInput
+                      </S.CheckWrapper>
+                      <S.AdminCampaignRadioLabel htmlFor="mediaImage">이미지형</S.AdminCampaignRadioLabel>
+                    </S.AdminCampaignRadioOption>
+                    <S.AdminCampaignRadioOption>
+                      <S.CheckWrapper>
+                        <S.CheckInput
                         type="radio"
                         id="mediaYoutube"
                         name="mediaType"
                         checked={formData.mediaType === "YOUTUBE"}
                         onChange={() => handleMediaTypeChange("YOUTUBE")}/>
-                      </F.CheckWrapper>
-                      <RadioLabel htmlFor="mediaYoutube">유튜브 링크형</RadioLabel>
-                    </RadioOption>
+                      </S.CheckWrapper>
+                      <S.AdminCampaignRadioLabel htmlFor="mediaYoutube">유튜브 링크형</S.AdminCampaignRadioLabel>
+                    </S.AdminCampaignRadioOption>
 
-                    <RadioOption>
-                      <F.CheckWrapper>
-                        <F.CheckInput
+                    <S.AdminCampaignRadioOption>
+                      <S.CheckWrapper>
+                        <S.CheckInput
                         type="radio"
                         id="mediaDirect"
                         name="mediaType"
                         checked={formData.mediaType === "DIRECT_VIDEO"}
                         onChange={() => handleMediaTypeChange("DIRECT_VIDEO")}/>
-                      </F.CheckWrapper>
-                      <RadioLabel htmlFor="mediaDirect">서버 직접 업로드형</RadioLabel>
-                    </RadioOption>
-                  </CategoryOptions>
-                </FormSection>
+                      </S.CheckWrapper>
+                      <S.AdminCampaignRadioLabel htmlFor="mediaDirect">서버 직접 업로드형</S.AdminCampaignRadioLabel>
+                    </S.AdminCampaignRadioOption>
+                  </S.AdminCampaignCategoryOptions>
+                </S.AdminCampaignFormSection>
 
                 <hr/>
                 {/*해시태그 및 제목 입력 구역 */}
-                <F.Row>
-                  <FieldColumn $md={4}>
+                <S.Row>
+                  <S.AdminCampaignFieldColumn $md={4}>
                     <p>
-                      <EmphasizedLabel>해시태그 (말머리)</EmphasizedLabel>
+                      <S.AdminCampaignEmphasizedLabel>해시태그 (말머리)</S.AdminCampaignEmphasizedLabel>
                     </p>
-                    <F.Select name="hashtag" value={formData.hashtag} onChange={handleChange} required>
+                    <S.AdminFormSelect name="hashtag" value={formData.hashtag} onChange={handleChange} required>
                       <option value="">-- 필수 선택 --</option>
                       {HASHTAG_LIST.map((tag, index) => (
                         <option key={index} value={tag}>
                           {tag}
                         </option>
                       ))}
-                    </F.Select>
-                  </FieldColumn>
+                    </S.AdminFormSelect>
+                  </S.AdminCampaignFieldColumn>
 
-                  <FieldColumn $md={8}>
-                    <EmphasizedLabel>캠페인 제목</EmphasizedLabel>
-                    <F.Control
+                  <S.AdminCampaignFieldColumn $md={8}>
+                    <S.AdminCampaignEmphasizedLabel>캠페인 제목</S.AdminCampaignEmphasizedLabel>
+                    <S.Control
                     name="title"
                     placeholder="목록에 노출될 제목을 적어주세요"
                     value={formData.title}
                     onChange={handleChange}
                     required/>
-                  </FieldColumn>
-                </F.Row>
+                  </S.AdminCampaignFieldColumn>
+                </S.Row>
 
                 {/*상세 내용구역 */}
-                <FormGroup>
-                  <EmphasizedLabel>상세 내용</EmphasizedLabel>
-                  <F.Control
+                <S.AdminCampaignFormGroup>
+                  <S.AdminCampaignEmphasizedLabel>상세 내용</S.AdminCampaignEmphasizedLabel>
+                  <S.Control
                   as="textarea"
                   rows={5}
                   name="content"
@@ -160,15 +140,15 @@ export default function AdoptionCampaignAdmin() {
                   value={formData.content}
                   onChange={handleChange}
                   required/>
-                </FormGroup>
+                </S.AdminCampaignFormGroup>
 
                 {/*동영상 링크 / 경로 */}
                 {formData.mediaType !== "IMAGE" && (
-                  <InsetFormGroup>
-                    <PrimaryLabel>
+                  <S.AdminCampaignInsetFormGroup>
+                    <S.AdminCampaignPrimaryLabel>
                       {formData.mediaType === "YOUTUBE" ? "유튜브 링크(URL)" : "서버동영상 파일경로"}
-                    </PrimaryLabel>
-                    <F.Control
+                    </S.AdminCampaignPrimaryLabel>
+                    <S.Control
                     type="text"
                     name="mediaUrl"
                     placeholder={
@@ -177,47 +157,47 @@ export default function AdoptionCampaignAdmin() {
                     value={formData.mediaUrl}
                     onChange={handleChange}
                     required={formData.mediaType !== "IMAGE"}/>
-                  </InsetFormGroup>
+                  </S.AdminCampaignInsetFormGroup>
                 )}
 
                 {/*썸네일 구역 */}
-                <FormSection>
-                  <EmphasizedLabel>썸네일 이미지 URL(최대 2MB)</EmphasizedLabel>
-                  <F.Control
+                <S.AdminCampaignFormSection>
+                  <S.AdminCampaignEmphasizedLabel>썸네일 이미지 URL(최대 2MB)</S.AdminCampaignEmphasizedLabel>
+                  <S.Control
                   type="url"
                   name="thumbnailUrl"
                   placeholder="목록에 보여질 썸네일 주소를 입력하세요"
                   value={formData.thumbnailUrl}
                   onChange={handleChange}
                   required/>
-                </FormSection>
+                </S.AdminCampaignFormSection>
 
                 {/*썸네일 미리보기*/}
                 {formData.thumbnailUrl && (
-                  <PreviewBox>
-                    <CampaignPreviewImage
+                  <S.AdminCampaignPreviewBox>
+                    <S.CampaignPreviewImage
                     src={formData.thumbnailUrl}
                     alt="썸네일 미리보기"
                     width={0}
                     height={0}
                     unoptimized
                     loading="eager"/>
-                  </PreviewBox>
+                  </S.AdminCampaignPreviewBox>
                 )}
-                <SubmitButton type="submit" $variant="primary" disabled={isLoading}>
+                <S.AdminCampaignSubmitButton type="submit" $variant="primary" disabled={isLoading}>
                   {isLoading ? "등록 중..." : "캠페인 최종 등록하기"}
-                </SubmitButton>
+                </S.AdminCampaignSubmitButton>
               </form>
-            </F.CardBody>
-          </FormCard>
-        </F.Column>
+            </S.AdminFormCardBody>
+          </S.AdminCampaignFormCard>
+        </S.AdminFormColumn>
 
-        <F.Column $lg={4}>
-          <FormCard>
-            <FormCardHeader>
-              <CardTitle>등록 안내 가이드</CardTitle>
-            </FormCardHeader>
-            <GuideBody>
+        <S.AdminFormColumn $lg={4}>
+          <S.AdminCampaignFormCard>
+            <S.AdminCampaignFormCardHeader>
+              <S.AdminCampaignCardTitle>등록 안내 가이드</S.AdminCampaignCardTitle>
+            </S.AdminCampaignFormCardHeader>
+            <S.AdminCampaignGuideBody>
               <p>
                 <strong>1. 해시태그(말머리) 필수:</strong>
                 <br/>
@@ -237,10 +217,10 @@ export default function AdoptionCampaignAdmin() {
                 외부 통제가 불가능한 상황을 대비한 기능입니다 트래픽 폭주를 막기위해 최대 2MB 용량, 30초 이내의 ogg 또는
                 mp4 파일로 변환하여 업로드
               </p>
-            </GuideBody>
-          </FormCard>
-        </F.Column>
-      </A.GridRow>
+            </S.AdminCampaignGuideBody>
+          </S.AdminCampaignFormCard>
+        </S.AdminFormColumn>
+      </S.GridRow>
     </Layout>
   );
 };

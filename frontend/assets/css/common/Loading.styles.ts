@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { TextCenter } from "./Common.styles";
+import { TextCenterMixin as TextCenter } from "@/assets/css/common/CommonBase.styles";
 
 export const LoadingText = styled.div`
   ${TextCenter}

@@ -1,3 +1,5 @@
+"use client";
+
 import { css } from "styled-components";
 
 // Swiper 기본 레이아웃과 페이지 표시 스타일을 한곳에서 적용합니다.

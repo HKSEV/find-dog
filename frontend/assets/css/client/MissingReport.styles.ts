@@ -1,5 +1,16 @@
+"use client";
+
 import styled from "styled-components";
-import { BgWhite, BorderNone, BoxShadow, FlexBetween, FlexCenter, Fw600, Nowrap, Pointer } from "../common/Common.styles";
+import {
+  BgWhite,
+  BorderNone,
+  BoxShadow,
+  FlexBetween,
+  FlexCenter,
+  Fw600,
+  Nowrap,
+  Pointer
+} from "@/assets/css/common/CommonBase.styles";
 
 export const BellIconWrapper = styled.div`
   cursor: pointer;

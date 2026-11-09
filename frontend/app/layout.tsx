@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 
 import StyledComponentsRegistry from "@/lib/registry";
-import { GlobalStyle } from "@/assets/css/GlobalStyles";
+
 import { Providers } from "./store/Providers";
+import * as S from "@/assets/css/Style.styles";
 
 export const metadata: Metadata = {
   title: "어서찾아주개",
@@ -14,7 +15,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
     <html lang="ko">
       <body id="page-top">
         <StyledComponentsRegistry>
-          <GlobalStyle/>
+          <S.GlobalStyle/>
           <Providers>{children}</Providers>
         </StyledComponentsRegistry>
       </body>

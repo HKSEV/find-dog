@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { FlexBetween, BgWhite, Pointer, Flex, Fw500 } from "../common/Common.styles";
+import { FlexBetween, BgWhite, Pointer, Flex, Fw500 } from "@/assets/css/common/CommonBase.styles";
 
 export const GuideBox = styled.div`
   ${FlexBetween}

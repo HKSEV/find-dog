@@ -1,5 +1,7 @@
+"use client";
+
 import styled, { keyframes } from "styled-components";
-import { coolGray } from "./Admin.styles";
+import { coolGray } from "@/assets/css/admin/AdminBase.styles";
 
 export type AdminAlertVariant = "info" | "success" | "error";
 
@@ -110,7 +112,7 @@ export const AlertActions = styled.div`
   margin-top: 1.75rem;
 `;
 
-export const ConfirmButton = styled.button`
+export const AdminAlertConfirmButton = styled.button`
   min-height: 2.75rem;
   padding: 0.625rem 1rem;
   color: ${alertColors.surface};
@@ -134,7 +136,7 @@ export const ConfirmButton = styled.button`
   }
 `;
 
-export const CloseButton = styled.button`
+export const AdminAlertCloseButton = styled.button`
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;

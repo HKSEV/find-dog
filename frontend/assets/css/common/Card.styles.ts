@@ -1,5 +1,16 @@
+"use client";
+
 import styled from "styled-components";
-import { BgWhite, Ohidden, BoxShadow, Ellipsis, Grid, Fw900, FlexColumn, Nowrap } from "./Common.styles";
+import {
+  BgWhite,
+  Ohidden,
+  BoxShadow,
+  Ellipsis,
+  Grid,
+  Fw900,
+  FlexColumn,
+  Nowrap
+} from "@/assets/css/common/CommonBase.styles";
 
 export const Card = styled.div`
   ${BgWhite}

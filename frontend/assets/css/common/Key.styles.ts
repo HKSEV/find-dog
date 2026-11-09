@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { FlexColumn, TextCenter } from "./Common.styles";
+import { FlexColumn, TextCenterMixin as TextCenter } from "@/assets/css/common/CommonBase.styles";
 
 export const DivKey = styled.div`
   border: 1px solid #DDD;

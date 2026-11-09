@@ -2,10 +2,9 @@
 
 import React from "react";
 import { useRouter } from "next/navigation"; // 💡 useRouter 임포트
-import * as S from "@/assets/css/Style.styles";
 
 import Logo from "./Logo";
-import { HeaderActions, AccountIcon, NotificationIcon, HeaderSpacer } from "@/assets/css/layout/HeaderContent.styles";
+import * as S from "@/assets/css/Style.styles";
 
 interface HeaderProps {
   title?: string;
@@ -31,14 +30,14 @@ export default function Header({title, onBackClick, isMain}: HeaderProps) {
         <Logo onClick={() => router.push("/")}/>
 
         {/* 우측 아이콘 그룹 */}
-        <HeaderActions>
-          <AccountIcon
+        <S.HeaderActions>
+          <S.HeaderAccountIcon
           onClick={() => router.push("/login")} // 💡 클릭 시 /login 으로 이동
         />
-          <NotificationIcon
+          <S.NotificationIcon
           onClick={() => router.push("/mypage")} // 필요시 알림 페이지 경로로 수정
         />
-        </HeaderActions>
+        </S.HeaderActions>
       </S.Header>
     );
   };
@@ -50,7 +49,7 @@ export default function Header({title, onBackClick, isMain}: HeaderProps) {
 
       <S.H5Bold>{title}</S.H5Bold>
 
-      <HeaderSpacer/>
+      <S.HeaderSpacer/>
     </S.Header>
   );
 };

@@ -1,6 +1,8 @@
+"use client";
+
 import { PlayArrow as PlayArrowIcon } from "@mui/icons-material";
 import styled from "styled-components";
-import { Absolute, FlexCenter, FlexColumn } from "./Common.styles";
+import { Absolute, FlexCenter, FlexColumn } from "@/assets/css/common/CommonBase.styles";
 
 export const MenuIconWrapper = styled.div`
   ${FlexColumn};

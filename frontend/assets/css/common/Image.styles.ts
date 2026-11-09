@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { Absolute, Ohidden, Relative, W100, H100 } from "./Common.styles";
+import { Absolute, Ohidden, Relative, W100, H100 } from "@/assets/css/common/CommonBase.styles";
 
 export const RecommendImgBox = styled.div`
   width: 140px;

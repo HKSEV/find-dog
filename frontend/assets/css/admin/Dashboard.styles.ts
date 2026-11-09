@@ -1,6 +1,8 @@
-import * as I from "@/assets/css/admin/AdminIcons.styles";
+"use client";
+
 import styled from "styled-components";
-import { StatCard } from "../common/Card.styles";
+import { StatCard } from "@/assets/css/common/Card.styles";
+import { Download, Calendar } from "@/assets/css/admin/AdminIcons.styles";
 
 export const MonthlyStatCard = styled(StatCard).attrs({$borderColor: "#4E73DF"})``;
 export const AnnualStatCard = styled(StatCard).attrs({$borderColor: "#1CC88A"})``;
@@ -38,7 +40,7 @@ export const ReportLink = styled.a`
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
 `;
 
-export const ReportIcon = styled(I.Download)`
+export const ReportIcon = styled(Download)`
   font-size: 0.875em;
   color: rgba(255, 255, 255, 0.5) !important;
 `;
@@ -70,7 +72,7 @@ export const MetricIconBox = styled.div`
   flex: 0 0 auto;
 `;
 
-export const CalendarIcon = styled(I.Calendar)`
+export const CalendarIcon = styled(Calendar)`
   font-size: 2em;
   color: #D1D5DC;
 `;

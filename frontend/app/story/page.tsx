@@ -5,46 +5,13 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { fetchStories, setActiveTab, setSubTab, toggleAlert, setDummyStories } from "../redux/storySlice";
-import * as S from "@/assets/css/Style.styles";
 
 // MUI 아이콘
 import { NotificationsOutlined as NotificationsIcon } from "@mui/icons-material";
 import { MessageSquare, Share2, Eye } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import {
-  StorySubTabs,
-  StorySubTab,
-  StoryFilters,
-  ViewOptions,
-  GridViewIcon,
-  StoryAlert,
-  StoryList,
-  LoadingMessage,
-  StoryCard,
-  FeaturedCard,
-  FeaturedHeader,
-  FeaturedBadge,
-  FeaturedTime,
-  FeaturedContent,
-  FeaturedImage,
-  FeaturedTitle,
-  FeaturedDescription,
-  FeaturedStats,
-  StoryHeader,
-  AuthorDetails,
-  AuthorAvatar,
-  AuthorName,
-  AuthorTime,
-  PostMenu,
-  StoryTitle,
-  StoryDescription,
-  StoryImages,
-  StoryImage,
-  StoryActions,
-  CommentCount,
-  WriteIcon
-} from "@/assets/css/client/Story.styles";
+import * as S from "@/assets/css/Style.styles";
 
 export default function StoryPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -111,16 +78,16 @@ export default function StoryPage() {
         </S.TabContainer>
 
         {/* 2차 서브 탭 메뉴 */}
-        <StorySubTabs>
+        <S.StorySubTabs>
           {["전체", "입양후기", "일상공유", "고민상담"].map((sub) => (
-            <StorySubTab key={sub} onClick={() => dispatch(setSubTab(sub))} $active={subTab === sub}>
+            <S.StorySubTab key={sub} onClick={() => dispatch(setSubTab(sub))} $active={subTab === sub}>
               {sub}
-            </StorySubTab>
+            </S.StorySubTab>
           ))}
-        </StorySubTabs>
+        </S.StorySubTabs>
 
         {/* 필터 및 정렬 바 */}
-        <StoryFilters>
+        <S.StoryFilters>
           <S.FilterSelect defaultValue="allArea">
             <option value="allArea">모든 지역</option>
           </S.FilterSelect>
@@ -129,14 +96,14 @@ export default function StoryPage() {
             <option value="latest">최신순</option>
           </S.FilterSelect>
 
-          <ViewOptions>
-            <GridViewIcon>🔲</GridViewIcon>
-            <GridViewIcon>☰</GridViewIcon>
-          </ViewOptions>
-        </StoryFilters>
+          <S.ViewOptions>
+            <S.GridViewIcon>🔲</S.GridViewIcon>
+            <S.GridViewIcon>☰</S.GridViewIcon>
+          </S.ViewOptions>
+        </S.StoryFilters>
 
         {/* 실시간 알림 토글배너 */}
-        <StoryAlert>
+        <S.StoryAlert>
           <S.AlertInfo>
             <div className="icon-circle">
               <NotificationsIcon/>
@@ -149,28 +116,28 @@ export default function StoryPage() {
           <S.ToggleBtn $isOn={isAlertOn} onClick={() => dispatch(toggleAlert())}>
             <div className="handle"/>
           </S.ToggleBtn>
-        </StoryAlert>
+        </S.StoryAlert>
 
         <S.Divider/>
 
         {/* 스토리 피드 리스트 */}
-        <StoryList>
+        <S.StoryList>
           {loading ? (
-            <LoadingMessage>스토리를 불러오는 중입니다...</LoadingMessage>
+            <S.LoadingMessage>스토리를 불러오는 중입니다...</S.LoadingMessage>
           ) : storyList.length === 0 ? (
-            <LoadingMessage>등록된 스토리가 없습니다.</LoadingMessage>
+            <S.LoadingMessage>등록된 스토리가 없습니다.</S.LoadingMessage>
           ) : (
             storyList.map((post) => (
-              <StoryCard key={post.id}>
+              <S.StoryCard key={post.id}>
                 {post.isPick ? (
-                  <FeaturedCard>
-                    <FeaturedHeader>
-                      <FeaturedBadge>어서찾아주개 Pick</FeaturedBadge>
-                      <FeaturedTime>{post.timeAgo}</FeaturedTime>
-                    </FeaturedHeader>
+                  <S.FeaturedCard>
+                    <S.FeaturedHeader>
+                      <S.FeaturedBadge>어서찾아주개 Pick</S.FeaturedBadge>
+                      <S.FeaturedTime>{post.timeAgo}</S.FeaturedTime>
+                    </S.FeaturedHeader>
 
-                    <FeaturedContent>
-                      <FeaturedImage
+                    <S.FeaturedContent>
+                      <S.FeaturedImage
                       src={post.images[0]}
                       alt="Pick"
                       width={70}
@@ -178,32 +145,32 @@ export default function StoryPage() {
                       unoptimized
                       loading="eager"/>
                       <div>
-                        <FeaturedTitle>{post.title}</FeaturedTitle>
-                        <FeaturedDescription>{post.content}</FeaturedDescription>
-                        <FeaturedStats>👤 {post.author}</FeaturedStats>
+                        <S.FeaturedTitle>{post.title}</S.FeaturedTitle>
+                        <S.FeaturedDescription>{post.content}</S.FeaturedDescription>
+                        <S.FeaturedStats>👤 {post.author}</S.FeaturedStats>
                       </div>
-                    </FeaturedContent>
-                  </FeaturedCard>
+                    </S.FeaturedContent>
+                  </S.FeaturedCard>
                 ) : (
                   <div>
-                    <StoryHeader>
-                      <AuthorDetails>
-                        <AuthorAvatar>👤</AuthorAvatar>
+                    <S.StoryHeader>
+                      <S.AuthorDetails>
+                        <S.AuthorAvatar>👤</S.AuthorAvatar>
                         <div>
-                          <AuthorName>{post.author}</AuthorName>
-                          <AuthorTime>사지말고 입양하세요.</AuthorTime>
+                          <S.AuthorName>{post.author}</S.AuthorName>
+                          <S.AuthorTime>사지말고 입양하세요.</S.AuthorTime>
                         </div>
-                      </AuthorDetails>
-                      <PostMenu>{post.timeAgo}</PostMenu>
-                    </StoryHeader>
+                      </S.AuthorDetails>
+                      <S.PostMenu>{post.timeAgo}</S.PostMenu>
+                    </S.StoryHeader>
 
-                    <StoryTitle>{post.title}</StoryTitle>
-                    <StoryDescription>{post.content}</StoryDescription>
+                    <S.StoryTitle>{post.title}</S.StoryTitle>
+                    <S.StoryDescription>{post.content}</S.StoryDescription>
 
                     {post.images && post.images.length > 0 && (
-                      <StoryImages>
+                      <S.StoryImages>
                         {post.images.map((img, idx) => (
-                          <StoryImage
+                          <S.StoryImage
                           key={idx}
                           src={img}
                           alt={`img-${idx}`}
@@ -212,30 +179,30 @@ export default function StoryPage() {
                           unoptimized
                           loading="eager"/>
                         ))}
-                      </StoryImages>
+                      </S.StoryImages>
                     )}
 
-                    <StoryActions>
-                      <CommentCount>
+                    <S.StoryActions>
+                      <S.CommentCount>
                         <MessageSquare size={14}/> {post.commentsCount}
-                      </CommentCount>
-                      <CommentCount>
+                      </S.CommentCount>
+                      <S.CommentCount>
                         <Share2 size={14}/> {post.sharesCount}
-                      </CommentCount>
-                      <CommentCount>
+                      </S.CommentCount>
+                      <S.CommentCount>
                         <Eye size={14}/> {post.viewsCount}
-                      </CommentCount>
-                    </StoryActions>
+                      </S.CommentCount>
+                    </S.StoryActions>
                   </div>
                 )}
-              </StoryCard>
+              </S.StoryCard>
             ))
           )}
-        </StoryList>
+        </S.StoryList>
 
         {/* 글쓰기 플로팅 버튼 */}
         <S.FloatingWriteButton>
-          <WriteIcon/>
+          <S.StoryWriteIcon/>
           <span>글쓰기</span>
         </S.FloatingWriteButton>
 

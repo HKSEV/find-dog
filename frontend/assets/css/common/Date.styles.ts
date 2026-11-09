@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { FlexCenter } from "./Common.styles";
+import { FlexCenter } from "@/assets/css/common/CommonBase.styles";
 
 export const DateRow = styled.div`
   ${FlexCenter}

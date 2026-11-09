@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { Nowrap } from "./Common.styles";
+import { Nowrap } from "@/assets/css/common/CommonBase.styles";
 
 export const HorizontalScroll = styled.div`
   display: flex;

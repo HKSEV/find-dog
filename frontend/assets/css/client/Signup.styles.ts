@@ -1,8 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import styled, { keyframes } from "styled-components";
-import * as S from "@/assets/css/Style.styles";
+import { BaseBtn } from "@/assets/css/common/Button.styles";
+import { PhotoUploadBottomText } from "@/assets/css/common/Title.styles";
+import { AlignItemsCenter } from "@/assets/css/layout/LayoutBase.styles";
+import { FormControl } from "@/assets/css/common/Input.styles";
 
-export const AuxiliaryButton = styled(S.BaseBtn).attrs({$variant: "primary", $mainColor: "#CCC", $width: "80px"})``;
+export const AuxiliaryButton = styled(BaseBtn).attrs({$variant: "primary", $mainColor: "#CCC", $width: "80px"})``;
 
 export const ProfilePreview = styled(Image)`
   && {
@@ -11,7 +16,7 @@ export const ProfilePreview = styled(Image)`
   }
 `;
 
-export const PhotoHint = styled(S.PhotoUploadBottomText)`
+export const PhotoHint = styled(PhotoUploadBottomText)`
   margin-top: 1rem !important;
 `;
 
@@ -21,12 +26,12 @@ export const HiddenFileInput = styled.input`
   }
 `;
 
-export const SignupSectionHeading = styled(S.AlignItemsCenter)`
+export const SignupSectionHeading = styled(AlignItemsCenter)`
   margin-top: 3rem !important;
   margin-bottom: 1.5rem !important;
 `;
 
-export const PhoneFieldRow = styled(S.AlignItemsCenter)`
+export const PhoneFieldRow = styled(AlignItemsCenter)`
   && {
     gap: 8px;
   }
@@ -37,41 +42,41 @@ export const PhoneFieldRow = styled(S.AlignItemsCenter)`
 // ==========================================
 // 💡 1. 애니메이션 Keyframes 및 래퍼 정의
 // ==========================================
-export const slideDown = keyframes`
+export const signupSlideDown = keyframes`
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }
 `;
 
-export const fadeUp = keyframes`
+export const signupFadeUp = keyframes`
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 `;
 
-export const AnimItem = styled.div<{$delay: number; $isSlideDown?: boolean}>`
+export const SignupAnimItem = styled.div<{$delay: number; $isSlideDown?: boolean}>`
   opacity: 0;
-  animation: ${(props) => (props.$isSlideDown ? slideDown : fadeUp)} 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: ${(props) => (props.$isSlideDown ? signupSlideDown : signupFadeUp)} 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: ${(props) => props.$delay}s;
   width: 100%;
 `;
 
-export const SignupField = styled(AnimItem)`
+export const SignupField = styled(SignupAnimItem)`
   margin-bottom: 1.5rem !important;
 `;
 
-export const FinalSignupField = styled(AnimItem)`
+export const FinalSignupField = styled(SignupAnimItem)`
   margin-bottom: 3rem !important;
 `;
 
 // ==========================================
 // 💡 2. 플로팅 라벨(애니메이션 인풋) 스타일 정의
 // ==========================================
-export const InputWrapper = styled.div`
+export const SignupInputWrapper = styled.div`
   position: relative;
   width: 100%;
   flex: 1;
 `;
 
-export const FloatingLabel = styled.label<{$isActive: boolean}>`
+export const SignupFloatingLabel = styled.label<{$isActive: boolean}>`
   position: absolute;
   left: 12px;
   top: ${(props) => (props.$isActive ? "0" : "50%")};
@@ -85,7 +90,7 @@ export const FloatingLabel = styled.label<{$isActive: boolean}>`
   z-index: 2;
 `;
 
-export const FloatingInput = styled(S.FormControl)`
+export const SignupFloatingInput = styled(FormControl)`
   width: 100%;
   padding: 14px 15px;
   background-color: transparent;

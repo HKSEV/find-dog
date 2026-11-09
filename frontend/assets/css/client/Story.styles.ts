@@ -1,7 +1,11 @@
+"use client";
+
 import Image from "next/image";
 import { Plus } from "lucide-react";
-import * as S from "@/assets/css/Style.styles";
+
 import styled from "styled-components";
+import { FilterContainer } from "@/assets/css/common/Nav.styles";
+import { AlertBanner } from "@/assets/css/client/MissingReport.styles";
 
 export const StorySubTabs = styled.div`
   && {
@@ -24,9 +28,9 @@ export const StorySubTab = styled.span<{$active: boolean}>`
   }
 `;
 
-export const WriteIcon = styled(Plus).attrs({size: 20, color: "#FFF"})``;
+export const StoryWriteIcon = styled(Plus).attrs({size: 20, color: "#FFF"})``;
 
-export const StoryFilters = styled(S.FilterContainer)`
+export const StoryFilters = styled(FilterContainer)`
   && {
     border-bottom: none;
     padding-bottom: 8px;
@@ -49,7 +53,7 @@ export const GridViewIcon = styled.span`
   }
 `;
 
-export const StoryAlert = styled(S.AlertBanner)`
+export const StoryAlert = styled(AlertBanner)`
   && {
     margin-top: 4px;
     margin-bottom: 8px;

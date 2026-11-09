@@ -6,25 +6,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { setStep, updateFormField, setAllAgreed, submitSignup } from "../redux/signupSlice";
 
-import * as S from "@/assets/css/Style.styles";
-
 import DaumPostcodeEmbed, { Address } from "react-daum-postcode";
 import Header from "../components/Header";
 import { CustomAlert } from "../components/CustomAlert";
-import {
-  ProfilePreview,
-  PhotoHint,
-  HiddenFileInput,
-  SignupSectionHeading,
-  PhoneFieldRow,
-  AnimItem,
-  SignupField,
-  FinalSignupField,
-  InputWrapper,
-  FloatingLabel,
-  FloatingInput,
-  AuxiliaryButton
-} from "@/assets/css/client/Signup.styles";
+import * as S from "@/assets/css/Style.styles";
 
 interface AnimatedInputProps {
   type?: React.HTMLInputTypeAttribute;
@@ -43,9 +28,9 @@ const AnimatedInput = ({type, name, label, value, onChange, readOnly, onClick, o
   const isActive = isFocused || value.length > 0;
 
   return (
-    <InputWrapper onClick={onClick}>
-      <FloatingLabel $isActive={isActive}>{label}</FloatingLabel>
-      <FloatingInput
+    <S.SignupInputWrapper onClick={onClick}>
+      <S.SignupFloatingLabel $isActive={isActive}>{label}</S.SignupFloatingLabel>
+      <S.SignupFloatingInput
       type={type}
       name={name}
       value={value}
@@ -55,7 +40,7 @@ const AnimatedInput = ({type, name, label, value, onChange, readOnly, onClick, o
       onBlur={() => setIsFocused(false)}
       placeholder={label}
       readOnly={readOnly}/>
-    </InputWrapper>
+    </S.SignupInputWrapper>
   );
 };
 
@@ -276,11 +261,11 @@ export default function SignupPage() {
         {/* STEP 3: 정보 입력 */}
         {step === 3 && (
           <S.LayOutPadding>
-            <AnimItem $delay={0} $isSlideDown>
+            <S.SignupAnimItem $delay={0} $isSlideDown>
               <S.TextCenter>
                 <S.PhotoUpload onClick={handleBoxClick}>
                   {profilePreview ? (
-                    <ProfilePreview
+                    <S.ProfilePreview
                     src={profilePreview}
                     alt="프로필"
                     width={0}
@@ -291,13 +276,13 @@ export default function SignupPage() {
                     <span>📷</span>
                   )}
                 </S.PhotoUpload>
-                <PhotoHint>클릭해서 사진을 등록하세요</PhotoHint>
-                <HiddenFileInput type="file" accept="image/*" ref={fileInputRef} onChange={handleImageChange}/>
+                <S.PhotoHint>클릭해서 사진을 등록하세요</S.PhotoHint>
+                <S.HiddenFileInput type="file" accept="image/*" ref={fileInputRef} onChange={handleImageChange}/>
               </S.TextCenter>
-            </AnimItem>
+            </S.SignupAnimItem>
 
-            <AnimItem $delay={0.1}>
-              <SignupSectionHeading>
+            <S.SignupAnimItem $delay={0.1}>
+              <S.SignupSectionHeading>
                 <S.LabelGroup>
                   <S.Label>
                     <input
@@ -318,66 +303,66 @@ export default function SignupPage() {
                     업체 (비즈니스)
                   </S.Label>
                 </S.LabelGroup>
-              </SignupSectionHeading>
-            </AnimItem>
+              </S.SignupSectionHeading>
+            </S.SignupAnimItem>
 
-            <SignupField $delay={0.2}>
+            <S.SignupField $delay={0.2}>
               <AnimatedInput type="text" name="name" label="이름(실명)" value={formData.name} onChange={handleChange}/>
-            </SignupField>
+            </S.SignupField>
 
-            <SignupField $delay={0.3}>
+            <S.SignupField $delay={0.3}>
               <AnimatedInput
               type="text"
               name="phone"
               label="전화번호 (- 제외)"
               value={formData.phone}
               onChange={handleChange}/>
-            </SignupField>
+            </S.SignupField>
 
-            <SignupField $delay={0.4}>
-              <PhoneFieldRow>
+            <S.SignupField $delay={0.4}>
+              <S.PhoneFieldRow>
                 <AnimatedInput
                 type="email"
                 name="email"
                 label="이메일"
                 value={formData.email}
                 onChange={handleChange}/>
-                <AuxiliaryButton onClick={handleCheckEmail}>중복확인</AuxiliaryButton>
-              </PhoneFieldRow>
-            </SignupField>
+                <S.AuxiliaryButton onClick={handleCheckEmail}>중복확인</S.AuxiliaryButton>
+              </S.PhoneFieldRow>
+            </S.SignupField>
 
-            <SignupField $delay={0.5}>
-              <PhoneFieldRow>
+            <S.SignupField $delay={0.5}>
+              <S.PhoneFieldRow>
                 <AnimatedInput
                 type="text"
                 name="nickname"
                 label="닉네임"
                 value={formData.nickname}
                 onChange={handleChange}/>
-                <AuxiliaryButton onClick={handleCheckNickname}>중복확인</AuxiliaryButton>
-              </PhoneFieldRow>
-            </SignupField>
+                <S.AuxiliaryButton onClick={handleCheckNickname}>중복확인</S.AuxiliaryButton>
+              </S.PhoneFieldRow>
+            </S.SignupField>
 
-            <SignupField $delay={0.6}>
+            <S.SignupField $delay={0.6}>
               <AnimatedInput
               type="password"
               name="password"
               label="비밀번호"
               value={formData.password}
               onChange={handleChange}/>
-            </SignupField>
+            </S.SignupField>
 
-            <SignupField $delay={0.7}>
+            <S.SignupField $delay={0.7}>
               <AnimatedInput
               type="password"
               name="passwordConfirm"
               label="비밀번호 확인"
               value={formData.passwordConfirm}
               onChange={handleChange}/>
-            </SignupField>
+            </S.SignupField>
 
-            <SignupField $delay={0.8}>
-              <PhoneFieldRow>
+            <S.SignupField $delay={0.8}>
+              <S.PhoneFieldRow>
                 <AnimatedInput
                 type="text"
                 name="address"
@@ -385,11 +370,11 @@ export default function SignupPage() {
                 value={formData.address}
                 readOnly
                 onClick={() => setIsOpenPostcode(true)}/>
-                <AuxiliaryButton onClick={() => setIsOpenPostcode(true)}>주소검색</AuxiliaryButton>
-              </PhoneFieldRow>
-            </SignupField>
+                <S.AuxiliaryButton onClick={() => setIsOpenPostcode(true)}>주소검색</S.AuxiliaryButton>
+              </S.PhoneFieldRow>
+            </S.SignupField>
 
-            <FinalSignupField $delay={0.9}>
+            <S.FinalSignupField $delay={0.9}>
               {/* 💡 마지막 상세 주소 인풋에 엔터(Enter) 키 감지 이벤트 추가 */}
               <AnimatedInput
               type="text"
@@ -398,7 +383,7 @@ export default function SignupPage() {
               value={formData.detailAddress}
               onChange={handleChange}
               onKeyDown={handleKeyDown}/>
-            </FinalSignupField>
+            </S.FinalSignupField>
 
             {isOpenPostcode && (
               <S.ModalBg>
@@ -409,13 +394,13 @@ export default function SignupPage() {
               </S.ModalBg>
             )}
 
-            <AnimItem $delay={1.0}>
+            <S.SignupAnimItem $delay={1.0}>
               <S.BtnBottomWrap>
                 <S.BaseBtn $variant="primary" onClick={handleSubmit} disabled={isLoading}>
                   {isLoading ? "처리 중..." : "회원가입 완료"}
                 </S.BaseBtn>
               </S.BtnBottomWrap>
-            </AnimItem>
+            </S.SignupAnimItem>
           </S.LayOutPadding>
         )}
       </S.Container>

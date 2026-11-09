@@ -1,3 +1,5 @@
+"use client";
+
 import styled from "styled-components";
 //join
 export const Background = styled.div`

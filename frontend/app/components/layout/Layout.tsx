@@ -3,8 +3,8 @@
 import React from "react";
 import { Sidebar } from "../sidebar/Sidebar";
 import { Topbar } from "../topbar/Topbar";
+import * as S from "@/assets/css/Style.styles";
 // 💡 앞서 쿨그레이 톤으로 만들어둔 스타일 컴포넌트들을 임포트합니다.
-import { Wrapper, ContentWrapper, MainContent, ContainerFluid } from "../../../assets/css/admin/layout.styled";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -29,21 +29,21 @@ React.ReactNode는 React가 화면에 그릴 수 있는
 
 export const Layout: React.FC<LayoutProps> = ({children}) => {
   return (
-    <Wrapper id="wrapper">
+    <S.AdminShellWrapper id="wrapper">
       {/* 좌측 고정 사이드바 */}
       <Sidebar/>
 
       {/* 우측 전체 콘텐츠 영역 (쿨그레이 배경) */}
-      <ContentWrapper id="content-wrapper">
+      <S.AdminShellContentWrapper id="content-wrapper">
         {/* 상하단 여백 및 콘텐츠 크기 자동 조절 영역 */}
-        <MainContent id="content">
+        <S.AdminShellMainContent id="content">
           {/* 상단 고정 네비게이션 바 */}
           <Topbar/>
 
           {/* 실제 각 페이지의 내용이 주입되는 래퍼 */}
-          <ContainerFluid>{children}</ContainerFluid>
-        </MainContent>
-      </ContentWrapper>
-    </Wrapper>
+          <S.AdminShellContainerFluid>{children}</S.AdminShellContainerFluid>
+        </S.AdminShellMainContent>
+      </S.AdminShellContentWrapper>
+    </S.AdminShellWrapper>
   );
 };

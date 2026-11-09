@@ -1,12 +1,15 @@
+"use client";
+
 import styled from "styled-components";
-import { Grid } from "../common/Common.styles";
+
 import { PlayArrow as PlayArrowIcon } from "@mui/icons-material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import VolunteerActivismOutlinedIcon from "@mui/icons-material/VolunteerActivismOutlined";
 import SavingsOutlinedIcon from "@mui/icons-material/SavingsOutlined";
 import CardGiftcardOutlinedIcon from "@mui/icons-material/CardGiftcardOutlined";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
-import { StatLabel } from "../common/Input.styles";
+import { Grid } from "@/assets/css/common/CommonBase.styles";
+import { StatLabel } from "@/assets/css/common/Input.styles";
 
 // 💡 홈 유튜브 / 펠로우 소식 / 도움이 필요해요 목록
 export const HomeGrid = styled.div<{$cols: number; $gap: string}>`

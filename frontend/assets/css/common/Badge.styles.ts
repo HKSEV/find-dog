@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { ColorWhite, Flex, Fw600, Fw700 } from "./Common.styles";
+import { ColorWhite, Flex, Fw600, Fw700 } from "@/assets/css/common/CommonBase.styles";
 
 interface StatusProps {
   status: string;

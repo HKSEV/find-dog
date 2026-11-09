@@ -7,24 +7,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { loadUserFromStorage, logoutUser } from "../redux/userSlice";
 
-import * as S from "@/assets/css/Style.styles";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { CustomAlert } from "../components/CustomAlert";
-import {
-  MembershipIcon,
-  ApplicationIcon,
-  MessageIcon,
-  AccountIcon,
-  FavoriteIcon,
-  NoticeIcon,
-  HelpMenuIcon,
-  ContactIcon,
-  InstagramIcon,
-  BlogIcon,
-  VideoIcon,
-  ListChevron
-} from "@/assets/css/client/MyPage.styles"; // 💡 커스텀 알럿 임포트
+import * as S from "@/assets/css/Style.styles";
+// 💡 커스텀 알럿 임포트
 
 // 💡 MUI 아이콘 임포트
 
@@ -91,9 +78,9 @@ export default function MyPage() {
           </S.H2Size20>
 
           <S.LayOutSpaceBetween>
-            <TopMenuCard icon={<MembershipIcon/>} text="맴버십"/>
-            <TopMenuCard icon={<ApplicationIcon/>} text="입양신청"/>
-            <TopMenuCard icon={<MessageIcon/>} text="쪽지함"/>
+            <TopMenuCard icon={<S.MembershipIcon/>} text="맴버십"/>
+            <TopMenuCard icon={<S.ApplicationIcon/>} text="입양신청"/>
+            <TopMenuCard icon={<S.MessageIcon/>} text="쪽지함"/>
           </S.LayOutSpaceBetween>
         </S.LoginLayout>
 
@@ -102,8 +89,8 @@ export default function MyPage() {
         <S.LoginLayout>
           <S.List>
             <S.H3Size16>마이메뉴</S.H3Size16>
-            {!isLoggedIn && <ListItem icon={<AccountIcon/>} text="로그인" link="/login"/>}
-            <ListItem icon={<FavoriteIcon/>} text="관심 유기 동물"/>
+            {!isLoggedIn && <ListItem icon={<S.MyPageAccountIcon/>} text="로그인" link="/login"/>}
+            <ListItem icon={<S.FavoriteIcon/>} text="관심 유기 동물"/>
           </S.List>
         </S.LoginLayout>
 
@@ -112,18 +99,18 @@ export default function MyPage() {
         <S.LoginLayout>
           <S.List>
             <S.H3Size16>정보</S.H3Size16>
-            <ListItem icon={<NoticeIcon/>} text="공지사항"/>
-            <ListItem icon={<HelpMenuIcon/>} text="자주하는 질문"/>
-            <ListItem icon={<ContactIcon/>} text="문의하기"/>
+            <ListItem icon={<S.NoticeIcon/>} text="공지사항"/>
+            <ListItem icon={<S.HelpMenuIcon/>} text="자주하는 질문"/>
+            <ListItem icon={<S.ContactIcon/>} text="문의하기"/>
           </S.List>
         </S.LoginLayout>
 
         <S.LoginLayout>
           <S.List>
             <S.H3Size16>SNS</S.H3Size16>
-            <ListItem icon={<InstagramIcon/>} text="어서찾아주개 인스타그램"/>
-            <ListItem icon={<BlogIcon/>} text="어서찾아주개 블로그"/>
-            <ListItem icon={<VideoIcon/>} text="어서찾아주개 유튜브"/>
+            <ListItem icon={<S.InstagramIcon/>} text="어서찾아주개 인스타그램"/>
+            <ListItem icon={<S.BlogIcon/>} text="어서찾아주개 블로그"/>
+            <ListItem icon={<S.VideoIcon/>} text="어서찾아주개 유튜브"/>
           </S.List>
         </S.LoginLayout>
       </S.Container>
@@ -155,7 +142,7 @@ function ListItem({icon, text, link}: {icon: React.ReactNode; text: string; link
         {icon}
         <S.ListItemText>{text}</S.ListItemText>
       </S.ListItemLeft>
-      <ListChevron/>
+      <S.ListChevron/>
     </S.ListItemWrapper>
   );
 

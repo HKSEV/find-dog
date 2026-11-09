@@ -1,5 +1,17 @@
+"use client";
+
 import styled from "styled-components";
-import { Fw400, Fw500, Fw600, Fw700, Fw900, MainColor, Nowrap, TextCenter } from "./Common.styles";
+import {
+  Fw400,
+  Fw500,
+  Fw600,
+  Fw700,
+  Fw900,
+  MainColor,
+  Nowrap,
+  TextCenterMixin as TextCenter
+} from "@/assets/css/common/CommonBase.styles";
+
 //title
 export const H5Bold = styled.h5`
   flex: 1;

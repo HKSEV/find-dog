@@ -1,6 +1,8 @@
-import * as S from "@/assets/css/Style.styles";
+"use client";
+
 import { NotificationsOutlined as NotificationsNoneIcon, PersonOutlined as PersonOutlineIcon } from "@mui/icons-material";
 import styled from "styled-components";
+import { None } from "@/assets/css/common/Placeholder.styles";
 
 export const HeaderActions = styled.div`
   && {
@@ -10,7 +12,7 @@ export const HeaderActions = styled.div`
   }
 `;
 
-export const AccountIcon = styled(PersonOutlineIcon)`
+export const HeaderAccountIcon = styled(PersonOutlineIcon)`
   && {
     cursor: pointer;
     color: #8A4E4B;
@@ -26,7 +28,7 @@ export const NotificationIcon = styled(NotificationsNoneIcon)`
   }
 `;
 
-export const HeaderSpacer = styled(S.None)`
+export const HeaderSpacer = styled(None)`
   && {
     width: 60px;
   }

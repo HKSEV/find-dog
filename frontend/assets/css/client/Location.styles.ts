@@ -1,5 +1,7 @@
+"use client";
+
 import styled from "styled-components";
-import { FlexStart, WebkitBox, Ohidden } from "../common/Common.styles";
+import { FlexStart, WebkitBox, Ohidden } from "@/assets/css/common/CommonBase.styles";
 
 export const LocationRow = styled.div`
   ${FlexStart}

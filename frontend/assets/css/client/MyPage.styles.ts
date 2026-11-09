@@ -1,3 +1,5 @@
+"use client";
+
 import {
   WorkspacePremiumOutlined as PremiumIcon,
   EditNoteOutlined as EditNoteIcon,
@@ -35,7 +37,7 @@ export const MessageIcon = styled(MailIcon)`
   }
 `;
 
-export const AccountIcon = styled(PersonIcon)`
+export const MyPageAccountIcon = styled(PersonIcon)`
   && {
     color: #666;
   }
