@@ -10,9 +10,10 @@ interface HeaderProps {
   title?: string;
   onBackClick?: () => void;
   isMain?: boolean;
+  isTab?: boolean; // 하단 탭 첫 화면 (입양·봉사, 실종·제보, 커뮤니티, 마이)
 }
 
-export default function Header({title, onBackClick, isMain}: HeaderProps) {
+export default function Header({title, onBackClick, isMain, isTab}: HeaderProps) {
   const router = useRouter(); // 💡 라우터 초기화
 
   const handleBack = () => {
@@ -39,7 +40,16 @@ export default function Header({title, onBackClick, isMain}: HeaderProps) {
     );
   };
 
-  // 💡 2. 서브 페이지용 헤더
+  // 💡 2. 하단 탭 첫 화면용 헤더 (뒤로 버튼 없이 큰 제목)
+  if (isTab) {
+    return (
+      <S.Header>
+        <S.HeaderTabTitle>{title}</S.HeaderTabTitle>
+      </S.Header>
+    );
+  };
+
+  // 💡 3. 서브 페이지용 헤더 (상세, 글쓰기 등)
   return (
     <S.Header>
       <S.Back onClick={handleBack}>&lt; 뒤로</S.Back>

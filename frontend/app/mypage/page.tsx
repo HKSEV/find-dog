@@ -57,7 +57,7 @@ export default function MyPage() {
 
   return (
     <S.AppWrapper>
-      <Header title="마이메뉴"/>
+      <Header title="마이" isTab/>
       <S.Container>
         <S.Mt70/>
 

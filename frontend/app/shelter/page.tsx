@@ -36,9 +36,11 @@ export default function Shelter() {
 
   return (
     <S.AppWrapper>
-      <Header title="보호소"/>
+      <Header title="입양·봉사" isTab/>
 
       <S.Container>
+        <S.Mt70/>
+
         <S.TabContainer>
           {["보호동물", "보호소 찾기", "추천 입양 동물"].map((tab) => (
             <S.TabBtn key={tab} $active={activeTab === tab} onClick={() => dispatch(setActiveTab(tab))}>

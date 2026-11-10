@@ -120,7 +120,7 @@ export default function StoryPage() {
   return (
     <S.AppWrapper>
       {/* 상단 헤더 */}
-      <Header title="커뮤니티"/>
+      <Header title="커뮤니티" isTab/>
 
       <S.Container>
         <S.Mt70/>

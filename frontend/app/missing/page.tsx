@@ -32,7 +32,8 @@ export default function MissingReportPage() {
 
   return (
     <S.Container>
-      <Header title="실종 / 제보"/>
+      <Header title="실종·제보" isTab/>
+      <S.Mt70/>
 
       {/* 카드 리스트 영역 */}
       <S.CardGrid>

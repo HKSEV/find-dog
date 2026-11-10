@@ -28,6 +28,18 @@ export const NotificationIcon = styled(NotificationsNoneIcon)`
   }
 `;
 
+// 💡 하단 탭 첫 화면용 헤더 제목 (뒤로 버튼 없이 왼쪽에 큰 제목, 높이는 메인 헤더 로고와 같게)
+export const HeaderTabTitle = styled.h1`
+  && {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 800;
+    line-height: 36px;
+    letter-spacing: -0.5px;
+    color: #222;
+  }
+`;
+
 export const HeaderSpacer = styled(None)`
   && {
     width: 60px;
