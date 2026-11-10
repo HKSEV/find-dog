@@ -134,8 +134,9 @@ export const ListItemText = styled.span`
   font-size: 15px;
   color: #111;
 `;
-export const Mt70 = styled.div`
-  margin-top: 70px;
+// 💡 고정 헤더(56px) 아래에서 본문이 시작하도록 두는 여백
+export const HeaderOffset = styled.div`
+  margin-top: 56px;
 `;
 
 export const TabContainer = styled.div`

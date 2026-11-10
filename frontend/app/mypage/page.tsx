@@ -59,7 +59,7 @@ export default function MyPage() {
     <S.AppWrapper>
       <Header title="마이페이지" isTab/>
       <S.Container>
-        <S.Mt70/>
+        <S.HeaderOffset/>
 
         <S.LoginLayout>
           <S.H2Size20>

@@ -109,7 +109,7 @@ export default function LoginPage() {
           <Header title="로그인" onBackClick={() => router.back()}/>
         </S.LoginAnimItem>
 
-        <S.Mt70/>
+        <S.HeaderOffset/>
 
         <S.LayOutPadding>
           <S.LoginAnimItem $delay={0.1}>

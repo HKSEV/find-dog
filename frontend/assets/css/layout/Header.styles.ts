@@ -6,7 +6,6 @@ import {
   FlexBetween,
   Fw500,
   IconColor,
-  MainBg,
   MainColor,
   Pointer,
   Sticky,
@@ -25,10 +24,10 @@ export const Header = styled.header`
   ${W100};
   max-width: 480px; /* 💡 컨테이너 최대 크기와 일치시킴 */
   box-sizing: border-box;
-  padding: 16px 20px;
+  height: 56px; /* 💡 시안 기준. 각 화면은 HeaderOffset(56px)으로 헤더 아래 여백을 둠 */
+  padding: 0 20px;
   ${FlexBetween};
-  ${MainBg};
-  border-bottom: 1px solid #EEE;
+  background-color: #FFF;
 `;
 
 export const Logo = styled.h4`
