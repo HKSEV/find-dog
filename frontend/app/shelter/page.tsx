@@ -12,7 +12,7 @@ import Header from "@/app/components/Header";
 import Footer from "../components/Footer";
 
 //MUI
-import { NotificationsOutlined as NotificationsIcon, PlayCircleFilled as PlayIcon } from "@mui/icons-material";
+import { NotificationsOutlined as NotificationsIcon } from "@mui/icons-material";
 import * as S from "@/assets/css/Style.styles";
 
 export default function Shelter() {
@@ -25,9 +25,8 @@ export default function Shelter() {
     dispatch(fetchShelterAnimals());
   }, [dispatch]);
 
-  // 이미지 주소 변환함수
+  // 이미지 주소 변환함수 (사진이 없으면 화면에서 "사진 없음"으로 표시)
   const getFullImageUrl = (url: string) => {
-    if (!url) return "http://via.placeholder.com/110";
     if (url.startsWith("/uploads/")) {
       return `http://localhost:8080${url}`;
     };
@@ -102,14 +101,7 @@ export default function Shelter() {
           <S.RecommendScroll>
             <S.RecommendCard>
               <S.RecommendImgBox>
-                <Image
-                src="https://via.placeholder.com/140"
-                alt="추천동물"
-                width={140}
-                height={140}
-                unoptimized
-                loading="eager"/>
-                <PlayIcon className="play-icon"/>
+                <S.ShelterPhotoEmpty>사진 준비 중</S.ShelterPhotoEmpty>
               </S.RecommendImgBox>
               <S.LocationText>
                 <S.LocationPin/>
@@ -130,13 +122,17 @@ export default function Shelter() {
             animals.map((animal) => (
               <S.AnimalCard key={animal.id}>
                 <S.AnimalImgBox>
-                  <Image
-                  src={getFullImageUrl(animal.imageUrl)}
-                  alt={animal.breed}
-                  width={95}
-                  height={95}
-                  unoptimized
-                  loading="eager"/>
+                  {animal.imageUrl ? (
+                    <Image
+                    src={getFullImageUrl(animal.imageUrl)}
+                    alt={animal.breed}
+                    width={95}
+                    height={95}
+                    unoptimized
+                    loading="eager"/>
+                  ) : (
+                    <S.ShelterPhotoEmpty>사진 없음</S.ShelterPhotoEmpty>
+                  )}
                 </S.AnimalImgBox>
                 <S.AnimalInfo>
                   <S.BadgeGroup>
