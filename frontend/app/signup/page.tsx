@@ -169,7 +169,7 @@ export default function SignupPage() {
   return (
     <S.AppWrapper>
       <S.Container>
-        <Header title="회원가입" onBackClick={() => (step > 0 ? dispatch(setStep(step - 1)) : window.history.back())}/>
+        <Header title="회원가입" onBackClick={() => (step > 0 ? dispatch(setStep(step - 1)) : window.history.back())} onClose={() => window.history.back()}/>
         <S.HeaderOffset/>
 
         {/* STEP 0: 가입 방식 선택 */}

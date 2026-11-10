@@ -1,6 +1,11 @@
 "use client";
 
-import { NotificationsOutlined as NotificationsNoneIcon, PersonOutlined as PersonOutlineIcon } from "@mui/icons-material";
+import {
+  NotificationsOutlined as NotificationsNoneIcon,
+  PersonOutlined as PersonOutlineIcon,
+  ArrowBackIosNewRounded as BackIcon,
+  CloseRounded as CloseIcon
+} from "@mui/icons-material";
 import styled from "styled-components";
 import { None } from "@/assets/css/common/Placeholder.styles";
 
@@ -41,8 +46,39 @@ export const HeaderTabTitle = styled.h1`
   }
 `;
 
+// 💡 서브·닫기 헤더의 뒤로(<) / 닫기(X) 버튼
+//    누르는 영역은 44px, 아이콘은 왼쪽(오른쪽) 여백 20px 선에 맞도록 바깥으로 10px 당김
+export const HeaderIconButton = styled.button<{$side: "left" | "right"}>`
+  && {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin: ${({$side}) => ($side === "left" ? "0 0 0 -10px" : "0 -10px 0 0")};
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #222;
+    cursor: pointer;
+  }
+`;
+
+export const HeaderBackIcon = styled(BackIcon)`
+  && {
+    font-size: 20px;
+  }
+`;
+
+export const HeaderCloseIcon = styled(CloseIcon)`
+  && {
+    font-size: 26px;
+  }
+`;
+
+// 가운데 제목이 정확히 가운데 오도록 반대쪽에 버튼과 같은 너비(44 - 10)를 비워 둠
 export const HeaderSpacer = styled(None)`
   && {
-    width: 60px;
+    width: 34px;
   }
 `;

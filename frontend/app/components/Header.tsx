@@ -11,9 +11,11 @@ interface HeaderProps {
   onBackClick?: () => void;
   isMain?: boolean;
   isTab?: boolean; // 하단 탭 첫 화면 (입양·봉사, 실종·제보, 커뮤니티, 마이)
+  isModal?: boolean; // 잠깐 띄운 작업 창 (로그인 등): 왼쪽에 닫기(X)
+  onClose?: () => void; // 닫기(X)를 눌렀을 때. 서브 헤더에 주면 오른쪽에 X가 생김
 }
 
-export default function Header({title, onBackClick, isMain, isTab}: HeaderProps) {
+export default function Header({title, onBackClick, isMain, isTab, isModal, onClose}: HeaderProps) {
   const router = useRouter(); // 💡 라우터 초기화
 
   const handleBack = () => {
@@ -21,6 +23,17 @@ export default function Header({title, onBackClick, isMain, isTab}: HeaderProps)
       onBackClick();
     } else {
       router.back(); // window.history.back() 대신 Next.js 라우터 사용
+    };
+  };
+
+  // 닫으면 원래 보던 화면으로. 주소로 바로 들어와서 돌아갈 곳이 없으면 홈으로
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
     };
   };
 
@@ -49,14 +62,37 @@ export default function Header({title, onBackClick, isMain, isTab}: HeaderProps)
     );
   };
 
-  // 💡 3. 서브 페이지용 헤더 (상세, 글쓰기 등)
+  // 💡 3. 잠깐 띄운 작업 창용 헤더 (로그인 등): 왼쪽 닫기(X) + 가운데 제목
+  if (isModal) {
+    return (
+      <S.Header>
+        <S.HeaderIconButton $side="left" aria-label="닫기" onClick={handleClose}>
+          <S.HeaderCloseIcon/>
+        </S.HeaderIconButton>
+
+        <S.H5Bold>{title}</S.H5Bold>
+
+        <S.HeaderSpacer/>
+      </S.Header>
+    );
+  };
+
+  // 💡 4. 서브 페이지용 헤더 (상세, 단계가 있는 화면 등): 왼쪽 뒤로(<) + 가운데 제목
   return (
     <S.Header>
-      <S.Back onClick={handleBack}>&lt; 뒤로</S.Back>
+      <S.HeaderIconButton $side="left" aria-label="뒤로" onClick={handleBack}>
+        <S.HeaderBackIcon/>
+      </S.HeaderIconButton>
 
       <S.H5Bold>{title}</S.H5Bold>
 
-      <S.HeaderSpacer/>
+      {onClose ? (
+        <S.HeaderIconButton $side="right" aria-label="닫기" onClick={handleClose}>
+          <S.HeaderCloseIcon/>
+        </S.HeaderIconButton>
+      ) : (
+        <S.HeaderSpacer/>
+      )}
     </S.Header>
   );
 };
