@@ -1,6 +1,7 @@
 "use client";
 
 import styled from "styled-components";
+import { colors } from "./theme";
 
 import { PlayArrow as PlayArrowIcon } from "@mui/icons-material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -20,37 +21,37 @@ export const HomeGrid = styled.div<{$cols: number; $gap: string}>`
   padding-bottom: ${({$gap}) => $gap};
 `;
 
-export const RescueLabel = styled(StatLabel).attrs({$color: "#198754"})``;
-export const AdoptionLabel = styled(StatLabel).attrs({$color: "#0D6EFD"})``;
-export const EuthanasiaLabel = styled(StatLabel).attrs({$color: "#DC3545"})``;
+export const RescueLabel = styled(StatLabel).attrs({$color: colors.success})``;
+export const AdoptionLabel = styled(StatLabel).attrs({$color: colors.info})``;
+export const EuthanasiaLabel = styled(StatLabel).attrs({$color: colors.danger})``;
 
 export const IntroductionIcon = styled(InfoOutlinedIcon)`
   && {
-    color: #B5A196;
+    color: ${colors.brandLight};
   }
 `;
 
 export const AdoptionIcon = styled(VolunteerActivismOutlinedIcon)`
   && {
-    color: #B5A196;
+    color: ${colors.brandLight};
   }
 `;
 
 export const DonationIcon = styled(SavingsOutlinedIcon)`
   && {
-    color: #B5A196;
+    color: ${colors.brandLight};
   }
 `;
 
 export const SupportIcon = styled(CardGiftcardOutlinedIcon)`
   && {
-    color: #B5A196;
+    color: ${colors.brandLight};
   }
 `;
 
 export const StoreIcon = styled(StorefrontOutlinedIcon)`
   && {
-    color: #B5A196;
+    color: ${colors.brandLight};
   }
 `;
 

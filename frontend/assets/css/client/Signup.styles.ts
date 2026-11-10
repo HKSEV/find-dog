@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import styled, { keyframes } from "styled-components";
+import { colors } from "./theme";
 import { BaseBtn } from "@/assets/css/common/Button.styles";
 import { PhotoUploadBottomText } from "@/assets/css/common/Title.styles";
 import { AlignItemsCenter } from "@/assets/css/layout/LayoutBase.styles";
 import { FormControl } from "@/assets/css/common/Input.styles";
 
-export const AuxiliaryButton = styled(BaseBtn).attrs({$variant: "primary", $mainColor: "#CCC", $width: "80px"})``;
+export const AuxiliaryButton = styled(BaseBtn).attrs({$variant: "primary", $mainColor: colors.gray200, $width: "80px"})``;
 
 export const ProfilePreview = styled(Image)`
   && {
@@ -81,10 +82,10 @@ export const SignupFloatingLabel = styled.label<{$isActive: boolean}>`
   left: 12px;
   top: ${(props) => (props.$isActive ? "0" : "50%")};
   transform: translateY(-50%);
-  background-color: #FFFFFF;
+  background-color: ${colors.white};
   padding: 0 4px;
   font-size: ${(props) => (props.$isActive ? "12px" : "15px")};
-  color: ${(props) => (props.$isActive ? "#8A4E4B" : "#999")};
+  color: ${(props) => (props.$isActive ? colors.brand : colors.gray400)};
   transition: all 0.2s ease-in-out;
   pointer-events: none;
   z-index: 2;
@@ -102,6 +103,6 @@ export const SignupFloatingInput = styled(FormControl)`
   &:focus {
     outline: none !important;
     box-shadow: none !important;
-    border: 1px solid #8A4E4B !important;
+    border: 1px solid ${colors.brand} !important;
   }
 `;

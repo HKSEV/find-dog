@@ -1,6 +1,7 @@
 "use client";
 
 import styled from "styled-components";
+import { colors } from "./theme";
 import {
   BgWhite,
   BorderNone,
@@ -20,8 +21,8 @@ export const FilterBar = styled.div`
   display: flex;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background-color: #FFF;
-  border-bottom: 1px solid #EEE;
+  background-color: ${colors.white};
+  border-bottom: 1px solid ${colors.border};
 
   &::-webkit-scrollbar {
     display: none;
@@ -31,12 +32,12 @@ export const FilterBar = styled.div`
 export const FilterButton = styled.button`
   ${FlexCenter}
   gap:0.25rem;
-  background-color: #F1F3F5;
+  background-color: ${colors.bgSubtle};
   ${BorderNone}
   border-radius:1.25rem;
   font-size: 0.8125rem;
   padding: 0.375rem 0.75rem;
-  color: #495057;
+  color: ${colors.gray800};
   ${Nowrap}
   ${Pointer}
 `;
@@ -53,11 +54,11 @@ margin: 0.75rem 1rem;
 export const AlertTitle = styled.div`
   font-size: 0.875rem;
   ${Fw600}
-  color:#333;
+  color:${colors.gray800};
 `;
 
 export const AlertSub = styled.div`
   font-size: 0.6875rem;
-  color: #888;
+  color: ${colors.gray400};
   margin-top: 0.125rem;
 `;

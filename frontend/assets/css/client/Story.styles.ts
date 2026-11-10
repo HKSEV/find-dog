@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Plus } from "lucide-react";
 
 import styled from "styled-components";
+import { colors } from "./theme";
 import { FilterContainer } from "@/assets/css/common/Nav.styles";
 import { AlertBanner } from "@/assets/css/client/MissingReport.styles";
 
@@ -12,23 +13,23 @@ export const StorySubTabs = styled.div`
     display: flex;
     gap: 16px;
     padding: 12px 16px;
-    background-color: #FFF;
+    background-color: ${colors.white};
     font-size: 14px;
     font-weight: bold;
-    border-bottom: 1px solid #F1F3F5;
+    border-bottom: 1px solid ${colors.bgSubtle};
   }
 `;
 
 export const StorySubTab = styled.span<{$active: boolean}>`
   && {
     cursor: pointer;
-    color: ${({$active}) => ($active ? "#FF7A00" : "#888")};
-    border-bottom: ${({$active}) => ($active ? "2px solid #FF7A00" : "none")};
+    color: ${({$active}) => ($active ? colors.accent : colors.gray400)};
+    border-bottom: ${({$active}) => ($active ? `2px solid ${colors.accent}` : "none")};
     padding-bottom: 4px;
   }
 `;
 
-export const StoryWriteIcon = styled(Plus).attrs({size: 20, color: "#FFF"})``;
+export const StoryWriteIcon = styled(Plus).attrs({size: 20, color: colors.white})``;
 
 export const StoryFilters = styled(FilterContainer)`
   && {
@@ -42,7 +43,7 @@ export const ViewOptions = styled.div`
     margin-left: auto;
     display: flex;
     gap: 6px;
-    color: #888;
+    color: ${colors.gray400};
     cursor: pointer;
   }
 `;
@@ -70,24 +71,24 @@ export const LoadingMessage = styled.div`
   && {
     text-align: center;
     padding: 40px;
-    color: #888;
+    color: ${colors.gray400};
   }
 `;
 
 export const StoryCard = styled.div`
   && {
-    background-color: #FFF;
-    border-bottom: 8px solid #F8F9FA;
+    background-color: ${colors.white};
+    border-bottom: 8px solid ${colors.bgLight};
     padding: 16px;
   }
 `;
 
 export const FeaturedCard = styled.div`
   && {
-    background-color: #FFF5EB;
+    background-color: ${colors.accentBg};
     border-radius: 12px;
     padding: 12px;
-    border: 1px solid #FFE8D6;
+    border: 1px solid ${colors.accentBorder};
   }
 `;
 
@@ -102,8 +103,8 @@ export const FeaturedHeader = styled.div`
 
 export const FeaturedBadge = styled.span`
   && {
-    background-color: #FF7A00;
-    color: #FFF;
+    background-color: ${colors.accent};
+    color: ${colors.white};
     font-size: 11px;
     font-weight: bold;
     padding: 2px 6px;
@@ -114,7 +115,7 @@ export const FeaturedBadge = styled.span`
 export const FeaturedTime = styled.span`
   && {
     font-size: 11px;
-    color: #888;
+    color: ${colors.gray400};
   }
 `;
 
@@ -139,7 +140,7 @@ export const FeaturedTitle = styled.div`
   && {
     font-size: 14px;
     font-weight: bold;
-    color: #222;
+    color: ${colors.gray900};
     margin-bottom: 4px;
   }
 `;
@@ -147,7 +148,7 @@ export const FeaturedTitle = styled.div`
 export const FeaturedDescription = styled.div`
   && {
     font-size: 12px;
-    color: #666;
+    color: ${colors.gray500};
     line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -159,7 +160,7 @@ export const FeaturedDescription = styled.div`
 export const FeaturedStats = styled.div`
   && {
     font-size: 11px;
-    color: #888;
+    color: ${colors.gray400};
     margin-top: 6px;
   }
 `;
@@ -186,12 +187,12 @@ export const AuthorAvatar = styled.div`
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background-color: #E4E5E7;
+    background-color: ${colors.bgMuted};
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 14px;
-    color: #555;
+    color: ${colors.gray500};
   }
 `;
 
@@ -199,21 +200,21 @@ export const AuthorName = styled.div`
   && {
     font-size: 13px;
     font-weight: bold;
-    color: #333;
+    color: ${colors.gray800};
   }
 `;
 
 export const AuthorTime = styled.div`
   && {
     font-size: 10px;
-    color: #AAA;
+    color: ${colors.gray400};
   }
 `;
 
 export const PostMenu = styled.span`
   && {
     font-size: 11px;
-    color: #999;
+    color: ${colors.gray400};
   }
 `;
 
@@ -221,7 +222,7 @@ export const StoryTitle = styled.div`
   && {
     font-size: 15px;
     font-weight: bold;
-    color: #111;
+    color: ${colors.gray900};
     margin-bottom: 6px;
   }
 `;
@@ -229,7 +230,7 @@ export const StoryTitle = styled.div`
 export const StoryDescription = styled.div`
   && {
     font-size: 13px;
-    color: #444;
+    color: ${colors.gray800};
     line-height: 1.4;
     margin-bottom: 12px;
   }
@@ -258,8 +259,8 @@ export const StoryActions = styled.div`
     display: flex;
     gap: 16px;
     font-size: 12px;
-    color: #888;
-    border-top: 1px solid #F1F3F5;
+    color: ${colors.gray400};
+    border-top: 1px solid ${colors.bgSubtle};
     padding-top: 10px;
   }
 `;
