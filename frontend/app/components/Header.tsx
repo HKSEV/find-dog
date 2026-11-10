@@ -29,11 +29,8 @@ export default function Header({title, onBackClick, isMain}: HeaderProps) {
       <S.Header>
         <Logo onClick={() => router.push("/")}/>
 
-        {/* 우측 아이콘 그룹 */}
+        {/* 우측 아이콘 그룹 (로그인·내 정보는 하단 "마이" 탭에서) */}
         <S.HeaderActions>
-          <S.HeaderAccountIcon
-          onClick={() => router.push("/admin/login")} // 💡 클릭 시 로그인으로 이동
-        />
           <S.NotificationIcon
           onClick={() => router.push("/mypage")} // 필요시 알림 페이지 경로로 수정
         />

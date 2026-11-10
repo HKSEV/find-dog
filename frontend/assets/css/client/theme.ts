@@ -4,7 +4,8 @@
 export const colors = {
   // 브랜드
   brand: "#8a4e4b",        // 버튼, 강조 글자, 입력창 포커스
-  brandLight: "#b5a196",   // 홈 퀵메뉴 아이콘
+  brandLight: "#b5a196",   // 브랜드 보조색
+  brandBg: "#fbefec",      // 브랜드 연한 배경 (홈 "발견했어요", 모두 만나기 카드)
   accent: "#ff8c00",       // 마이페이지 상단 메뉴 아이콘, 스토리 탭·추천 배지 (예전 #ff7a00 포함)
   accentBg: "#fff5eb",     // 스토리 추천 카드 배경
   accentBorder: "#ffe8d6", // 스토리 추천 카드 테두리
