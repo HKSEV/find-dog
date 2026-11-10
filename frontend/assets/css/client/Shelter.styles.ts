@@ -6,11 +6,12 @@ import {
   ChevronRight as ChevronRightIcon
 } from "@mui/icons-material";
 import styled from "styled-components";
+import { colors } from "./theme";
 
 export const FilterIconButton = styled(FilterIcon)`
   && {
     font-size: 20px;
-    color: #666;
+    color: ${colors.gray500};
   }
 `;
 

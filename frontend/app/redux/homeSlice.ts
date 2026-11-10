@@ -36,6 +36,8 @@ export interface FellowNews {
 
 export interface NeedHelp {
   id: number;
+  title: string;
+  content: string;
   imageUrl: string;
 }
 
