@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { adminSessionCleared } from "@/app/redux/adminSessionActions";
@@ -11,6 +11,7 @@ import {
   getAdminSession,
   useAdminSession
 } from "@/lib/adminAuth";
+import { isAdminSessionRenewing } from "@/lib/adminApi";
 import useAdminModal from "../contexts/AdminModalContext";
 
 export default function AdminSessionManager() {
@@ -23,7 +24,7 @@ export default function AdminSessionManager() {
   const expiresAt = session?.expiresAt;
   const clockOffset = session?.clockOffset;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const handleSessionEnd = (event: Event) => {
       const reason = (event as CustomEvent<{reason?: string}>).detail?.reason;
       if (!reason) return;
@@ -39,18 +40,24 @@ export default function AdminSessionManager() {
     return () => window.removeEventListener(adminSessionEvent, handleSessionEnd);
   }, [dispatch, openAlertModal, router]);
 
-  useEffect(() => {
-    if (!isHydrating && !token && pathname !== "/admin/login") {
+  useLayoutEffect(() => {
+    if (isHydrating || pathname === "/admin/login") return;
+    const current = getAdminSession();
+    if (!current) {
       dispatch(adminSessionCleared());
       router.replace("/admin/login");
+    } else if (getAdminRemainingSeconds(current) === 0 && !isAdminSessionRenewing(current.token)) {
+      clearAdminSession("expired", current.token);
     };
-  }, [dispatch, isHydrating, pathname, router, token]);
+  }, [clockOffset, dispatch, expiresAt, isHydrating, pathname, router, token]);
 
   useEffect(() => {
     if (!token || expiresAt === undefined || clockOffset === undefined) return;
     const checkExpiration = () => {
       const current = getAdminSession();
-      if (current?.token === token && getAdminRemainingSeconds(current) === 0) clearAdminSession("expired", token);
+      if (current?.token === token && getAdminRemainingSeconds(current) === 0 && !isAdminSessionRenewing(token)) {
+        clearAdminSession("expired", token);
+      };
     };
     checkExpiration();
     const timer = window.setInterval(checkExpiration, 1000);

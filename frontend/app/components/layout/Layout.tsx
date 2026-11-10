@@ -6,7 +6,7 @@ import { Sidebar } from "../sidebar/Sidebar";
 import { Topbar } from "../topbar/Topbar";
 import AdminPageDataBoundary from "../admin/AdminPageDataBoundary";
 import AdminPageLoading from "../admin/AdminPageLoading";
-import { useAdminSession } from "@/lib/adminAuth";
+import { getAdminSessionId, useAdminSession } from "@/lib/adminAuth";
 import * as S from "@/assets/css/Style.styles";
 // 💡 앞서 쿨그레이 톤으로 만들어둔 스타일 컴포넌트들을 임포트합니다.
 
@@ -45,7 +45,7 @@ export const Layout: React.FC<LayoutProps> = ({children}) => {
           <Topbar/>
           <S.AdminShellContainerFluid>
             {session ? (
-              <AdminPageDataBoundary key={`${pathname}:${session.token}`} pathname={pathname}>
+              <AdminPageDataBoundary key={`${pathname}:${getAdminSessionId(session)}`} pathname={pathname}>
                 {children}
               </AdminPageDataBoundary>
             ) : <AdminPageLoading/>}

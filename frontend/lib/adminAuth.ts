@@ -42,20 +42,45 @@ const parseSession = (snapshot: string | null | undefined): AdminSession | null 
 
 export const getAdminSession = () => parseSession(getSnapshot());
 
+// jti는 갱신 전후의 요청과 화면을 같은 로그인으로 묶는 데만 사용합니다.
+export const getAdminSessionId = (session: AdminSession) => {
+  try {
+    const payload = session.token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    const claims: {jti?: unknown} = JSON.parse(atob(payload));
+    return typeof claims.jti === "string" && claims.jti ? claims.jti : session.token;
+  } catch {
+    return session.token;
+  }
+};
+
 export const getAdminRemainingSeconds = (session: AdminSession, now = Date.now()) =>
   Math.max(0, Math.ceil((session.expiresAt - now - session.clockOffset) / 1000));
 
-export const saveAdminSession = (response: AdminLoginResponse) => {
-  if (!response.token || !Number.isFinite(response.expiresAt) || !Number.isFinite(response.serverTime)
+const createSession = (response: AdminLoginResponse): AdminSession => {
+  if (typeof response.token !== "string" || !response.token || !Number.isFinite(response.expiresAt) || !Number.isFinite(response.serverTime)
     || response.expiresAt <= response.serverTime) throw new Error("관리자 로그인 응답이 올바르지 않습니다.");
-  const session: AdminSession = {
+  return {
     token: response.token,
     expiresAt: response.expiresAt,
     clockOffset: response.serverTime - Date.now()
   };
+};
+
+export const saveAdminSession = (response: AdminLoginResponse) => {
+  const session = createSession(response);
   sessionStorage.setItem(sessionKey, JSON.stringify(session));
   clearedSnapshot = null;
   window.dispatchEvent(new CustomEvent(adminSessionEvent));
+};
+
+export const replaceAdminSession = (response: AdminLoginResponse, expectedToken: string) => {
+  const current = getAdminSession();
+  if (current?.token !== expectedToken) return false;
+  const session = createSession(response);
+  if (getAdminSessionId(session) !== getAdminSessionId(current)) throw new Error("관리자 로그인 정보가 변경되었습니다.");
+  sessionStorage.setItem(sessionKey, JSON.stringify(session));
+  window.dispatchEvent(new CustomEvent(adminSessionEvent));
+  return true;
 };
 
 export const syncAdminServerTime = (token: string, expiresAt: number, serverTime: number) => {

@@ -3,7 +3,7 @@ import axios from "axios";
 import adminApi from "@/lib/adminApi";
 import { adminSessionCleared } from "./adminSessionActions";
 import { AdminProfile } from "@/lib/adminProfile";
-import { clearAdminSession, getAdminSession } from "@/lib/adminAuth";
+import { clearAdminSession, getAdminSession, getAdminSessionId } from "@/lib/adminAuth";
 
 interface AdminProfileState {
   profile: AdminProfile | null;
@@ -40,10 +40,13 @@ export const fetchAdminProfile = createAsyncThunk("adminProfile/fetch", async (_
 });
 
 export const logoutAdmin = createAsyncThunk("adminProfile/logout", async (_, {rejectWithValue}) => {
-  const token = getAdminSession()?.token;
+  const session = getAdminSession();
   try {
     await adminApi.post("/api/admin/logout", null, {timeout: 15000});
-    clearAdminSession("logout", token);
+    const current = getAdminSession();
+    if (session && current && getAdminSessionId(session) === getAdminSessionId(current)) {
+      clearAdminSession("logout", current.token);
+    };
   } catch (error: unknown) {
     return rejectWithValue(getErrorMessage(error, "로그아웃하지 못했습니다. 잠시 후 다시 시도해 주세요."));
   }

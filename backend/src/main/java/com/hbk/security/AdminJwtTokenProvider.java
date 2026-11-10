@@ -24,9 +24,12 @@ public class AdminJwtTokenProvider {
     }
 
     public IssuedToken createToken(Admin admin) {
+        return createToken(admin, UUID.randomUUID().toString());
+    }
+
+    public IssuedToken createToken(Admin admin, String id) {
         long issuedAt = System.currentTimeMillis() / 1000 * 1000;
         long expiresAt = issuedAt + VALIDITY_MILLIS;
-        String id = UUID.randomUUID().toString();
         String token = Jwts.builder()
                 .setIssuer("find-dog")
                 .setAudience("find-dog-admin")

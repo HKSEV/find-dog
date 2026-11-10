@@ -3,6 +3,8 @@ import { fetchAdminProfile } from "@/app/redux/adminProfileSlice";
 import { fetchDashboard } from "@/app/redux/dashboardAdminSlice";
 import { fetchAdminRegistrations } from "@/app/redux/registrationAdminSlice";
 import type { AdminRegistrationKind } from "@/lib/adminRegistrations";
+import { getAdminRemainingSeconds, getAdminSession, getAdminSessionId } from "@/lib/adminAuth";
+import { isAdminSessionRenewing } from "@/lib/adminApi";
 
 const registrationPages: Record<string, AdminRegistrationKind> = {
   "/admin/pick": "recommended",
@@ -12,19 +14,23 @@ const registrationPages: Record<string, AdminRegistrationKind> = {
 };
 
 export const loadAdminPageData = (dispatch: AppDispatch, pathname: string) => {
+  const session = getAdminSession();
+  if (!session || (getAdminRemainingSeconds(session) === 0 && !isAdminSessionRenewing(session.token))) {
+    return {completed: Promise.resolve(false), cancel: () => undefined};
+  };
   const profileRequest = dispatch(fetchAdminProfile());
+  const kind = registrationPages[pathname];
+  const pageRequest = kind
+    ? dispatch(fetchAdminRegistrations(kind))
+    : pathname === "/admin"
+      ? dispatch(fetchDashboard())
+      : null;
   let isCanceled = false;
-  let pageRequest: ReturnType<ReturnType<typeof fetchAdminRegistrations>> | ReturnType<ReturnType<typeof fetchDashboard>> | null = null;
-  const completed = profileRequest.then(async (result) => {
-    if (isCanceled || !fetchAdminProfile.fulfilled.match(result)) return false;
-    const kind = registrationPages[pathname];
-    pageRequest = kind
-      ? dispatch(fetchAdminRegistrations(kind))
-      : pathname === "/admin"
-        ? dispatch(fetchDashboard())
-        : null;
-    if (pageRequest) await pageRequest;
-    return !isCanceled;
+  const completed = Promise.all([profileRequest, pageRequest]).then(([result]) => {
+    const current = getAdminSession();
+    return !isCanceled && fetchAdminProfile.fulfilled.match(result) && current !== null
+      && getAdminSessionId(current) === getAdminSessionId(session)
+      && (getAdminRemainingSeconds(current) > 0 || isAdminSessionRenewing(current.token));
   });
 
   return {

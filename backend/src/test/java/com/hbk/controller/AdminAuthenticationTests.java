@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hbk.security.AdminJwtTokenProvider;
 import com.hbk.security.JwtTokenProvider;
+import com.hbk.service.AdminAuthService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -20,12 +21,16 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
+import java.util.List;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -41,6 +46,10 @@ class AdminAuthenticationTests {
     private JdbcTemplate jdbc;
     @Autowired
     private JwtTokenProvider memberTokenProvider;
+    @Autowired
+    private AdminAuthService authService;
+    @Autowired
+    private AdminJwtTokenProvider adminTokenProvider;
     @Value("${jwt.secret}")
     private String secret;
 
@@ -150,6 +159,93 @@ class AdminAuthenticationTests {
         mvc.perform(get("/api/admin/profile").header("Authorization", first)).andExpect(status().isUnauthorized());
         mvc.perform(get("/api/admin/profile").header("Authorization", second)).andExpect(status().isOk());
         assertEquals(1, jdbc.queryForObject("select count(*) from admin_access_tokens", Integer.class));
+    }
+
+    @Test
+    void refreshResetsExpiryToOneHourAndKeepsTheSameLoginIdentity() throws Exception {
+        String previous = signedToken(1800000, "find-dog-admin", 1L);
+        JsonNode previousClaims = mapper.readTree(Base64.getUrlDecoder().decode(previous.split("\\.")[1]));
+        var result = mvc.perform(post("/api/admin/refresh").header("Authorization", "Bearer " + previous))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.message").value("로그인 시간이 갱신되었습니다."))
+                .andExpect(header().doesNotExist("Set-Cookie")).andReturn();
+        JsonNode response = mapper.readTree(result.getResponse().getContentAsString());
+        JsonNode claims = mapper.readTree(Base64.getUrlDecoder().decode(response.get("token").asText().split("\\.")[1]));
+
+        assertEquals(3600L, claims.get("exp").asLong() - claims.get("iat").asLong());
+        assertEquals(previousClaims.get("jti"), claims.get("jti"));
+        assertTrue(response.get("expiresAt").asLong() > previousClaims.get("exp").asLong() * 1000);
+        assertEquals(1, jdbc.queryForObject("select count(*) from admin_access_tokens", Integer.class));
+        assertNull(result.getRequest().getSession(false));
+        mvc.perform(get("/api/admin/profile").header("Authorization", "Bearer " + previous)).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/admin/profile").header("Authorization", bearer(response))).andExpect(status().isOk())
+                .andExpect(header().string("X-Admin-Expires-At", response.get("expiresAt").asText()));
+    }
+
+    @Test
+    void expiredTokensCannotBeRenewed() throws Exception {
+        String expired = signedToken(-1000, "find-dog-admin", 1L);
+        long previousExpiry = jdbc.queryForObject("select expires_at from admin_access_tokens", Long.class);
+        mvc.perform(post("/api/admin/refresh").header("Authorization", "Bearer " + expired)).andExpect(status().isUnauthorized());
+        assertEquals(previousExpiry, jdbc.queryForObject("select expires_at from admin_access_tokens", Long.class));
+    }
+
+    @Test
+    void anonymousAndMemberTokensCannotRenewAdminLogin() throws Exception {
+        mvc.perform(post("/api/admin/refresh")).andExpect(status().isUnauthorized());
+        mvc.perform(post("/api/admin/refresh").header("Authorization", "Bearer " + memberTokenProvider.createToken("jwt-admin@example.com")))
+                .andExpect(status().isUnauthorized());
+        assertEquals(0, jdbc.queryForObject("select count(*) from admin_access_tokens", Integer.class));
+    }
+
+    @Test
+    void removedAdminCannotRenewExistingLogin() throws Exception {
+        String authorization = bearer(login());
+        jdbc.update("delete from admins");
+        mvc.perform(post("/api/admin/refresh").header("Authorization", authorization)).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void loggedOutTokenCannotRenewOrReviveTheSession() throws Exception {
+        String token = login().get("token").asText();
+        var principal = adminTokenProvider.parseToken(token);
+        mvc.perform(post("/api/admin/logout").header("Authorization", "Bearer " + token)).andExpect(status().isOk());
+        mvc.perform(post("/api/admin/refresh").header("Authorization", "Bearer " + token)).andExpect(status().isUnauthorized());
+        assertThrows(BadCredentialsException.class, () -> authService.refresh(principal));
+        assertEquals(0, jdbc.queryForObject("select count(*) from admin_access_tokens", Integer.class));
+    }
+
+    @Test
+    void refreshedTokenCanBeLoggedOutAndCannotBeReplayed() throws Exception {
+        String token = signedToken(1800000, "find-dog-admin", 1L);
+        var refreshed = mvc.perform(post("/api/admin/refresh").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk()).andReturn();
+        String authorization = bearer(mapper.readTree(refreshed.getResponse().getContentAsString()));
+        mvc.perform(post("/api/admin/logout").header("Authorization", authorization)).andExpect(status().isOk());
+        mvc.perform(get("/api/admin/profile").header("Authorization", authorization)).andExpect(status().isUnauthorized());
+        mvc.perform(post("/api/admin/refresh").header("Authorization", authorization)).andExpect(status().isUnauthorized());
+        assertEquals(0, jdbc.queryForObject("select count(*) from admin_access_tokens", Integer.class));
+    }
+
+    @Test
+    void concurrentRefreshesCannotAcceptTheSameOldTokenTwice() throws Exception {
+        String authorization = "Bearer " + signedToken(1800000, "find-dog-admin", 1L);
+        var barrier = new CyclicBarrier(2);
+        var executor = Executors.newFixedThreadPool(2);
+        try {
+            var requests = List.of(executor.submit(() -> {
+                barrier.await();
+                return mvc.perform(post("/api/admin/refresh").header("Authorization", authorization)).andReturn().getResponse().getStatus();
+            }), executor.submit(() -> {
+                barrier.await();
+                return mvc.perform(post("/api/admin/refresh").header("Authorization", authorization)).andReturn().getResponse().getStatus();
+            }));
+            var statuses = List.of(requests.get(0).get(), requests.get(1).get());
+            assertTrue(statuses.contains(200));
+            assertTrue(statuses.contains(401));
+            assertEquals(1, jdbc.queryForObject("select count(*) from admin_access_tokens", Integer.class));
+        } finally {
+            executor.shutdownNow();
+        }
     }
 
     @ParameterizedTest

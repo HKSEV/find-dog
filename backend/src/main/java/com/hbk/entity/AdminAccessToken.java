@@ -23,4 +23,8 @@ public class AdminAccessToken {
 
     @Column(nullable = false)
     private long expiresAt;
+
+    public void renew(long expiresAt) {
+        this.expiresAt = expiresAt;
+    }
 }

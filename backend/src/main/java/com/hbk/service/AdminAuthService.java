@@ -49,6 +49,24 @@ public class AdminAuthService {
     }
 
     @Transactional
+    public AdminLoginResponse refresh(AdminPrincipal principal) {
+        AdminAccessToken activeToken = tokenRepository.findByIdForUpdate(principal.tokenId())
+                .orElseThrow(() -> new BadCredentialsException("종료된 관리자 로그인입니다."));
+        Admin admin = adminRepository.findById(principal.adminId())
+                .orElseThrow(() -> new BadCredentialsException("관리자 계정을 확인할 수 없습니다."));
+        if (!activeToken.getAdminId().equals(principal.adminId()) || activeToken.getExpiresAt() != principal.expiresAt()
+                || principal.expiresAt() <= System.currentTimeMillis()
+                || !admin.getMember().getId().equals(principal.memberId())
+                || !admin.getMember().getEmail().equals(principal.email())) {
+            throw new BadCredentialsException("관리자 로그인 정보를 확인할 수 없습니다.");
+        }
+        var issued = tokenProvider.createToken(admin, principal.tokenId());
+        activeToken.renew(issued.expiresAt());
+        return new AdminLoginResponse(admin.getMember().getName(), "로그인 시간이 갱신되었습니다.", issued.token(),
+                issued.expiresAt(), System.currentTimeMillis());
+    }
+
+    @Transactional
     public void logout(AdminPrincipal principal) {
         tokenRepository.deleteById(principal.tokenId());
     }

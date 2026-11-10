@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -66,5 +67,19 @@ public class AdminController {
         }
         authService.logout(principal);
         return ResponseEntity.ok(Collections.singletonMap("message", "로그아웃이 완료되었습니다."));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@AuthenticationPrincipal AdminPrincipal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", "관리자로 다시 로그인해 주세요."));
+        }
+        try {
+            return ResponseEntity.ok(authService.refresh(principal));
+        } catch (BadCredentialsException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", e.getMessage()));
+        }
     }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import styled, { css } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { TopbarContainer } from "@/assets/css/admin/Topbar.styles";
 import { coolGray, adminColors } from "@/assets/css/admin/AdminBase.styles";
 
@@ -92,6 +92,49 @@ export const AdminSessionExpiryBadge = styled.div<{$expiring: boolean}>`
 
     span {
       display: none;
+    }
+  }
+`;
+
+const adminSessionRefreshSpin = keyframes`
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+export const AdminSessionRefreshButton = styled.button<{$refreshing: boolean}>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  margin-left: 2px;
+  border-radius: 5px;
+  color: inherit;
+  cursor: pointer;
+
+  svg {
+    animation: ${({$refreshing}) => ($refreshing ? css`${adminSessionRefreshSpin} 0.8s linear infinite` : "none")};
+  }
+
+  &:hover:not(:disabled) {
+    background-color: ${coolGray[200]};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${adminColors.primary};
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: wait;
+    opacity: 0.6;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    svg {
+      animation: none;
     }
   }
 `;
