@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpMethod;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.mock.web.MockHttpSession;
+import com.hbk.service.AdminAuthService;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,7 +37,10 @@ class AdminRegistrationControllerTests {
     @Autowired
     private JdbcTemplate jdbc;
 
-    private MockHttpSession session;
+    @Autowired
+    private AdminAuthService authService;
+
+    private String authorization;
     private final List<Path> uploadedFiles = new ArrayList<>();
 
     @BeforeEach
@@ -45,9 +48,7 @@ class AdminRegistrationControllerTests {
         clearRecords();
         jdbc.update("insert into member (id, email, nickname, password, name, phone, user_type, marketing_agreed) values (1, 'admin-test@example.com', 'admin_test', 'test', '관리자', '01000000000', 'ADMIN', false)");
         jdbc.update("insert into admins (id, member_id, admin_level) values (1, 1, 'ADMIN')");
-        session = new MockHttpSession();
-        session.setAttribute("adminEmail", "admin-test@example.com");
-        session.setAttribute("adminName", "관리자");
+        authorization = "Bearer " + authService.login("admin-test@example.com", "test").token();
     }
 
     @AfterEach
@@ -62,13 +63,13 @@ class AdminRegistrationControllerTests {
     void existingRecordCanBeLoadedUpdatedAndDeleted(String source) throws Exception {
         seed(source);
         String url = url(source, 1);
-        mvc.perform(get(url).session(session)).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(1));
-        mvc.perform(update(source, values()).session(session))
+        mvc.perform(get(url).header("Authorization", authorization)).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(1));
+        mvc.perform(update(source, values()).header("Authorization", authorization))
                 .andExpect(status().isOk()).andExpect(jsonPath("$." + labelField(source)).value("수정 항목"));
-        mvc.perform(get(url).session(session)).andExpect(status().isOk())
+        mvc.perform(get(url).header("Authorization", authorization)).andExpect(status().isOk())
                 .andExpect(jsonPath("$." + labelField(source)).value("수정 항목"));
-        mvc.perform(delete(url).session(session)).andExpect(status().isOk()).andExpect(jsonPath("$.message").value("삭제가 완료되었습니다."));
-        mvc.perform(get(url).session(session)).andExpect(status().isNotFound());
+        mvc.perform(delete(url).header("Authorization", authorization)).andExpect(status().isOk()).andExpect(jsonPath("$.message").value("삭제가 완료되었습니다."));
+        mvc.perform(get(url).header("Authorization", authorization)).andExpect(status().isNotFound());
     }
 
     @ParameterizedTest
@@ -78,16 +79,16 @@ class AdminRegistrationControllerTests {
         mvc.perform(get(url(source, 1))).andExpect(status().isUnauthorized());
         mvc.perform(update(source, values())).andExpect(status().isUnauthorized());
         mvc.perform(delete(url(source, 1))).andExpect(status().isUnauthorized());
-        mvc.perform(get(url(source, 1)).session(session)).andExpect(status().isOk())
+        mvc.perform(get(url(source, 1)).header("Authorization", authorization)).andExpect(status().isOk())
                 .andExpect(jsonPath("$." + labelField(source)).value("원본 항목"));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"animals", "campaigns", "youtubePosts", "fellowNews", "needHelps", "shelterAnimals"})
     void missingRecordReturnsNotFoundForEveryOperation(String source) throws Exception {
-        mvc.perform(get(url(source, 999)).session(session)).andExpect(status().isNotFound());
-        mvc.perform(multipart(HttpMethod.PUT, url(source, 999)).params(values()).session(session)).andExpect(status().isNotFound());
-        mvc.perform(delete(url(source, 999)).session(session)).andExpect(status().isNotFound());
+        mvc.perform(get(url(source, 999)).header("Authorization", authorization)).andExpect(status().isNotFound());
+        mvc.perform(multipart(HttpMethod.PUT, url(source, 999)).params(values()).header("Authorization", authorization)).andExpect(status().isNotFound());
+        mvc.perform(delete(url(source, 999)).header("Authorization", authorization)).andExpect(status().isNotFound());
     }
 
     @ParameterizedTest
@@ -101,8 +102,8 @@ class AdminRegistrationControllerTests {
             default -> "imageUrl";
         };
         data.set(invalidField, "");
-        mvc.perform(update(source, data).session(session)).andExpect(status().isBadRequest());
-        mvc.perform(get(url(source, 1)).session(session)).andExpect(status().isOk())
+        mvc.perform(update(source, data).header("Authorization", authorization)).andExpect(status().isBadRequest());
+        mvc.perform(get(url(source, 1)).header("Authorization", authorization)).andExpect(status().isOk())
                 .andExpect(jsonPath("$." + labelField(source)).value("원본 항목"));
     }
 
@@ -110,24 +111,23 @@ class AdminRegistrationControllerTests {
     void equalIdsInDifferentPostTypesDoNotAffectEachOther() throws Exception {
         seed("youtubePosts");
         seed("fellowNews");
-        mvc.perform(update("youtubePosts", values()).session(session)).andExpect(status().isOk());
-        mvc.perform(delete(url("youtubePosts", 1)).session(session)).andExpect(status().isOk());
-        mvc.perform(get(url("fellowNews", 1)).session(session)).andExpect(status().isOk())
+        mvc.perform(update("youtubePosts", values()).header("Authorization", authorization)).andExpect(status().isOk());
+        mvc.perform(delete(url("youtubePosts", 1)).header("Authorization", authorization)).andExpect(status().isOk());
+        mvc.perform(get(url("fellowNews", 1)).header("Authorization", authorization)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("원본 항목"));
     }
 
     @Test
-    void revokedAdminCannotDeleteAndSessionIsInvalidated() throws Exception {
+    void revokedAdminCannotDeleteWithPreviouslyIssuedToken() throws Exception {
         seed("animals");
         jdbc.update("delete from admins");
-        mvc.perform(delete(url("animals", 1)).session(session)).andExpect(status().isUnauthorized());
-        assertTrue(session.isInvalid());
+        mvc.perform(delete(url("animals", 1)).header("Authorization", authorization)).andExpect(status().isUnauthorized());
         assertEquals(1, jdbc.queryForObject("select count(*) from recommended_animals", Integer.class));
     }
 
     @Test
     void unknownSourceIsRejected() throws Exception {
-        mvc.perform(delete(url("members", 1)).session(session)).andExpect(status().isBadRequest());
+        mvc.perform(delete(url("members", 1)).header("Authorization", authorization)).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -135,7 +135,7 @@ class AdminRegistrationControllerTests {
         seed("shelterAnimals");
         byte[] image = Base64.getDecoder().decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jY1kAAAAASUVORK5CYII=");
         MockMultipartFile file = new MockMultipartFile("imageFile", "photo.png", "image/png", image);
-        mvc.perform(update("shelterAnimals", values()).file(file).session(session)).andExpect(status().isOk());
+        mvc.perform(update("shelterAnimals", values()).file(file).header("Authorization", authorization)).andExpect(status().isOk());
         String path = jdbc.queryForObject("select image_url from shelter_animals where id = 1", String.class);
         assertNotNull(path);
         assertTrue(path.startsWith("/uploads/"));
@@ -148,7 +148,7 @@ class AdminRegistrationControllerTests {
     void nonImageUploadDoesNotChangeShelterRecord() throws Exception {
         seed("shelterAnimals");
         MockMultipartFile file = new MockMultipartFile("imageFile", "file.txt", "text/plain", new byte[]{1});
-        mvc.perform(update("shelterAnimals", values()).file(file).session(session)).andExpect(status().isBadRequest());
+        mvc.perform(update("shelterAnimals", values()).file(file).header("Authorization", authorization)).andExpect(status().isBadRequest());
         assertEquals("원본 항목", jdbc.queryForObject("select notice_no from shelter_animals where id = 1", String.class));
     }
 
@@ -203,7 +203,7 @@ class AdminRegistrationControllerTests {
     }
 
     private void clearRecords() {
-        for (String table : List.of("recommended_animals", "adoption_campaign", "youtube_post", "fellow_news", "need_help", "shelter_animals", "admins", "member")) {
+        for (String table : List.of("admin_access_tokens", "recommended_animals", "adoption_campaign", "youtube_post", "fellow_news", "need_help", "shelter_animals", "admins", "member")) {
             jdbc.update("delete from " + table);
         }
     }

@@ -1,8 +1,8 @@
 // src/redux/campaignAdminSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-
-axios.defaults.withCredentials = true;
+import adminApi from "@/lib/adminApi";
+import { adminSessionCleared } from "./adminSessionActions";
 
 interface CampaignFormState {
   hashtag: string;
@@ -44,7 +44,7 @@ export const submitCampaign = createAsyncThunk(
   "campaignAdmin/submitCampaign",
   async (formData: CampaignFormState, {rejectWithValue}) => {
     try {
-      const response = await axios.post("http://localhost:8080/api/campaigns", formData);
+      const response = await adminApi.post("/api/campaigns", formData);
       return response.data.message || "입양 캠페인이 성공적으로 등록되었습니다!";
     } catch (error: unknown) {
       console.error("등록에러:", error);
@@ -89,6 +89,7 @@ export const campaignAdminSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(adminSessionCleared, () => initialState)
       .addCase(submitCampaign.pending, (state) => {
         state.isLoading = true;
         state.error = null;

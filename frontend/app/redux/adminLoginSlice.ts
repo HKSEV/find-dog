@@ -1,7 +1,10 @@
 // src/redux/adminLoginSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-import { logoutAdmin, resetAdminProfile } from "./adminProfileSlice";
+import adminApi from "@/lib/adminApi";
+import { adminSessionCleared } from "./adminSessionActions";
+import { logoutAdmin } from "./adminProfileSlice";
+import { AdminLoginResponse, saveAdminSession } from "@/lib/adminAuth";
 
 interface AdminLoginState {
   email: string;
@@ -22,17 +25,17 @@ export const submitAdminLogin = createAsyncThunk(
   "adminLogin/submitAdminLogin",
   async ({email, password}: {email: string; password: string}, {rejectWithValue, dispatch}) => {
     try {
-      const response = await axios.post(
+      const response = await adminApi.post<AdminLoginResponse>(
         "/api/admin/login",
         {
           email,
           password
-        },
-        {withCredentials: true}
+        }
       );
 
       const data = response.data;
-      dispatch(resetAdminProfile());
+      saveAdminSession(data);
+      dispatch(adminSessionCleared());
 
       return data;
     } catch (error: unknown) {
@@ -57,6 +60,7 @@ export const adminLoginSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(adminSessionCleared, () => initialState)
       .addCase(submitAdminLogin.pending, (state) => {
         state.isLoading = true;
         state.error = null;

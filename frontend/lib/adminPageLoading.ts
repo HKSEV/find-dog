@@ -13,16 +13,24 @@ const registrationPages: Record<string, AdminRegistrationKind> = {
 
 export const loadAdminPageData = (dispatch: AppDispatch, pathname: string) => {
   const profileRequest = dispatch(fetchAdminProfile());
-  const kind = registrationPages[pathname];
-  const pageRequest = kind
-    ? dispatch(fetchAdminRegistrations(kind))
-    : pathname === "/admin"
-      ? dispatch(fetchDashboard())
-      : null;
+  let isCanceled = false;
+  let pageRequest: ReturnType<ReturnType<typeof fetchAdminRegistrations>> | ReturnType<ReturnType<typeof fetchDashboard>> | null = null;
+  const completed = profileRequest.then(async (result) => {
+    if (isCanceled || !fetchAdminProfile.fulfilled.match(result)) return false;
+    const kind = registrationPages[pathname];
+    pageRequest = kind
+      ? dispatch(fetchAdminRegistrations(kind))
+      : pathname === "/admin"
+        ? dispatch(fetchDashboard())
+        : null;
+    if (pageRequest) await pageRequest;
+    return !isCanceled;
+  });
 
   return {
-    completed: Promise.allSettled([profileRequest, pageRequest]),
+    completed,
     cancel: () => {
+      isCanceled = true;
       profileRequest.abort();
       pageRequest?.abort();
     }

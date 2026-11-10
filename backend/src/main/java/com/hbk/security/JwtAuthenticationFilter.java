@@ -21,6 +21,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider tokenProvider;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return new AdminRequestMatcher().matches(request);
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterchain)
             throws ServletException, IOException{
         try{

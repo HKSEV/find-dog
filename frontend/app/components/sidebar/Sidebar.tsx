@@ -2,15 +2,15 @@
 
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
-import { FaPaw } from "react-icons/fa";
-import { FiGrid, FiSpeaker, FiLayers, FiHome, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FaPaw, FaBullhorn } from "react-icons/fa";
+import { FiGrid, FiLayers, FiHome, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import AdminLogoIcon from "../AdminLogoIcon";
 import * as S from "@/assets/css/Style.styles";
 
 const menuItems = [
   {href: "/admin", label: "Dashboard", icon: FiGrid},
   {href: "/admin/pick", label: "추천동물설정", icon: FaPaw},
-  {href: "/admin/campaign", label: "캠페인", icon: FiSpeaker},
+  {href: "/admin/campaign", label: "캠페인", icon: FaBullhorn},
   {href: "/admin/intergrate", label: "통합게시물설정", icon: FiLayers},
   {href: "/admin/sheltersetting", label: "보호소 설정", icon: FiHome}
 ];

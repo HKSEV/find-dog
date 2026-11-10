@@ -2,8 +2,8 @@
 // src/redux/recommendedAdminSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-
-axios.defaults.withCredentials = true;
+import adminApi from "@/lib/adminApi";
+import { adminSessionCleared } from "./adminSessionActions";
 
 interface RecommendedFormState {
   sourceUrl: string;
@@ -42,23 +42,15 @@ const initialState: RecommendedAdminState = {
 // URL 파싱 비동기 Thunk
 export const parseAnimalUrl = createAsyncThunk(
   "recommendedAdmin/parseUrl",
-  async ({url, sourceType}: {url: string; sourceType: string}) => {
+  async ({url, sourceType}: {url: string; sourceType: string}, {rejectWithValue}) => {
     try {
-      const response = await axios.post("http://localhost:8080/api/animals/parse-link", {
+      const response = await adminApi.post("/api/animals/parse-link", {
         url,
         type: sourceType
       });
       return response.data;
     } catch {
-      // 에러 발생 시 테스트용 더미 데이터 반환
-      return {
-        region: "서울시 마포구",
-        noticeNo: "마포-2026-001",
-        birthYear: "2023",
-        gender: "M",
-        weight: "5.5",
-        imageUrl: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=300"
-      };
+      return rejectWithValue("링크 정보를 불러오지 못했습니다. 로그인과 링크 주소를 확인해 주세요.");
     }
   }
 );
@@ -68,7 +60,7 @@ export const submitRecommendedAnimal = createAsyncThunk(
   "recommendedAdmin/submitAnimal",
   async ({sourceType, formData}: {sourceType: string; formData: RecommendedFormState}, {rejectWithValue}) => {
     try {
-      const response = await axios.post("http://localhost:8080/api/animals/recommended", {
+      const response = await adminApi.post("/api/animals/recommended", {
         sourceType,
         ...formData
       });
@@ -108,6 +100,7 @@ export const recommendedAdminSlice = createSlice({
   extraReducers: (builder) => {
     // 파싱 처리
     builder
+      .addCase(adminSessionCleared, () => initialState)
       .addCase(parseAnimalUrl.pending, (state) => {
         state.isParsing = true;
       })

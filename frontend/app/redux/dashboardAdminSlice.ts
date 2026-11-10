@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import adminApi from "@/lib/adminApi";
+import { adminSessionCleared } from "./adminSessionActions";
 import {
   createDashboardData,
   dashboardSources,
@@ -27,7 +28,7 @@ const initialState: DashboardAdminState = {
 export const fetchDashboard = createAsyncThunk("dashboardAdmin/fetchDashboard", async (_, {signal}) => {
   const results = await Promise.allSettled(
     dashboardSources.map(async ({endpoint}) => {
-      const response = await axios.get<DashboardRecord[]>(endpoint, {signal, withCredentials: true, timeout: 15000});
+      const response = await adminApi.get<DashboardRecord[]>(endpoint, {signal, timeout: 15000});
       if (!Array.isArray(response.data)) throw new Error("목록 응답이 올바르지 않습니다.");
       return response.data.map(({id, title, insertDt, createdAt}) => ({id, title, insertDt, createdAt}));
     })
@@ -53,6 +54,7 @@ const dashboardAdminSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(adminSessionCleared, () => initialState)
       .addCase(fetchDashboard.pending, (state, action) => {
         state.status = "loading";
         state.currentRequestId = action.meta.requestId;

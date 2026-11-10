@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import adminApi from "@/lib/adminApi";
+import { adminSessionCleared } from "./adminSessionActions";
 import {
   AdminRegistrationKind,
   AdminRegistrationRow,
@@ -49,7 +51,7 @@ export const fetchAdminRegistration = createAsyncThunk(
   "registrationAdmin/fetchOne",
   async ({kind, row}: RegistrationTarget, {rejectWithValue, signal}) => {
     try {
-      const response = await axios.get<unknown>(registrationEndpoint(row), {withCredentials: true, timeout: 15000, signal});
+      const response = await adminApi.get<unknown>(registrationEndpoint(row), {timeout: 15000, signal});
       return createRegistrationRows(kind, row.source, [response.data])[0];
     } catch (error: unknown) {
       return rejectWithValue(registrationError(error));
@@ -67,7 +69,7 @@ export const updateAdminRegistration = createAsyncThunk(
       const data = new FormData();
       Object.entries(values).forEach(([key, value]) => data.append(key, value));
       if (imageFile) data.append("imageFile", imageFile);
-      const response = await axios.put<unknown>(registrationEndpoint(row), data, {withCredentials: true, timeout: 30000});
+      const response = await adminApi.put<unknown>(registrationEndpoint(row), data, {timeout: 30000});
       return createRegistrationRows(kind, row.source, [response.data])[0];
     } catch (error: unknown) {
       return rejectWithValue(registrationError(error));
@@ -79,7 +81,7 @@ export const deleteAdminRegistration = createAsyncThunk(
   "registrationAdmin/delete",
   async ({row}: RegistrationTarget, {rejectWithValue}) => {
     try {
-      await axios.delete(registrationEndpoint(row), {withCredentials: true, timeout: 15000});
+      await adminApi.delete(registrationEndpoint(row), {timeout: 15000});
       return row.key;
     } catch (error: unknown) {
       return rejectWithValue(registrationError(error));
@@ -93,7 +95,7 @@ export const fetchAdminRegistrations = createAsyncThunk(
     const sources = getRegistrationSources(kind);
     const results = await Promise.allSettled(
       sources.map(async ({key, endpoint}) => {
-        const response = await axios.get<unknown>(endpoint, {signal, withCredentials: true, timeout: 15000});
+        const response = await adminApi.get<unknown>(endpoint, {signal, timeout: 15000});
         return createRegistrationRows(kind, key, response.data);
       })
     );
@@ -114,6 +116,7 @@ const registrationAdminSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(adminSessionCleared, () => initialState)
       .addCase(logoutAdmin.fulfilled, () => initialState)
       .addCase(updateAdminRegistration.fulfilled, (state, action) => {
         const list = state[action.meta.arg.kind];

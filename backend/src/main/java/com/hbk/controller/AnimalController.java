@@ -7,8 +7,6 @@ import com.hbk.dto.AnimalRequest;
 import com.hbk.dto.AnimalResponse;
 import com.hbk.dto.LinkParseRequest;
 import com.hbk.service.AnimalService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.http.HttpStatus;
@@ -52,17 +50,8 @@ public class AnimalController {
 
 	//추가
 	@PostMapping("/recommended")
-	public ResponseEntity<?> registerRecommendedAnimal(@RequestBody AnimalRequest request,
-	HttpServletRequest httpRequest){
-		// 1. [세션 검사] 현재 접속한 브라우저의 신분증(세션)을 확인합니다.
-		HttpSession session = httpRequest.getSession(false);
-
-		// 2. 신분증이 없거나, 안에 관리자 이름이 없으면 401(권한 없음) 에러를 던집니다.
-		if(session == null || session.getAttribute("adminName") == null){
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(new AnimalResponse("관리자 로그인이 필요한 서비스입니다."));
-		}
-		// 3. 관리자가 맞다면, 주방장(Service)에게 저장을 지시합니다.
+	public ResponseEntity<?> registerRecommendedAnimal(@RequestBody AnimalRequest request){
+		// 관리자 JWT 검증은 공통 인증 필터에서 처리합니다.
 		try{
 // 저장이 끝나면 200 OK(성공) 도장을 찍어 보냅니다.
 animalService.registerAnimal(request);

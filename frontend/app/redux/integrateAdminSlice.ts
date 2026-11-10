@@ -1,8 +1,8 @@
 // src/redux/integrateAdminSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-
-axios.defaults.withCredentials = true;
+import adminApi from "@/lib/adminApi";
+import { adminSessionCleared } from "./adminSessionActions";
 
 interface IntegrateFormState {
   title: string;
@@ -55,14 +55,14 @@ export const submitIntegrateContent = createAsyncThunk(
       let payload = {};
 
       if (boardType === "YOUTUBE") {
-        endpoint = "http://localhost:8080/api/youtube";
+        endpoint = "/api/youtube";
         payload = {
           title: formData.title,
           youtubeUrl: formData.youtubeUrl,
           thumbnailUrl: formData.thumbnailUrl
         };
       } else if (boardType === "FELLOW") {
-        endpoint = "http://localhost:8080/api/fellow-news";
+        endpoint = "/api/fellow-news";
         payload = {
           title: formData.title,
           content: formData.content,
@@ -71,7 +71,7 @@ export const submitIntegrateContent = createAsyncThunk(
           attachmentUrl: formData.attachmentUrl
         };
       } else if (boardType === "HELP") {
-        endpoint = "http://localhost:8080/api/need-help";
+        endpoint = "/api/need-help";
         payload = {
           title: formData.title,
           content: formData.content,
@@ -81,7 +81,7 @@ export const submitIntegrateContent = createAsyncThunk(
         };
       };
 
-      const response = await axios.post(endpoint, payload);
+      const response = await adminApi.post(endpoint, payload);
       return response.data || "성공적으로 등록되었습니다";
     } catch (error: unknown) {
       console.error("등록에러 :", error);
@@ -134,6 +134,7 @@ export const integrateAdminSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(adminSessionCleared, () => initialState)
       .addCase(submitIntegrateContent.pending, (state) => {
         state.isLoading = true;
         state.error = null;

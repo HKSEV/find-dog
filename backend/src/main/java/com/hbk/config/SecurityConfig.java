@@ -2,6 +2,9 @@ package com.hbk.config; // 본인 패키지 경로에 맞게 확인
 
 import com.hbk.security.JwtAuthenticationFilter;
 import com.hbk.security.JwtTokenProvider;
+import com.hbk.security.AdminJwtAuthenticationFilter;
+import com.hbk.security.AdminRequestMatcher;
+import com.hbk.service.AdminAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final AdminAuthService adminAuthService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -28,8 +32,9 @@ public class SecurityConfig {
                 .httpBasic(basic -> basic.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new AdminJwtAuthenticationFilter(adminAuthService), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        // 모든 요청을 허용하여 시큐리티가 요청을 차단하지 않도록 설정
+                        .requestMatchers(new AdminRequestMatcher()).hasRole("ADMIN")
                         .anyRequest().permitAll()
                 );
 

@@ -1,8 +1,8 @@
 // src/redux/shelterAdminSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-
-axios.defaults.withCredentials = true;
+import adminApi from "@/lib/adminApi";
+import { adminSessionCleared } from "./adminSessionActions";
 
 interface ShelterFormState {
   status: "ACTIVE" | "COMPLETED";
@@ -43,7 +43,7 @@ export const submitShelterAnimal = createAsyncThunk(
   "shelterAdmin/submitShelterAnimal",
   async ({formData, imageFile}: {formData: ShelterFormState; imageFile: File | null}, {rejectWithValue}) => {
     try {
-      const endpoint = "http://localhost:8080/api/shelter-animals";
+      const endpoint = "/api/shelter-animals";
       const submitData = new FormData();
 
       // 텍스트 필드 추가
@@ -58,7 +58,7 @@ export const submitShelterAnimal = createAsyncThunk(
         submitData.append("imageFile", imageFile);
       };
 
-      const response = await axios.post(endpoint, submitData, {
+      const response = await adminApi.post(endpoint, submitData, {
         headers: {
           "Content-Type": "multipart/form-data"
         }
@@ -101,6 +101,7 @@ export const shelterAdminSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(adminSessionCleared, () => initialState)
       .addCase(submitShelterAnimal.pending, (state) => {
         state.isLoading = true;
         state.error = null;

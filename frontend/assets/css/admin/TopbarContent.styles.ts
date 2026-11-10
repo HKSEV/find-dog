@@ -39,6 +39,17 @@ const profileMenuItem = css`
 export const AdminTopbar = styled(TopbarContainer)`
   position: relative;
   z-index: 20;
+  flex-shrink: 0;
+  gap: 16px;
+
+  @media (max-width: 991px) {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 70px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    row-gap: 10px;
+  }
 `;
 
 export const AdminTopbarCaption = styled.span`
@@ -46,8 +57,42 @@ export const AdminTopbarCaption = styled.span`
   font-size: 0.8125rem;
   font-weight: 600;
 
-  @media (max-width: 575px) {
+  @media (max-width: 991px) {
     display: none;
+  }
+`;
+
+export const AdminSessionExpiryBadge = styled.div<{$expiring: boolean}>`
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 7px 10px;
+  border: 1px solid ${({$expiring}) => ($expiring ? adminColors.danger : coolGray[200])};
+  border-radius: 8px;
+  background-color: ${({$expiring}) => ($expiring ? adminColors.dangerSoft : adminColors.primarySoft)};
+  color: ${({$expiring}) => ($expiring ? adminColors.danger : adminColors.primaryText)};
+  font-size: 0.75rem;
+  white-space: nowrap;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  time {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 575px) {
+    margin-left: 0;
+    padding: 6px 8px;
+
+    span {
+      display: none;
+    }
   }
 `;
 
@@ -57,7 +102,6 @@ export const ProfileMenu = styled.div`
   align-items: center;
   gap: 12px;
   min-width: 0;
-  margin-left: auto;
 `;
 
 export const ProfileName = styled(Link)`

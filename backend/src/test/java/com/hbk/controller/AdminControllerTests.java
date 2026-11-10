@@ -1,99 +1,78 @@
 package com.hbk.controller;
 
+import com.hbk.dto.AdminLoginResponse;
 import com.hbk.dto.AdminProfileResponse;
 import com.hbk.dto.AdminRequest;
-import com.hbk.dto.AdminResponse;
+import com.hbk.security.AdminPrincipal;
+import com.hbk.service.AdminAuthService;
 import com.hbk.service.AdminService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpSession;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class AdminControllerTests {
     private AdminService service;
+    private AdminAuthService authService;
     private AdminController controller;
+    private final AdminPrincipal principal = new AdminPrincipal(1L, 2L, "owner@example.com", "token-id", 3600000L);
 
     @BeforeEach
     void setUp() {
         service = mock(AdminService.class);
-        controller = new AdminController(service);
+        authService = mock(AdminAuthService.class);
+        controller = new AdminController(service, authService);
     }
 
     @Test
-    void loginStoresAuthenticatedEmailAndRotatesSession() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        String previousId = request.getSession().getId();
+    void loginReturnsIssuedTokenWithoutSessionCookie() {
         AdminRequest credentials = new AdminRequest();
         credentials.setEmail("admin@example.com");
         credentials.setPassword("password");
-        when(service.authenticate("admin@example.com", "password"))
-                .thenReturn(new AdminResponse("관리자", "로그인 성공"));
+        var login = new AdminLoginResponse("관리자", "로그인 성공", "signed-token", 3600000L, 0L);
+        when(authService.login("admin@example.com", "password")).thenReturn(login);
 
-        var response = controller.login(credentials, request);
+        var response = controller.login(credentials);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("admin@example.com", request.getSession(false).getAttribute("adminEmail"));
-        assertEquals("관리자", request.getSession(false).getAttribute("adminName"));
-        assertNotEquals(previousId, request.getSession(false).getId());
+        assertSame(login, response.getBody());
+        assertNull(response.getHeaders().getFirst("Set-Cookie"));
     }
 
     @Test
-    void anonymousProfileRequestDoesNotCreateSession() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-
-        assertEquals(HttpStatus.UNAUTHORIZED, controller.getProfile(request).getStatusCode());
-        assertNull(request.getSession(false));
+    void anonymousProfileRequestIsRejected() {
+        assertEquals(HttpStatus.UNAUTHORIZED, controller.getProfile(null).getStatusCode());
         verifyNoInteractions(service);
     }
 
     @Test
-    void profileUsesAuthenticatedSessionInsteadOfRequestParameters() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.getSession().setAttribute("adminEmail", "owner@example.com");
-        request.addParameter("email", "other@example.com");
+    void profileUsesVerifiedPrincipalAndReturnsSessionDeadline() {
         AdminProfileResponse profile = new AdminProfileResponse(
                 "회원", "닉네임", "owner@example.com", "01000000000", "/uploads/profile.png", "ADMIN", "운영"
         );
         when(service.getProfile("owner@example.com")).thenReturn(profile);
 
-        var response = controller.getProfile(request);
+        var response = controller.getProfile(principal);
 
         assertSame(profile, response.getBody());
+        assertEquals("3600000", response.getHeaders().getFirst("X-Admin-Expires-At"));
+        assertNotNull(response.getHeaders().getFirst("X-Server-Time"));
         verify(service).getProfile("owner@example.com");
-        verify(service, never()).getProfile("other@example.com");
     }
 
     @Test
-    void removedAdminAccountInvalidatesSession() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpSession session = (MockHttpSession) request.getSession();
-        session.setAttribute("adminEmail", "removed@example.com");
-        when(service.getProfile("removed@example.com")).thenThrow(new IllegalArgumentException("관리자 계정 없음"));
+    void removedAdminAccountIsRejected() {
+        when(service.getProfile("owner@example.com")).thenThrow(new IllegalArgumentException("관리자 계정 없음"));
 
-        assertEquals(HttpStatus.UNAUTHORIZED, controller.getProfile(request).getStatusCode());
-        assertTrue(session.isInvalid());
+        assertEquals(HttpStatus.UNAUTHORIZED, controller.getProfile(principal).getStatusCode());
     }
 
     @Test
-    void logoutInvalidatesSessionAndExpiresCookie() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpSession session = (MockHttpSession) request.getSession();
-        session.setAttribute("adminEmail", "admin@example.com");
-
-        var response = controller.logout(request);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(session.isInvalid());
-        String cookie = response.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
-        assertNotNull(cookie);
-        assertTrue(cookie.contains("JSESSIONID="));
-        assertTrue(cookie.contains("Max-Age=0"));
-        assertTrue(cookie.contains("HttpOnly"));
-        assertEquals(HttpStatus.OK, controller.logout(new MockHttpServletRequest()).getStatusCode());
+    void logoutRevokesVerifiedToken() {
+        assertEquals(HttpStatus.OK, controller.logout(principal).getStatusCode());
+        verify(authService).logout(principal);
+        assertEquals(HttpStatus.UNAUTHORIZED, controller.logout(null).getStatusCode());
     }
 }

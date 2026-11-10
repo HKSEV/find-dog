@@ -27,12 +27,17 @@ export const AdminShellContentWrapper = styled.div`
 `;
 
 export const AdminShellMainContent = styled.div`
+  display: flex;
+  flex-direction: column;
   flex: 1;
   width: 100%;
   min-width: 0;
 `;
 
 export const AdminShellContainerFluid = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   width: 100%;
   padding-right: 1.5rem;
   padding-left: 1.5rem;

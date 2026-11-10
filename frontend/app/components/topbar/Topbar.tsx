@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from "../../store/store";
 import { fetchAdminProfile, logoutAdmin } from "../../redux/adminProfileSlice";
 import useAdminModal from "../contexts/AdminModalContext";
 import AdminProfileAvatar from "../AdminProfileAvatar";
+import AdminSessionExpiry from "../admin/AdminSessionExpiry";
 import * as S from "@/assets/css/Style.styles";
 
 export const Topbar: React.FC = () => {
@@ -76,6 +77,7 @@ export const Topbar: React.FC = () => {
   return (
     <S.AdminTopbar aria-label="관리자 헤더">
       <S.AdminTopbarCaption>어서찾아주개 관리자</S.AdminTopbarCaption>
+      <AdminSessionExpiry/>
       <S.ProfileMenu
       ref={menuRef}
       onBlurCapture={(event) => {
