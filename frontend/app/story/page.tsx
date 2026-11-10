@@ -4,207 +4,161 @@ import { useEffect } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
-import { fetchStories, setActiveTab, setSubTab, toggleAlert, setDummyStories } from "../redux/storySlice";
+import {
+  communityTabs,
+  fetchStoryContents,
+  setActiveTab,
+  setCategory,
+  storyCategories,
+  ShelterNews,
+  StoryVideo
+} from "../redux/storySlice";
 
-// MUI 아이콘
-import { NotificationsOutlined as NotificationsIcon } from "@mui/icons-material";
-import { MessageSquare, Share2, Eye } from "lucide-react";
+import { PlayArrow as PlayIcon } from "@mui/icons-material";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import * as S from "@/assets/css/Style.styles";
+
+// 전체 보기에서 미리 보여줄 개수
+const PREVIEW_NEWS_COUNT = 3;
+const PREVIEW_VIDEO_COUNT = 4;
+
+// 업로드 이미지는 백엔드 주소를 붙여서 사용
+const toImageUrl = (url?: string) => (url && url.startsWith("/uploads/") ? `http://localhost:8080${url}` : url);
+
+// "2026-11-10T09:30:00" -> "2026.11.10"
+const toDate = (iso: string) => (iso ? iso.substring(0, 10).replaceAll("-", ".") : "");
+
+const NewsList = ({items}: {items: ShelterNews[]}) => (
+  <S.StoryNewsList>
+    {items.map((news) => (
+      <S.StoryNewsRow key={news.id}>
+        <S.StoryNewsThumb src={toImageUrl(news.imageUrl)} alt=""/>
+        <S.StoryNewsBody>
+          <S.StoryNewsTitle>{news.title}</S.StoryNewsTitle>
+          <S.StoryNewsSummary>{news.content}</S.StoryNewsSummary>
+          <S.StoryNewsDate>{toDate(news.insertDt)}</S.StoryNewsDate>
+        </S.StoryNewsBody>
+      </S.StoryNewsRow>
+    ))}
+  </S.StoryNewsList>
+);
+
+const VideoGrid = ({items}: {items: StoryVideo[]}) => (
+  <S.StoryVideoGrid>
+    {items.map((video) => (
+      <S.StoryVideoCard key={video.id} href={video.youtubeUrl} target="_blank" rel="noopener noreferrer">
+        <S.StoryVideoThumbWrap>
+          <S.StoryVideoThumb src={toImageUrl(video.thumbnailUrl)} alt=""/>
+          <S.StoryVideoPlayBadge><PlayIcon/></S.StoryVideoPlayBadge>
+        </S.StoryVideoThumbWrap>
+        <S.StoryVideoTitle>{video.title}</S.StoryVideoTitle>
+      </S.StoryVideoCard>
+    ))}
+  </S.StoryVideoGrid>
+);
 
 export default function StoryPage() {
   const dispatch = useDispatch<AppDispatch>();
 
   // Redux Store 상태 조회
-  const {activeTab, subTab, isAlertOn, storyList, loading} = useSelector((state: RootState) => state.story);
+  const {activeTab, category, videos, news, loading, error} = useSelector((state: RootState) => state.story);
 
   useEffect(() => {
-    const loadStories = async () => {
-      const resultAction = await dispatch(fetchStories());
-      if (fetchStories.rejected.match(resultAction)) {
-        // API 요청 실패 시 더미 데이터 세팅
-        dispatch(
-          setDummyStories([
-            {
-              id: 1,
-              category: "입양후기",
-              author: "Crong",
-              timeAgo: "2026.10.02",
-              title: "우리집 막내 사랑이💕",
-              content:
-                "사랑이와 가족이 된지 100일이 지났어요. 그동안 적응하느라 사랑이도 가족들도 쉽지 않았지만 이제는 사랑...",
-              images: ["https://placehold.co/140x140"],
-              commentsCount: 0,
-              sharesCount: 0,
-              viewsCount: 0,
-              isPick: true
-            },
-            {
-              id: 2,
-              category: "입양후기",
-              author: "7번째난쟁이",
-              timeAgo: "13분 전",
-              title: "애기 데려온지 두달차❤️",
-              content:
-                "시간이 이렇게 빠르게 흘러 벌써 두달차된 초보 집사입니다😊 처음 봤을때 손바닥만했는데 이렇게 크다니.. 가면 갈수록 더 이뻐지는게 너무 신기하고 아주 이뻐 죽겠어용...",
-              images: ["https://placehold.co/120x120", "https://placehold.co/120x120", "https://placehold.co/120x120"],
-              commentsCount: 0,
-              sharesCount: 3,
-              viewsCount: 12,
-              isPick: false
-            }
-          ])
-        );
-      };
+    dispatch(fetchStoryContents());
+  }, [dispatch]);
+
+  // 이야기 탭 본문: 분류에 따라 보호소 소식 / 영상 / 준비 중 안내를 보여줌
+  const renderStories = () => {
+    if (loading) return <S.StoryEmpty>이야기를 불러오는 중입니다...</S.StoryEmpty>;
+    if (error) return <S.StoryEmpty>{error}</S.StoryEmpty>;
+
+    if (category === "보호소 소식") {
+      return news.length ? <NewsList items={news}/> : <S.StoryEmpty>등록된 보호소 소식이 없어요.</S.StoryEmpty>;
+    };
+    if (category === "영상") {
+      return videos.length ? <VideoGrid items={videos}/> : <S.StoryEmpty>등록된 영상이 없어요.</S.StoryEmpty>;
+    };
+    if (category !== "전체") {
+      // 💡 입양 후기 · 임시보호 일기 · 구조 이야기는 회원 글 백엔드(community_posts)가 생기면 연결
+      return <S.StoryEmpty>{category}는 곧 나눌 수 있어요.</S.StoryEmpty>;
     };
 
-    loadStories();
-  }, [dispatch]);
+    return (
+      <>
+        <S.StorySection>
+          <S.StorySectionHead>
+            <S.StorySectionTitle>보호소 소식</S.StorySectionTitle>
+            {news.length > PREVIEW_NEWS_COUNT && (
+              <S.StoryMoreButton onClick={() => dispatch(setCategory("보호소 소식"))}>더보기</S.StoryMoreButton>
+            )}
+          </S.StorySectionHead>
+          {news.length ? (
+            <NewsList items={news.slice(0, PREVIEW_NEWS_COUNT)}/>
+          ) : (
+            <S.StoryEmpty>등록된 보호소 소식이 없어요.</S.StoryEmpty>
+          )}
+        </S.StorySection>
+
+        <S.StorySection>
+          <S.StorySectionHead>
+            <S.StorySectionTitle>영상</S.StorySectionTitle>
+            {videos.length > PREVIEW_VIDEO_COUNT && (
+              <S.StoryMoreButton onClick={() => dispatch(setCategory("영상"))}>더보기</S.StoryMoreButton>
+            )}
+          </S.StorySectionHead>
+          {videos.length ? (
+            <VideoGrid items={videos.slice(0, PREVIEW_VIDEO_COUNT)}/>
+          ) : (
+            <S.StoryEmpty>등록된 영상이 없어요.</S.StoryEmpty>
+          )}
+        </S.StorySection>
+      </>
+    );
+  };
 
   return (
     <S.AppWrapper>
       {/* 상단 헤더 */}
-      <Header title="스토리"/>
+      <Header title="커뮤니티"/>
 
       <S.Container>
-        {/* 1차 탭 메뉴 */}
-        <S.TabContainer>
-          {["입양이야기", "입양 / 임보", "봉사", "어서찾아주개 정보"].map((tab) => (
-            <S.TabBtn key={tab} $active={activeTab === tab} onClick={() => dispatch(setActiveTab(tab))}>
+        <S.Mt70/>
+
+        {/* 이야기 / 질문·정보 / 나눔 */}
+        <S.CommunityTabs role="tablist" aria-label="커뮤니티 메뉴">
+          {communityTabs.map((tab) => (
+            <S.CommunityTab
+            key={tab}
+            role="tab"
+            aria-selected={activeTab === tab}
+            $active={activeTab === tab}
+            onClick={() => dispatch(setActiveTab(tab))}>
               {tab}
-            </S.TabBtn>
+            </S.CommunityTab>
           ))}
-        </S.TabContainer>
+        </S.CommunityTabs>
 
-        {/* 2차 서브 탭 메뉴 */}
-        <S.StorySubTabs>
-          {["전체", "입양후기", "일상공유", "고민상담"].map((sub) => (
-            <S.StorySubTab key={sub} onClick={() => dispatch(setSubTab(sub))} $active={subTab === sub}>
-              {sub}
-            </S.StorySubTab>
-          ))}
-        </S.StorySubTabs>
+        {activeTab === "이야기" ? (
+          <>
+            <S.CategoryChips>
+              {storyCategories.map((item) => (
+                <S.CategoryChip
+                key={item}
+                aria-pressed={category === item}
+                $active={category === item}
+                onClick={() => dispatch(setCategory(item))}>
+                  {item}
+                </S.CategoryChip>
+              ))}
+            </S.CategoryChips>
 
-        {/* 필터 및 정렬 바 */}
-        <S.StoryFilters>
-          <S.FilterSelect defaultValue="allArea">
-            <option value="allArea">모든 지역</option>
-          </S.FilterSelect>
-
-          <S.FilterSelect defaultValue="latest">
-            <option value="latest">최신순</option>
-          </S.FilterSelect>
-
-          <S.ViewOptions>
-            <S.GridViewIcon>🔲</S.GridViewIcon>
-            <S.GridViewIcon>☰</S.GridViewIcon>
-          </S.ViewOptions>
-        </S.StoryFilters>
-
-        {/* 실시간 알림 토글배너 */}
-        <S.StoryAlert>
-          <S.AlertInfo>
-            <div className="icon-circle">
-              <NotificationsIcon/>
-            </div>
-            <div className="text-group">
-              <strong>이 카테고리 실시간 알림</strong>
-              <span>새 글이 올라오면 알려드려요</span>
-            </div>
-          </S.AlertInfo>
-          <S.ToggleBtn $isOn={isAlertOn} onClick={() => dispatch(toggleAlert())}>
-            <div className="handle"/>
-          </S.ToggleBtn>
-        </S.StoryAlert>
-
-        <S.Divider/>
-
-        {/* 스토리 피드 리스트 */}
-        <S.StoryList>
-          {loading ? (
-            <S.LoadingMessage>스토리를 불러오는 중입니다...</S.LoadingMessage>
-          ) : storyList.length === 0 ? (
-            <S.LoadingMessage>등록된 스토리가 없습니다.</S.LoadingMessage>
-          ) : (
-            storyList.map((post) => (
-              <S.StoryCard key={post.id}>
-                {post.isPick ? (
-                  <S.FeaturedCard>
-                    <S.FeaturedHeader>
-                      <S.FeaturedBadge>어서찾아주개 Pick</S.FeaturedBadge>
-                      <S.FeaturedTime>{post.timeAgo}</S.FeaturedTime>
-                    </S.FeaturedHeader>
-
-                    <S.FeaturedContent>
-                      <S.FeaturedImage
-                      src={post.images[0]}
-                      alt="Pick"
-                      width={70}
-                      height={70}
-                      unoptimized
-                      loading="eager"/>
-                      <div>
-                        <S.FeaturedTitle>{post.title}</S.FeaturedTitle>
-                        <S.FeaturedDescription>{post.content}</S.FeaturedDescription>
-                        <S.FeaturedStats>👤 {post.author}</S.FeaturedStats>
-                      </div>
-                    </S.FeaturedContent>
-                  </S.FeaturedCard>
-                ) : (
-                  <div>
-                    <S.StoryHeader>
-                      <S.AuthorDetails>
-                        <S.AuthorAvatar>👤</S.AuthorAvatar>
-                        <div>
-                          <S.AuthorName>{post.author}</S.AuthorName>
-                          <S.AuthorTime>사지말고 입양하세요.</S.AuthorTime>
-                        </div>
-                      </S.AuthorDetails>
-                      <S.PostMenu>{post.timeAgo}</S.PostMenu>
-                    </S.StoryHeader>
-
-                    <S.StoryTitle>{post.title}</S.StoryTitle>
-                    <S.StoryDescription>{post.content}</S.StoryDescription>
-
-                    {post.images && post.images.length > 0 && (
-                      <S.StoryImages>
-                        {post.images.map((img, idx) => (
-                          <S.StoryImage
-                          key={idx}
-                          src={img}
-                          alt={`img-${idx}`}
-                          width={90}
-                          height={90}
-                          unoptimized
-                          loading="eager"/>
-                        ))}
-                      </S.StoryImages>
-                    )}
-
-                    <S.StoryActions>
-                      <S.CommentCount>
-                        <MessageSquare size={14}/> {post.commentsCount}
-                      </S.CommentCount>
-                      <S.CommentCount>
-                        <Share2 size={14}/> {post.sharesCount}
-                      </S.CommentCount>
-                      <S.CommentCount>
-                        <Eye size={14}/> {post.viewsCount}
-                      </S.CommentCount>
-                    </S.StoryActions>
-                  </div>
-                )}
-              </S.StoryCard>
-            ))
-          )}
-        </S.StoryList>
-
-        {/* 글쓰기 플로팅 버튼 */}
-        <S.FloatingWriteButton>
-          <S.StoryWriteIcon/>
-          <span>글쓰기</span>
-        </S.FloatingWriteButton>
+            {renderStories()}
+          </>
+        ) : (
+          // 💡 질문·정보, 나눔도 회원 글 백엔드가 생기면 연결
+          <S.StoryEmpty>{activeTab} 게시판은 곧 열려요.</S.StoryEmpty>
+        )}
 
         <Footer/>
       </S.Container>

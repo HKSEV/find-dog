@@ -1,274 +1,198 @@
 "use client";
 
-import Image from "next/image";
-import { Plus } from "lucide-react";
-
 import styled from "styled-components";
 import { colors } from "./theme";
-import { FilterContainer } from "@/assets/css/common/Nav.styles";
-import { AlertBanner } from "@/assets/css/client/MissingReport.styles";
 
-export const StorySubTabs = styled.div`
-  && {
-    display: flex;
-    gap: 16px;
-    padding: 12px 16px;
-    background-color: ${colors.white};
-    font-size: 14px;
-    font-weight: bold;
-    border-bottom: 1px solid ${colors.bgSubtle};
+// 💡 커뮤니티 탭 (디자인 개편 시안 기준)
+
+export const CommunityTabs = styled.div`
+  display: flex;
+  gap: 20px;
+  padding: 0 20px;
+  border-bottom: 1px solid ${colors.border};
+`;
+
+export const CommunityTab = styled.button<{$active: boolean}>`
+  height: 44px;
+  padding: 0;
+  margin-bottom: -1px;
+  border: 0;
+  border-bottom: 2px solid ${({$active}) => ($active ? colors.brand : "transparent")};
+  background: transparent;
+  font-size: 15px;
+  font-weight: ${({$active}) => ($active ? 800 : 500)};
+  color: ${({$active}) => ($active ? colors.gray900 : colors.gray500)};
+  cursor: pointer;
+`;
+
+export const CategoryChips = styled.div`
+  display: flex;
+  gap: 6px;
+  padding: 12px 20px 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
 `;
 
-export const StorySubTab = styled.span<{$active: boolean}>`
-  && {
-    cursor: pointer;
-    color: ${({$active}) => ($active ? colors.accent : colors.gray400)};
-    border-bottom: ${({$active}) => ($active ? `2px solid ${colors.accent}` : "none")};
-    padding-bottom: 4px;
+export const CategoryChip = styled.button<{$active: boolean}>`
+  flex: none;
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background-color: ${({$active}) => ($active ? colors.brand : colors.bgSubtle)};
+  color: ${({$active}) => ($active ? colors.white : colors.gray800)};
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+`;
+
+// 섹션 (전체 보기에서 보호소 소식 / 영상을 나눠 보여줄 때)
+export const StorySection = styled.section`
+  padding: 20px 0 0;
+`;
+
+export const StorySectionHead = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+`;
+
+export const StorySectionTitle = styled.h2`
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: ${colors.gray900};
+`;
+
+export const StoryMoreButton = styled.button`
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 13px;
+  color: ${colors.gray500};
+  cursor: pointer;
+`;
+
+export const StoryEmpty = styled.p`
+  margin: 0;
+  padding: 24px 20px 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: ${colors.gray500};
+`;
+
+// 보호소 소식 목록
+export const StoryNewsList = styled.div`
+  padding: 4px 20px 0;
+`;
+
+export const StoryNewsRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid ${colors.border};
+
+  &:last-child {
+    border-bottom: 0;
   }
 `;
 
-export const StoryWriteIcon = styled(Plus).attrs({size: 20, color: colors.white})``;
+export const StoryNewsThumb = styled.img`
+  flex: none;
+  width: 76px;
+  height: 76px;
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: ${colors.bgSubtle};
+`;
 
-export const StoryFilters = styled(FilterContainer)`
-  && {
-    border-bottom: none;
-    padding-bottom: 8px;
+export const StoryNewsBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+`;
+
+export const StoryNewsTitle = styled.span`
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: ${colors.gray900};
+`;
+
+export const StoryNewsSummary = styled.span`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 13px;
+  color: ${colors.gray500};
+`;
+
+export const StoryNewsDate = styled.span`
+  font-size: 12px;
+  color: ${colors.gray500};
+`;
+
+// 영상 목록 (2열)
+export const StoryVideoGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 10px;
+  padding: 12px 20px 0;
+`;
+
+export const StoryVideoCard = styled.a`
+  display: block;
+  color: ${colors.gray900};
+  text-decoration: none;
+`;
+
+export const StoryVideoThumbWrap = styled.span`
+  position: relative;
+  display: block;
+`;
+
+export const StoryVideoThumb = styled.img`
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: ${colors.bgSubtle};
+`;
+
+export const StoryVideoPlayBadge = styled.span`
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background-color: rgba(31, 27, 26, 0.6);
+  color: ${colors.white};
+  transform: translate(-50%, -50%);
+
+  svg {
+    font-size: 20px;
   }
 `;
 
-export const ViewOptions = styled.div`
-  && {
-    margin-left: auto;
-    display: flex;
-    gap: 6px;
-    color: ${colors.gray400};
-    cursor: pointer;
-  }
-`;
-
-export const GridViewIcon = styled.span`
-  && {
-    font-size: 18px;
-  }
-`;
-
-export const StoryAlert = styled(AlertBanner)`
-  && {
-    margin-top: 4px;
-    margin-bottom: 8px;
-  }
-`;
-
-export const StoryList = styled.div`
-  && {
-    padding-bottom: 30px;
-  }
-`;
-
-export const LoadingMessage = styled.div`
-  && {
-    text-align: center;
-    padding: 40px;
-    color: ${colors.gray400};
-  }
-`;
-
-export const StoryCard = styled.div`
-  && {
-    background-color: ${colors.white};
-    border-bottom: 8px solid ${colors.bgLight};
-    padding: 16px;
-  }
-`;
-
-export const FeaturedCard = styled.div`
-  && {
-    background-color: ${colors.accentBg};
-    border-radius: 12px;
-    padding: 12px;
-    border: 1px solid ${colors.accentBorder};
-  }
-`;
-
-export const FeaturedHeader = styled.div`
-  && {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-`;
-
-export const FeaturedBadge = styled.span`
-  && {
-    background-color: ${colors.accent};
-    color: ${colors.white};
-    font-size: 11px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 4px;
-  }
-`;
-
-export const FeaturedTime = styled.span`
-  && {
-    font-size: 11px;
-    color: ${colors.gray400};
-  }
-`;
-
-export const FeaturedContent = styled.div`
-  && {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
-`;
-
-export const FeaturedImage = styled(Image)`
-  && {
-    width: 70px;
-    height: 70px;
-    border-radius: 8px;
-    object-fit: cover;
-  }
-`;
-
-export const FeaturedTitle = styled.div`
-  && {
-    font-size: 14px;
-    font-weight: bold;
-    color: ${colors.gray900};
-    margin-bottom: 4px;
-  }
-`;
-
-export const FeaturedDescription = styled.div`
-  && {
-    font-size: 12px;
-    color: ${colors.gray500};
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-`;
-
-export const FeaturedStats = styled.div`
-  && {
-    font-size: 11px;
-    color: ${colors.gray400};
-    margin-top: 6px;
-  }
-`;
-
-export const StoryHeader = styled.div`
-  && {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-`;
-
-export const AuthorDetails = styled.div`
-  && {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-`;
-
-export const AuthorAvatar = styled.div`
-  && {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: ${colors.bgMuted};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    color: ${colors.gray500};
-  }
-`;
-
-export const AuthorName = styled.div`
-  && {
-    font-size: 13px;
-    font-weight: bold;
-    color: ${colors.gray800};
-  }
-`;
-
-export const AuthorTime = styled.div`
-  && {
-    font-size: 10px;
-    color: ${colors.gray400};
-  }
-`;
-
-export const PostMenu = styled.span`
-  && {
-    font-size: 11px;
-    color: ${colors.gray400};
-  }
-`;
-
-export const StoryTitle = styled.div`
-  && {
-    font-size: 15px;
-    font-weight: bold;
-    color: ${colors.gray900};
-    margin-bottom: 6px;
-  }
-`;
-
-export const StoryDescription = styled.div`
-  && {
-    font-size: 13px;
-    color: ${colors.gray800};
-    line-height: 1.4;
-    margin-bottom: 12px;
-  }
-`;
-
-export const StoryImages = styled.div`
-  && {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
-    overflow-x: auto;
-  }
-`;
-
-export const StoryImage = styled(Image)`
-  && {
-    width: 90px;
-    height: 90px;
-    border-radius: 8px;
-    object-fit: cover;
-  }
-`;
-
-export const StoryActions = styled.div`
-  && {
-    display: flex;
-    gap: 16px;
-    font-size: 12px;
-    color: ${colors.gray400};
-    border-top: 1px solid ${colors.bgSubtle};
-    padding-top: 10px;
-  }
-`;
-
-export const CommentCount = styled.div`
-  && {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
+export const StoryVideoTitle = styled.span`
+  display: -webkit-box;
+  margin-top: 8px;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
 `;
