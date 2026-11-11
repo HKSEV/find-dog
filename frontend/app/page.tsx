@@ -161,7 +161,7 @@ export default function HomePage() {
           </S.HomeSectionHead>
           <S.HomeStrip>
             {waitingAnimals.map((animal) => (
-              <S.HomeAnimalCard key={animal.id} as={Link} href="/shelter">
+              <S.HomeAnimalCard key={animal.id} as={Link} href={`/shelter/${animal.id}`}>
                 {animal.imageUrl ? (
                   <S.HomeAnimalImage src={toImageUrl(animal.imageUrl)} alt={`${animal.breed} 사진`}/>
                 ) : (

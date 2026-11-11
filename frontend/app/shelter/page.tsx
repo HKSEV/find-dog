@@ -1,37 +1,50 @@
 "use client";
 
-import Image from "next/image";
-
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
-import { fetchShelterAnimals, setActiveTab, toggleAlert } from "../redux/shelterSlice";
+import { fetchShelterAnimals, setActiveTab } from "../redux/shelterSlice";
+import { genderLabel, toImageUrl, toMonthDay } from "./animalFormat";
+import { useLikedAnimals } from "./useLikedAnimals";
 
 import Header from "@/app/components/Header";
 import Footer from "../components/Footer";
-
-//MUI
-import { NotificationsOutlined as NotificationsIcon } from "@mui/icons-material";
 import * as S from "@/assets/css/Style.styles";
+
+// 💡 입양·봉사 탭의 하위 메뉴 (봉사·후원, 보호소는 다음 작업에서)
+const subTabs = ["입양", "봉사·후원", "보호소"];
+
+// 로고의 처진 귀 모양 (사진이 없을 때)
+const EarMark = () => (
+  <svg width="28" height="20" viewBox="0 0 20 14" aria-hidden="true">
+    <ellipse cx="5" cy="7" rx="3.4" ry="6" transform="rotate(-25 5 7)" fill="#d8c9c4"/>
+    <ellipse cx="15" cy="7" rx="3.4" ry="6" transform="rotate(25 15 7)" fill="#d8c9c4"/>
+  </svg>
+);
 
 export default function Shelter() {
   const dispatch = useDispatch<AppDispatch>();
-
-  // Redux Store 상태 조회
-  const {activeTab, isAlertOn, animals, loading} = useSelector((state: RootState) => state.shelter);
+  const {activeTab, animals, loading, error} = useSelector((state: RootState) => state.shelter);
+  const {isLiked, toggle} = useLikedAnimals();
+  const [keyword, setKeyword] = useState("");
 
   useEffect(() => {
     dispatch(fetchShelterAnimals());
   }, [dispatch]);
 
-  // 이미지 주소 변환함수 (사진이 없으면 화면에서 "사진 없음"으로 표시)
-  const getFullImageUrl = (url: string) => {
-    if (url.startsWith("/uploads/")) {
-      return `http://localhost:8080${url}`;
-    };
-    return url;
-  };
+  // 품종·구조 지역·공고번호로 찾고, 공고일 최신순 (같은 날이면 나중에 등록한 순)
+  const visibleAnimals = useMemo(() => {
+    const word = keyword.trim().toLowerCase();
+    return animals
+      .filter((animal) =>
+        !word || [animal.breed, animal.rescueLocation, animal.noticeNo].some((text) => text?.toLowerCase().includes(word))
+      )
+      .slice()
+      .sort((a, b) => (b.regDate ?? "").localeCompare(a.regDate ?? "") || b.id - a.id);
+  }, [animals, keyword]);
+
+  const isAdoptTab = activeTab === "입양" || !subTabs.includes(activeTab);
 
   return (
     <S.AppWrapper>
@@ -40,123 +53,83 @@ export default function Shelter() {
       <S.Container>
         <S.HeaderOffset/>
 
-        <S.TabContainer>
-          {["보호동물", "보호소 찾기", "추천 입양 동물"].map((tab) => (
-            <S.TabBtn key={tab} $active={activeTab === tab} onClick={() => dispatch(setActiveTab(tab))}>
-              {tab}
-            </S.TabBtn>
-          ))}
-        </S.TabContainer>
+        <S.AdoptSubTabs aria-label="입양·봉사 메뉴">
+          {subTabs.map((tab) => {
+            const active = tab === "입양" ? isAdoptTab : activeTab === tab;
+            return (
+              <S.AdoptSubTab
+              key={tab}
+              type="button"
+              $active={active}
+              aria-current={active ? "page" : undefined}
+              onClick={() => dispatch(setActiveTab(tab))}>
+                {tab}
+              </S.AdoptSubTab>
+            );
+          })}
+        </S.AdoptSubTabs>
 
-        {/*필터 영역 */}
-        <S.FilterContainer>
-          <S.FilterIconBtn>
-            <S.FilterIconButton/>
-          </S.FilterIconBtn>
+        {isAdoptTab ? (
+          <>
+            <S.AdoptSearch>
+              <S.AdoptSearchIcon aria-hidden="true"/>
+              <S.AdoptSearchInput
+              type="search"
+              aria-label="보호 동물 검색"
+              placeholder="품종, 구조 지역, 공고번호"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}/>
+            </S.AdoptSearch>
 
-          <S.FilterSelect defaultValue="3months">
-            <option value="3months">최근 1개월</option>
-            <option value="3months">최근 2개월</option>
-            <option value="3months">최근 3개월</option>
-          </S.FilterSelect>
+            <S.AdoptListHead>
+              <span>전체 <strong>{visibleAnimals.length}마리</strong></span>
+              <span>최신순</span>
+            </S.AdoptListHead>
 
-          <S.FilterSelect defaultValue="allArea">
-            <option value="allArea">모든 지역</option>
-            <option value="allArea">서울</option>
-          </S.FilterSelect>
+            {loading && animals.length === 0 ? (
+              <S.AdoptEmpty>보호 동물을 불러오는 중이에요</S.AdoptEmpty>
+            ) : error && animals.length === 0 ? (
+              <S.AdoptEmpty>보호 동물을 불러오지 못했어요. 잠시 후 다시 시도해 주세요</S.AdoptEmpty>
+            ) : visibleAnimals.length === 0 ? (
+              <S.AdoptEmpty>{keyword ? "찾는 조건에 맞는 친구가 없어요" : "지금 보호 중인 친구가 없어요"}</S.AdoptEmpty>
+            ) : (
+              <S.AdoptGrid>
+                {visibleAnimals.map((animal) => {
+                  const liked = isLiked(animal.id);
+                  const imageUrl = toImageUrl(animal.imageUrl);
+                  return (
+                    <S.AdoptCard key={animal.id}>
+                      <S.AdoptCardLink as={Link} href={`/shelter/${animal.id}`}>
+                        <S.AdoptPhotoWrap>
+                          {imageUrl ? (
+                            <S.AdoptPhoto src={imageUrl} alt={`${animal.breed} 사진`}/>
+                          ) : (
+                            <S.AdoptPhotoEmpty><EarMark/>사진 준비 중</S.AdoptPhotoEmpty>
+                          )}
+                          {animal.status === "COMPLETED" && <S.AdoptDoneBadge>입양 완료</S.AdoptDoneBadge>}
+                        </S.AdoptPhotoWrap>
+                        <S.AdoptCardTitle>{animal.breed} · {genderLabel[animal.gender] ?? animal.gender}</S.AdoptCardTitle>
+                        <S.AdoptCardMeta>{animal.rescueLocation}에서 구조</S.AdoptCardMeta>
+                        <S.AdoptCardMeta $muted>공고 {toMonthDay(animal.regDate)}</S.AdoptCardMeta>
+                      </S.AdoptCardLink>
 
-          <S.FilterSelect defaultValue="allAnimal">
-            <option value="allAnimal">모든 동물</option>
-            <option value="allAnimal">강아지</option>
-          </S.FilterSelect>
-        </S.FilterContainer>
-
-        {/*실시간 알림 토글배너 */}
-        <S.AlertBanner>
-          <S.AlertInfo>
-            <div className="icon-circle">
-              <NotificationsIcon/>
-            </div>
-            <div className="text-group">
-              <strong>이 지역 실시간 알림</strong>
-              <span>새 공고가 올라오면 알려드려요</span>
-            </div>
-          </S.AlertInfo>
-          <S.ToggleBtn $isOn={isAlertOn} onClick={() => dispatch(toggleAlert())}>
-            <div className="handle"/>
-          </S.ToggleBtn>
-        </S.AlertBanner>
-
-        <S.Divider/>
-
-        <S.RecommendSection>
-          <S.SectionHeader>
-            <S.H2Size20>이달의 추천 입양 동물</S.H2Size20>
-            <Link href="#more" className="more-link">
-              더보기
-              <S.MoreChevron/>
-            </Link>
-          </S.SectionHeader>
-
-          <S.RecommendScroll>
-            <S.RecommendCard>
-              <S.RecommendImgBox>
-                <S.ShelterPhotoEmpty>사진 준비 중</S.ShelterPhotoEmpty>
-              </S.RecommendImgBox>
-              <S.LocationText>
-                <S.LocationPin/>
-                강원특별자치도..
-              </S.LocationText>
-            </S.RecommendCard>
-          </S.RecommendScroll>
-        </S.RecommendSection>
-
-        <S.Divider/>
-
-        <S.ListSection>
-          {loading ? (
-            <div>데이터를 불러오는 중입니다...</div>
-          ) : animals.length === 0 ? (
-            <div>등록된 보호 동물이 없습니다</div>
-          ) : (
-            animals.map((animal) => (
-              <S.AnimalCard key={animal.id}>
-                <S.AnimalImgBox>
-                  {animal.imageUrl ? (
-                    <Image
-                    src={getFullImageUrl(animal.imageUrl)}
-                    alt={animal.breed}
-                    width={95}
-                    height={95}
-                    unoptimized
-                    loading="eager"/>
-                  ) : (
-                    <S.ShelterPhotoEmpty>사진 없음</S.ShelterPhotoEmpty>
-                  )}
-                </S.AnimalImgBox>
-                <S.AnimalInfo>
-                  <S.BadgeGroup>
-                    <S.Badge $type="status">{animal.status === "COMPLETED" ? "완료" : "공고중"}</S.Badge>
-                    <S.Badge
-                    $type={animal.gender === "FEMALE" ? "female" : animal.gender === "MALE" ? "male" : "unknown"}>
-                      {animal.gender === "MALE" ? "수컷" : animal.gender === "FEMALE" ? "암컷" : "미상"}
-                    </S.Badge>
-                  </S.BadgeGroup>
-                  <S.InfoGrid>
-                    <span className="label">품종</span>
-                    <span className="value">{animal.breed}</span>
-                    <span className="label">공고번호</span>
-                    <span className="value">{animal.noticeNo}</span>
-                    <span className="label">등록날짜</span>
-                    <span className="value">{animal.regDate}</span>
-                    <span className="label">구조장소</span>
-                    <span className="value">{animal.rescueLocation}</span>
-                  </S.InfoGrid>
-                </S.AnimalInfo>
-              </S.AnimalCard>
-            ))
-          )}
-        </S.ListSection>
+                      <S.AdoptHeartButton
+                      type="button"
+                      $liked={liked}
+                      aria-pressed={liked}
+                      aria-label={liked ? "관심 동물에서 빼기" : "관심 동물에 추가"}
+                      onClick={() => toggle(animal.id)}>
+                        {liked ? <S.AdoptHeartFilledIcon/> : <S.AdoptHeartIcon/>}
+                      </S.AdoptHeartButton>
+                    </S.AdoptCard>
+                  );
+                })}
+              </S.AdoptGrid>
+            )}
+          </>
+        ) : (
+          <S.AdoptEmpty>{activeTab} 화면은 준비 중이에요</S.AdoptEmpty>
+        )}
       </S.Container>
       <Footer/>
     </S.AppWrapper>
