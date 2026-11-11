@@ -39,6 +39,11 @@ export const GlobalStyle = createGlobalStyle`
   body {
     line-height: 1.5;
     background-color: #6C757D;
+
+    /* 한글이 좁은 화면에서 단어 중간("보|호소")에서 끊기지 않게 단어 단위로 줄바꿈.
+       띄어쓰기 없이 아주 긴 글자(주소·영문 등)는 칸을 넘치지 않게 그 안에서 끊음 */
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
 
   h1, h2, h3, h4, h5, h6 {
