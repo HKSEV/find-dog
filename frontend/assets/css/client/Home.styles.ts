@@ -13,26 +13,51 @@ export const HomeEntryGrid = styled.div`
   padding: 8px 20px 0;
 `;
 
+// 제목(위) + 짧은 꼬리말(아래), 오른쪽 아래로 잘려 나가는 큰 흐린 아이콘 (시안 C4)
 export const HomeEntryButton = styled.a<{$primary?: boolean}>`
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 16px;
+  justify-content: space-between;
+  height: 80px;
+  box-sizing: border-box;
+  padding: 14px 16px;
   border-radius: 14px;
   background-color: ${({$primary}) => ($primary ? colors.brand : colors.brandBg)};
   color: ${({$primary}) => ($primary ? colors.white : colors.gray900)};
-  font-size: 16px;
-  font-weight: 800;
   text-decoration: none;
 
+  &:hover {
+    color: ${({$primary}) => ($primary ? colors.white : colors.gray900)}; /* 전역 a:hover 파란색 대신 */
+  }
+
+  strong {
+    position: relative;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+
+  small {
+    position: relative;
+    font-size: 12px;
+    color: ${({$primary}) => ($primary ? "rgba(255, 255, 255, 0.85)" : colors.brand)};
+  }
+
+  /* 장식 아이콘 */
   svg {
-    font-size: 24px;
+    position: absolute;
+    right: -10px;
+    bottom: -12px;
+    font-size: 64px;
+    color: ${({$primary}) => ($primary ? "rgba(255, 255, 255, 0.18)" : "rgba(138, 78, 75, 0.15)")};
   }
 `;
 
 // 섹션 공통
 export const HomeSection = styled.section`
-  padding: 26px 0 0;
+  padding: 24px 0 0;
 `;
 
 export const HomeSectionHead = styled.div`
@@ -87,8 +112,9 @@ export const HomePhotoPlaceholder = styled.span<{$size: string}>`
 `;
 
 // 목록형 한 줄 (실종 신고, 함께 도와주세요)
+// 섹션 제목과 첫 줄 사이: 10px + 줄 안쪽 여백 12px
 export const HomeList = styled.div`
-  padding: 6px 20px 0;
+  padding: 10px 20px 0;
 `;
 
 export const HomeListRow = styled.a`
@@ -161,7 +187,7 @@ export const HomeStatusBadge = styled.span<{$done?: boolean}>`
 export const HomeStrip = styled.div`
   display: flex;
   gap: 12px;
-  padding: 14px 20px 4px;
+  padding: 22px 20px 4px; /* 섹션 제목과 사진 사이를 목록형 섹션과 같게 */
   overflow-x: auto;
 
   &::-webkit-scrollbar {

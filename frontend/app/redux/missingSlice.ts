@@ -8,6 +8,8 @@ export interface MissingAnimal {
   content?: string;
   breed: string;
   status: "MISSING" | "COMPLETED";
+  type: "LOST" | "FOUND"; // 잃어버렸어요 / 발견했어요
+  occurredAt?: string; // 잃어버린 때 / 발견한 때
   gender: string;
   age?: string;
   weight?: string;

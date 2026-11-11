@@ -219,6 +219,34 @@ export const DetailHeroImage = styled.img`
   object-fit: cover;
 `;
 
+// 사진이 여러 장이면 옆으로 넘겨 보기
+export const DetailGallery = styled.div`
+  display: flex;
+  height: 400px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  img {
+    flex: none;
+    scroll-snap-align: start;
+  }
+`;
+
+export const DetailPhotoCount = styled.span`
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: rgba(31, 27, 26, 0.72);
+  color: ${colors.white};
+  font-size: 12px;
+`;
+
 export const DetailBackButton = styled.button`
   position: absolute;
   top: 12px;

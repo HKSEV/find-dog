@@ -121,12 +121,18 @@ export const MissingRowBody = styled.span`
   min-width: 0;
 `;
 
-export const MissingBadge = styled.span<{$done?: boolean}>`
+const badgeColors = {
+  lost: {bg: colors.danger, fg: colors.white},
+  found: {bg: colors.brandBg, fg: colors.brand},
+  done: {bg: colors.bgMuted, fg: colors.gray800}
+};
+
+export const MissingBadge = styled.span<{$tone: "lost" | "found" | "done"}>`
   align-self: flex-start;
   padding: 2px 6px;
   border-radius: 4px;
-  background-color: ${({$done}) => ($done ? colors.bgMuted : colors.danger)};
-  color: ${({$done}) => ($done ? colors.gray800 : colors.white)};
+  background-color: ${({$tone}) => badgeColors[$tone].bg};
+  color: ${({$tone}) => badgeColors[$tone].fg};
   font-size: 11px;
   font-weight: 800;
 `;
@@ -206,7 +212,12 @@ export const MissingWriteFab = styled.button`
   color: ${colors.white};
   font-size: 15px;
   font-weight: 700;
+  text-decoration: none;
   cursor: pointer;
+
+  &:hover {
+    color: ${colors.white};
+  }
 `;
 
 export const MissingWritePlus = styled(PlusIcon)`

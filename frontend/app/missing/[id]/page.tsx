@@ -8,7 +8,7 @@ import { AppDispatch, RootState } from "../../store/store";
 import { fetchMissingPost } from "../../redux/missingSlice";
 import { setActiveTab } from "../../redux/shelterSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
-import { missingStatusLabel, timeAgo } from "../missingFormat";
+import { formatWhen, missingBadge, placeLabel, timeAgo, whenLabel } from "../missingFormat";
 
 import Header from "@/app/components/Header";
 import * as S from "@/assets/css/Style.styles";
@@ -55,43 +55,54 @@ export default function MissingPostDetail() {
 
   const done = post.status === "COMPLETED";
   const author = post.authorName?.trim(); // 백엔드가 닉네임을 줌 (없으면 "익명")
-  const photo = toImageUrl(post.mediaUrls?.[0]);
+  const photos = (post.mediaUrls ?? []).map((url) => toImageUrl(url)).filter((url): url is string => Boolean(url));
   const facts = [
     {label: "품종", value: post.breed},
     {label: "성별", value: post.gender},
     {label: "나이", value: post.age},
     {label: "체중", value: post.weight},
     {label: "털색", value: post.color},
+    {label: whenLabel(post.type), value: formatWhen(post.occurredAt)},
     {label: "등록", value: timeAgo(post.createdAt)}
   ].filter((fact) => fact.value);
+
+  // 3칸 격자의 마지막 줄이 비지 않게, 마지막 칸이 남은 자리를 채움
+  const lastSpan = 1 + ((3 - (facts.length % 3)) % 3);
 
   return (
     <S.AppWrapper>
       <S.Container>
         <S.DetailPage>
           <S.DetailHero>
-            {photo ? (
-              <S.DetailHeroImage src={photo} alt={`${post.breed || "실종 동물"} 사진`}/>
+            {photos.length > 0 ? (
+              <S.DetailGallery>
+                {photos.map((url, index) => (
+                  <S.DetailHeroImage key={url} src={url} alt={`${post.breed || "실종 동물"} 사진 ${index + 1}`}/>
+                ))}
+              </S.DetailGallery>
             ) : (
               <S.AdoptPhotoEmpty $height="400px" $square>사진 없음</S.AdoptPhotoEmpty>
             )}
             <S.DetailBackButton type="button" aria-label="뒤로" onClick={handleBack}>
               <S.DetailBackIcon/>
             </S.DetailBackButton>
+            {photos.length > 1 && <S.DetailPhotoCount>사진 {photos.length}장 · 옆으로 넘겨 보세요</S.DetailPhotoCount>}
           </S.DetailHero>
 
           <S.DetailSection>
-            <S.MissingBadge $done={done}>{missingStatusLabel[post.status] ?? post.status}</S.MissingBadge>
+            <S.MissingBadge $tone={missingBadge(post).tone}>{missingBadge(post).label}</S.MissingBadge>
             <S.DetailTitle>{post.title || post.breed}</S.DetailTitle>
             {author && <S.DetailNotice>작성자 {author}</S.DetailNotice>}
 
             {facts.length > 0 && (
               <S.DetailFacts>
-                {facts.map((fact) => (
-                  <S.DetailFact key={fact.label}><dt>{fact.label}</dt><dd>{fact.value}</dd></S.DetailFact>
+                {facts.map((fact, index) => (
+                  <S.DetailFact key={fact.label} $span={index === facts.length - 1 ? lastSpan : undefined}>
+                    <dt>{fact.label}</dt><dd>{fact.value}</dd>
+                  </S.DetailFact>
                 ))}
                 {post.rescueLocation && (
-                  <S.DetailFact $span={3}><dt>실종 장소</dt><dd>{post.rescueLocation}</dd></S.DetailFact>
+                  <S.DetailFact $span={3}><dt>{placeLabel(post.type)}</dt><dd>{post.rescueLocation}</dd></S.DetailFact>
                 )}
               </S.DetailFacts>
             )}
@@ -99,12 +110,12 @@ export default function MissingPostDetail() {
 
           {post.content && (
             <S.DetailSection>
-              <S.DetailHeading>{done ? "돌아온 이야기" : "찾고 있어요"}</S.DetailHeading>
+              <S.DetailHeading>{done ? "돌아온 이야기" : post.type === "FOUND" ? "이런 아이를 봤어요" : "찾고 있어요"}</S.DetailHeading>
               <S.DetailText>{post.content}</S.DetailText>
             </S.DetailSection>
           )}
 
-          {!done && (
+          {!done && post.type !== "FOUND" && (
             <S.DetailSection>
               <S.MissingShelterHint as={Link} href="/shelter" $flush onClick={() => dispatch(setActiveTab("입양"))}>
                 <S.MissingHintSearchIcon aria-hidden="true"/>
