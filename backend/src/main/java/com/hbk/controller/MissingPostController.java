@@ -44,6 +44,16 @@ public class MissingPostController {
         return ResponseEntity.ok(posts);
     }
 
+    // 글 하나 조회 API (GET /api/missing-posts/{id}) - 상세 화면
+    @GetMapping("/{id}")
+    public ResponseEntity<MissingPostResponseDto> getPost(@PathVariable Long id){
+        try {
+            return ResponseEntity.ok(service.getPost(id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     // 3. 글 수정 API (PUT /api/missing-posts/{id})
     @PutMapping("/{id}")
     public ResponseEntity<MissingPostResponseDto> updatePost(

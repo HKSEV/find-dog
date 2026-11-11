@@ -11,6 +11,7 @@ export interface Animal {
   regDate: string;
   rescueLocation: string;
   imageUrl: string;
+  content?: string;
 }
 
 interface ShelterState {
@@ -19,14 +20,16 @@ interface ShelterState {
   animals: Animal[];
   loading: boolean;
   error: string | null;
+  likedIds: number[]; // 관심 동물 (브라우저에 저장, animalFormat.ts)
 }
 
 const initialState: ShelterState = {
-  activeTab: "보호동물",
+  activeTab: "입양",
   isAlertOn: false,
   animals: [],
   loading: false,
-  error: null
+  error: null,
+  likedIds: []
 };
 
 // 보호 동물 데이터 비동기 조회 Thunk
@@ -51,6 +54,15 @@ export const shelterSlice = createSlice({
     },
     toggleAlert: (state) => {
       state.isAlertOn = !state.isAlertOn;
+    },
+    setLikedIds: (state, action: PayloadAction<number[]>) => {
+      state.likedIds = action.payload;
+    },
+    toggleLike: (state, action: PayloadAction<number>) => {
+      const id = action.payload;
+      state.likedIds = state.likedIds.includes(id)
+        ? state.likedIds.filter((likedId) => likedId !== id)
+        : [...state.likedIds, id];
     }
   },
   extraReducers: (builder) => {
@@ -70,5 +82,5 @@ export const shelterSlice = createSlice({
   }
 });
 
-export const {setActiveTab, toggleAlert} = shelterSlice.actions;
+export const {setActiveTab, toggleAlert, setLikedIds, toggleLike} = shelterSlice.actions;
 export default shelterSlice.reducer;

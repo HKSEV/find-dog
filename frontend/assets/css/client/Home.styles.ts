@@ -100,6 +100,10 @@ export const HomeListRow = styled.a`
   color: ${colors.gray900};
   text-decoration: none;
 
+  &:hover {
+    color: ${colors.gray900}; /* 전역 a:hover 파란색 대신 */
+  }
+
   &:last-child {
     border-bottom: 0;
   }
@@ -170,6 +174,10 @@ export const HomeAnimalCard = styled.a`
   width: 156px;
   color: ${colors.gray900};
   text-decoration: none;
+
+  &:hover {
+    color: ${colors.gray900};
+  }
 `;
 
 export const HomeAnimalImage = styled.img`

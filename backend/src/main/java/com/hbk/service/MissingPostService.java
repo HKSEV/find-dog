@@ -87,6 +87,14 @@ public class MissingPostService {
                 .collect(Collectors.toList());
     }
 
+    // 글 하나 조회 (상세 화면)
+    @Transactional(readOnly = true)
+    public MissingPostResponseDto getPost(Long id){
+        MissingPost post = missingPostRepository.findById(id)
+                .orElseThrow(()->new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
+        return new MissingPostResponseDto(post);
+    }
+
     // 글 수정 (본인 확인)
     @Transactional
     public MissingPostResponseDto updatePost(Long id, MissingPostRequestDto requestDto, String username){

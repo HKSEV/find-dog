@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 public class MissingPostResponseDto {
 private Long id;
-private String title, content, breed, gender, rescueLocation, authorName;
+private String title, content, breed, gender, age, weight, color, rescueLocation, authorName;
 private PostStatus status;
 private List<String> mediaUrls;
 private LocalDateTime createdAt;
@@ -29,8 +29,12 @@ this.status =post.getStatus();
 this.content = post.getContent();
 this.breed = post.getBreed();
 this.gender = post.getGender();
+this.age = post.getAge();
+this.weight = post.getWeight();
+this.color = post.getColor();
 this.rescueLocation = post.getRescueLocation();
 this.authorName = post.getAuthor() != null ? post.getAuthor().getUsername() : " 알수 없음";
 this.mediaUrls = post.getMediaUrls();
+this.createdAt = post.getCreatedAt();
 }
 }

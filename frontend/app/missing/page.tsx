@@ -1,9 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "../store/store"; // 프로젝트 경로에 맞게 수정
+import { AppDispatch, RootState } from "../store/store";
 import { fetchMissingAnimals } from "../redux/missingSlice";
+import { setActiveTab } from "../redux/shelterSlice";
+import { toImageUrl } from "../shelter/animalFormat";
+import { missingStatusLabel, missingTraits, timeAgo } from "./missingFormat";
 
 import { ModalSingle } from "../modal/ModalSingle";
 
@@ -11,88 +15,104 @@ import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import * as S from "@/assets/css/Style.styles";
 
-// 💡 실종 글 상태를 화면에 보여줄 한글 이름 (StatusBadge 색은 "실종"일 때 빨강)
-const statusLabel: Record<string, string> = {MISSING: "찾는 중", COMPLETED: "찾았어요"};
-
 export default function MissingReportPage() {
   const dispatch = useDispatch<AppDispatch>();
+  const {animalList, loading, loadingMore, hasMore, error} = useSelector((state: RootState) => state.missing);
 
-  // Redux Store 상태 조회
-  const {animalList, loading} = useSelector((state: RootState) => state.missing);
-
-  // 모달 제어 상태 (UI 전용 상태는 로컬 유지)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [onlySearching, setOnlySearching] = useState(true); // 💡 시안 기준: 찾는 중인 글만 먼저
 
-  // 컴포넌트 마운트 시 데이터 로드
   useEffect(() => {
-    dispatch(fetchMissingAnimals());
+    dispatch(fetchMissingAnimals(undefined));
   }, [dispatch]);
 
-  // 모달에서 글 등록 성공 시 데이터 리프레시
+  // 모달에서 글 등록 성공 시 처음부터 다시 불러옴
   const handleSuccessUpload = () => {
-    dispatch(fetchMissingAnimals());
+    dispatch(fetchMissingAnimals(undefined));
   };
 
+  // 서버가 최신순(id 큰 순)으로 주므로 순서는 그대로
+  const posts = onlySearching ? animalList.filter((post) => post.status === "MISSING") : animalList;
+  const lastId = animalList.length > 0 ? animalList[animalList.length - 1].id : undefined;
+
   return (
-    <S.Container>
+    <S.AppWrapper>
       <Header title="실종·제보" isTab/>
-      <S.HeaderOffset/>
 
-      {/* 카드 리스트 영역 */}
-      <S.CardGrid>
-        {loading ? (
-          <S.LoadingText>데이터를 불러오는 중입니다...</S.LoadingText>
-        ) : animalList.length === 0 ? (
-          <S.LoadingText>등록된 실종 신고가 없습니다.</S.LoadingText>
-        ) : (
-          animalList.map((item) => (
-            <S.Card key={item.id}>
-              <S.ImageContainer>
-                {item.mediaUrls && item.mediaUrls.length > 0 ? (
-                  <S.CardImage src={item.mediaUrls[0]} alt={item.breed}/>
-                ) : (
-                  <S.MissingPhotoEmpty>사진 없음</S.MissingPhotoEmpty>
-                )}
-              </S.ImageContainer>
-              <S.CardBody>
-                <S.InfoRow>
-                  <S.StatusBadge status={item.status === "MISSING" ? "실종" : "완료"}>
-                    {statusLabel[item.status] ?? item.status}
-                  </S.StatusBadge>
-                  <S.BreedName>{item.breed}</S.BreedName>
-                </S.InfoRow>
-                <S.MetaInfo>
-                  {item.gender} {item.age ? `| ${item.age}` : ""} {item.weight ? `| ${item.weight}` : ""}
-                </S.MetaInfo>
-                <S.LocationRow>
-                  <S.LocationIcon/>
-                  <S.LocationText>{item.rescueLocation}</S.LocationText>
-                </S.LocationRow>
-                <S.DateRow>
-                  <S.DateIcon/>
-                  <S.DateText>{item.createdAt ? item.createdAt.substring(0, 10) : ""}</S.DateText>
-                </S.DateRow>
-              </S.CardBody>
-            </S.Card>
-          ))
-        )}
-      </S.CardGrid>
+      <S.Container>
+        <S.HeaderOffset/>
 
-      {/* 글쓰기 플로팅 버튼 */}
-      <S.FloatingWriteButton onClick={() => setIsModalOpen(true)}>
-        <S.MissingWriteIcon/>
-        <span>글쓰기</span>
-      </S.FloatingWriteButton>
+        <S.MissingToolbar>
+          <S.MissingOnlyToggle>
+            <input type="checkbox" checked={onlySearching} onChange={(e) => setOnlySearching(e.target.checked)}/>
+            찾는 중인 글만
+          </S.MissingOnlyToggle>
+          <span>최신순</span>
+        </S.MissingToolbar>
 
-      {/* 공통 모달 컴포넌트 연결 */}
-      <ModalSingle
-      isOpen={isModalOpen}
-      onClose={() => setIsModalOpen(false)}
-      titleText="실종/제보 글쓰기"
-      submitText="등록하기"
-      onSuccess={handleSuccessUpload}/>
+        <S.MissingShelterHint as={Link} href="/shelter" onClick={() => dispatch(setActiveTab("입양"))}>
+          <S.MissingHintSearchIcon aria-hidden="true"/>
+          <span><strong>잃어버린 아이가 보호소에 들어왔을 수도 있어요.</strong> 보호소 공고도 확인해 보세요.</span>
+          <S.MissingHintChevron aria-hidden="true"/>
+        </S.MissingShelterHint>
 
+        <S.MissingRows>
+          {loading && animalList.length === 0 ? (
+            <S.MissingEmptyText>실종·제보 글을 불러오는 중이에요</S.MissingEmptyText>
+          ) : error && animalList.length === 0 ? (
+            <S.MissingEmptyText>글을 불러오지 못했어요. 잠시 후 다시 시도해 주세요</S.MissingEmptyText>
+          ) : posts.length === 0 ? (
+            <S.MissingEmptyText>
+              {onlySearching && animalList.length > 0 ? "지금 찾는 중인 글이 없어요" : "등록된 실종·제보 글이 없어요"}
+            </S.MissingEmptyText>
+          ) : (
+            posts.map((post) => {
+              const done = post.status === "COMPLETED";
+              const photo = toImageUrl(post.mediaUrls?.[0]);
+              const meta = [post.rescueLocation, timeAgo(post.createdAt), done ? "가족 품으로 돌아갔어요" : ""]
+                .filter(Boolean)
+                .join(" · ");
+              return (
+                <S.MissingRow key={post.id} as={Link} href={`/missing/${post.id}`} $done={done}>
+                  {photo ? (
+                    <S.MissingRowThumb src={photo} alt={`${post.breed || "실종 동물"} 사진`}/>
+                  ) : (
+                    <S.MissingRowThumbEmpty>사진 없음</S.MissingRowThumbEmpty>
+                  )}
+                  <S.MissingRowBody>
+                    <S.MissingBadge $done={done}>{missingStatusLabel[post.status] ?? post.status}</S.MissingBadge>
+                    <S.MissingRowTitle>{post.title || post.breed}</S.MissingRowTitle>
+                    <S.MissingRowTraits>{[post.breed, missingTraits(post)].filter(Boolean).join(" · ")}</S.MissingRowTraits>
+                    <S.MissingRowMeta>{meta}</S.MissingRowMeta>
+                  </S.MissingRowBody>
+                </S.MissingRow>
+              );
+            })
+          )}
+
+          {hasMore && (
+            <S.MissingMoreButton
+            type="button"
+            disabled={loadingMore}
+            onClick={() => dispatch(fetchMissingAnimals(lastId))}>
+              {loadingMore ? "불러오는 중..." : "이전 글 더 보기"}
+            </S.MissingMoreButton>
+          )}
+        </S.MissingRows>
+
+        <S.MissingWriteFab type="button" onClick={() => setIsModalOpen(true)}>
+          <S.MissingWritePlus aria-hidden="true"/>
+          신고·제보하기
+        </S.MissingWriteFab>
+
+        <ModalSingle
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        titleText="실종/제보 글쓰기"
+        submitText="등록하기"
+        onSuccess={handleSuccessUpload}/>
+      </S.Container>
       <Footer/>
-    </S.Container>
+    </S.AppWrapper>
   );
 };
