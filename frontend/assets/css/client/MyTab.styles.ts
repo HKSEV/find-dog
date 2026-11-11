@@ -1,0 +1,251 @@
+"use client";
+
+import {
+  ChevronRightRounded as ChevronIcon,
+  PersonOutlineRounded as PersonIcon
+} from "@mui/icons-material";
+import styled from "styled-components";
+import { colors } from "./theme";
+
+// 💡 마이 탭 (디자인 개편 시안 기준)
+
+// 로그인 전: 로그인 / 회원가입 안내
+export const MyLoginCard = styled.section`
+  margin: 8px 20px 0;
+  padding: 22px 20px;
+  border-radius: 14px;
+  background-color: ${colors.brandBg};
+  color: ${colors.gray900};
+`;
+
+export const MyLoginTitle = styled.p`
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.45;
+`;
+
+export const MyLoginButtons = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+`;
+
+export const MyLoginButton = styled.a<{$primary?: boolean}>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 46px;
+  border-radius: 10px;
+  background-color: ${({$primary}) => ($primary ? colors.brand : colors.white)};
+  color: ${({$primary}) => ($primary ? colors.white : colors.gray900)};
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+
+  &:hover {
+    color: ${({$primary}) => ($primary ? colors.white : colors.gray900)};
+  }
+`;
+
+// 로그인 후: 프로필
+export const MyProfile = styled.section`
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 20px 0;
+`;
+
+export const MyAvatar = styled.span`
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 999px;
+  background-color: ${colors.bgSubtle};
+  color: ${colors.gray400};
+`;
+
+export const MyAvatarIcon = styled(PersonIcon)`
+  && {
+    font-size: 32px;
+  }
+`;
+
+export const MyProfileText = styled.span`
+  flex: 1;
+  min-width: 0;
+
+  strong {
+    display: block;
+    overflow: hidden;
+    font-size: 18px;
+    font-weight: 800;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  span {
+    display: block;
+    overflow: hidden;
+    margin-top: 2px;
+    font-size: 13px;
+    color: ${colors.gray500};
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+`;
+
+// 섹션
+export const MySection = styled.section`
+  padding: 26px 0 0;
+`;
+
+export const MySectionHead = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+`;
+
+export const MySectionTitle = styled.h2`
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: ${colors.gray900};
+`;
+
+export const MySectionCount = styled.span`
+  font-size: 13px;
+  color: ${colors.gray500};
+`;
+
+export const MyEmpty = styled.p`
+  margin: 0;
+  padding: 12px 20px 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: ${colors.gray500};
+
+  a {
+    color: ${colors.brand};
+    font-weight: 700;
+  }
+`;
+
+// 관심 동물 (가로 줄)
+export const MyLikedStrip = styled.div`
+  display: flex;
+  gap: 10px;
+  padding: 12px 20px 0;
+  overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+export const MyLikedCard = styled.a`
+  flex: none;
+  width: 104px;
+  color: ${colors.gray900};
+  text-decoration: none;
+
+  &:hover {
+    color: ${colors.gray900};
+  }
+`;
+
+export const MyLikedImage = styled.img`
+  display: block;
+  width: 104px;
+  height: 104px;
+  object-fit: cover;
+  border-radius: 10px;
+`;
+
+export const MyLikedEmptyImage = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 104px;
+  height: 104px;
+  border-radius: 10px;
+  background-color: ${colors.bgSubtle};
+  color: ${colors.gray500};
+  font-size: 11px;
+`;
+
+export const MyLikedName = styled.span`
+  display: block;
+  overflow: hidden;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`;
+
+export const MyBand = styled.div`
+  height: 8px;
+  margin-top: 26px;
+  background-color: ${colors.bgSubtle};
+`;
+
+// 메뉴 목록
+export const MyMenu = styled.section`
+  padding: 8px 20px 24px;
+`;
+
+export const MyMenuTitle = styled.h2`
+  margin: 16px 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: ${colors.gray500};
+`;
+
+export const MyMenuItem = styled.a<{$disabled?: boolean}>`
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  border-bottom: 1px solid ${colors.bgSubtle};
+  color: ${({$disabled}) => ($disabled ? colors.gray400 : colors.gray900)};
+  font-size: 15px;
+  text-decoration: none;
+  cursor: ${({$disabled}) => ($disabled ? "default" : "pointer")};
+
+  &:hover {
+    color: ${({$disabled}) => ($disabled ? colors.gray400 : colors.gray900)};
+  }
+
+  span {
+    flex: 1;
+  }
+
+  small {
+    font-size: 12px;
+    color: ${colors.gray400};
+  }
+`;
+
+export const MyMenuChevron = styled(ChevronIcon)`
+  && {
+    font-size: 20px;
+    color: ${colors.gray400};
+  }
+`;
+
+export const MyLogoutButton = styled.button`
+  height: 40px;
+  margin-top: 18px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: ${colors.gray500};
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+`;

@@ -47,6 +47,7 @@ export const submitLogin = createAsyncThunk(
 
       const cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
       localStorage.setItem("token", cleanToken);
+      localStorage.setItem("email", email); // 마이 화면 프로필에 표시
 
       if (
         data &&

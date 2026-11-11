@@ -162,6 +162,11 @@ export const MissingEmptyText = styled.p`
   font-size: 14px;
   color: ${colors.gray500};
   text-align: center;
+
+  a {
+    color: ${colors.brand};
+    font-weight: 700;
+  }
 `;
 
 export const MissingMoreButton = styled.button`

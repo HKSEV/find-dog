@@ -9,6 +9,7 @@ export * from "./Missing.styles";
 export * from "./MissingBoard.styles";
 export * from "./MissingReport.styles";
 export * from "./MyPage.styles";
+export * from "./MyTab.styles";
 export * from "./Shelter.styles";
 export * from "./Signup.styles";
 export * from "./Story.styles";

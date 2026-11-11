@@ -54,7 +54,7 @@ export default function MissingPostDetail() {
   };
 
   const done = post.status === "COMPLETED";
-  const author = post.authorName?.trim() === "알수 없음" ? "" : post.authorName?.trim(); // 백엔드는 작성자가 없으면 "알수 없음"을 줌
+  const author = post.authorName?.trim(); // 백엔드가 닉네임을 줌 (없으면 "익명")
   const photo = toImageUrl(post.mediaUrls?.[0]);
   const facts = [
     {label: "품종", value: post.breed},

@@ -4,11 +4,13 @@ import { createSlice } from "@reduxjs/toolkit";
 interface UserState {
   isLoggedIn: boolean;
   nickname: string;
+  email: string;
 }
 
 const initialState: UserState = {
   isLoggedIn: false,
-  nickname: "회원"
+  nickname: "회원",
+  email: ""
 };
 
 export const userSlice = createSlice({
@@ -19,6 +21,7 @@ export const userSlice = createSlice({
     loadUserFromStorage: (state) => {
       const token = localStorage.getItem("token");
       const storedNickname = localStorage.getItem("nickname");
+      const storedEmail = localStorage.getItem("email");
 
       if (token) {
         state.isLoggedIn = true;
@@ -26,13 +29,16 @@ export const userSlice = createSlice({
       if (storedNickname) {
         state.nickname = storedNickname;
       };
+      state.email = token && storedEmail ? storedEmail : "";
     },
     // 로그아웃 시 상태 초기화 액션
     logoutUser: (state) => {
       localStorage.removeItem("token");
       localStorage.removeItem("nickname");
+      localStorage.removeItem("email");
       state.isLoggedIn = false;
       state.nickname = "회원";
+      state.email = "";
     }
   }
 });

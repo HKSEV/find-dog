@@ -1,58 +1,76 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { loadUserFromStorage, logoutUser } from "../redux/userSlice";
+import { fetchShelterAnimals } from "../redux/shelterSlice";
+import { genderLabel, toImageUrl } from "../shelter/animalFormat";
+import { useLikedAnimals } from "../shelter/useLikedAnimals";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { CustomAlert } from "../components/CustomAlert";
 import * as S from "@/assets/css/Style.styles";
-// 💡 커스텀 알럿 임포트
 
-// 💡 MUI 아이콘 임포트
+// 💡 아직 화면이 없는 메뉴는 "준비 중"으로 표시 (누를 수 없음)
+const activityMenus = [
+  {label: "작성한 글", href: "/mypage/posts", needLogin: true},
+  {label: "입양·봉사 신청 내역"},
+  {label: "관심 보호소"},
+  {label: "알림 설정"}
+];
+
+const guideMenus = [
+  {label: "어서찾아주개 소개"},
+  {label: "공지사항"},
+  {label: "자주 묻는 질문"},
+  {label: "문의하기"}
+];
+
+type Menu = {label: string; href?: string; needLogin?: boolean};
 
 export default function MyPage() {
-  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-
-  // Redux Store 상태 조회
-  const {isLoggedIn, nickname} = useSelector((state: RootState) => state.user);
-
-  // 💡 커스텀 알럿 상태 관리
-  const [alertConfig, setAlertConfig] = useState({
-    isOpen: false,
-    message: "",
-    type: "info" as "success" | "error" | "info",
-    onConfirm: () => {}
-  });
-
-  const closeAlert = () => {
-    setAlertConfig((prev) => ({...prev, isOpen: false}));
-  };
+  const {isLoggedIn, nickname, email} = useSelector((state: RootState) => state.user);
+  const {animals} = useSelector((state: RootState) => state.shelter);
+  const {isLiked} = useLikedAnimals();
+  const [isLogoutAlertOpen, setIsLogoutAlertOpen] = useState(false);
 
   useEffect(() => {
-    // 컴포넌트 마운트 시 로컬스토리지에서 유저 정보 로드
-    dispatch(loadUserFromStorage());
+    dispatch(loadUserFromStorage()); // 로컬스토리지에서 로그인 정보 로드
+    dispatch(fetchShelterAnimals()); // 관심 동물 사진·이름을 보여주려고 보호 동물 목록을 받음
   }, [dispatch]);
 
-  // 로그아웃 기능
+  // 하트를 누른 순서가 아니라 보호 동물 목록 순서(공고 최신순)로 보여줌
+  const likedAnimals = animals
+    .filter((animal) => isLiked(animal.id))
+    .slice()
+    .sort((a, b) => (b.regDate ?? "").localeCompare(a.regDate ?? "") || b.id - a.id);
+
   const handleLogout = () => {
     dispatch(logoutUser());
+    setIsLogoutAlertOpen(true);
+  };
 
-    // 💡 기본 alert 대신 CustomAlert 띄우기
-    setAlertConfig({
-      isOpen: true,
-      message: "로그아웃 되었습니다.",
-      type: "success",
-      onConfirm: () => {
-        closeAlert();
-        router.push("/login"); // 확인 버튼을 누르면 이동
-      }
-    });
+  const renderMenu = ({label, href, needLogin}: Menu) => {
+    if (!href) {
+      return (
+        <S.MyMenuItem key={label} as="div" $disabled aria-disabled="true">
+          <span>{label}</span>
+          <small>준비 중</small>
+        </S.MyMenuItem>
+      );
+    };
+
+    // 로그인이 필요한 메뉴는 로그인 전이면 로그인 화면으로
+    return (
+      <S.MyMenuItem key={label} as={Link} href={needLogin && !isLoggedIn ? "/login" : href}>
+        <span>{label}</span>
+        <S.MyMenuChevron aria-hidden="true"/>
+      </S.MyMenuItem>
+    );
   };
 
   return (
@@ -61,93 +79,73 @@ export default function MyPage() {
       <S.Container>
         <S.HeaderOffset/>
 
-        <S.LoginLayout>
-          <S.H2Size20>
-            {isLoggedIn ? (
-              <S.LayOutSpaceBetween>
-                <span>
-                  환영합니다 <span>{nickname}</span>님
-                </span>
-                <S.LogOutBtn onClick={handleLogout}>로그아웃</S.LogOutBtn>
-              </S.LayOutSpaceBetween>
-            ) : (
-              <Link href="/login">
-                <span>로그인</span>을 해주세요
-              </Link>
-            )}
-          </S.H2Size20>
+        {isLoggedIn ? (
+          <S.MyProfile>
+            <S.MyAvatar><S.MyAvatarIcon aria-hidden="true"/></S.MyAvatar>
+            <S.MyProfileText>
+              <strong>{nickname}</strong>
+              {email && <span>{email}</span>}
+            </S.MyProfileText>
+          </S.MyProfile>
+        ) : (
+          <S.MyLoginCard>
+            <S.MyLoginTitle>로그인하면 실종 신고를 올리고<br/>작성한 글을 모아 볼 수 있어요</S.MyLoginTitle>
+            <S.MyLoginButtons>
+              <S.MyLoginButton as={Link} href="/login" $primary>로그인</S.MyLoginButton>
+              <S.MyLoginButton as={Link} href="/signup">회원가입</S.MyLoginButton>
+            </S.MyLoginButtons>
+          </S.MyLoginCard>
+        )}
 
-          <S.LayOutSpaceBetween>
-            <TopMenuCard icon={<S.MembershipIcon/>} text="멤버십"/>
-            <TopMenuCard icon={<S.ApplicationIcon/>} text="입양신청"/>
-            <TopMenuCard icon={<S.MessageIcon/>} text="쪽지함"/>
-          </S.LayOutSpaceBetween>
-        </S.LoginLayout>
+        {/* 관심 동물: 입양 탭에서 하트를 누른 친구 (이 브라우저에 저장) */}
+        <S.MySection>
+          <S.MySectionHead>
+            <S.MySectionTitle>관심 동물</S.MySectionTitle>
+            {likedAnimals.length > 0 && <S.MySectionCount>{likedAnimals.length}마리</S.MySectionCount>}
+          </S.MySectionHead>
 
-        <S.Line/>
+          {likedAnimals.length === 0 ? (
+            <S.MyEmpty>
+              입양 탭에서 하트를 누르면 여기에 모여요. <Link href="/shelter">보호 중인 친구 보러 가기</Link>
+            </S.MyEmpty>
+          ) : (
+            <S.MyLikedStrip>
+              {likedAnimals.map((animal) => {
+                const imageUrl = toImageUrl(animal.imageUrl);
+                return (
+                  <S.MyLikedCard key={animal.id} as={Link} href={`/shelter/${animal.id}`}>
+                    {imageUrl ? (
+                      <S.MyLikedImage src={imageUrl} alt={`${animal.breed} 사진`}/>
+                    ) : (
+                      <S.MyLikedEmptyImage>사진 준비 중</S.MyLikedEmptyImage>
+                    )}
+                    <S.MyLikedName>{animal.breed} · {genderLabel[animal.gender] ?? animal.gender}</S.MyLikedName>
+                  </S.MyLikedCard>
+                );
+              })}
+            </S.MyLikedStrip>
+          )}
+        </S.MySection>
 
-        <S.LoginLayout>
-          <S.List>
-            <S.H3Size16>마이메뉴</S.H3Size16>
-            {!isLoggedIn && <ListItem icon={<S.MyPageAccountIcon/>} text="로그인" link="/login"/>}
-            <ListItem icon={<S.FavoriteIcon/>} text="관심 유기 동물"/>
-          </S.List>
-        </S.LoginLayout>
+        <S.MyBand/>
 
-        <S.Line/>
+        <S.MyMenu>
+          <S.MyMenuTitle>나의 활동</S.MyMenuTitle>
+          {activityMenus.map(renderMenu)}
 
-        <S.LoginLayout>
-          <S.List>
-            <S.H3Size16>정보</S.H3Size16>
-            <ListItem icon={<S.NoticeIcon/>} text="공지사항"/>
-            <ListItem icon={<S.HelpMenuIcon/>} text="자주하는 질문"/>
-            <ListItem icon={<S.ContactIcon/>} text="문의하기"/>
-          </S.List>
-        </S.LoginLayout>
+          <S.MyMenuTitle>이용안내</S.MyMenuTitle>
+          {guideMenus.map(renderMenu)}
 
-        <S.LoginLayout>
-          <S.List>
-            <S.H3Size16>SNS</S.H3Size16>
-            <ListItem icon={<S.InstagramIcon/>} text="어서찾아주개 인스타그램"/>
-            <ListItem icon={<S.BlogIcon/>} text="어서찾아주개 블로그"/>
-            <ListItem icon={<S.VideoIcon/>} text="어서찾아주개 유튜브"/>
-          </S.List>
-        </S.LoginLayout>
+          {isLoggedIn && <S.MyLogoutButton type="button" onClick={handleLogout}>로그아웃</S.MyLogoutButton>}
+        </S.MyMenu>
       </S.Container>
       <Footer/>
 
-      {/* 💡 커스텀 알럿 렌더링 영역 */}
       <CustomAlert
-      isOpen={alertConfig.isOpen}
-      message={alertConfig.message}
-      type={alertConfig.type}
-      onConfirm={alertConfig.onConfirm}/>
+      isOpen={isLogoutAlertOpen}
+      message="로그아웃 되었습니다."
+      type="success"
+      onConfirm={() => setIsLogoutAlertOpen(false)}/>
     </S.AppWrapper>
   );
-};
-
-function TopMenuCard({icon, text}: {icon: React.ReactNode; text: string}) {
-  return (
-    <S.MenuCardBox>
-      {icon}
-      <S.MenuCardText>{text}</S.MenuCardText>
-    </S.MenuCardBox>
-  );
-};
-
-function ListItem({icon, text, link}: {icon: React.ReactNode; text: string; link?: string}) {
-  const content = (
-    <S.ListItemWrapper>
-      <S.ListItemLeft>
-        {icon}
-        <S.ListItemText>{text}</S.ListItemText>
-      </S.ListItemLeft>
-      <S.ListChevron/>
-    </S.ListItemWrapper>
-  );
-
-  if (link) {
-    return <Link href={link}>{content}</Link>;
-  };
-  return content;
 };

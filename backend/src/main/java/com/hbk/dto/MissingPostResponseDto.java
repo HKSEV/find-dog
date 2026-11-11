@@ -33,7 +33,10 @@ this.age = post.getAge();
 this.weight = post.getWeight();
 this.color = post.getColor();
 this.rescueLocation = post.getRescueLocation();
-this.authorName = post.getAuthor() != null ? post.getAuthor().getUsername() : " 알수 없음";
+// 목록은 누구나 볼 수 있어서 실명(getUsername) 대신 닉네임을 보여줌
+this.authorName = post.getAuthor() != null && post.getAuthor().getNickname() != null && !post.getAuthor().getNickname().isBlank()
+        ? post.getAuthor().getNickname()
+        : "익명";
 this.mediaUrls = post.getMediaUrls();
 this.createdAt = post.getCreatedAt();
 }

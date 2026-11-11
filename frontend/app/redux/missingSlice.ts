@@ -27,6 +27,9 @@ interface MissingState {
   detail: MissingAnimal | null; // 상세 화면에서 보는 글
   detailLoading: boolean;
   detailError: string | null;
+  myPosts: MissingAnimal[]; // 마이 > 작성한 글
+  myPostsLoading: boolean;
+  myPostsError: string | null; // "UNAUTHORIZED"면 다시 로그인 필요
 }
 
 export const MISSING_PAGE_SIZE = 10;
@@ -39,7 +42,10 @@ const initialState: MissingState = {
   error: null,
   detail: null,
   detailLoading: false,
-  detailError: null
+  detailError: null,
+  myPosts: [],
+  myPostsLoading: false,
+  myPostsError: null
 };
 
 const toErrorMessage = (error: unknown, fallback: string) =>
@@ -72,6 +78,24 @@ export const fetchMissingPost = createAsyncThunk("missing/fetchMissingPost", asy
       return rejectWithValue("NOT_FOUND");
     };
     return rejectWithValue(toErrorMessage(error, "글을 불러오지 못했습니다."));
+  }
+});
+
+// 내가 쓴 실종/제보 글 (로그인 토큰 필요)
+export const fetchMyMissingPosts = createAsyncThunk("missing/fetchMyMissingPosts", async (_: void, {rejectWithValue}) => {
+  const token = localStorage.getItem("token");
+  if (!token) return rejectWithValue("UNAUTHORIZED");
+
+  try {
+    const response = await axios.get("/api/missing-posts/mine", {
+      headers: {Authorization: `Bearer ${token}`}
+    });
+    return response.data as MissingAnimal[];
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403)) {
+      return rejectWithValue("UNAUTHORIZED");
+    };
+    return rejectWithValue(toErrorMessage(error, "작성한 글을 불러오지 못했습니다."));
   }
 });
 
@@ -115,6 +139,21 @@ export const missingSlice = createSlice({
         state.detailLoading = false;
         state.detail = null;
         state.detailError = action.payload as string;
+      });
+
+    builder
+      .addCase(fetchMyMissingPosts.pending, (state) => {
+        state.myPostsLoading = true;
+        state.myPostsError = null;
+      })
+      .addCase(fetchMyMissingPosts.fulfilled, (state, action) => {
+        state.myPostsLoading = false;
+        state.myPosts = action.payload;
+      })
+      .addCase(fetchMyMissingPosts.rejected, (state, action) => {
+        state.myPostsLoading = false;
+        state.myPosts = [];
+        state.myPostsError = action.payload as string;
       });
   }
 });
