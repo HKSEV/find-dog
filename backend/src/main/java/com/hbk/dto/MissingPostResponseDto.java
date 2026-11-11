@@ -4,6 +4,7 @@ import com.hbk.entity.MissingPost;
 
 import lombok.Getter;
 import com.hbk.domain.PostStatus;
+import com.hbk.domain.PostType;
 
 
 import java.time.LocalDateTime;
@@ -14,6 +15,8 @@ public class MissingPostResponseDto {
 private Long id;
 private String title, content, breed, gender, age, weight, color, rescueLocation, authorName;
 private PostStatus status;
+private PostType type;
+private LocalDateTime occurredAt;
 private List<String> mediaUrls;
 private LocalDateTime createdAt;
 
@@ -39,5 +42,7 @@ this.authorName = post.getAuthor() != null && post.getAuthor().getNickname() != 
         : "익명";
 this.mediaUrls = post.getMediaUrls();
 this.createdAt = post.getCreatedAt();
+this.type = post.getType() != null ? post.getType() : PostType.LOST;
+this.occurredAt = post.getOccurredAt();
 }
 }
