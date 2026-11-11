@@ -89,7 +89,7 @@ export default function ShelterAnimalDetail() {
               <S.DetailFact><dt>성별</dt><dd>{gender}</dd></S.DetailFact>
               <S.DetailFact><dt>상태</dt><dd>{status}</dd></S.DetailFact>
               <S.DetailFact><dt>공고일</dt><dd>{regDate}</dd></S.DetailFact>
-              <S.DetailFact $wide><dt>구조 장소</dt><dd>{animal.rescueLocation}</dd></S.DetailFact>
+              <S.DetailFact $span={2}><dt>구조 장소</dt><dd>{animal.rescueLocation}</dd></S.DetailFact>
             </S.DetailFacts>
           </S.DetailSection>
 

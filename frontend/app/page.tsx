@@ -7,6 +7,7 @@ import { AppDispatch, RootState } from "./store/store";
 import { fetchCampaigns, fetchHomeExtras } from "./redux/homeSlice";
 import { fetchMissingAnimals } from "./redux/missingSlice";
 import { fetchShelterAnimals } from "./redux/shelterSlice";
+import { timeAgo } from "./missing/missingFormat";
 
 import {
   Campaign as CampaignIcon,
@@ -33,15 +34,6 @@ const toImageUrl = (url?: string) => (url && url.startsWith("/uploads/") ? `http
 
 // "2026-11-07" -> "11.07"
 const toMonthDay = (date: string) => (date ? date.substring(5, 10).replace("-", ".") : "");
-
-// 작성 시각 -> "N분 전", "N시간 전", "N일 전"
-const timeAgo = (iso: string) => {
-  if (!iso) return "";
-  const minutes = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
-  if (minutes < 60) return `${Math.max(minutes, 1)}분 전`;
-  if (minutes < 60 * 24) return `${Math.floor(minutes / 60)}시간 전`;
-  return `${Math.floor(minutes / (60 * 24))}일 전`;
-};
 
 // 로고의 처진 귀 모양을 섹션 제목 표시로 사용
 const EarMark = () => (
@@ -78,7 +70,7 @@ export default function HomePage() {
 
   // 컴포넌트 마운트 시 데이터 로드 (캠페인은 해시태그 없이 전체)
   useEffect(() => {
-    dispatch(fetchMissingAnimals());
+    dispatch(fetchMissingAnimals(undefined));
     dispatch(fetchShelterAnimals());
     dispatch(fetchCampaigns(""));
     dispatch(fetchHomeExtras());
@@ -132,7 +124,7 @@ export default function HomePage() {
           ) : (
             <S.HomeList>
               {recentMissing.map((post) => (
-                <S.HomeListRow key={post.id} as={Link} href="/missing">
+                <S.HomeListRow key={post.id} as={Link} href={`/missing/${post.id}`}>
                   {post.mediaUrls && post.mediaUrls.length > 0 ? (
                     <S.HomeListThumb src={toImageUrl(post.mediaUrls[0])} alt={`${post.breed} 사진`}/>
                   ) : (

@@ -6,6 +6,7 @@ export * from "./Home.styles";
 export * from "./Location.styles";
 export * from "./Login.styles";
 export * from "./Missing.styles";
+export * from "./MissingBoard.styles";
 export * from "./MissingReport.styles";
 export * from "./MyPage.styles";
 export * from "./Shelter.styles";

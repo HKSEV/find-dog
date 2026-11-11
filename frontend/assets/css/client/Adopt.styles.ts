@@ -94,6 +94,10 @@ export const AdoptCardLink = styled.a`
   display: block;
   color: ${colors.gray900};
   text-decoration: none;
+
+  &:hover {
+    color: ${colors.gray900}; /* 전역 a:hover 파란색 대신 */
+  }
 `;
 
 export const AdoptPhotoWrap = styled.span`
@@ -289,8 +293,8 @@ export const DetailFacts = styled.dl`
   background-color: ${colors.border};
 `;
 
-export const DetailFact = styled.div<{$wide?: boolean}>`
-  grid-column: ${({$wide}) => ($wide ? "span 2" : "auto")};
+export const DetailFact = styled.div<{$span?: number}>`
+  grid-column: ${({$span}) => ($span ? `span ${$span}` : "auto")};
   min-width: 0;
   padding: 12px;
   background-color: ${colors.white};
