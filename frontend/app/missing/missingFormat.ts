@@ -40,6 +40,17 @@ export const timeAgo = (iso?: string) => {
   return iso.substring(5, 10).replace("-", ".");
 };
 
-// 성별 · 나이 · 체중 · 털색 (비어 있는 값은 빼고)
-export const missingTraits = (post: MissingAnimal) =>
-  [post.gender, post.age, post.weight, post.color].filter(Boolean).join(" · ");
+// 저장값 "미상"은 화면에서 "성별 모름"으로
+export const genderText = (gender?: string) => (gender === "미상" ? "성별 모름" : gender ?? "");
+
+// 목록 한 줄 특징: 제목에 이미 품종·털색이 있으면 빼고 보여줌
+export const missingRowTraits = (post: MissingAnimal) => {
+  const title = post.title ?? "";
+  return [
+    post.breed && !title.includes(post.breed) ? post.breed : "",
+    genderText(post.gender),
+    post.age,
+    post.weight,
+    post.color && !title.includes(post.color) ? post.color : ""
+  ].filter(Boolean).join(" · ");
+};

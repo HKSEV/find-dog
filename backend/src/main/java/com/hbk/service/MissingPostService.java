@@ -65,12 +65,12 @@ public class MissingPostService {
 
         PostType type = requestDto.getType() != null ? requestDto.getType() : PostType.LOST;
 
-        // 시안에는 제목 칸이 없어서, 비어 있으면 종류와 품종으로 만듦 (예: "실종 · 비글 믹스")
+        // 시안에는 제목 칸이 없어서, 비어 있으면 품종과 털색·특징으로 만듦 (예: "비글 믹스 · 노란 스카프")
         String title = requestDto.getTitle();
         if (title == null || title.isBlank()) {
-            String kind = type == PostType.FOUND ? "목격" : "실종";
             String breed = requestDto.getBreed() != null && !requestDto.getBreed().isBlank() ? requestDto.getBreed() : "품종 모름";
-            title = kind + " · " + breed;
+            String color = requestDto.getColor();
+            title = color != null && !color.isBlank() ? breed + " · " + color : breed;
         }
 
         MissingPost post = new MissingPost();

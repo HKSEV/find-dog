@@ -8,7 +8,7 @@ import { AppDispatch, RootState } from "../../store/store";
 import { fetchMissingPost } from "../../redux/missingSlice";
 import { setActiveTab } from "../../redux/shelterSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
-import { formatWhen, missingBadge, placeLabel, timeAgo, whenLabel } from "../missingFormat";
+import { formatWhen, genderText, missingBadge, placeLabel, timeAgo, whenLabel } from "../missingFormat";
 
 import Header from "@/app/components/Header";
 import * as S from "@/assets/css/Style.styles";
@@ -58,12 +58,11 @@ export default function MissingPostDetail() {
   const photos = (post.mediaUrls ?? []).map((url) => toImageUrl(url)).filter((url): url is string => Boolean(url));
   const facts = [
     {label: "품종", value: post.breed},
-    {label: "성별", value: post.gender},
+    {label: "성별", value: genderText(post.gender)},
     {label: "나이", value: post.age},
     {label: "체중", value: post.weight},
     {label: "털색", value: post.color},
-    {label: whenLabel(post.type), value: formatWhen(post.occurredAt)},
-    {label: "등록", value: timeAgo(post.createdAt)}
+    {label: whenLabel(post.type), value: formatWhen(post.occurredAt)}
   ].filter((fact) => fact.value);
 
   // 3칸 격자의 마지막 줄이 비지 않게, 마지막 칸이 남은 자리를 채움
@@ -92,7 +91,7 @@ export default function MissingPostDetail() {
           <S.DetailSection>
             <S.MissingBadge $tone={missingBadge(post).tone}>{missingBadge(post).label}</S.MissingBadge>
             <S.DetailTitle>{post.title || post.breed}</S.DetailTitle>
-            {author && <S.DetailNotice>작성자 {author}</S.DetailNotice>}
+            <S.DetailNotice>{[author && `작성자 ${author}`, timeAgo(post.createdAt)].filter(Boolean).join(" · ")}</S.DetailNotice>
 
             {facts.length > 0 && (
               <S.DetailFacts>

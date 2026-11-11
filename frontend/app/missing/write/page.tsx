@@ -98,8 +98,11 @@ function MissingWriteForm() {
 
     setSubmitting(true);
     try {
+      // 시안처럼 제목은 "품종 · 털색·특징" (예: 비글 믹스 · 노란 스카프)
+      const title = [form.breed.trim() || "품종 모름", form.color.trim()].filter(Boolean).join(" · ");
       const dto = {
         type: kind,
+        title,
         breed: form.breed.trim(),
         color: form.color.trim(),
         gender: form.gender,
