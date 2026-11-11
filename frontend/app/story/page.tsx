@@ -120,10 +120,10 @@ export default function StoryPage() {
   return (
     <S.AppWrapper>
       {/* 상단 헤더 */}
-      <Header title="커뮤니티"/>
+      <Header title="커뮤니티" isTab/>
 
       <S.Container>
-        <S.Mt70/>
+        <S.HeaderOffset/>
 
         {/* 이야기 / 질문·정보 / 나눔 */}
         <S.CommunityTabs role="tablist" aria-label="커뮤니티 메뉴">

@@ -169,8 +169,8 @@ export default function SignupPage() {
   return (
     <S.AppWrapper>
       <S.Container>
-        <Header title="회원가입" onBackClick={() => (step > 0 ? dispatch(setStep(step - 1)) : window.history.back())}/>
-        <S.Mt70/>
+        <Header title="회원가입" onBackClick={() => (step > 0 ? dispatch(setStep(step - 1)) : window.history.back())} onClose={() => window.history.back()}/>
+        <S.HeaderOffset/>
 
         {/* STEP 0: 가입 방식 선택 */}
         {step === 0 && (
@@ -250,7 +250,7 @@ export default function SignupPage() {
                 if (!formData.agreeTerms || !formData.agreePrivacy || !formData.agreeAge) {
                   return showAlert("필수 약관에 모두 동의해 주세요.", "error");
                 };
-                dispatch(setStep(3));
+                dispatch(setStep(2));
               }}>
                 다음으로
               </S.BaseBtn>
@@ -258,8 +258,8 @@ export default function SignupPage() {
           </S.BasicLayout>
         )}
 
-        {/* STEP 3: 정보 입력 */}
-        {step === 3 && (
+        {/* STEP 2: 정보 입력 (예전 3번이라 뒤로 누르면 없는 2번으로 가서 빈 화면이 됐음) */}
+        {step === 2 && (
           <S.LayOutPadding>
             <S.SignupAnimItem $delay={0} $isSlideDown>
               <S.TextCenter>

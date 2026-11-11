@@ -11,6 +11,9 @@ import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import * as S from "@/assets/css/Style.styles";
 
+// 💡 실종 글 상태를 화면에 보여줄 한글 이름 (StatusBadge 색은 "실종"일 때 빨강)
+const statusLabel: Record<string, string> = {MISSING: "찾는 중", COMPLETED: "찾았어요"};
+
 export default function MissingReportPage() {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -32,7 +35,8 @@ export default function MissingReportPage() {
 
   return (
     <S.Container>
-      <Header title="실종 / 제보"/>
+      <Header title="실종·제보" isTab/>
+      <S.HeaderOffset/>
 
       {/* 카드 리스트 영역 */}
       <S.CardGrid>
@@ -44,13 +48,17 @@ export default function MissingReportPage() {
           animalList.map((item) => (
             <S.Card key={item.id}>
               <S.ImageContainer>
-                <S.CardImage
-                src={item.mediaUrls && item.mediaUrls.length > 0 ? item.mediaUrls[0] : "https://placehold.co/300x300"}
-                alt={item.breed}/>
+                {item.mediaUrls && item.mediaUrls.length > 0 ? (
+                  <S.CardImage src={item.mediaUrls[0]} alt={item.breed}/>
+                ) : (
+                  <S.MissingPhotoEmpty>사진 없음</S.MissingPhotoEmpty>
+                )}
               </S.ImageContainer>
               <S.CardBody>
                 <S.InfoRow>
-                  <S.StatusBadge status={item.status}>{item.status}</S.StatusBadge>
+                  <S.StatusBadge status={item.status === "MISSING" ? "실종" : "완료"}>
+                    {statusLabel[item.status] ?? item.status}
+                  </S.StatusBadge>
                   <S.BreedName>{item.breed}</S.BreedName>
                 </S.InfoRow>
                 <S.MetaInfo>

@@ -107,7 +107,7 @@ export default function HomePage() {
     <S.AppWrapper>
       <Header isMain={true}/>
       <S.Container>
-        <S.Mt70/>
+        <S.HeaderOffset/>
 
         {/* 잃어버렸어요 / 발견했어요 */}
         <S.HomeEntryGrid>

@@ -57,9 +57,9 @@ export default function MyPage() {
 
   return (
     <S.AppWrapper>
-      <Header title="마이메뉴"/>
+      <Header title="마이페이지" isTab/>
       <S.Container>
-        <S.Mt70/>
+        <S.HeaderOffset/>
 
         <S.LoginLayout>
           <S.H2Size20>
@@ -78,7 +78,7 @@ export default function MyPage() {
           </S.H2Size20>
 
           <S.LayOutSpaceBetween>
-            <TopMenuCard icon={<S.MembershipIcon/>} text="맴버십"/>
+            <TopMenuCard icon={<S.MembershipIcon/>} text="멤버십"/>
             <TopMenuCard icon={<S.ApplicationIcon/>} text="입양신청"/>
             <TopMenuCard icon={<S.MessageIcon/>} text="쪽지함"/>
           </S.LayOutSpaceBetween>
