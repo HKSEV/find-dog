@@ -7,7 +7,7 @@ import {
   SearchRounded as SearchIcon
 } from "@mui/icons-material";
 import styled from "styled-components";
-import { colors } from "./theme";
+import { colors, fontWeight, fluid } from "./theme";
 
 // 💡 입양·봉사 탭 > 입양 목록, 동물 상세 (디자인 개편 시안 기준)
 
@@ -30,7 +30,7 @@ export const AdoptSubTab = styled.button<{$active?: boolean}>`
   background: transparent;
   color: ${({$active}) => ($active ? colors.gray900 : colors.gray500)};
   font-size: 15px;
-  font-weight: ${({$active}) => ($active ? 800 : 500)};
+  font-weight: ${({$active}) => ($active ? fontWeight.bold : fontWeight.medium)};
   cursor: pointer;
 `;
 
@@ -137,7 +137,7 @@ export const AdoptDoneBadge = styled.span`
   background-color: rgba(31, 27, 26, 0.72);
   color: ${colors.white};
   font-size: 11px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
 `;
 
 export const AdoptCardTitle = styled.span`
@@ -145,7 +145,7 @@ export const AdoptCardTitle = styled.span`
   overflow: hidden;
   margin-top: 8px;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
@@ -285,20 +285,20 @@ export const DetailKicker = styled.span<{$done?: boolean}>`
   background-color: ${({$done}) => ($done ? colors.bgSubtle : colors.brandBg)};
   color: ${({$done}) => ($done ? colors.gray800 : colors.brand)};
   font-size: 12px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
 `;
 
 export const DetailTitle = styled.h1`
   margin: 10px 0 0;
-  font-size: 26px;
-  font-weight: 800;
+  font-size: ${fluid(22, 26)};
+  font-weight: ${fontWeight.bold};
   letter-spacing: -0.6px;
   color: ${colors.gray900};
 
   span {
     margin-left: 4px;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: ${fontWeight.medium};
     color: ${colors.gray500};
   }
 `;
@@ -336,7 +336,7 @@ export const DetailFact = styled.div<{$span?: number}>`
     margin: 2px 0 0;
     overflow-wrap: anywhere;
     font-size: 15px;
-    font-weight: 700;
+    font-weight: ${fontWeight.semibold};
     color: ${colors.gray900};
   }
 `;
@@ -344,7 +344,7 @@ export const DetailFact = styled.div<{$span?: number}>`
 export const DetailHeading = styled.h2`
   margin: 0;
   font-size: 17px;
-  font-weight: 800;
+  font-weight: ${fontWeight.bold};
   color: ${colors.gray900};
 `;
 
@@ -380,7 +380,7 @@ export const DetailStep = styled.li<{$first?: boolean}>`
     border-radius: 999px;
     background-color: ${({$first}) => ($first ? colors.brand : colors.bgSubtle)};
     color: ${({$first}) => ($first ? colors.white : colors.gray800)};
-    font-weight: 700;
+    font-weight: ${fontWeight.semibold};
   }
 `;
 
@@ -424,7 +424,7 @@ export const DetailApplyButton = styled.button`
   background-color: ${colors.brand};
   color: ${colors.white};
   font-size: 16px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   cursor: pointer;
 
   &:disabled {

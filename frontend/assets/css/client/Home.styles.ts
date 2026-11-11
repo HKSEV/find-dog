@@ -1,7 +1,7 @@
 "use client";
 
 import styled from "styled-components";
-import { colors } from "./theme";
+import { colors, fontWeight, fluid } from "./theme";
 
 // 💡 홈 화면 (디자인 개편 시안 기준)
 
@@ -35,7 +35,7 @@ export const HomeEntryButton = styled.a<{$primary?: boolean}>`
   strong {
     position: relative;
     font-size: 16px;
-    font-weight: 800;
+    font-weight: ${fontWeight.semibold};
     letter-spacing: -0.3px;
   }
 
@@ -72,8 +72,8 @@ export const HomeSectionTitle = styled.h2`
   align-items: center;
   gap: 8px;
   margin: 0;
-  font-size: 19px;
-  font-weight: 800;
+  font-size: ${fluid(17, 19)};
+  font-weight: ${fontWeight.bold};
   letter-spacing: -0.4px;
   color: ${colors.gray900};
 `;
@@ -154,7 +154,7 @@ export const HomeListBody = styled.span`
 export const HomeListTitle = styled.span`
   overflow: hidden;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
@@ -169,7 +169,7 @@ export const HomeListMeta = styled.span`
 
 export const HomeKicker = styled.span<{$tone?: "brand" | "danger"}>`
   font-size: 11px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   color: ${({$tone}) => ($tone === "danger" ? colors.danger : colors.brand)};
 `;
 
@@ -180,7 +180,7 @@ export const HomeStatusBadge = styled.span<{$done?: boolean}>`
   background-color: ${({$done}) => ($done ? colors.bgSubtle : colors.danger)};
   color: ${({$done}) => ($done ? colors.gray800 : colors.white)};
   font-size: 11px;
-  font-weight: 800;
+  font-weight: ${fontWeight.semibold};
 `;
 
 // 새 가족을 기다려요 (가로 사진 줄)
@@ -231,7 +231,7 @@ export const HomeAnimalName = styled.span`
   overflow: hidden;
   margin-top: 8px;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
@@ -259,7 +259,7 @@ export const HomeSeeAllTile = styled.a`
   background-color: ${colors.brandBg};
   color: ${colors.gray900};
   font-size: 15px;
-  font-weight: 800;
+  font-weight: ${fontWeight.semibold};
   line-height: 1.4;
   text-align: center;
   text-decoration: none;

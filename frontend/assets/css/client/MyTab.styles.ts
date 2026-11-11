@@ -5,7 +5,7 @@ import {
   PersonOutlineRounded as PersonIcon
 } from "@mui/icons-material";
 import styled from "styled-components";
-import { colors } from "./theme";
+import { colors, fontWeight } from "./theme";
 
 // 💡 마이 탭 (디자인 개편 시안 기준)
 
@@ -21,7 +21,7 @@ export const MyLoginCard = styled.section`
 export const MyLoginTitle = styled.p`
   margin: 0;
   font-size: 17px;
-  font-weight: 800;
+  font-weight: ${fontWeight.bold};
   line-height: 1.45;
 `;
 
@@ -41,7 +41,7 @@ export const MyLoginButton = styled.a<{$primary?: boolean}>`
   background-color: ${({$primary}) => ($primary ? colors.brand : colors.white)};
   color: ${({$primary}) => ($primary ? colors.white : colors.gray900)};
   font-size: 15px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   text-decoration: none;
 
   &:hover {
@@ -83,7 +83,7 @@ export const MyProfileText = styled.span`
     display: block;
     overflow: hidden;
     font-size: 18px;
-    font-weight: 800;
+    font-weight: ${fontWeight.bold};
     white-space: nowrap;
     text-overflow: ellipsis;
   }
@@ -114,7 +114,7 @@ export const MySectionHead = styled.div`
 export const MySectionTitle = styled.h2`
   margin: 0;
   font-size: 18px;
-  font-weight: 800;
+  font-weight: ${fontWeight.bold};
   color: ${colors.gray900};
 `;
 
@@ -132,7 +132,7 @@ export const MyEmpty = styled.p`
 
   a {
     color: ${colors.brand};
-    font-weight: 700;
+    font-weight: ${fontWeight.semibold};
   }
 `;
 
@@ -184,7 +184,7 @@ export const MyLikedName = styled.span`
   overflow: hidden;
   margin-top: 6px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
@@ -203,7 +203,7 @@ export const MyMenu = styled.section`
 export const MyMenuTitle = styled.h2`
   margin: 16px 0 4px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   color: ${colors.gray500};
 `;
 

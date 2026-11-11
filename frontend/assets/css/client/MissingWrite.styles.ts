@@ -5,7 +5,7 @@ import {
   CloseRounded as CloseIcon
 } from "@mui/icons-material";
 import styled from "styled-components";
-import { colors } from "./theme";
+import { colors, fontWeight } from "./theme";
 
 // 💡 실종·제보 글쓰기 (디자인 개편 시안 3번 "신고·제보하기")
 
@@ -38,7 +38,7 @@ export const WriteKindButton = styled.button<{$checked?: boolean}>`
 
   strong {
     font-size: 15px;
-    font-weight: 800;
+    font-weight: ${fontWeight.semibold};
   }
 
   span {
@@ -62,11 +62,11 @@ export const WriteRow = styled.div`
 
 export const WriteLabel = styled.label`
   font-size: 13px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   color: ${colors.gray900};
 
   span {
-    font-weight: 400;
+    font-weight: ${fontWeight.regular};
     color: ${colors.gray500};
   }
 `;
@@ -126,7 +126,7 @@ export const WriteChoice = styled.button<{$checked?: boolean}>`
   background-color: ${({$checked}) => ($checked ? colors.brandBg : colors.white)};
   color: ${({$checked}) => ($checked ? colors.brand : colors.gray800)};
   font-size: 14px;
-  font-weight: ${({$checked}) => ($checked ? 700 : 400)};
+  font-weight: ${({$checked}) => ($checked ? fontWeight.semibold : fontWeight.regular)};
   cursor: pointer;
 `;
 
@@ -234,7 +234,7 @@ export const WriteSubmit = styled.button`
   background-color: ${colors.brand};
   color: ${colors.white};
   font-size: 16px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   cursor: pointer;
 
   &:disabled {
@@ -254,7 +254,7 @@ export const WriteLoginNotice = styled.div`
   p {
     margin: 0;
     font-size: 16px;
-    font-weight: 800;
+    font-weight: ${fontWeight.semibold};
     line-height: 1.5;
   }
 
@@ -268,7 +268,7 @@ export const WriteLoginNotice = styled.div`
     background-color: ${colors.brand};
     color: ${colors.white};
     font-size: 15px;
-    font-weight: 700;
+    font-weight: ${fontWeight.semibold};
     text-decoration: none;
   }
 

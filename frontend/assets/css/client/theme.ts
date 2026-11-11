@@ -31,3 +31,18 @@ export const colors = {
   bgLight: "#f9f9f9",      // (예전 #f8f9fa 포함)
   bgMuted: "#e4e5e7",      // 프로필 사진 자리
 } as const;
+
+// 💡 글자 굵기 3단계 (+ 보조 500)
+//    제목(화면·섹션, 17px 이상)은 bold, 카드 이름·버튼·배지는 semibold, 본문·설명은 regular
+//    800은 쓰지 않음 (작은 화면에서 글자가 뭉쳐 보임)
+export const fontWeight = {
+  regular: 400,
+  medium: 500,
+  semibold: 600,
+  bold: 700
+} as const;
+
+// 💡 큰 제목 크기: 화면 폭 430px 이상에서는 max, 좁아지면 줄어들되 min 아래로는 안 내려감
+//    예: fluid(22, 26) -> 375px(아이폰 미니)에서 22px, 430px 이상에서 26px
+export const fluid = (min: number, max: number) =>
+  `clamp(${min}px, ${(max / 4.3).toFixed(2)}vw, ${max}px)`;

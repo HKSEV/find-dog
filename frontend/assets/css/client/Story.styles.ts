@@ -1,7 +1,7 @@
 "use client";
 
 import styled from "styled-components";
-import { colors } from "./theme";
+import { colors, fontWeight } from "./theme";
 
 // 💡 커뮤니티 탭 (디자인 개편 시안 기준)
 
@@ -20,7 +20,7 @@ export const CommunityTab = styled.button<{$active: boolean}>`
   border-bottom: 2px solid ${({$active}) => ($active ? colors.brand : "transparent")};
   background: transparent;
   font-size: 15px;
-  font-weight: ${({$active}) => ($active ? 800 : 500)};
+  font-weight: ${({$active}) => ($active ? fontWeight.bold : fontWeight.medium)};
   color: ${({$active}) => ($active ? colors.gray900 : colors.gray500)};
   cursor: pointer;
 `;
@@ -46,7 +46,7 @@ export const CategoryChip = styled.button<{$active: boolean}>`
   background-color: ${({$active}) => ($active ? colors.brand : colors.bgSubtle)};
   color: ${({$active}) => ($active ? colors.white : colors.gray800)};
   font-size: 13px;
-  font-weight: 600;
+  font-weight: ${fontWeight.semibold};
   cursor: pointer;
 `;
 
@@ -65,7 +65,7 @@ export const StorySectionHead = styled.div`
 export const StorySectionTitle = styled.h2`
   margin: 0;
   font-size: 18px;
-  font-weight: 800;
+  font-weight: ${fontWeight.bold};
   color: ${colors.gray900};
 `;
 
@@ -121,7 +121,7 @@ export const StoryNewsBody = styled.div`
 
 export const StoryNewsTitle = styled.span`
   font-size: 15px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   line-height: 1.4;
   color: ${colors.gray900};
 `;
@@ -193,6 +193,6 @@ export const StoryVideoTitle = styled.span`
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: ${fontWeight.semibold};
   line-height: 1.4;
 `;

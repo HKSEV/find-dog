@@ -1,7 +1,7 @@
 "use client";
 
 import styled from "styled-components";
-import { colors } from "./theme";
+import { colors, fontWeight, fluid } from "./theme";
 
 // 💡 입양·봉사 탭 > 봉사·후원, 보호소 (디자인 개편 시안 기준)
 
@@ -17,8 +17,8 @@ export const VolunteerSectionHead = styled.div`
 
 export const VolunteerSectionTitle = styled.h2`
   margin: 0;
-  font-size: 19px;
-  font-weight: 800;
+  font-size: ${fluid(17, 19)};
+  font-weight: ${fontWeight.bold};
   letter-spacing: -0.4px;
   color: ${colors.gray900};
 `;
@@ -120,7 +120,7 @@ export const VolunteerHelpBody = styled.span`
 export const VolunteerHelpTitle = styled.span`
   overflow: hidden;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
@@ -136,7 +136,7 @@ export const VolunteerHelpSummary = styled.span`
 export const VolunteerHelpToggle = styled.span`
   flex: none;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   color: ${colors.brand};
 `;
 
@@ -169,7 +169,7 @@ export const VolunteerTag = styled.button<{$active?: boolean}>`
   background-color: ${({$active}) => ($active ? colors.brand : colors.bgSubtle)};
   color: ${({$active}) => ($active ? colors.white : colors.gray800)};
   font-size: 13px;
-  font-weight: ${({$active}) => ($active ? 700 : 500)};
+  font-weight: ${({$active}) => ($active ? fontWeight.semibold : fontWeight.regular)};
   cursor: pointer;
 `;
 
@@ -229,7 +229,7 @@ export const VolunteerCampaignBody = styled.span`
 
 export const VolunteerCampaignTitle = styled.span`
   font-size: 15px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   line-height: 1.4;
 `;
 
@@ -266,7 +266,7 @@ export const SupportCard = styled.button<{$primary?: boolean}>`
 
   strong {
     font-size: 15px;
-    font-weight: 800;
+    font-weight: ${fontWeight.semibold};
   }
 
   span {
