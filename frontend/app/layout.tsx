@@ -43,6 +43,14 @@ const adminEntryGuard = String.raw`
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="ko">
+      <head>
+        {/* 💡 GlobalStyles의 첫 글꼴 Pretendard를 실제로 불러옴. 없으면 기기마다 다른 기본 글꼴로 보임
+            (dynamic-subset: 화면에 쓰인 글자 묶음만 그때그때 받아서 가벼움) */}
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous"/>
+        <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css"/>
+      </head>
       <body id="page-top">
         <Script id="admin-entry-guard" strategy="beforeInteractive">
           {adminEntryGuard}
