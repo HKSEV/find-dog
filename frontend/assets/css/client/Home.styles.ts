@@ -1,7 +1,7 @@
 "use client";
 
 import styled from "styled-components";
-import { colors } from "./theme";
+import { colors, fontWeight, fluid } from "./theme";
 
 // 💡 홈 화면 (디자인 개편 시안 기준)
 
@@ -13,26 +13,51 @@ export const HomeEntryGrid = styled.div`
   padding: 8px 20px 0;
 `;
 
+// 제목(위) + 짧은 꼬리말(아래), 오른쪽 아래로 잘려 나가는 큰 흐린 아이콘 (시안 C4)
 export const HomeEntryButton = styled.a<{$primary?: boolean}>`
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 16px;
+  justify-content: space-between;
+  height: 80px;
+  box-sizing: border-box;
+  padding: 14px 16px;
   border-radius: 14px;
   background-color: ${({$primary}) => ($primary ? colors.brand : colors.brandBg)};
   color: ${({$primary}) => ($primary ? colors.white : colors.gray900)};
-  font-size: 16px;
-  font-weight: 800;
   text-decoration: none;
 
+  &:hover {
+    color: ${({$primary}) => ($primary ? colors.white : colors.gray900)}; /* 전역 a:hover 파란색 대신 */
+  }
+
+  strong {
+    position: relative;
+    font-size: 16px;
+    font-weight: ${fontWeight.semibold};
+    letter-spacing: -0.3px;
+  }
+
+  small {
+    position: relative;
+    font-size: 12px;
+    color: ${({$primary}) => ($primary ? "rgba(255, 255, 255, 0.85)" : colors.brand)};
+  }
+
+  /* 장식 아이콘 */
   svg {
-    font-size: 24px;
+    position: absolute;
+    right: -10px;
+    bottom: -12px;
+    font-size: 64px;
+    color: ${({$primary}) => ($primary ? "rgba(255, 255, 255, 0.18)" : "rgba(138, 78, 75, 0.15)")};
   }
 `;
 
 // 섹션 공통
 export const HomeSection = styled.section`
-  padding: 26px 0 0;
+  padding: 24px 0 0;
 `;
 
 export const HomeSectionHead = styled.div`
@@ -47,8 +72,8 @@ export const HomeSectionTitle = styled.h2`
   align-items: center;
   gap: 8px;
   margin: 0;
-  font-size: 19px;
-  font-weight: 800;
+  font-size: ${fluid(17, 19)};
+  font-weight: ${fontWeight.bold};
   letter-spacing: -0.4px;
   color: ${colors.gray900};
 `;
@@ -87,8 +112,9 @@ export const HomePhotoPlaceholder = styled.span<{$size: string}>`
 `;
 
 // 목록형 한 줄 (실종 신고, 함께 도와주세요)
+// 섹션 제목과 첫 줄 사이: 10px + 줄 안쪽 여백 12px
 export const HomeList = styled.div`
-  padding: 6px 20px 0;
+  padding: 10px 20px 0;
 `;
 
 export const HomeListRow = styled.a`
@@ -128,7 +154,7 @@ export const HomeListBody = styled.span`
 export const HomeListTitle = styled.span`
   overflow: hidden;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
@@ -143,7 +169,7 @@ export const HomeListMeta = styled.span`
 
 export const HomeKicker = styled.span<{$tone?: "brand" | "danger"}>`
   font-size: 11px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   color: ${({$tone}) => ($tone === "danger" ? colors.danger : colors.brand)};
 `;
 
@@ -154,14 +180,14 @@ export const HomeStatusBadge = styled.span<{$done?: boolean}>`
   background-color: ${({$done}) => ($done ? colors.bgSubtle : colors.danger)};
   color: ${({$done}) => ($done ? colors.gray800 : colors.white)};
   font-size: 11px;
-  font-weight: 800;
+  font-weight: ${fontWeight.semibold};
 `;
 
 // 새 가족을 기다려요 (가로 사진 줄)
 export const HomeStrip = styled.div`
   display: flex;
   gap: 12px;
-  padding: 14px 20px 4px;
+  padding: 22px 20px 4px; /* 섹션 제목과 사진 사이를 목록형 섹션과 같게 */
   overflow-x: auto;
 
   &::-webkit-scrollbar {
@@ -205,7 +231,7 @@ export const HomeAnimalName = styled.span`
   overflow: hidden;
   margin-top: 8px;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
@@ -233,7 +259,7 @@ export const HomeSeeAllTile = styled.a`
   background-color: ${colors.brandBg};
   color: ${colors.gray900};
   font-size: 15px;
-  font-weight: 800;
+  font-weight: ${fontWeight.semibold};
   line-height: 1.4;
   text-align: center;
   text-decoration: none;

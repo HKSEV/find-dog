@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { fetchMyMissingPosts } from "../../redux/missingSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
-import { missingStatusLabel, missingTraits, timeAgo } from "../../missing/missingFormat";
+import { missingBadge, missingRowTraits, timeAgo } from "../../missing/missingFormat";
 
 import Header from "@/app/components/Header";
 import * as S from "@/assets/css/Style.styles";
@@ -53,9 +53,9 @@ export default function MyPostsPage() {
             <S.MissingRowThumbEmpty>사진 없음</S.MissingRowThumbEmpty>
           )}
           <S.MissingRowBody>
-            <S.MissingBadge $done={done}>{missingStatusLabel[post.status] ?? post.status}</S.MissingBadge>
+            <S.MissingBadge $tone={missingBadge(post).tone}>{missingBadge(post).label}</S.MissingBadge>
             <S.MissingRowTitle>{post.title || post.breed}</S.MissingRowTitle>
-            <S.MissingRowTraits>{[post.breed, missingTraits(post)].filter(Boolean).join(" · ")}</S.MissingRowTraits>
+            <S.MissingRowTraits>{missingRowTraits(post)}</S.MissingRowTraits>
             <S.MissingRowMeta>{[post.rescueLocation, timeAgo(post.createdAt)].filter(Boolean).join(" · ")}</S.MissingRowMeta>
           </S.MissingRowBody>
         </S.MissingRow>

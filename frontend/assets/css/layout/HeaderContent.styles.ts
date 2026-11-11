@@ -8,6 +8,7 @@ import {
 } from "@mui/icons-material";
 import styled from "styled-components";
 import { None } from "@/assets/css/common/Placeholder.styles";
+import { fluid, fontWeight } from "@/assets/css/client/theme";
 
 export const HeaderActions = styled.div`
   && {
@@ -38,8 +39,8 @@ export const NotificationIcon = styled(NotificationsNoneIcon)`
 export const HeaderTabTitle = styled.h1`
   && {
     margin: 0;
-    font-size: 20px;
-    font-weight: 800;
+    font-size: ${fluid(18, 20)};
+    font-weight: ${fontWeight.bold};
     line-height: 36px;
     letter-spacing: -0.5px;
     color: #222;

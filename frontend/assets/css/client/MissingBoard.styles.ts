@@ -6,7 +6,7 @@ import {
   SearchRounded as SearchIcon
 } from "@mui/icons-material";
 import styled from "styled-components";
-import { colors } from "./theme";
+import { colors, fontWeight } from "./theme";
 
 // 💡 실종·제보 탭 목록 (디자인 개편 시안 기준)
 
@@ -121,20 +121,26 @@ export const MissingRowBody = styled.span`
   min-width: 0;
 `;
 
-export const MissingBadge = styled.span<{$done?: boolean}>`
+const badgeColors = {
+  lost: {bg: colors.danger, fg: colors.white},
+  found: {bg: colors.brandBg, fg: colors.brand},
+  done: {bg: colors.bgMuted, fg: colors.gray800}
+};
+
+export const MissingBadge = styled.span<{$tone: "lost" | "found" | "done"}>`
   align-self: flex-start;
   padding: 2px 6px;
   border-radius: 4px;
-  background-color: ${({$done}) => ($done ? colors.bgMuted : colors.danger)};
-  color: ${({$done}) => ($done ? colors.gray800 : colors.white)};
+  background-color: ${({$tone}) => badgeColors[$tone].bg};
+  color: ${({$tone}) => badgeColors[$tone].fg};
   font-size: 11px;
-  font-weight: 800;
+  font-weight: ${fontWeight.semibold};
 `;
 
 export const MissingRowTitle = styled.span`
   overflow: hidden;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
@@ -165,7 +171,7 @@ export const MissingEmptyText = styled.p`
 
   a {
     color: ${colors.brand};
-    font-weight: 700;
+    font-weight: ${fontWeight.semibold};
   }
 `;
 
@@ -179,7 +185,7 @@ export const MissingMoreButton = styled.button`
   background-color: ${colors.white};
   color: ${colors.gray800};
   font-size: 14px;
-  font-weight: 600;
+  font-weight: ${fontWeight.semibold};
   cursor: pointer;
 
   &:disabled {
@@ -205,8 +211,13 @@ export const MissingWriteFab = styled.button`
   box-shadow: 0 6px 16px rgba(94, 52, 50, 0.25);
   color: ${colors.white};
   font-size: 15px;
-  font-weight: 700;
+  font-weight: ${fontWeight.semibold};
+  text-decoration: none;
   cursor: pointer;
+
+  &:hover {
+    color: ${colors.white};
+  }
 `;
 
 export const MissingWritePlus = styled(PlusIcon)`

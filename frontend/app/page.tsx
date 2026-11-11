@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "./store/store";
 import { fetchCampaigns, fetchHomeExtras } from "./redux/homeSlice";
 import { fetchMissingAnimals } from "./redux/missingSlice";
-import { fetchShelterAnimals } from "./redux/shelterSlice";
+import { fetchShelterAnimals, setActiveTab } from "./redux/shelterSlice";
 import { timeAgo } from "./missing/missingFormat";
 
 import {
@@ -90,6 +90,9 @@ export default function HomePage() {
   const campaign = campaigns[0];
   const helps = needHelps.slice(0, HELP_COUNT);
 
+  // 함께 도와주세요 → 입양·봉사 탭의 봉사·후원 화면으로
+  const openVolunteerTab = () => dispatch(setActiveTab("봉사·후원"));
+
   // 💡 showSplash가 true일 때는 스플래시 화면만 렌더링
   if (showSplash) {
     return <SplashScreen/>;
@@ -103,15 +106,20 @@ export default function HomePage() {
 
         {/* 잃어버렸어요 / 발견했어요 */}
         <S.HomeEntryGrid>
-          <S.HomeEntryButton as={Link} href="/missing" $primary>
-            <CampaignIcon/>
-            잃어버렸어요
+          {/* 잃어버렸어요: 바로 실종 신고 글쓰기 / 발견했어요: 찾는 글이 있는지 목록부터 */}
+          <S.HomeEntryButton as={Link} href="/missing/write" $primary>
+            <strong>잃어버렸어요</strong>
+            <small>신고하기 ›</small>
+            <CampaignIcon aria-hidden="true"/>
           </S.HomeEntryButton>
           <S.HomeEntryButton as={Link} href="/missing">
-            <SeenIcon/>
-            발견했어요
+            <strong>발견했어요</strong>
+            <small>찾는 글 보기 ›</small>
+            <SeenIcon aria-hidden="true"/>
           </S.HomeEntryButton>
         </S.HomeEntryGrid>
+
+        <S.HomeBand/>
 
         {/* 최근 실종 신고 */}
         <S.HomeSection>
@@ -180,11 +188,12 @@ export default function HomePage() {
         {(campaign || helps.length > 0) && (
           <S.HomeSection>
             <S.HomeSectionHead>
-              <S.HomeSectionTitle>함께 도와주세요</S.HomeSectionTitle>
+              <S.HomeSectionTitle><EarMark/>함께 도와주세요</S.HomeSectionTitle>
+              <S.HomeMoreLink as={Link} href="/shelter" onClick={openVolunteerTab}>더보기</S.HomeMoreLink>
             </S.HomeSectionHead>
             <S.HomeList>
               {campaign && (
-                <S.HomeListRow as="div">
+                <S.HomeListRow as={Link} href="/shelter" onClick={openVolunteerTab}>
                   <S.HomeThumbWrap>
                     <S.HomeListThumb src={campaign.thumbnailUrl} alt=""/>
                     {campaign.mediaType !== "IMAGE" && (
@@ -198,7 +207,7 @@ export default function HomePage() {
                 </S.HomeListRow>
               )}
               {helps.map((help) => (
-                <S.HomeListRow key={help.id} as="div">
+                <S.HomeListRow key={help.id} as={Link} href="/shelter" onClick={openVolunteerTab}>
                   <S.HomeListThumb src={help.imageUrl} alt=""/>
                   <S.HomeListBody>
                     <S.HomeKicker $tone="danger">도움이 필요해요</S.HomeKicker>

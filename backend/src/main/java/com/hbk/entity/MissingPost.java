@@ -1,6 +1,7 @@
 package com.hbk.entity;
 
 import com.hbk.domain.PostStatus;
+import com.hbk.domain.PostType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +27,13 @@ public class MissingPost {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PostStatus status = PostStatus.MISSING;
+
+    // 잃어버렸어요(LOST) / 발견했어요(FOUND). 예전 글은 비어 있어서 LOST로 봄
+    @Enumerated(EnumType.STRING)
+    private PostType type;
+
+    // 잃어버린 때 / 발견한 때
+    private LocalDateTime occurredAt;
 
     private String breed;
     private String gender;

@@ -1,6 +1,7 @@
 package com.hbk.service;
 
 import com.hbk.domain.PostStatus;
+import com.hbk.domain.PostType;
 import com.hbk.dto.MissingPostRequestDto;
 import com.hbk.dto.MissingPostResponseDto;
 import com.hbk.entity.Member;
@@ -27,41 +28,54 @@ public class MissingPostService {
     private final MissingPostRepository missingPostRepository;
     private final MemberRepository memberRepository;
 
-    // 실종 신고글 작성 (DTO, 파일, 유저 이메일 수신)
+    public static final int MAX_PHOTOS = 5;
+
+    // 실종 신고글 작성 (DTO, 사진 여러 장, 유저 이메일 수신)
     @Transactional
     public MissingPostResponseDto createPost(
             MissingPostRequestDto requestDto,
-            MultipartFile file,
+            List<MultipartFile> files,
             String username
     ){
         // 1. 현재 로그인한 유저의 이메일을 기반으로 DB에서 유저 정보를 조회
         Member member = memberRepository.findByEmail(username)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 입니다"));
 
-        // 2. 파일이 존재할 경우 서버에 저장하고 URL을 DTO의 mediaUrls에 추가
-        if (file != null && !file.isEmpty()) {
+        // 2. 사진을 서버에 저장하고 주소를 mediaUrls에 추가 (/uploads/... 는 WebMvcConfig가 내려줌)
+        List<String> mediaUrls = new java.util.ArrayList<>();
+        if (requestDto.getMediaUrls() != null) mediaUrls.addAll(requestDto.getMediaUrls());
+        for (int i = 0; i < files.size(); i++) {
+            MultipartFile file = files.get(i);
             try {
-                String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                // 여러 장을 같은 순간에 저장해도 겹치지 않게 순번을 붙이고, 파일 이름의 특수문자는 _로 바꿈
+                String original = file.getOriginalFilename() != null ? file.getOriginalFilename() : "photo.jpg";
+                String filename = System.currentTimeMillis() + "_" + i + "_" + original.replaceAll("[^A-Za-z0-9._-]", "_");
                 String uploadDir = System.getProperty("user.dir") + "/uploads/";
                 java.nio.file.Path path = java.nio.file.Paths.get(uploadDir + filename);
 
                 java.nio.file.Files.createDirectories(path.getParent());
                 java.nio.file.Files.write(path, file.getBytes());
 
-                String imageUrl = "http://localhost:8080/uploads/" + filename;
-
-                if (requestDto.getMediaUrls() == null) {
-                    requestDto.setMediaUrls(new java.util.ArrayList<>());
-                }
-                requestDto.getMediaUrls().add(imageUrl);
+                mediaUrls.add("/uploads/" + filename);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        requestDto.setMediaUrls(mediaUrls);
+
+        PostType type = requestDto.getType() != null ? requestDto.getType() : PostType.LOST;
+
+        // 시안에는 제목 칸이 없어서, 비어 있으면 품종과 털색·특징으로 만듦 (예: "비글 믹스 · 노란 스카프")
+        String title = requestDto.getTitle();
+        if (title == null || title.isBlank()) {
+            String breed = requestDto.getBreed() != null && !requestDto.getBreed().isBlank() ? requestDto.getBreed() : "품종 모름";
+            String color = requestDto.getColor();
+            title = color != null && !color.isBlank() ? breed + " · " + color : breed;
+        }
 
         MissingPost post = new MissingPost();
-        post.setTitle(requestDto.getTitle());
-        post.setContent(requestDto.getContent());
+        post.setTitle(title);
+        post.setContent(requestDto.getContent() != null ? requestDto.getContent() : "");
         post.setBreed(requestDto.getBreed());
         post.setGender(requestDto.getGender());
         post.setAge(requestDto.getAge());
@@ -70,6 +84,8 @@ public class MissingPostService {
         post.setRescueLocation(requestDto.getRescueLocation());
         post.setMediaUrls(requestDto.getMediaUrls());
         post.setStatus(PostStatus.MISSING);
+        post.setType(type);
+        post.setOccurredAt(requestDto.getOccurredAt());
         post.setAuthor(member);
         post.setCreatedAt(LocalDateTime.now());
 
