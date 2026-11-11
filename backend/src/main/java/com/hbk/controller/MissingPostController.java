@@ -44,6 +44,15 @@ public class MissingPostController {
         return ResponseEntity.ok(posts);
     }
 
+    // 내가 쓴 글 API (GET /api/missing-posts/mine) - 마이 > 작성한 글
+    @GetMapping("/mine")
+    public ResponseEntity<?> getMyPosts(Principal principal){
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 정보가 없습니다. 다시 로그인해주세요.");
+        }
+        return ResponseEntity.ok(service.getMyPosts(principal.getName()));
+    }
+
     // 글 하나 조회 API (GET /api/missing-posts/{id}) - 상세 화면
     @GetMapping("/{id}")
     public ResponseEntity<MissingPostResponseDto> getPost(@PathVariable Long id){

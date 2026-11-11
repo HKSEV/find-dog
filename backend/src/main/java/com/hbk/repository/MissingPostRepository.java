@@ -30,4 +30,7 @@ WHERE (:cursorId IS NULL OR p.id < :cursorId)
 이 조건은 무시되고 가장 최신 글부터 가져옵니다.
 */
 
+
+// 내가 쓴 글 (마이 > 작성한 글), 최신순
+List<MissingPost> findByAuthorEmailOrderByIdDesc(String email);
 }

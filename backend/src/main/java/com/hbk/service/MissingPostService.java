@@ -87,6 +87,14 @@ public class MissingPostService {
                 .collect(Collectors.toList());
     }
 
+    // 내가 쓴 글 (마이 > 작성한 글)
+    @Transactional(readOnly = true)
+    public List<MissingPostResponseDto> getMyPosts(String email){
+        return missingPostRepository.findByAuthorEmailOrderByIdDesc(email).stream()
+                .map(MissingPostResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
     // 글 하나 조회 (상세 화면)
     @Transactional(readOnly = true)
     public MissingPostResponseDto getPost(Long id){
