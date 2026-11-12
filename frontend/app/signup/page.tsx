@@ -55,7 +55,7 @@ const Check = ({checked, onChange, label}: {checked: boolean; onChange: (checked
 );
 
 // ==========================================
-// 💡 회원가입: 0 시작 → 1 약관 동의 → 2 정보 입력
+// 💡 회원가입: 0 시작 → 1 약관 동의 → 2 정보 입력 → 3 프로필
 // ==========================================
 export default function SignupPage() {
   const router = useRouter();
@@ -159,16 +159,14 @@ export default function SignupPage() {
     };
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // 2/3 정보 입력 → 3/3 프로필
+  const handleNextFromInfo = (e: React.FormEvent) => {
     e.preventDefault();
 
     const next: Partial<Record<ErrorKey, string>> = {};
     const email = formData.email.trim();
-    const nickname = formData.nickname.trim();
     if (!email) next.email = "이메일을 적어 주세요.";
     else if (checked.email !== email) next.email = "이메일 중복 확인을 눌러 주세요.";
-    if (!nickname) next.nickname = "닉네임을 적어 주세요.";
-    else if (checked.nickname !== nickname) next.nickname = "닉네임 중복 확인을 눌러 주세요.";
     if (formData.password.length < 8) next.password = "비밀번호는 8자 이상이어야 해요.";
     if (formData.password !== formData.passwordConfirm) next.passwordConfirm = "비밀번호가 서로 달라요.";
     if (!formData.name.trim()) next.name = "이름을 적어 주세요.";
@@ -177,9 +175,21 @@ export default function SignupPage() {
       setErrors(next);
       return;
     };
+    dispatch(setStep(3));
+  };
+
+  // 3/3 프로필 → 가입
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const nickname = formData.nickname.trim();
+    if (!nickname || checked.nickname !== nickname) {
+      setErrors({nickname: nickname ? "닉네임 중복 확인을 눌러 주세요." : "닉네임을 적어 주세요."});
+      return;
+    };
 
     const resultAction = await dispatch(submitSignup({
-      formData: {...formData, email, nickname, phone: formData.phone.replace(/-/g, "")},
+      formData: {...formData, email: formData.email.trim(), nickname, phone: formData.phone.replace(/-/g, "")},
       profileFile
     }));
     if (submitSignup.fulfilled.match(resultAction)) {
@@ -193,7 +203,7 @@ export default function SignupPage() {
     };
   };
 
-  // 시작 화면은 닫기(X), 약관·정보 입력은 이전 단계로(<)
+  // 시작 화면은 닫기(X), 약관·정보 입력·프로필은 이전 단계로(<)
   const header = step === 0
     ? <Header title="회원가입" isModal/>
     : <Header title="회원가입" onBackClick={() => dispatch(setStep(step - 1))}/>;
@@ -228,8 +238,8 @@ export default function SignupPage() {
         {/* 1. 약관 동의 */}
         {step === 1 && (
           <S.SignupBody>
-            <S.SignupStep><b>1</b> / 2 약관 동의</S.SignupStep>
-            <S.SignupProgress $percent={50}/>
+            <S.SignupStep><b>1</b> / 3 약관 동의</S.SignupStep>
+            <S.SignupProgress $percent={33}/>
             <S.SignupTitle>서비스 이용 약관에<br/>동의해 주세요</S.SignupTitle>
 
             <S.SignupAgreeAll>
@@ -277,11 +287,11 @@ export default function SignupPage() {
           </S.SignupBody>
         )}
 
-        {/* 2. 정보 입력 */}
+        {/* 2. 정보 입력 (계정 + 연락처) */}
         {step === 2 && (
-          <S.SignupBody as="form" onSubmit={handleSubmit} noValidate>
-            <S.SignupStep><b>2</b> / 2 정보 입력</S.SignupStep>
-            <S.SignupProgress $percent={100}/>
+          <S.SignupBody as="form" onSubmit={handleNextFromInfo} noValidate>
+            <S.SignupStep><b>2</b> / 3 정보 입력</S.SignupStep>
+            <S.SignupProgress $percent={67}/>
 
             <S.WriteField>
               <S.WriteLabel as="span" id="signup-type-title">가입 유형</S.WriteLabel>
@@ -350,47 +360,6 @@ export default function SignupPage() {
               {errors.passwordConfirm && <S.WriteError>{errors.passwordConfirm}</S.WriteError>}
             </S.WriteField>
 
-            <S.SignupSection>프로필</S.SignupSection>
-            <S.SignupAvatar>
-              <S.SignupAvatarButton aria-label="프로필 사진 고르기">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {profilePreview ? <img src={profilePreview} alt="고른 프로필 사진"/> : <S.SignupAvatarIcon aria-hidden="true"/>}
-                <S.SignupAvatarBadge aria-hidden="true"><S.SignupCameraIcon/></S.SignupAvatarBadge>
-                <input type="file" accept="image/*" onChange={handleImageChange}/>
-              </S.SignupAvatarButton>
-              {profilePreview ? (
-                <S.SignupAvatarRemove
-                type="button"
-                onClick={() => {
-                  setProfileFile(null);
-                  setProfilePreview(null);
-                }}>
-                  사진 빼기
-                </S.SignupAvatarRemove>
-              ) : (
-                <span>사진 (선택)</span>
-              )}
-            </S.SignupAvatar>
-
-            <S.WriteField>
-              <S.WriteLabel htmlFor="signup-nickname">닉네임</S.WriteLabel>
-              <S.SignupInputRow>
-                <S.WriteInput
-                id="signup-nickname"
-                placeholder="예: 보리아빠"
-                value={formData.nickname}
-                $invalid={Boolean(errors.nickname)}
-                aria-invalid={Boolean(errors.nickname)}
-                onChange={(e) => setField("nickname", e.target.value)}/>
-                <S.SignupSideButton type="button" $done={checked.nickname !== "" && checked.nickname === formData.nickname.trim()} onClick={() => handleCheck("nickname")}>
-                  {checked.nickname !== "" && checked.nickname === formData.nickname.trim() ? "확인됨" : "중복 확인"}
-                </S.SignupSideButton>
-              </S.SignupInputRow>
-              {errors.nickname
-                ? <S.WriteError>{errors.nickname}</S.WriteError>
-                : checked.nickname !== "" && checked.nickname === formData.nickname.trim() && <S.SignupHint $ok>사용할 수 있는 닉네임이에요.</S.SignupHint>}
-            </S.WriteField>
-
             <S.SignupSection>연락처 <span>· 입양 신청서에 미리 채워져요</span></S.SignupSection>
             <S.WriteField>
               <S.WriteLabel htmlFor="signup-name">이름 (실명)</S.WriteLabel>
@@ -439,7 +408,60 @@ export default function SignupPage() {
             </S.WriteField>
 
             <S.WriteBar>
-              <S.WriteSubmit type="submit" disabled={isLoading}>{isLoading ? "가입하는 중..." : "가입하기"}</S.WriteSubmit>
+              <S.WriteSubmit type="submit">다음</S.WriteSubmit>
+            </S.WriteBar>
+          </S.SignupBody>
+        )}
+
+        {/* 3. 프로필 (사진 + 닉네임). 다른 회원에게 보이는 정보라 따로 받음 */}
+        {step === 3 && (
+          <S.SignupBody as="form" onSubmit={handleSubmit} noValidate>
+            <S.SignupStep><b>3</b> / 3 프로필</S.SignupStep>
+            <S.SignupProgress $percent={100}/>
+            <S.SignupTitle>다른 회원에게 보일<br/>프로필을 만들어 주세요</S.SignupTitle>
+
+            <S.SignupAvatar>
+              <S.SignupAvatarButton aria-label="프로필 사진 고르기">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {profilePreview ? <img src={profilePreview} alt="고른 프로필 사진"/> : <S.SignupAvatarIcon aria-hidden="true"/>}
+                <S.SignupAvatarBadge aria-hidden="true"><S.SignupCameraIcon/></S.SignupAvatarBadge>
+                <input type="file" accept="image/*" onChange={handleImageChange}/>
+              </S.SignupAvatarButton>
+              {profilePreview ? (
+                <S.SignupAvatarRemove
+                type="button"
+                onClick={() => {
+                  setProfileFile(null);
+                  setProfilePreview(null);
+                }}>
+                  사진 빼기
+                </S.SignupAvatarRemove>
+              ) : (
+                <span>사진 (선택)</span>
+              )}
+            </S.SignupAvatar>
+
+            <S.WriteField>
+              <S.WriteLabel htmlFor="signup-nickname">닉네임</S.WriteLabel>
+              <S.SignupInputRow>
+                <S.WriteInput
+                id="signup-nickname"
+                placeholder="예: 보리아빠"
+                value={formData.nickname}
+                $invalid={Boolean(errors.nickname)}
+                aria-invalid={Boolean(errors.nickname)}
+                onChange={(e) => setField("nickname", e.target.value)}/>
+                <S.SignupSideButton type="button" $done={checked.nickname !== "" && checked.nickname === formData.nickname.trim()} onClick={() => handleCheck("nickname")}>
+                  {checked.nickname !== "" && checked.nickname === formData.nickname.trim() ? "확인됨" : "중복 확인"}
+                </S.SignupSideButton>
+              </S.SignupInputRow>
+              {errors.nickname
+                ? <S.WriteError>{errors.nickname}</S.WriteError>
+                : checked.nickname !== "" && checked.nickname === formData.nickname.trim() && <S.SignupHint $ok>사용할 수 있는 닉네임이에요.</S.SignupHint>}
+            </S.WriteField>
+
+            <S.WriteBar>
+              <S.WriteSubmit type="submit" disabled={isLoading}>{isLoading ? "가입하는 중..." : "가입 완료"}</S.WriteSubmit>
             </S.WriteBar>
           </S.SignupBody>
         )}

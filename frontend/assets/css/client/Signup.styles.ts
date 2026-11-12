@@ -299,7 +299,7 @@ export const SignupHint = styled.p<{$ok?: boolean}>`
   color: ${({$ok}) => ($ok ? colors.success : colors.gray400)};
 `;
 
-// 프로필 사진 (가운데 원 + 카메라 표시)
+// 프로필 사진 (3/3 프로필 화면 가운데 원 + 카메라 표시)
 export const SignupAvatar = styled.div`
   display: flex;
   flex-direction: column;
@@ -314,16 +314,16 @@ export const SignupAvatarButton = styled.label`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 72px;
-  height: 72px;
+  width: 96px;
+  height: 96px;
   border-radius: 999px;
   background-color: ${colors.bgSubtle};
   color: ${colors.gray400};
   cursor: pointer;
 
   img {
-    width: 72px;
-    height: 72px;
+    width: 96px;
+    height: 96px;
     object-fit: cover;
     border-radius: 999px;
   }
@@ -335,7 +335,7 @@ export const SignupAvatarButton = styled.label`
 
 export const SignupAvatarIcon = styled(PersonIcon)`
   && {
-    font-size: 32px;
+    font-size: 44px;
   }
 `;
 
@@ -346,8 +346,8 @@ export const SignupAvatarBadge = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   border: 2px solid ${colors.white};
   border-radius: 999px;
   background-color: ${colors.brand};
@@ -356,7 +356,7 @@ export const SignupAvatarBadge = styled.span`
 
 export const SignupCameraIcon = styled(CameraIcon)`
   && {
-    font-size: 14px;
+    font-size: 16px;
   }
 `;
 
