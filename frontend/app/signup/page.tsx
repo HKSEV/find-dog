@@ -15,6 +15,7 @@ import {
 } from "@mui/icons-material";
 import Header from "../components/Header";
 import { CustomAlert } from "../components/CustomAlert";
+import { SIGNUP_EMAIL_KEY } from "../components/loginLink";
 import * as S from "@/assets/css/Style.styles";
 
 type FormField = keyof RootState["signup"]["formData"];
@@ -193,11 +194,14 @@ export default function SignupPage() {
       profileFile
     }));
     if (submitSignup.fulfilled.match(resultAction)) {
-      showAlert("어서찾아주개 회원이 되신 것을 환영해요!", "success", () => {
-        closeAlert();
-        dispatch(setStep(0));
-        router.push("/login");
-      });
+      // 모달 없이 로그인 화면으로. 로그인 화면이 "가입이 끝났어요" 배너와 이메일을 채워 줌
+      try {
+        sessionStorage.setItem(SIGNUP_EMAIL_KEY, formData.email.trim());
+      } catch {
+        // 저장이 막힌 브라우저에서는 배너 없이 이동
+      };
+      dispatch(setStep(0));
+      router.replace("/login");
     } else {
       showAlert(`가입하지 못했어요. ${resultAction.payload ?? ""}`, "error");
     };

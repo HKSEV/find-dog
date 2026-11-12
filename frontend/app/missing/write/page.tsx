@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { compressImage } from "../compressImage";
 import { placeLabel, whenLabel } from "../missingFormat";
+import { loginHref } from "../../components/loginLink";
 
 import Header from "@/app/components/Header";
 import * as S from "@/assets/css/Style.styles";
@@ -92,7 +93,7 @@ function MissingWriteForm() {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      router.push("/login");
+      router.push(loginHref("/missing/write"));
       return;
     };
 
@@ -140,7 +141,7 @@ function MissingWriteForm() {
     return (
       <S.WriteLoginNotice>
         <p>로그인하면 실종 신고와<br/>목격 제보를 올릴 수 있어요</p>
-        <Link href="/login">로그인</Link>
+        <Link href={loginHref("/missing/write")}>로그인</Link>
       </S.WriteLoginNotice>
     );
   };

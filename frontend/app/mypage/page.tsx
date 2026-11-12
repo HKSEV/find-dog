@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
@@ -11,7 +11,8 @@ import { useLikedAnimals } from "../shelter/useLikedAnimals";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { CustomAlert } from "../components/CustomAlert";
+import { showToast } from "../components/Toast";
+import { loginHref } from "../components/loginLink";
 import * as S from "@/assets/css/Style.styles";
 
 // 💡 아직 화면이 없는 메뉴는 "준비 중"으로 표시 (누를 수 없음)
@@ -37,7 +38,6 @@ export default function MyPage() {
   const {isLoggedIn, nickname, email} = useSelector((state: RootState) => state.user);
   const {animals} = useSelector((state: RootState) => state.shelter);
   const {isLiked} = useLikedAnimals();
-  const [isLogoutAlertOpen, setIsLogoutAlertOpen] = useState(false);
 
   useEffect(() => {
     dispatch(loadUserFromStorage()); // 로컬스토리지에서 로그인 정보 로드
@@ -52,7 +52,7 @@ export default function MyPage() {
 
   const handleLogout = () => {
     dispatch(logoutUser());
-    setIsLogoutAlertOpen(true);
+    showToast("로그아웃했어요");
   };
 
   const renderMenu = ({label, href, needLogin}: Menu) => {
@@ -67,7 +67,7 @@ export default function MyPage() {
 
     // 로그인이 필요한 메뉴는 로그인 전이면 로그인 화면으로
     return (
-      <S.MyMenuItem key={label} as={Link} href={needLogin && !isLoggedIn ? "/login" : href}>
+      <S.MyMenuItem key={label} as={Link} href={needLogin && !isLoggedIn ? loginHref(href) : href}>
         <span>{label}</span>
         <S.MyMenuChevron aria-hidden="true"/>
       </S.MyMenuItem>
@@ -92,7 +92,7 @@ export default function MyPage() {
           <S.MyLoginCard>
             <S.MyLoginTitle>로그인하면 실종 신고를 올리고<br/>작성한 글을 모아 볼 수 있어요</S.MyLoginTitle>
             <S.MyLoginButtons>
-              <S.MyLoginButton as={Link} href="/login" $primary>로그인</S.MyLoginButton>
+              <S.MyLoginButton as={Link} href={loginHref("/mypage")} $primary>로그인</S.MyLoginButton>
               <S.MyLoginButton as={Link} href="/signup">회원가입</S.MyLoginButton>
             </S.MyLoginButtons>
           </S.MyLoginCard>
@@ -141,12 +141,6 @@ export default function MyPage() {
         </S.MyMenu>
       </S.Container>
       <Footer/>
-
-      <CustomAlert
-      isOpen={isLogoutAlertOpen}
-      message="로그아웃 되었습니다."
-      type="success"
-      onConfirm={() => setIsLogoutAlertOpen(false)}/>
     </S.AppWrapper>
   );
 };

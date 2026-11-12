@@ -16,4 +16,5 @@ export * from "./Shelter.styles";
 export * from "./Signup.styles";
 export * from "./Story.styles";
 export * from "./Term.styles";
+export * from "./Toast.styles";
 export * from "./Volunteer.styles";

@@ -10,6 +10,7 @@ import { genderLabel, toImageUrl, toMonthDay } from "../../animalFormat";
 import { HousingType, fetchApplyPrefill, submitApplication, toApplicationError } from "../../adoptionApi";
 
 import Header from "@/app/components/Header";
+import { loginHref } from "@/app/components/loginLink";
 import * as S from "@/assets/css/Style.styles";
 
 const housingOptions: {label: string; value: HousingType}[] = [
@@ -106,7 +107,7 @@ export default function AdoptionApplyPage() {
       return (
         <S.WriteLoginNotice>
           <p>로그인하면 입양 신청서를<br/>보낼 수 있어요</p>
-          <Link href="/login">로그인</Link>
+          <Link href={loginHref(`/shelter/${animalId}/apply`)}>로그인</Link>
         </S.WriteLoginNotice>
       );
     };

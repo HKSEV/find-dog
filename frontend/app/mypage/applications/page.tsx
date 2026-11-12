@@ -17,6 +17,7 @@ import {
 } from "../../shelter/adoptionApi";
 
 import Header from "@/app/components/Header";
+import { loginHref } from "@/app/components/loginLink";
 import { CustomAlert } from "@/app/components/CustomAlert";
 import * as S from "@/assets/css/Style.styles";
 
@@ -63,7 +64,7 @@ export default function MyApplicationsPage() {
   const renderBody = () => {
     if (status === "loading") return <S.MissingEmptyText>신청 내역을 불러오는 중이에요</S.MissingEmptyText>;
     if (status === "login") {
-      return <S.MissingEmptyText>로그인이 필요해요. <Link href="/login">로그인하기</Link></S.MissingEmptyText>;
+      return <S.MissingEmptyText>로그인이 필요해요. <Link href={loginHref("/mypage/applications")}>로그인하기</Link></S.MissingEmptyText>;
     };
     if (status === "error") return <S.MissingEmptyText>신청 내역을 불러오지 못했어요. 잠시 후 다시 시도해 주세요</S.MissingEmptyText>;
     if (applications.length === 0) {

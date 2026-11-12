@@ -4,6 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation"; // 💡 useRouter 임포트
 
 import Logo from "./Logo";
+import { ToastHost } from "./Toast";
 import * as S from "@/assets/css/Style.styles";
 
 interface HeaderProps {
@@ -15,6 +16,7 @@ interface HeaderProps {
   onClose?: () => void; // 닫기(X)를 눌렀을 때. 서브 헤더에 주면 오른쪽에 X가 생김
 }
 
+// 💡 토스트(ToastHost)도 여기서 같이 그려서, 헤더가 있는 사용자 화면 어디서든 토스트가 보이게 함
 export default function Header({title, onBackClick, isMain, isTab, isModal, onClose}: HeaderProps) {
   const router = useRouter(); // 💡 라우터 초기화
 
@@ -40,59 +42,71 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
   // 💡 1. 메인 페이지용 헤더
   if (isMain) {
     return (
-      <S.Header>
-        <Logo onClick={() => router.push("/")}/>
+      <>
+        <S.Header>
+          <Logo onClick={() => router.push("/")}/>
 
-        {/* 우측 아이콘 그룹 (로그인·내 정보는 하단 "마이" 탭에서) */}
-        <S.HeaderActions>
-          <S.NotificationIcon
-          onClick={() => router.push("/mypage")} // 필요시 알림 페이지 경로로 수정
-        />
-        </S.HeaderActions>
-      </S.Header>
+          {/* 우측 아이콘 그룹 (로그인·내 정보는 하단 "마이" 탭에서) */}
+          <S.HeaderActions>
+            <S.NotificationIcon
+            onClick={() => router.push("/mypage")} // 필요시 알림 페이지 경로로 수정
+          />
+          </S.HeaderActions>
+        </S.Header>
+        <ToastHost/>
+      </>
     );
   };
 
   // 💡 2. 하단 탭 첫 화면용 헤더 (뒤로 버튼 없이 큰 제목)
   if (isTab) {
     return (
-      <S.Header>
-        <S.HeaderTabTitle>{title}</S.HeaderTabTitle>
-      </S.Header>
+      <>
+        <S.Header>
+          <S.HeaderTabTitle>{title}</S.HeaderTabTitle>
+        </S.Header>
+        <ToastHost/>
+      </>
     );
   };
 
   // 💡 3. 잠깐 띄운 작업 창용 헤더 (로그인 등): 왼쪽 닫기(X) + 가운데 제목
   if (isModal) {
     return (
-      <S.Header>
-        <S.HeaderIconButton $side="left" aria-label="닫기" onClick={handleClose}>
-          <S.HeaderCloseIcon/>
-        </S.HeaderIconButton>
+      <>
+        <S.Header>
+          <S.HeaderIconButton $side="left" aria-label="닫기" onClick={handleClose}>
+            <S.HeaderCloseIcon/>
+          </S.HeaderIconButton>
 
-        <S.H5Bold>{title}</S.H5Bold>
+          <S.H5Bold>{title}</S.H5Bold>
 
-        <S.HeaderSpacer/>
-      </S.Header>
+          <S.HeaderSpacer/>
+        </S.Header>
+        <ToastHost/>
+      </>
     );
   };
 
   // 💡 4. 서브 페이지용 헤더 (상세, 단계가 있는 화면 등): 왼쪽 뒤로(<) + 가운데 제목
   return (
-    <S.Header>
-      <S.HeaderIconButton $side="left" aria-label="뒤로" onClick={handleBack}>
-        <S.HeaderBackIcon/>
-      </S.HeaderIconButton>
-
-      <S.H5Bold>{title}</S.H5Bold>
-
-      {onClose ? (
-        <S.HeaderIconButton $side="right" aria-label="닫기" onClick={handleClose}>
-          <S.HeaderCloseIcon/>
+    <>
+      <S.Header>
+        <S.HeaderIconButton $side="left" aria-label="뒤로" onClick={handleBack}>
+          <S.HeaderBackIcon/>
         </S.HeaderIconButton>
-      ) : (
-        <S.HeaderSpacer/>
-      )}
-    </S.Header>
+
+        <S.H5Bold>{title}</S.H5Bold>
+
+        {onClose ? (
+          <S.HeaderIconButton $side="right" aria-label="닫기" onClick={handleClose}>
+            <S.HeaderCloseIcon/>
+          </S.HeaderIconButton>
+        ) : (
+          <S.HeaderSpacer/>
+        )}
+      </S.Header>
+      <ToastHost/>
+    </>
   );
 };

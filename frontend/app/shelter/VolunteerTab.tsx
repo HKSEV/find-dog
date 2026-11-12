@@ -6,7 +6,7 @@ import { AppDispatch, RootState } from "../store/store";
 import { fetchCampaigns, fetchHomeExtras } from "../redux/homeSlice";
 import { toImageUrl } from "./animalFormat";
 
-import { CustomAlert } from "@/app/components/CustomAlert";
+import { showToast } from "@/app/components/Toast";
 import { PlayArrow as PlayIcon } from "@mui/icons-material";
 import * as S from "@/assets/css/Style.styles";
 
@@ -23,7 +23,6 @@ export default function VolunteerTab() {
   const [openHelpId, setOpenHelpId] = useState<number | null>(null);
   const [showAllHelps, setShowAllHelps] = useState(false);
   const [pickedTag, setPickedTag] = useState<string | null>(null);
-  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
     dispatch(fetchHomeExtras());
@@ -46,7 +45,7 @@ export default function VolunteerTab() {
     if (mediaUrl) {
       window.open(mediaUrl, "_blank", "noopener,noreferrer");
     } else {
-      setAlertMessage("캠페인 자세한 내용은 준비 중이에요.");
+      showToast("캠페인 자세한 내용은 준비 중이에요.");
     };
   };
 
@@ -157,22 +156,16 @@ export default function VolunteerTab() {
           <S.VolunteerSectionTitle>후원하기</S.VolunteerSectionTitle>
         </S.VolunteerSectionHead>
         <S.SupportGrid>
-          <S.SupportCard type="button" $primary onClick={() => setAlertMessage("정기 후원은 준비 중이에요.")}>
+          <S.SupportCard type="button" $primary onClick={() => showToast("정기 후원은 준비 중이에요.")}>
             <strong>정기 후원</strong>
             <span>보호소 운영비를 매달 함께</span>
           </S.SupportCard>
-          <S.SupportCard type="button" onClick={() => setAlertMessage("물품 후원은 준비 중이에요.")}>
+          <S.SupportCard type="button" onClick={() => showToast("물품 후원은 준비 중이에요.")}>
             <strong>물품 후원</strong>
             <span>사료, 패드, 담요 보내기</span>
           </S.SupportCard>
         </S.SupportGrid>
       </S.VolunteerSection>
-
-      <CustomAlert
-      isOpen={alertMessage !== ""}
-      message={alertMessage}
-      type="info"
-      onConfirm={() => setAlertMessage("")}/>
     </>
   );
 };

@@ -1,7 +1,7 @@
 "use client";
 import * as S from "@/assets/css/Style.styles";
 
-// 아이콘 활용
+// 💡 글자만 있는 알림 창 (오류 안내용)
 
 interface CustomAlertProps {
   isOpen: boolean;
@@ -17,12 +17,10 @@ export const CustomAlert = ({isOpen, message, type = "info", onConfirm}: CustomA
     <S.ModalOverlay>
       {/* 알림창 크기에 맞게 maxWidth를 줄이고 가운데 정렬 적용 */}
       <S.AlertContent>
+        {/* 💡 아이콘 없이 문장만 (초록 체크·빨간 느낌표 아이콘은 뺌). 성공 알림은 토스트로 옮겼고, 이 창은 오류 안내에만 씀 */}
         <S.AlertSummary>
-          <S.AlertIconCircle className="icon-circle" $error={type === "error"}>
-            {type === "error" ? <S.ErrorAlertIcon/> : <S.SuccessAlertIcon/>}
-          </S.AlertIconCircle>
           <S.AlertTextGroup className="text-group">
-            <S.AlertMessage>{message}</S.AlertMessage>
+            <S.AlertMessage role={type === "error" ? "alert" : undefined}>{message}</S.AlertMessage>
           </S.AlertTextGroup>
         </S.AlertSummary>
 

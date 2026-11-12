@@ -9,6 +9,7 @@ import { toImageUrl } from "../../shelter/animalFormat";
 import { missingBadge, missingRowTraits, timeAgo } from "../../missing/missingFormat";
 
 import Header from "@/app/components/Header";
+import { loginHref } from "@/app/components/loginLink";
 import * as S from "@/assets/css/Style.styles";
 
 // 💡 마이 > 작성한 글: 내가 올린 실종·제보 글 (최신순)
@@ -24,7 +25,7 @@ export default function MyPostsPage() {
     if (myPostsError === "UNAUTHORIZED") {
       return (
         <S.MissingEmptyText>
-          로그인이 필요해요. <Link href="/login">로그인하기</Link>
+          로그인이 필요해요. <Link href={loginHref("/mypage/posts")}>로그인하기</Link>
         </S.MissingEmptyText>
       );
     };
