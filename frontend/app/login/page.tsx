@@ -109,8 +109,12 @@ function LoginForm() {
   };
 
   return (
-    <>
-      <S.LayOutPadding>
+    <S.LoginBody>
+      <S.LoginAnimItem $delay={0.05}>
+        <S.LoginTitle>다시 만나서 반가워요</S.LoginTitle>
+      </S.LoginAnimItem>
+
+      <S.LoginFields>
         <S.LoginAnimItem $delay={0.1}>
           <AnimatedInput
           type="email"
@@ -127,9 +131,7 @@ function LoginForm() {
           {errors.email && <S.LoginError>{errors.email}</S.LoginError>}
         </S.LoginAnimItem>
 
-        <S.HB10/>
-
-        <S.LoginAnimItem $delay={0.2}>
+        <S.LoginAnimItem $delay={0.15}>
           <AnimatedInput
           type="password"
           label="비밀번호"
@@ -144,34 +146,28 @@ function LoginForm() {
         />
           {errors.password && <S.LoginError role="alert">{errors.password}</S.LoginError>}
         </S.LoginAnimItem>
-      </S.LayOutPadding>
+      </S.LoginFields>
 
-      <S.BtnBottomWrap>
-        <S.LoginAnimItem $delay={0.3}>
-          <S.BaseBtn $variant="primary" onClick={handleLogin} disabled={isLoading}>
-            {isLoading ? "로그인 중..." : "로그인"}
-          </S.BaseBtn>
-        </S.LoginAnimItem>
-        <br/>
+      <S.LoginAnimItem $delay={0.2}>
+        <S.LoginSubmit type="button" onClick={handleLogin} disabled={isLoading}>
+          {isLoading ? "로그인 중..." : "로그인"}
+        </S.LoginSubmit>
+      </S.LoginAnimItem>
 
-        <S.LoginAnimItem $delay={0.4}>
-          <S.BaseBtn $variant="kakao" onClick={handleKakaoLogin}>
-            카카오톡으로 간편하게 시작하기
-          </S.BaseBtn>
-        </S.LoginAnimItem>
-        <br/>
+      <S.LoginAnimItem $delay={0.25}>
+        <S.LoginDivider>또는</S.LoginDivider>
+        <S.LoginSocial>
+          <S.LoginSocialButton type="button" $variant="kakao" onClick={handleKakaoLogin}>카카오로 시작하기</S.LoginSocialButton>
+          <S.LoginSocialButton type="button" $variant="apple">Apple로 로그인</S.LoginSocialButton>
+        </S.LoginSocial>
+      </S.LoginAnimItem>
 
-        <S.LoginAnimItem $delay={0.5}>
-          <S.BaseBtn $variant="local">Apple로 로그인</S.BaseBtn>
-        </S.LoginAnimItem>
-
-        <S.LoginAnimItem $delay={0.6}>
-          <S.SignupPrompt>
-            아직 계정이 없으시다고요? <S.SignupLink onClick={() => router.push("/signup")}>회원가입</S.SignupLink>
-          </S.SignupPrompt>
-        </S.LoginAnimItem>
-      </S.BtnBottomWrap>
-    </>
+      <S.LoginAnimItem $delay={0.3}>
+        <S.SignupPrompt>
+          아직 계정이 없나요? <S.SignupLink onClick={() => router.push("/signup")}>회원가입</S.SignupLink>
+        </S.SignupPrompt>
+      </S.LoginAnimItem>
+    </S.LoginBody>
   );
 };
 

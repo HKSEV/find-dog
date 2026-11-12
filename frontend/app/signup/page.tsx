@@ -316,7 +316,6 @@ export default function SignupPage() {
               </S.ApplyChoiceGroup>
             </S.WriteField>
 
-            <S.SignupSection>계정</S.SignupSection>
             <S.WriteField>
               <S.WriteLabel htmlFor="signup-email">이메일</S.WriteLabel>
               <S.SignupInputRow>
@@ -366,7 +365,7 @@ export default function SignupPage() {
               {errors.passwordConfirm && <S.WriteError>{errors.passwordConfirm}</S.WriteError>}
             </S.WriteField>
 
-            <S.SignupSection>연락처 <span>· 입양 신청서에 미리 채워져요</span></S.SignupSection>
+            <S.SignupGroupHint>아래 정보는 입양 신청서에 미리 채워져요</S.SignupGroupHint>
             <S.WriteField>
               <S.WriteLabel htmlFor="signup-name">이름 (실명)</S.WriteLabel>
               <S.WriteInput
