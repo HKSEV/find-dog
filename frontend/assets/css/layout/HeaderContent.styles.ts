@@ -4,7 +4,8 @@ import {
   NotificationsOutlined as NotificationsNoneIcon,
   PersonOutlined as PersonOutlineIcon,
   ArrowBackIosNewRounded as BackIcon,
-  CloseRounded as CloseIcon
+  CloseRounded as CloseIcon,
+  SettingsOutlined as SettingsIcon
 } from "@mui/icons-material";
 import styled from "styled-components";
 import { None } from "@/assets/css/common/Placeholder.styles";
@@ -68,6 +69,12 @@ export const HeaderIconButton = styled.button<{$side: "left" | "right"}>`
 export const HeaderBackIcon = styled(BackIcon)`
   && {
     font-size: 20px;
+  }
+`;
+
+export const HeaderSettingsIcon = styled(SettingsIcon)`
+  && {
+    font-size: 24px;
   }
 `;
 

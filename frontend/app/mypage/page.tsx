@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
-import { loadUserFromStorage, logoutUser } from "../redux/userSlice";
+import { loadUserFromStorage } from "../redux/userSlice";
 import { fetchShelterAnimals } from "../redux/shelterSlice";
 import { genderLabel, toImageUrl } from "../shelter/animalFormat";
 import { useLikedAnimals } from "../shelter/useLikedAnimals";
+import { fetchMyAccount } from "./accountApi";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { showToast } from "../components/Toast";
 import { loginHref } from "../components/loginLink";
 import * as S from "@/assets/css/Style.styles";
 
@@ -21,7 +21,6 @@ const activityMenus = [
   {label: "입양 신청 내역", href: "/mypage/applications", needLogin: true},
   {label: "봉사 신청 내역"},
   {label: "관심 보호소"},
-  {label: "알림 설정"}
 ];
 
 const guideMenus = [
@@ -38,22 +37,30 @@ export default function MyPage() {
   const {isLoggedIn, nickname, email} = useSelector((state: RootState) => state.user);
   const {animals} = useSelector((state: RootState) => state.shelter);
   const {isLiked} = useLikedAnimals();
+  const [photo, setPhoto] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(loadUserFromStorage()); // 로컬스토리지에서 로그인 정보 로드
     dispatch(fetchShelterAnimals()); // 관심 동물 사진·이름을 보여주려고 보호 동물 목록을 받음
   }, [dispatch]);
 
+  // 프로필 사진은 로그인 정보에 없어서 내 정보를 따로 받아 옴 (정보 수정에서 바꾼 사진이 바로 보이게)
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    let alive = true;
+    fetchMyAccount()
+      .then((me) => alive && setPhoto(toImageUrl(me.profileImageUrl) ?? null))
+      .catch(() => alive && setPhoto(null)); // 못 받아도 기본 아이콘으로
+    return () => {
+      alive = false;
+    };
+  }, [isLoggedIn]);
+
   // 하트를 누른 순서가 아니라 보호 동물 목록 순서(공고 최신순)로 보여줌
   const likedAnimals = animals
     .filter((animal) => isLiked(animal.id))
     .slice()
     .sort((a, b) => (b.regDate ?? "").localeCompare(a.regDate ?? "") || b.id - a.id);
-
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    showToast("로그아웃했어요");
-  };
 
   const renderMenu = ({label, href, needLogin}: Menu) => {
     if (!href) {
@@ -76,13 +83,24 @@ export default function MyPage() {
 
   return (
     <S.AppWrapper>
-      <Header title="마이페이지" isTab/>
+      <Header
+      title="마이페이지"
+      isTab
+      action={(
+        // 💡 설정: 정보 수정, 알림 설정, 로그아웃, 회원 탈퇴 (로그아웃은 실수로 누르지 않게 설정 안으로 옮김)
+        <S.HeaderIconButton as={Link} href="/mypage/settings" $side="right" aria-label="설정">
+          <S.HeaderSettingsIcon/>
+        </S.HeaderIconButton>
+      )}/>
       <S.Container>
         <S.HeaderOffset/>
 
         {isLoggedIn ? (
           <S.MyProfile>
-            <S.MyAvatar><S.MyAvatarIcon aria-hidden="true"/></S.MyAvatar>
+            <S.MyAvatar>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {photo ? <img src={photo} alt=""/> : <S.MyAvatarIcon aria-hidden="true"/>}
+            </S.MyAvatar>
             <S.MyProfileText>
               <strong>{nickname}</strong>
               {email && <span>{email}</span>}
@@ -137,7 +155,6 @@ export default function MyPage() {
           <S.MyMenuTitle>이용안내</S.MyMenuTitle>
           {guideMenus.map(renderMenu)}
 
-          {isLoggedIn && <S.MyLogoutButton type="button" onClick={handleLogout}>로그아웃</S.MyLogoutButton>}
         </S.MyMenu>
       </S.Container>
       <Footer/>

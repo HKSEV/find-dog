@@ -16,7 +16,7 @@ export const SignupBody = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 0 20px 140px; /* 아래 고정 버튼에 마지막 칸이 가리지 않게 */
+  padding: 0 20px 64px; /* 아래 고정 버튼(약 111px)에 안 가리게. Container가 이미 70px를 둬서 합쳐 134px */
 `;
 
 // 진행 단계 (1 / 2 약관 동의)
@@ -159,7 +159,7 @@ export const SignupAgreeAll = styled.label`
 
 export const SignupAgreeList = styled.ul`
   margin: -8px 0 0;
-  padding: 0 2px;
+  padding: 0 14px; /* "모두 동의해요" 칸의 안쪽 여백(14px)과 같게 해서 체크 상자가 한 줄로 서게 */
   list-style: none;
 `;
 
@@ -262,16 +262,12 @@ export const SignupTermsText = styled.p`
 // 정보 입력
 // ==========================================
 
-export const SignupSection = styled.h3`
+// 계정 칸(이메일·비밀번호)과 연락처 칸(이름·휴대폰·주소) 사이: 제목 대신 간격 + 왜 묻는지 안내
+export const SignupGroupHint = styled.p`
   margin: 12px 0 -6px;
   font-size: 13px;
-  font-weight: ${fontWeight.semibold};
-  color: ${colors.brand};
-
-  span {
-    font-weight: ${fontWeight.regular};
-    color: ${colors.gray400};
-  }
+  line-height: 1.5;
+  color: ${colors.gray400};
 `;
 
 // 칸 + 버튼(중복 확인·주소 검색)을 같은 높이로 한 줄에

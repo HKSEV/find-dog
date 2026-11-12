@@ -13,9 +13,10 @@ interface HeaderProps {
   isTab?: boolean; // 하단 탭 첫 화면 (입양·봉사, 실종·제보, 커뮤니티, 마이)
   isModal?: boolean; // 잠깐 띄운 작업 창 (로그인 등): 왼쪽에 닫기(X)
   onClose?: () => void; // 닫기(X)를 눌렀을 때. 서브 헤더에 주면 오른쪽에 X가 생김
+  action?: React.ReactNode; // 탭 헤더 오른쪽 버튼 (예: 마이의 설정 톱니바퀴)
 }
 
-export default function Header({title, onBackClick, isMain, isTab, isModal, onClose}: HeaderProps) {
+export default function Header({title, onBackClick, isMain, isTab, isModal, onClose, action}: HeaderProps) {
   const router = useRouter(); // 💡 라우터 초기화
 
   const handleBack = () => {
@@ -61,6 +62,7 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
       <>
         <S.Header>
           <S.HeaderTabTitle>{title}</S.HeaderTabTitle>
+          {action}
         </S.Header>
       </>
     );

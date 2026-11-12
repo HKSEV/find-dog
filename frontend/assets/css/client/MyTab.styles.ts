@@ -65,8 +65,15 @@ export const MyAvatar = styled.span`
   width: 60px;
   height: 60px;
   border-radius: 999px;
+  overflow: hidden;
   background-color: ${colors.bgSubtle};
   color: ${colors.gray400};
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 export const MyAvatarIcon = styled(PersonIcon)`
@@ -200,6 +207,27 @@ export const MyMenu = styled.section`
   padding: 8px 20px 24px;
 `;
 
+// 설정 맨 아래 로그아웃 (메뉴와 떨어뜨려 실수로 누르지 않게)
+export const SettingsLogout = styled.button`
+  display: block;
+  width: calc(100% - 40px);
+  height: 48px;
+  margin: 8px 20px 0;
+  border: 1px solid ${colors.border};
+  border-radius: 12px;
+  background-color: ${colors.white};
+  color: ${colors.gray500};
+  font-size: 15px;
+  font-weight: ${fontWeight.medium};
+  text-align: center;
+  line-height: 46px;
+  cursor: pointer;
+
+  &&:hover {
+    color: ${colors.gray500};
+  }
+`;
+
 export const MyMenuTitle = styled.h2`
   margin: 16px 0 4px;
   font-size: 13px;
@@ -210,7 +238,16 @@ export const MyMenuTitle = styled.h2`
 export const MyMenuItem = styled.a<{$disabled?: boolean}>`
   display: flex;
   align-items: center;
+  width: 100%;
   min-height: 52px;
+  /* 버튼으로 쓸 때(로그아웃)도 같은 모양 */
+  padding: 0;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
   border-bottom: 1px solid ${colors.bgSubtle};
   color: ${({$disabled}) => ($disabled ? colors.gray400 : colors.gray900)};
   font-size: 15px;

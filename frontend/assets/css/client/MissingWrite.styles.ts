@@ -13,7 +13,7 @@ export const WriteForm = styled.form`
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 4px 20px 140px; /* 아래 고정 버튼에 마지막 칸이 가리지 않게 */
+  padding: 4px 20px 64px; /* 아래 고정 버튼(약 111px)에 안 가리게. Container가 이미 70px를 둬서 합쳐 134px */
 `;
 
 // 잃어버렸어요 / 발견했어요
@@ -103,6 +103,14 @@ export const WriteTextArea = styled.textarea<{$invalid?: boolean}>`
   padding: 12px;
   line-height: 1.5;
   resize: none;
+  /* 빈 칸의 안내 문구가 줄바꿈되지 않아 가로 스크롤이 생기는 브라우저(사파리 등)가 있어서 막음 */
+  overflow-x: hidden;
+  overflow-wrap: anywhere;
+
+  &::placeholder {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
   border-color: ${({$invalid}) => ($invalid ? colors.danger : colors.border)};
 `;
 
