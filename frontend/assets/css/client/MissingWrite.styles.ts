@@ -106,10 +106,13 @@ export const WriteTextArea = styled.textarea<{$invalid?: boolean}>`
   border-color: ${({$invalid}) => ($invalid ? colors.danger : colors.border)};
 `;
 
+// && 로 우선순위를 올려서 아래 고정 버튼 묶음(WriteBar)의 p 회색 글자에 덮이지 않게
 export const WriteError = styled.p`
-  margin: 0;
-  font-size: 12px;
-  color: ${colors.danger};
+  && {
+    margin: 0;
+    font-size: 12px;
+    color: ${colors.danger};
+  }
 `;
 
 // 성별: 남 / 여 / 모름

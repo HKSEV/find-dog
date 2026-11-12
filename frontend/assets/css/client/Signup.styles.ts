@@ -1,108 +1,425 @@
 "use client";
 
-import Image from "next/image";
-import styled, { keyframes } from "styled-components";
-import { colors } from "./theme";
-import { BaseBtn } from "@/assets/css/common/Button.styles";
-import { PhotoUploadBottomText } from "@/assets/css/common/Title.styles";
-import { AlignItemsCenter } from "@/assets/css/layout/LayoutBase.styles";
-import { FormControl } from "@/assets/css/common/Input.styles";
+import {
+  CheckRounded as CheckIcon,
+  PersonOutlineRounded as PersonIcon,
+  PhotoCameraRounded as CameraIcon,
+  CloseRounded as CloseIcon
+} from "@mui/icons-material";
+import styled from "styled-components";
+import { colors, fontWeight, fluid } from "./theme";
 
-export const AuxiliaryButton = styled(BaseBtn).attrs({$variant: "primary", $mainColor: colors.gray200, $width: "80px"})``;
+// 💡 회원가입 (시작 / 약관 동의 / 정보 입력). 개편 시안 2차 기준
+//    입력 칸·선택 버튼·아래 고정 버튼은 MissingWrite.styles의 Write* 를 같이 씀
 
-export const ProfilePreview = styled(Image)`
-  && {
-    width: auto;
-    height: auto;
+export const SignupBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 20px 140px; /* 아래 고정 버튼에 마지막 칸이 가리지 않게 */
+`;
+
+// 진행 단계 (1 / 2 약관 동의)
+export const SignupStep = styled.div`
+  margin-bottom: -8px; /* 진행 막대와 붙여 보이게 */
+  font-size: 12px;
+  color: ${colors.gray500};
+
+  b {
+    font-weight: ${fontWeight.semibold};
+    color: ${colors.brand};
   }
 `;
 
-export const PhotoHint = styled(PhotoUploadBottomText)`
-  margin-top: 1rem !important;
+export const SignupProgress = styled.div<{$percent: number}>`
+  flex: none;
+  height: 4px;
+  margin-bottom: 4px;
+  border-radius: 999px;
+  background-color: ${colors.border};
+
+  &::after {
+    content: "";
+    display: block;
+    width: ${({$percent}) => $percent}%;
+    height: 4px;
+    border-radius: 999px;
+    background-color: ${colors.brand};
+    transition: width 0.3s;
+  }
 `;
 
-export const HiddenFileInput = styled.input`
+export const SignupTitle = styled.h2`
+  margin: 8px 0 4px;
+  font-size: ${fluid(18, 20)};
+  font-weight: ${fontWeight.bold};
+  line-height: 1.4;
+  letter-spacing: -0.4px;
+  color: ${colors.gray900};
+`;
+
+// ==========================================
+// 시작
+// ==========================================
+
+export const SignupIntro = styled.section`
+  padding: 40px 20px 200px; /* 아래 고정 버튼 묶음 높이만큼 */
+
+  h2 {
+    margin-top: 20px;
+  }
+`;
+
+export const SignupIntroList = styled.ul`
+  display: grid;
+  gap: 16px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    color: ${colors.gray800};
+  }
+
+  svg {
+    font-size: 20px;
+    color: ${colors.brand};
+  }
+`;
+
+// 아래 고정 버튼 묶음 (시작 화면: 카카오 / 이메일 / 로그인 링크)
+export const SignupBottom = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  z-index: 100;
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  max-width: 480px;
+  box-sizing: border-box;
+  padding: 12px 20px 24px;
+  background-color: ${colors.white};
+  transform: translateX(-50%);
+`;
+
+export const SignupButton = styled.button<{$variant?: "kakao" | "primary"}>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  border: 0;
+  border-radius: 12px;
+  background-color: ${({$variant}) => ($variant === "kakao" ? "#FEE500" : colors.brand)}; /* 카카오 규정 노란색 */
+  color: ${({$variant}) => ($variant === "kakao" ? "rgba(0, 0, 0, 0.85)" : colors.white)};
+  font-size: 16px;
+  font-weight: ${fontWeight.semibold};
+  cursor: pointer;
+
+  &:disabled {
+    background-color: ${colors.gray200};
+    cursor: default;
+  }
+`;
+
+export const SignupLoginLink = styled.p`
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: ${colors.gray400};
+  text-align: center;
+
+  a {
+    color: ${colors.brand};
+    font-weight: ${fontWeight.semibold};
+  }
+`;
+
+// ==========================================
+// 약관 동의
+// ==========================================
+
+export const SignupAgreeAll = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 54px;
+  padding: 0 14px;
+  border-radius: 12px;
+  background-color: ${colors.brandBg};
+  font-size: 16px;
+  font-weight: ${fontWeight.semibold};
+  color: ${colors.gray900};
+  cursor: pointer;
+`;
+
+export const SignupAgreeList = styled.ul`
+  margin: -8px 0 0;
+  padding: 0 2px;
+  list-style: none;
+`;
+
+export const SignupAgreeItem = styled.li`
+  border-bottom: 1px solid ${colors.border};
+
+  &:last-child {
+    border-bottom: 0;
+  }
+`;
+
+export const SignupAgreeRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 50px;
+
+  label {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: ${colors.gray900};
+    cursor: pointer;
+  }
+`;
+
+// 네모 체크 (진짜 checkbox는 숨기고 모양만 그림. 키보드 포커스는 그대로 받음)
+export const SignupCheck = styled.span`
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+
+  input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    box-sizing: border-box;
+    border: 1.5px solid ${colors.gray200};
+    border-radius: 6px;
+    background-color: ${colors.white};
+    color: transparent;
+  }
+
+  input:checked + i {
+    border-color: ${colors.brand};
+    background-color: ${colors.brand};
+    color: ${colors.white};
+  }
+
+  input:focus-visible + i {
+    outline: 2px solid ${colors.brand};
+    outline-offset: 2px;
+  }
+`;
+
+export const SignupCheckIcon = styled(CheckIcon)`
   && {
+    font-size: 16px;
+  }
+`;
+
+export const SignupViewButton = styled.button`
+  flex: none;
+  padding: 8px 0 8px 8px;
+  border: 0;
+  background: transparent;
+  color: ${colors.gray500};
+  font-size: 13px;
+  cursor: pointer;
+`;
+
+export const SignupTermsText = styled.p`
+  margin: 0 0 12px 32px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: ${colors.bgLight};
+  font-size: 12px;
+  line-height: 1.6;
+  color: ${colors.gray500};
+  white-space: pre-line;
+`;
+
+// ==========================================
+// 정보 입력
+// ==========================================
+
+export const SignupSection = styled.h3`
+  margin: 12px 0 -6px;
+  font-size: 13px;
+  font-weight: ${fontWeight.semibold};
+  color: ${colors.brand};
+
+  span {
+    font-weight: ${fontWeight.regular};
+    color: ${colors.gray400};
+  }
+`;
+
+// 칸 + 버튼(중복 확인·주소 검색)을 같은 높이로 한 줄에
+export const SignupInputRow = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+export const SignupSideButton = styled.button<{$done?: boolean}>`
+  flex: none;
+  height: 46px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background-color: ${({$done}) => ($done ? colors.brandBg : colors.bgSubtle)};
+  color: ${({$done}) => ($done ? colors.brand : colors.gray800)};
+  font-size: 13px;
+  font-weight: ${fontWeight.medium};
+  cursor: pointer;
+`;
+
+export const SignupHint = styled.p<{$ok?: boolean}>`
+  margin: 0;
+  font-size: 12px;
+  color: ${({$ok}) => ($ok ? colors.success : colors.gray400)};
+`;
+
+// 프로필 사진 (가운데 원 + 카메라 표시)
+export const SignupAvatar = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: ${colors.gray400};
+`;
+
+export const SignupAvatarButton = styled.label`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  background-color: ${colors.bgSubtle};
+  color: ${colors.gray400};
+  cursor: pointer;
+
+  img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 999px;
+  }
+
+  input {
     display: none;
   }
 `;
 
-export const SignupSectionHeading = styled(AlignItemsCenter)`
-  margin-top: 3rem !important;
-  margin-bottom: 1.5rem !important;
-`;
-
-export const PhoneFieldRow = styled(AlignItemsCenter)`
+export const SignupAvatarIcon = styled(PersonIcon)`
   && {
-    gap: 8px;
+    font-size: 32px;
   }
 `;
 
-// 💡 커스텀 알럿 임포트
-
-// ==========================================
-// 💡 1. 애니메이션 Keyframes 및 래퍼 정의
-// ==========================================
-export const signupSlideDown = keyframes`
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-export const signupFadeUp = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-export const SignupAnimItem = styled.div<{$delay: number; $isSlideDown?: boolean}>`
-  opacity: 0;
-  animation: ${(props) => (props.$isSlideDown ? signupSlideDown : signupFadeUp)} 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: ${(props) => props.$delay}s;
-  width: 100%;
-`;
-
-export const SignupField = styled(SignupAnimItem)`
-  margin-bottom: 1.5rem !important;
-`;
-
-export const FinalSignupField = styled(SignupAnimItem)`
-  margin-bottom: 3rem !important;
-`;
-
-// ==========================================
-// 💡 2. 플로팅 라벨(애니메이션 인풋) 스타일 정의
-// ==========================================
-export const SignupInputWrapper = styled.div`
-  position: relative;
-  width: 100%;
-  flex: 1;
-`;
-
-export const SignupFloatingLabel = styled.label<{$isActive: boolean}>`
+export const SignupAvatarBadge = styled.span`
   position: absolute;
-  left: 12px;
-  top: ${(props) => (props.$isActive ? "0" : "50%")};
-  transform: translateY(-50%);
-  background-color: ${colors.white};
-  padding: 0 4px;
-  font-size: ${(props) => (props.$isActive ? "12px" : "15px")};
-  color: ${(props) => (props.$isActive ? colors.brand : colors.gray400)};
-  transition: all 0.2s ease-in-out;
-  pointer-events: none;
-  z-index: 2;
+  right: -2px;
+  bottom: -2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 2px solid ${colors.white};
+  border-radius: 999px;
+  background-color: ${colors.brand};
+  color: ${colors.white};
 `;
 
-export const SignupFloatingInput = styled(FormControl)`
-  width: 100%;
-  padding: 14px 15px;
-  background-color: transparent;
-
-  &::placeholder {
-    color: transparent;
+export const SignupCameraIcon = styled(CameraIcon)`
+  && {
+    font-size: 14px;
   }
+`;
 
-  &:focus {
-    outline: none !important;
-    box-shadow: none !important;
-    border: 1px solid ${colors.brand} !important;
+export const SignupAvatarRemove = styled.button`
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: ${colors.gray500};
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+`;
+
+// 주소 검색 창
+export const SignupPostcode = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.45);
+`;
+
+export const SignupPostcodeSheet = styled.div`
+  width: 100%;
+  max-width: 480px;
+  height: 80vh;
+  border-radius: 16px 16px 0 0;
+  background-color: ${colors.white};
+  overflow: hidden;
+
+  /* 다음 주소 검색 창이 시트 높이를 꽉 채우게 (기본 높이 400px을 덮어씀) */
+  & > div:last-child {
+    height: calc(100% - 52px) !important;
+  }
+`;
+
+export const SignupPostcodeHead = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 0 8px 0 20px;
+  font-size: 16px;
+  font-weight: ${fontWeight.semibold};
+  border-bottom: 1px solid ${colors.border};
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: transparent;
+    color: ${colors.gray900};
+    cursor: pointer;
+  }
+`;
+
+export const SignupCloseIcon = styled(CloseIcon)`
+  && {
+    font-size: 24px;
   }
 `;
