@@ -152,7 +152,8 @@ public class AdoptionApplicationService {
 
     // 관리자가 상태를 바꾸면 신청한 회원에게 알림 (누르면 마이 > 입양 신청 내역)
     private void notifyApplicant(AdoptionApplication application) {
-        String breed = application.getShelterAnimal().getBreed();
+        ShelterAnimal shelterAnimal = application.getShelterAnimal();
+        String breed = shelterAnimal.getBreed();
         String animal = breed == null || breed.isBlank() ? "보호 동물" : breed;
         String message = switch (application.getStatus()) {
             case FORWARDED -> animal + " 입양 신청서가 보호소에 전달됐어요. 보호소에서 곧 연락드려요.";
@@ -162,7 +163,14 @@ public class AdoptionApplicationService {
             default -> null;
         };
         if (message != null) {
-            notificationService.notify(application.getMember(), NotificationType.ADOPTION, message, "/mypage/applications");
+            notificationService.notify(
+                    application.getMember(),
+                    NotificationType.ADOPTION,
+                    application.getStatus().name(),
+                    message,
+                    shelterAnimal.getImageUrl(),
+                    "/mypage/applications"
+            );
         }
     }
 

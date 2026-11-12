@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 public record NotificationDto(
         Long id,
         NotificationType type,
+        String badge,
         String message,
+        String imageUrl,
         String link,
         boolean read,
         LocalDateTime createdAt
@@ -18,7 +20,9 @@ public record NotificationDto(
         return new NotificationDto(
                 notification.getId(),
                 notification.getType(),
+                notification.getBadge(),
                 notification.getMessage(),
+                notification.getImageUrl(),
                 notification.getLink(),
                 notification.isRead(),
                 notification.getCreatedAt()

@@ -31,6 +31,14 @@ public class Notification {
     @Column(nullable = false, length = 255)
     private String message;
 
+    // 알림 위 작은 라벨 (입양 알림은 신청 상태: FORWARDED, ADOPTED, REJECTED)
+    @Column(length = 20)
+    private String badge;
+
+    // 왼쪽 사진 (입양 알림은 동물 공고 사진. 없으면 null)
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
+
     // 누르면 갈 화면 (예: /mypage/applications)
     @Column(length = 255)
     private String link;

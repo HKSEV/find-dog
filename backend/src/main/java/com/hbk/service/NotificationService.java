@@ -20,11 +20,13 @@ public class NotificationService {
 
     // 다른 서비스에서 알림을 남길 때 (같은 트랜잭션 안에서 저장)
     @Transactional
-    public void notify(Member member, NotificationType type, String message, String link) {
+    public void notify(Member member, NotificationType type, String badge, String message, String imageUrl, String link) {
         if (member == null) return;
         Notification notification = new Notification();
         notification.setMember(member);
         notification.setType(type);
+        notification.setBadge(badge);
+        notification.setImageUrl(imageUrl != null && imageUrl.length() > 500 ? null : imageUrl);
         notification.setMessage(message.length() > 255 ? message.substring(0, 255) : message);
         notification.setLink(link);
         notificationRepository.save(notification);

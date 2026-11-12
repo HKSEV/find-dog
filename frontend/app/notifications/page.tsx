@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { AppNotification, fetchNotifications, isUnauthorized, readAllNotifications } from "./notificationApi";
+import { AppNotification, fetchNotifications, isUnauthorized, noticeBadge, readAllNotifications } from "./notificationApi";
 import { timeAgo } from "../missing/missingFormat";
+import { toImageUrl } from "../shelter/animalFormat";
 
 import Header from "@/app/components/Header";
 import { loginHref } from "@/app/components/loginLink";
@@ -51,11 +52,18 @@ export default function NotificationsPage() {
     return (
       <S.NoticeList>
         {items.map((item) => {
+          const badge = noticeBadge(item);
+          const image = toImageUrl(item.imageUrl);
           const body = (
             <>
-              <S.NoticeKind>입양 신청</S.NoticeKind>
-              <S.NoticeMessage>{item.message}</S.NoticeMessage>
-              <S.NoticeTime>{timeAgo(item.createdAt)}</S.NoticeTime>
+              {image ? <S.NoticeThumb src={image} alt=""/> : <S.NoticeThumbEmpty aria-hidden="true"><S.NoticePawIcon/></S.NoticeThumbEmpty>}
+              <S.NoticeBody>
+                <S.NoticeHead>
+                  <S.NoticeBadge $tone={badge.tone}>{badge.label}</S.NoticeBadge>
+                  <S.NoticeTime>{timeAgo(item.createdAt)}</S.NoticeTime>
+                </S.NoticeHead>
+                <S.NoticeMessage>{item.message}</S.NoticeMessage>
+              </S.NoticeBody>
             </>
           );
           return (
