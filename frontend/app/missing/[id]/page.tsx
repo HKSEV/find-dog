@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { fetchMissingPost } from "../../redux/missingSlice";
 import { setActiveTab } from "../../redux/shelterSlice";
+import { loadUserFromStorage } from "../../redux/userSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
 import { formatWhen, genderText, missingBadge, placeLabel, timeAgo, whenLabel } from "../missingFormat";
 
@@ -15,6 +16,7 @@ import DetailTopBar from "@/app/components/DetailTopBar";
 import MiniMap from "@/app/components/map/MiniMap";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
 import { queueToast, showToast } from "@/app/components/Toast";
+import { loginHref } from "@/app/components/loginLink";
 import { completeMissingPost, deleteMissingPost, toMissingError } from "../missingApi";
 import * as S from "@/assets/css/Style.styles";
 
@@ -25,12 +27,14 @@ export default function MissingPostDetail() {
   const id = Number(params.id);
 
   const {detail, detailError} = useSelector((state: RootState) => state.missing);
+  const {isLoggedIn} = useSelector((state: RootState) => state.user);
   const post = detail?.id === id ? detail : null;
 
   const [confirm, setConfirm] = useState<"complete" | "delete" | null>(null); // 한 번 더 묻는 중인 일
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
+    dispatch(loadUserFromStorage()); // 연락 버튼: 로그인 전이면 "로그인하고 연락하기"
     if (Number.isFinite(id)) dispatch(fetchMissingPost(id));
   }, [dispatch, id]);
 
@@ -173,6 +177,24 @@ export default function MissingPostDetail() {
               <S.DetailApplyButton type="button" onClick={() => setConfirm("complete")}>
                 {post.type === "FOUND" ? "주인을 찾았어요" : "찾았어요"}
               </S.DetailApplyButton>
+            )}
+          </S.DetailActionBar>
+        )}
+
+        {/* 💡 남의 글이고 찾는 중이면 아래에 연락 버튼 (번호는 로그인한 회원에게만 내려옴) */}
+        {!post.mine && !done && (
+          <S.DetailActionBar>
+            {!isLoggedIn ? (
+              <S.DetailApplyButton as={Link} href={loginHref(`/missing/${post.id}`)}>로그인하고 연락하기</S.DetailApplyButton>
+            ) : post.contactPhone ? (
+              <>
+                <S.MissingOwnerButton as="a" href={`sms:${post.contactPhone}`}>문자 보내기</S.MissingOwnerButton>
+                <S.DetailApplyButton as="a" href={`tel:${post.contactPhone}`}>
+                  {post.type === "FOUND" ? "제 아이 같아요, 전화하기" : "봤어요, 전화하기"}
+                </S.DetailApplyButton>
+              </>
+            ) : (
+              <S.DetailApplyButton type="button" disabled>작성자 연락처가 없어요</S.DetailApplyButton>
             )}
           </S.DetailActionBar>
         )}

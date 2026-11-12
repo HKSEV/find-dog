@@ -381,7 +381,7 @@ function MissingWriteForm() {
       </S.WriteField>
 
       <S.WriteBar>
-        {errors.submit ? <S.WriteError as="p">{errors.submit}</S.WriteError> : <p>연락은 로그인한 계정의 연락처로 받아요.</p>}
+        {errors.submit ? <S.WriteError as="p">{errors.submit}</S.WriteError> : <p>로그인한 회원에게 내 휴대폰으로 연락하는 버튼이 보여요.</p>}
         <S.WriteSubmit type="submit" disabled={submitting}>
           {submitting ? (editId ? "고치는 중..." : "등록하는 중...") : (editId ? "고치기" : "등록하기")}
         </S.WriteSubmit>
