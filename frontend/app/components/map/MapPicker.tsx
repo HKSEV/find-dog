@@ -95,6 +95,7 @@ export default function MapPicker({initial, onSelect, onClose}: Props) {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // 바깥 화면의 form 제출로 번지지 않게
     const kakao = kakaoRef.current;
     const word = keyword.trim();
     if (!kakao || !word) return;

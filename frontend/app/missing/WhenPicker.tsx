@@ -73,13 +73,15 @@ interface Props {
   label: string; // "잃어버린 때" / "발견한 때"
   value: WhenValue;
   error?: string;
-  onChange: (value: WhenValue) => void;
+  // 항상 최신 값을 기준으로 바꾸도록 바꿀 부분만 넘김 (빠르게 연달아 눌러도 앞 선택이 사라지지 않게)
+  onChange: (update: (prev: WhenValue) => WhenValue) => void;
 }
 
 // 💡 잃어버린 때 / 발견한 때: 날짜는 칩(오늘·어제·그저께·날짜 고르기)으로 꼭 고르고,
 //    시간은 시간대 칩(모르겠어요 포함)이나 정확한 시각. 연도는 화면에 안 보이고 저장할 때 자동
 export default function WhenPicker({label, value, error, onChange}: Props) {
   const [sheetOpen, setSheetOpen] = useState(false);
+  const patch = (part: Partial<WhenValue>) => onChange((prev) => ({...prev, ...part}));
   const quick = [{label: "오늘", key: daysAgo(0)}, {label: "어제", key: daysAgo(1)}, {label: "그저께", key: daysAgo(2)}];
   const isQuick = quick.some((q) => q.key === value.date);
 
@@ -98,11 +100,11 @@ export default function WhenPicker({label, value, error, onChange}: Props) {
     const h = Number(nextHour);
     const m = Number(nextMinute || "0");
     if (!nextHour || Number.isNaN(h) || h < 1 || h > 12 || Number.isNaN(m) || m < 0 || m > 59) {
-      onChange({...value, exact: ""});
+      patch({exact: ""});
       return;
     };
     const h24 = nextAmPm === "AM" ? h % 12 : (h % 12) + 12;
-    onChange({...value, exact: `${pad(h24)}:${pad(m)}`});
+    patch({exact: `${pad(h24)}:${pad(m)}`});
   };
 
   return (
@@ -110,7 +112,7 @@ export default function WhenPicker({label, value, error, onChange}: Props) {
       <S.WriteLabel as="span" id="when-label">{label}</S.WriteLabel>
       <S.WhenChips role="radiogroup" aria-labelledby="when-label">
         {quick.map((q) => (
-          <S.WhenChip key={q.key} type="button" role="radio" aria-checked={value.date === q.key} $checked={value.date === q.key} onClick={() => onChange({...value, date: q.key})}>
+          <S.WhenChip key={q.key} type="button" role="radio" aria-checked={value.date === q.key} $checked={value.date === q.key} onClick={() => patch({date: q.key})}>
             {q.label}
           </S.WhenChip>
         ))}
@@ -132,12 +134,12 @@ export default function WhenPicker({label, value, error, onChange}: Props) {
               role="radio"
               aria-checked={value.band === b.value}
               $checked={value.band === b.value}
-              onClick={() => onChange({...value, band: value.band === b.value ? "" : b.value})}>
+              onClick={() => patch({band: value.band === b.value ? "" : b.value})}>
                 {b.label}
               </S.WhenChip>
             ))}
           </S.WhenChips>
-          <S.WhenLink type="button" onClick={() => onChange({...value, exactMode: true})}>정확한 시각 적기 ›</S.WhenLink>
+          <S.WhenLink type="button" onClick={() => patch({exactMode: true})}>정확한 시각 적기 ›</S.WhenLink>
         </>
       ) : (
         <>
@@ -151,7 +153,7 @@ export default function WhenPicker({label, value, error, onChange}: Props) {
             <span>:</span>
             <input inputMode="numeric" aria-label="분" placeholder="분" maxLength={2} defaultValue={minute} onChange={(e) => setExact(ampm, hour || "", e.target.value)}/>
           </S.WhenExact>
-          <S.WhenLink type="button" onClick={() => onChange({...value, exactMode: false, exact: ""})}>시간대로 고르기 ›</S.WhenLink>
+          <S.WhenLink type="button" onClick={() => patch({exactMode: false, exact: ""})}>시간대로 고르기 ›</S.WhenLink>
         </>
       )}
 
@@ -162,7 +164,7 @@ export default function WhenPicker({label, value, error, onChange}: Props) {
         selected={value.date}
         onClose={() => setSheetOpen(false)}
         onPick={(key) => {
-          onChange({...value, date: key});
+          patch({date: key});
           setSheetOpen(false);
         }}/>
       )}

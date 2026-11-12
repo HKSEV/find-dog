@@ -363,22 +363,10 @@ function MissingWriteForm() {
       label={whenLabel(kind)}
       value={when}
       error={errors.when}
-      onChange={(next) => {
-        setWhen(next);
-        if (next.date) setErrors((prev) => ({...prev, when: undefined}));
+      onChange={(update) => {
+        setWhen(update);
+        setErrors((prev) => ({...prev, when: undefined}));
       }}/>
-
-      {pickerOpen && (
-        <MapPicker
-        initial={point}
-        onClose={() => setPickerOpen(false)}
-        onSelect={(place: PickedPlace) => {
-          setPoint({lat: place.lat, lng: place.lng});
-          setField("rescueLocation", place.address);
-          setPickerOpen(false);
-        }}/>
-      )}
-
       <S.WriteField>
         <S.WriteLabel htmlFor="mw-note">자세한 내용</S.WriteLabel>
         <S.WriteTextArea
@@ -399,6 +387,18 @@ function MissingWriteForm() {
         </S.WriteSubmit>
       </S.WriteBar>
     </S.WriteForm>
+
+    {/* 지도 고르기는 글쓰기 form 밖에 둠 (안에 검색 form이 있어서 form이 겹치지 않게) */}
+    {pickerOpen && (
+      <MapPicker
+      initial={point}
+      onClose={() => setPickerOpen(false)}
+      onSelect={(place: PickedPlace) => {
+        setPoint({lat: place.lat, lng: place.lng});
+        setField("rescueLocation", place.address);
+        setPickerOpen(false);
+      }}/>
+    )}
     </>
   );
 };
