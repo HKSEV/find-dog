@@ -1,51 +1,63 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { useState, useRef } from "react";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { setStep, updateFormField, setAllAgreed, submitSignup } from "../redux/signupSlice";
 
 import DaumPostcodeEmbed, { Address } from "react-daum-postcode";
+import {
+  CampaignOutlined as SpeakerIcon,
+  FavoriteBorderRounded as HeartIcon,
+  DescriptionOutlined as FormIcon
+} from "@mui/icons-material";
 import Header from "../components/Header";
 import { CustomAlert } from "../components/CustomAlert";
+import { SIGNUP_EMAIL_KEY } from "../components/loginLink";
+import { queueToast } from "../components/Toast";
 import * as S from "@/assets/css/Style.styles";
 
-interface AnimatedInputProps {
-  type?: React.HTMLInputTypeAttribute;
-  name?: string;
-  readOnly?: boolean;
-  onClick?: React.MouseEventHandler<HTMLDivElement>;
-  label: string;
-  value: string;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
-  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
-}
+type FormField = keyof RootState["signup"]["formData"];
+type ErrorKey = "email" | "nickname" | "password" | "passwordConfirm" | "name" | "phone";
 
-// 💡 onKeyDown 프롭스 추가
-const AnimatedInput = ({type, name, label, value, onChange, readOnly, onClick, onKeyDown}: AnimatedInputProps) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const isActive = isFocused || value.length > 0;
+// 입력하면 그 칸의 오류 문구를 지움
+const errorsKeys: Record<ErrorKey, true> = {email: true, nickname: true, password: true, passwordConfirm: true, name: true, phone: true};
 
-  return (
-    <S.SignupInputWrapper onClick={onClick}>
-      <S.SignupFloatingLabel $isActive={isActive}>{label}</S.SignupFloatingLabel>
-      <S.SignupFloatingInput
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      onKeyDown={onKeyDown} // 💡 키보드 이벤트 연결
-      onFocus={() => setIsFocused(true)}
-      onBlur={() => setIsFocused(false)}
-      placeholder={label}
-      readOnly={readOnly}/>
-    </S.SignupInputWrapper>
-  );
-};
+
+// 💡 약관 (필수 3개 + 선택 1개). 본문은 아직 임시 문구
+const agreements: {field: FormField; label: string; text?: string}[] = [
+  {field: "agreeTerms", label: "이용약관 (필수)", text: "제 1조 (목적) ..."},
+  {field: "agreePrivacy", label: "개인정보 수집·이용 (필수)", text: "수집 항목: 이메일..."},
+  {field: "agreeAge", label: "만 14세 이상이에요 (필수)"},
+  {field: "marketingAgreed", label: "마케팅 정보 메일·문자 수신 (선택)"}
+];
+
+// 로고와 같은 강아지 얼굴 (흰 배경에서도 보이게 얼굴 테두리)
+const DogMark = () => (
+  <svg width="64" height="64" viewBox="0 0 36 36" aria-hidden="true">
+    <ellipse cx="18" cy="18" rx="14" ry="13" fill="#fff" stroke="#c17f4a" strokeWidth="1.5"/>
+    <ellipse cx="8" cy="14" rx="6.5" ry="11" transform="rotate(-25 8 14)" fill="#c17f4a"/>
+    <ellipse cx="28" cy="14" rx="6.5" ry="11" transform="rotate(25 28 14)" fill="#c17f4a"/>
+    <ellipse cx="14" cy="16" rx="1.5" ry="2.2" fill="#2c2522"/>
+    <ellipse cx="22" cy="16" rx="1.5" ry="2.2" fill="#2c2522"/>
+    <ellipse cx="18" cy="20" rx="3" ry="2" fill="#2c2522"/>
+    <circle cx="12.5" cy="31" r="5.5" fill="#fff" stroke="#c17f4a" strokeWidth="1.5"/>
+    <circle cx="23.5" cy="31" r="5.5" fill="#fff" stroke="#c17f4a" strokeWidth="1.5"/>
+  </svg>
+);
+
+// 네모 체크 (진짜 checkbox + 모양)
+const Check = ({checked, onChange, label}: {checked: boolean; onChange: (checked: boolean) => void; label?: string}) => (
+  <S.SignupCheck>
+    <input type="checkbox" checked={checked} aria-label={label} onChange={(e) => onChange(e.target.checked)}/>
+    <i><S.SignupCheckIcon/></i>
+  </S.SignupCheck>
+);
 
 // ==========================================
-// 💡 3. 메인 회원가입 페이지 컴포넌트
+// 💡 회원가입: 0 시작 → 1 약관 동의 → 2 정보 입력 → 3 프로필
 // ==========================================
 export default function SignupPage() {
   const router = useRouter();
@@ -54,12 +66,13 @@ export default function SignupPage() {
 
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isOpenPostcode, setIsOpenPostcode] = useState(false);
-  const [showTerms, setShowTerms] = useState(false);
-  const [showPrivacy, setShowPrivacy] = useState(false);
+  const [openTerms, setOpenTerms] = useState<FormField | null>(null);
+  const [agreeError, setAgreeError] = useState("");
+  const [errors, setErrors] = useState<Partial<Record<ErrorKey, string>>>({});
+  // 중복 확인을 통과한 값 (값을 바꾸면 다시 확인해야 함)
+  const [checked, setChecked] = useState<{email: string; nickname: string}>({email: "", nickname: ""});
 
-  // 💡 커스텀 알럿 상태 관리
   const [alertConfig, setAlertConfig] = useState({
     isOpen: false,
     message: "",
@@ -68,23 +81,31 @@ export default function SignupPage() {
   });
 
   const closeAlert = () => setAlertConfig((prev) => ({...prev, isOpen: false}));
-
-  // 알럿 띄우기 공통 함수
   const showAlert = (message: string, type: "success" | "error" | "info" = "info", customConfirm?: () => void) => {
-    setAlertConfig({
-      isOpen: true,
-      message,
-      type,
-      onConfirm: customConfirm || closeAlert
-    });
+    setAlertConfig({isOpen: true, message, type, onConfirm: customConfirm || closeAlert});
+  };
+
+  // 단계가 바뀌면 화면 맨 위로
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
+
+  // 미리보기 주소 정리
+  useEffect(() => () => {
+    if (profilePreview) URL.revokeObjectURL(profilePreview);
+  }, [profilePreview]);
+
+  const setField = (field: FormField, value: string | boolean) => {
+    dispatch(updateFormField({field, value}));
+    if (field in errorsKeys) setErrors((prev) => ({...prev, [field]: undefined}));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setProfileFile(file);
-      setProfilePreview(URL.createObjectURL(file));
-    };
+    e.target.value = "";
+    if (!file || !file.type.startsWith("image/")) return;
+    setProfileFile(file);
+    setProfilePreview(URL.createObjectURL(file));
   };
 
   const handleCompletePostcode = (data: Address) => {
@@ -103,309 +124,367 @@ export default function SignupPage() {
 
   const isAllAgreed = formData.agreeTerms && formData.agreePrivacy && formData.agreeAge && formData.marketingAgreed;
 
-  const handleAllAgreeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setAllAgreed(e.target.checked));
+  const handleKakaoSignup = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
   };
 
-  const handleBoxClick = () => fileInputRef.current?.click();
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(updateFormField({field: e.target.name as keyof RootState["signup"]["formData"], value: e.target.value}));
-  };
-
-  const handleGeneralSignup = () => dispatch(setStep(1));
-  const handleKakaoSignup = () => showAlert("카카오 로그인 연동 페이지로 이동합니다.", "info");
-
-  const handleCheckEmail = async () => {
-    if (!formData.email.trim()) return showAlert("이메일을 먼저 입력해 주세요.", "error");
-    try {
-      const res = await fetch(`http://localhost:8080/api/members/check-email?email=${formData.email}`);
-      if (!res.ok) throw new Error("서버응답에러");
-      if (await res.json()) showAlert("이미 사용 중인 이메일입니다.", "error");
-      else showAlert("사용 가능한 이메일입니다!", "success");
-    } catch {
-      showAlert("서버와 통신하는 중 문제가 발생했습니다.", "error");
-    }
-  };
-
-  const handleCheckNickname = async () => {
-    if (!formData.nickname.trim()) return showAlert("닉네임을 먼저 입력해 주세요.", "error");
-    try {
-      const res = await fetch(`http://localhost:8080/api/members/check-nickname?nickname=${formData.nickname}`);
-      if (!res.ok) throw new Error("서버응답에러");
-      if (await res.json()) showAlert("이미 누군가 사용 중인 닉네임입니다.", "error");
-      else showAlert("멋진 닉네임이네요! 사용 가능합니다.", "success");
-    } catch {
-      showAlert("서버와 통신하는 중 문제가 발생했습니다.", "error");
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!formData.email || !formData.nickname || !formData.password || !formData.name || !formData.phone) {
-      return showAlert("필수 입력 사항을 모두 입력해 주세요.", "error");
+  const goNextFromAgree = () => {
+    if (!formData.agreeTerms || !formData.agreePrivacy || !formData.agreeAge) {
+      setAgreeError("필수 약관에 모두 동의해 주세요.");
+      return;
     };
-    if (formData.password !== formData.passwordConfirm) {
-      return showAlert("비밀번호가 일치하지 않습니다.", "error");
+    dispatch(setStep(2));
+  };
+
+  // 중복 확인 (이메일 / 닉네임)
+  const handleCheck = async (kind: "email" | "nickname") => {
+    const value = formData[kind].trim();
+    if (!value) {
+      setErrors((prev) => ({...prev, [kind]: kind === "email" ? "이메일을 먼저 적어 주세요." : "닉네임을 먼저 적어 주세요."}));
+      return;
+    };
+    if (kind === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      setErrors((prev) => ({...prev, email: "이메일 형식을 확인해 주세요."}));
+      return;
+    };
+    try {
+      const res = await fetch(`/api/members/check-${kind}?${kind}=${encodeURIComponent(value)}`);
+      if (!res.ok) throw new Error();
+      if (await res.json()) {
+        setErrors((prev) => ({...prev, [kind]: kind === "email" ? "이미 가입된 이메일이에요." : "이미 누군가 쓰고 있는 닉네임이에요."}));
+      } else {
+        setChecked((prev) => ({...prev, [kind]: value}));
+        setErrors((prev) => ({...prev, [kind]: undefined}));
+      };
+    } catch {
+      showAlert("서버와 연결하지 못했어요. 잠시 후 다시 시도해 주세요.", "error");
+    };
+  };
+
+  // 2/3 정보 입력 → 3/3 프로필
+  const handleNextFromInfo = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const next: Partial<Record<ErrorKey, string>> = {};
+    const email = formData.email.trim();
+    if (!email) next.email = "이메일을 적어 주세요.";
+    else if (checked.email !== email) next.email = "이메일 중복 확인을 눌러 주세요.";
+    if (formData.password.length < 8) next.password = "비밀번호는 8자 이상이어야 해요.";
+    if (formData.password !== formData.passwordConfirm) next.passwordConfirm = "비밀번호가 서로 달라요.";
+    if (!formData.name.trim()) next.name = "이름을 적어 주세요.";
+    if (!/^\d{9,11}$/.test(formData.phone.replace(/-/g, ""))) next.phone = "휴대폰 번호를 숫자로 적어 주세요.";
+    if (Object.keys(next).length > 0) {
+      setErrors(next);
+      return;
+    };
+    dispatch(setStep(3));
+  };
+
+  // 3/3 프로필 → 가입
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const nickname = formData.nickname.trim();
+    if (!nickname || checked.nickname !== nickname) {
+      setErrors({nickname: nickname ? "닉네임 중복 확인을 눌러 주세요." : "닉네임을 적어 주세요."});
+      return;
     };
 
-    const resultAction = await dispatch(submitSignup({formData, profileFile}));
+    const resultAction = await dispatch(submitSignup({
+      formData: {...formData, email: formData.email.trim(), nickname, phone: formData.phone.replace(/-/g, "")},
+      profileFile
+    }));
     if (submitSignup.fulfilled.match(resultAction)) {
-      showAlert("어서찾아주개 회원이 되신 것을 환영합니다! 🎉", "success", () => {
-        closeAlert();
-        router.push("/login");
-      });
+      // 모달 없이 로그인 화면으로. 로그인 화면에서 "가입이 끝났어요" 토스트 + 이메일 채움
+      queueToast("가입이 끝났어요. 로그인해 주세요");
+      try {
+        sessionStorage.setItem(SIGNUP_EMAIL_KEY, formData.email.trim());
+      } catch {
+        // 저장이 막힌 브라우저에서는 배너 없이 이동
+      };
+      dispatch(setStep(0));
+      router.replace("/login");
     } else {
-      showAlert(`회원가입에 실패했습니다: ${resultAction.payload}`, "error");
+      showAlert(`가입하지 못했어요. ${resultAction.payload ?? ""}`, "error");
     };
   };
 
-  // 💡 엔터키 입력 감지 핸들러
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSubmit();
-    };
-  };
+  // 시작 화면은 닫기(X), 약관·정보 입력·프로필은 이전 단계로(<)
+  const header = step === 0
+    ? <Header title="회원가입" isModal/>
+    : <Header title="회원가입" onBackClick={() => dispatch(setStep(step - 1))}/>;
 
   return (
     <S.AppWrapper>
       <S.Container>
-        <Header title="회원가입" onBackClick={() => (step > 0 ? dispatch(setStep(step - 1)) : window.history.back())} onClose={() => window.history.back()}/>
+        {header}
         <S.HeaderOffset/>
 
-        {/* STEP 0: 가입 방식 선택 */}
+        {/* 0. 시작 */}
         {step === 0 && (
-          <S.TextCenter>
-            <S.H3Title>어서찾아주개에 오신 것을 환영합니다!</S.H3Title>
-            <S.Column>
-              <S.BtnBottomWrap>
-                <S.BaseBtn $variant="kakao" onClick={handleKakaoSignup}>
-                  카카오로 시작하기
-                </S.BaseBtn>
-                <br/>
-                <S.BaseBtn $variant="primary" onClick={handleGeneralSignup}>
-                  일반회원가입
-                </S.BaseBtn>
-              </S.BtnBottomWrap>
-            </S.Column>
-          </S.TextCenter>
+          <>
+            <S.SignupIntro>
+              <DogMark/>
+              <S.SignupTitle as="h2">잃어버린 아이와<br/>새 가족을 이어 줘요</S.SignupTitle>
+              <S.SignupIntroList>
+                <li><SpeakerIcon aria-hidden="true"/>실종 신고와 목격 제보</li>
+                <li><HeartIcon aria-hidden="true"/>관심 동물 모아 보기</li>
+                <li><FormIcon aria-hidden="true"/>입양 신청과 진행 상황 확인</li>
+              </S.SignupIntroList>
+            </S.SignupIntro>
+
+            <S.SignupBottom>
+              <S.SignupButton type="button" $variant="kakao" onClick={handleKakaoSignup}>카카오로 시작하기</S.SignupButton>
+              <S.SignupButton type="button" onClick={() => dispatch(setStep(1))}>이메일로 가입하기</S.SignupButton>
+              <S.SignupLoginLink>이미 계정이 있나요? <Link href="/login">로그인</Link></S.SignupLoginLink>
+            </S.SignupBottom>
+          </>
         )}
 
-        {/* STEP 1: 약관동의 */}
+        {/* 1. 약관 동의 */}
         {step === 1 && (
-          <S.BasicLayout>
-            <S.H3Title>약관에 동의하고 어서찾아주개 회원이 되어주세요 !</S.H3Title>
-            <S.MemberInfo>
-              <label>
-                <input type="checkbox" checked={isAllAgreed} onChange={handleAllAgreeChange}/>
-                전체동의
-              </label>
-              <br/>
-              <label>
-                <input
-                type="checkbox"
-                checked={formData.agreeTerms}
-                onChange={(e) => dispatch(updateFormField({field: "agreeTerms", value: e.target.checked}))}/>
-                이용약관 동의(필수)
-              </label>
-              <S.UpAndDown onClick={() => setShowTerms(!showTerms)}>{showTerms ? "▲ 닫기" : "▼ 보기"}</S.UpAndDown>
-              <S.Terms $expanded={showTerms}>
-                <S.TermsInner>제 1조 (목적) ...</S.TermsInner>
-              </S.Terms>
+          <S.SignupBody>
+            <S.SignupStep><b>1</b> / 3 약관 동의</S.SignupStep>
+            <S.SignupProgress $percent={33}/>
+            <S.SignupTitle>서비스 이용 약관에<br/>동의해 주세요</S.SignupTitle>
 
-              <label>
-                <input
-                type="checkbox"
-                checked={formData.agreePrivacy}
-                onChange={(e) => dispatch(updateFormField({field: "agreePrivacy", value: e.target.checked}))}/>
-                개인정보 수집이용 동의(필수)
-              </label>
-              <S.UpAndDown onClick={() => setShowPrivacy(!showPrivacy)}>
-                {showPrivacy ? "▲ 닫기" : "▼ 보기"}
-              </S.UpAndDown>
-              <S.Privacy $expanded={showPrivacy}>
-                <S.TermsInner>수집 항목: 이메일... </S.TermsInner>
-              </S.Privacy>
+            <S.SignupAgreeAll>
+              <Check
+              checked={isAllAgreed}
+              label="모두 동의해요"
+              onChange={(value) => {
+                dispatch(setAllAgreed(value));
+                setAgreeError("");
+              }}/>
+              모두 동의해요
+            </S.SignupAgreeAll>
 
-              <label>
-                <input
-                type="checkbox"
-                checked={formData.agreeAge}
-                onChange={(e) => dispatch(updateFormField({field: "agreeAge", value: e.target.checked}))}/>
-                만 14세 이상입니다(필수)
-              </label>
-              <br/>
-              <label>
-                <input
-                type="checkbox"
-                checked={formData.marketingAgreed}
-                onChange={(e) => dispatch(updateFormField({field: "marketingAgreed", value: e.target.checked}))}/>
-                마케팅 정보 메일, SMS 수신동의 (선택)
-              </label>
-              <br/>
-            </S.MemberInfo>
-            <S.BtnBottomWrap>
-              <S.BaseBtn
-              $variant="primary"
-              onClick={() => {
-                if (!formData.agreeTerms || !formData.agreePrivacy || !formData.agreeAge) {
-                  return showAlert("필수 약관에 모두 동의해 주세요.", "error");
-                };
-                dispatch(setStep(2));
-              }}>
-                다음으로
-              </S.BaseBtn>
-            </S.BtnBottomWrap>
-          </S.BasicLayout>
+            <S.SignupAgreeList>
+              {agreements.map(({field, label, text}) => (
+                <S.SignupAgreeItem key={field}>
+                  <S.SignupAgreeRow>
+                    <label>
+                      <Check
+                      checked={Boolean(formData[field])}
+                      onChange={(value) => {
+                        setField(field, value);
+                        setAgreeError("");
+                      }}/>
+                      {label}
+                    </label>
+                    {text && (
+                      <S.SignupViewButton
+                      type="button"
+                      aria-expanded={openTerms === field}
+                      onClick={() => setOpenTerms(openTerms === field ? null : field)}>
+                        {openTerms === field ? "닫기" : "보기 ›"}
+                      </S.SignupViewButton>
+                    )}
+                  </S.SignupAgreeRow>
+                  {text && openTerms === field && <S.SignupTermsText>{text}</S.SignupTermsText>}
+                </S.SignupAgreeItem>
+              ))}
+            </S.SignupAgreeList>
+
+            <S.WriteBar>
+              {agreeError && <S.WriteError as="p">{agreeError}</S.WriteError>}
+              <S.WriteSubmit type="button" onClick={goNextFromAgree}>다음</S.WriteSubmit>
+            </S.WriteBar>
+          </S.SignupBody>
         )}
 
-        {/* STEP 2: 정보 입력 (예전 3번이라 뒤로 누르면 없는 2번으로 가서 빈 화면이 됐음) */}
+        {/* 2. 정보 입력 (계정 + 연락처) */}
         {step === 2 && (
-          <S.LayOutPadding>
-            <S.SignupAnimItem $delay={0} $isSlideDown>
-              <S.TextCenter>
-                <S.PhotoUpload onClick={handleBoxClick}>
-                  {profilePreview ? (
-                    <S.ProfilePreview
-                    src={profilePreview}
-                    alt="프로필"
-                    width={0}
-                    height={0}
-                    unoptimized
-                    loading="eager"/>
-                  ) : (
-                    <span>📷</span>
-                  )}
-                </S.PhotoUpload>
-                <S.PhotoHint>클릭해서 사진을 등록하세요</S.PhotoHint>
-                <S.HiddenFileInput type="file" accept="image/*" ref={fileInputRef} onChange={handleImageChange}/>
-              </S.TextCenter>
-            </S.SignupAnimItem>
+          <S.SignupBody as="form" onSubmit={handleNextFromInfo} noValidate>
+            <S.SignupStep><b>2</b> / 3 정보 입력</S.SignupStep>
+            <S.SignupProgress $percent={67}/>
 
-            <S.SignupAnimItem $delay={0.1}>
-              <S.SignupSectionHeading>
-                <S.LabelGroup>
-                  <S.Label>
-                    <input
-                    type="radio"
-                    name="userType"
-                    value="GENERAL"
-                    checked={formData.userType === "GENERAL"}
-                    onChange={handleChange}/>
-                    일반회원
-                  </S.Label>
-                  <S.Label>
-                    <input
-                    type="radio"
-                    name="userType"
-                    value="BUSINESS"
-                    checked={formData.userType === "BUSINESS"}
-                    onChange={handleChange}/>
-                    업체 (비즈니스)
-                  </S.Label>
-                </S.LabelGroup>
-              </S.SignupSectionHeading>
-            </S.SignupAnimItem>
+            <S.WriteField>
+              <S.WriteLabel as="span" id="signup-type-title">가입 유형</S.WriteLabel>
+              <S.ApplyChoiceGroup $columns={2} role="radiogroup" aria-labelledby="signup-type-title">
+              {[{label: "일반 회원", value: "GENERAL"}, {label: "업체 (보호소·병원 등)", value: "BUSINESS"}].map((option) => (
+                <S.WriteChoice
+                key={option.value}
+                type="button"
+                role="radio"
+                aria-checked={formData.userType === option.value}
+                $checked={formData.userType === option.value}
+                onClick={() => setField("userType", option.value)}>
+                  {option.label}
+                </S.WriteChoice>
+              ))}
+              </S.ApplyChoiceGroup>
+            </S.WriteField>
 
-            <S.SignupField $delay={0.2}>
-              <AnimatedInput type="text" name="name" label="이름(실명)" value={formData.name} onChange={handleChange}/>
-            </S.SignupField>
-
-            <S.SignupField $delay={0.3}>
-              <AnimatedInput
-              type="text"
-              name="phone"
-              label="전화번호 (- 제외)"
-              value={formData.phone}
-              onChange={handleChange}/>
-            </S.SignupField>
-
-            <S.SignupField $delay={0.4}>
-              <S.PhoneFieldRow>
-                <AnimatedInput
+            <S.SignupSection>계정</S.SignupSection>
+            <S.WriteField>
+              <S.WriteLabel htmlFor="signup-email">이메일</S.WriteLabel>
+              <S.SignupInputRow>
+                <S.WriteInput
+                id="signup-email"
                 type="email"
-                name="email"
-                label="이메일"
+                autoComplete="email"
+                placeholder="name@example.com"
                 value={formData.email}
-                onChange={handleChange}/>
-                <S.AuxiliaryButton onClick={handleCheckEmail}>중복확인</S.AuxiliaryButton>
-              </S.PhoneFieldRow>
-            </S.SignupField>
+                $invalid={Boolean(errors.email)}
+                aria-invalid={Boolean(errors.email)}
+                onChange={(e) => setField("email", e.target.value)}/>
+                <S.SignupSideButton type="button" $done={checked.email !== "" && checked.email === formData.email.trim()} onClick={() => handleCheck("email")}>
+                  {checked.email !== "" && checked.email === formData.email.trim() ? "확인됨" : "중복 확인"}
+                </S.SignupSideButton>
+              </S.SignupInputRow>
+              {errors.email
+                ? <S.WriteError>{errors.email}</S.WriteError>
+                : checked.email !== "" && checked.email === formData.email.trim() && <S.SignupHint $ok>사용할 수 있는 이메일이에요.</S.SignupHint>}
+            </S.WriteField>
 
-            <S.SignupField $delay={0.5}>
-              <S.PhoneFieldRow>
-                <AnimatedInput
-                type="text"
-                name="nickname"
-                label="닉네임"
-                value={formData.nickname}
-                onChange={handleChange}/>
-                <S.AuxiliaryButton onClick={handleCheckNickname}>중복확인</S.AuxiliaryButton>
-              </S.PhoneFieldRow>
-            </S.SignupField>
-
-            <S.SignupField $delay={0.6}>
-              <AnimatedInput
+            <S.WriteField>
+              <S.WriteLabel htmlFor="signup-password">비밀번호</S.WriteLabel>
+              <S.WriteInput
+              id="signup-password"
               type="password"
-              name="password"
-              label="비밀번호"
+              autoComplete="new-password"
+              placeholder="8자 이상"
               value={formData.password}
-              onChange={handleChange}/>
-            </S.SignupField>
+              $invalid={Boolean(errors.password)}
+              aria-invalid={Boolean(errors.password)}
+              onChange={(e) => setField("password", e.target.value)}/>
+              {errors.password && <S.WriteError>{errors.password}</S.WriteError>}
+            </S.WriteField>
 
-            <S.SignupField $delay={0.7}>
-              <AnimatedInput
+            <S.WriteField>
+              <S.WriteLabel htmlFor="signup-password-confirm">비밀번호 확인</S.WriteLabel>
+              <S.WriteInput
+              id="signup-password-confirm"
               type="password"
-              name="passwordConfirm"
-              label="비밀번호 확인"
+              autoComplete="new-password"
+              placeholder="한 번 더 입력"
               value={formData.passwordConfirm}
-              onChange={handleChange}/>
-            </S.SignupField>
+              $invalid={Boolean(errors.passwordConfirm)}
+              aria-invalid={Boolean(errors.passwordConfirm)}
+              onChange={(e) => setField("passwordConfirm", e.target.value)}/>
+              {errors.passwordConfirm && <S.WriteError>{errors.passwordConfirm}</S.WriteError>}
+            </S.WriteField>
 
-            <S.SignupField $delay={0.8}>
-              <S.PhoneFieldRow>
-                <AnimatedInput
-                type="text"
-                name="address"
-                label="주소 검색"
+            <S.SignupSection>연락처 <span>· 입양 신청서에 미리 채워져요</span></S.SignupSection>
+            <S.WriteField>
+              <S.WriteLabel htmlFor="signup-name">이름 (실명)</S.WriteLabel>
+              <S.WriteInput
+              id="signup-name"
+              autoComplete="name"
+              placeholder="홍길동"
+              value={formData.name}
+              $invalid={Boolean(errors.name)}
+              aria-invalid={Boolean(errors.name)}
+              onChange={(e) => setField("name", e.target.value)}/>
+              {errors.name && <S.WriteError>{errors.name}</S.WriteError>}
+            </S.WriteField>
+
+            <S.WriteField>
+              <S.WriteLabel htmlFor="signup-phone">휴대폰 번호</S.WriteLabel>
+              <S.WriteInput
+              id="signup-phone"
+              type="tel"
+              inputMode="numeric"
+              autoComplete="tel"
+              placeholder="01012345678"
+              value={formData.phone}
+              $invalid={Boolean(errors.phone)}
+              aria-invalid={Boolean(errors.phone)}
+              onChange={(e) => setField("phone", e.target.value)}/>
+              {errors.phone && <S.WriteError>{errors.phone}</S.WriteError>}
+            </S.WriteField>
+
+            <S.WriteField>
+              <S.WriteLabel htmlFor="signup-address">주소 <span>(선택)</span></S.WriteLabel>
+              <S.SignupInputRow>
+                <S.WriteInput
+                id="signup-address"
+                placeholder="주소 검색"
                 value={formData.address}
                 readOnly
                 onClick={() => setIsOpenPostcode(true)}/>
-                <S.AuxiliaryButton onClick={() => setIsOpenPostcode(true)}>주소검색</S.AuxiliaryButton>
-              </S.PhoneFieldRow>
-            </S.SignupField>
-
-            <S.FinalSignupField $delay={0.9}>
-              {/* 💡 마지막 상세 주소 인풋에 엔터(Enter) 키 감지 이벤트 추가 */}
-              <AnimatedInput
-              type="text"
-              name="detailAddress"
-              label="상세 주소"
+                <S.SignupSideButton type="button" onClick={() => setIsOpenPostcode(true)}>검색</S.SignupSideButton>
+              </S.SignupInputRow>
+              <S.WriteInput
+              aria-label="상세 주소"
+              placeholder="상세 주소"
               value={formData.detailAddress}
-              onChange={handleChange}
-              onKeyDown={handleKeyDown}/>
-            </S.FinalSignupField>
+              onChange={(e) => setField("detailAddress", e.target.value)}/>
+            </S.WriteField>
 
-            {isOpenPostcode && (
-              <S.ModalBg>
-                <S.Modal>
-                  <S.Exit onClick={() => setIsOpenPostcode(false)}>닫기 X</S.Exit>
-                  <DaumPostcodeEmbed onComplete={handleCompletePostcode}/>
-                </S.Modal>
-              </S.ModalBg>
-            )}
+            <S.WriteBar>
+              <S.WriteSubmit type="submit">다음</S.WriteSubmit>
+            </S.WriteBar>
+          </S.SignupBody>
+        )}
 
-            <S.SignupAnimItem $delay={1.0}>
-              <S.BtnBottomWrap>
-                <S.BaseBtn $variant="primary" onClick={handleSubmit} disabled={isLoading}>
-                  {isLoading ? "처리 중..." : "회원가입 완료"}
-                </S.BaseBtn>
-              </S.BtnBottomWrap>
-            </S.SignupAnimItem>
-          </S.LayOutPadding>
+        {/* 3. 프로필 (사진 + 닉네임). 다른 회원에게 보이는 정보라 따로 받음 */}
+        {step === 3 && (
+          <S.SignupBody as="form" onSubmit={handleSubmit} noValidate>
+            <S.SignupStep><b>3</b> / 3 프로필</S.SignupStep>
+            <S.SignupProgress $percent={100}/>
+            <S.SignupTitle>다른 회원에게 보일<br/>프로필을 만들어 주세요</S.SignupTitle>
+
+            <S.SignupAvatar>
+              <S.SignupAvatarButton aria-label="프로필 사진 고르기">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {profilePreview ? <img src={profilePreview} alt="고른 프로필 사진"/> : <S.SignupAvatarIcon aria-hidden="true"/>}
+                <S.SignupAvatarBadge aria-hidden="true"><S.SignupCameraIcon/></S.SignupAvatarBadge>
+                <input type="file" accept="image/*" onChange={handleImageChange}/>
+              </S.SignupAvatarButton>
+              {profilePreview ? (
+                <S.SignupAvatarRemove
+                type="button"
+                onClick={() => {
+                  setProfileFile(null);
+                  setProfilePreview(null);
+                }}>
+                  사진 빼기
+                </S.SignupAvatarRemove>
+              ) : (
+                <span>사진 (선택)</span>
+              )}
+            </S.SignupAvatar>
+
+            <S.WriteField>
+              <S.WriteLabel htmlFor="signup-nickname">닉네임</S.WriteLabel>
+              <S.SignupInputRow>
+                <S.WriteInput
+                id="signup-nickname"
+                placeholder="예: 보리아빠"
+                value={formData.nickname}
+                $invalid={Boolean(errors.nickname)}
+                aria-invalid={Boolean(errors.nickname)}
+                onChange={(e) => setField("nickname", e.target.value)}/>
+                <S.SignupSideButton type="button" $done={checked.nickname !== "" && checked.nickname === formData.nickname.trim()} onClick={() => handleCheck("nickname")}>
+                  {checked.nickname !== "" && checked.nickname === formData.nickname.trim() ? "확인됨" : "중복 확인"}
+                </S.SignupSideButton>
+              </S.SignupInputRow>
+              {errors.nickname
+                ? <S.WriteError>{errors.nickname}</S.WriteError>
+                : checked.nickname !== "" && checked.nickname === formData.nickname.trim() && <S.SignupHint $ok>사용할 수 있는 닉네임이에요.</S.SignupHint>}
+            </S.WriteField>
+
+            <S.WriteBar>
+              <S.WriteSubmit type="submit" disabled={isLoading}>{isLoading ? "가입하는 중..." : "가입 완료"}</S.WriteSubmit>
+            </S.WriteBar>
+          </S.SignupBody>
         )}
       </S.Container>
 
-      {/* 💡 커스텀 알럿 컴포넌트 렌더링 */}
+      {isOpenPostcode && (
+        <S.SignupPostcode role="dialog" aria-modal="true" aria-label="주소 검색">
+          <S.SignupPostcodeSheet>
+            <S.SignupPostcodeHead>
+              주소 검색
+              <button type="button" aria-label="닫기" onClick={() => setIsOpenPostcode(false)}><S.SignupCloseIcon/></button>
+            </S.SignupPostcodeHead>
+            <DaumPostcodeEmbed onComplete={handleCompletePostcode}/>
+          </S.SignupPostcodeSheet>
+        </S.SignupPostcode>
+      )}
+
       <CustomAlert
       isOpen={alertConfig.isOpen}
       message={alertConfig.message}
@@ -414,3 +493,4 @@ export default function SignupPage() {
     </S.AppWrapper>
   );
 };
+

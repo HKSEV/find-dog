@@ -5,7 +5,6 @@ import {
   Fixed,
   MainMaxWidth,
   Mauto,
-  FlexAround,
   FlexColumn,
   Pointer,
   W100,
@@ -25,8 +24,20 @@ export const BottomNav = styled.nav`
   height: 3.75rem;
   background-color: #FFF; /* 💡 시안 기준 흰색. 브랜드 색은 선택된 탭에만 */
   border-top: 1px solid #EEE;
-  ${FlexAround};
   z-index: 999999;
+
+  /* 💡 시안처럼 5칸으로 똑같이 나눔. 예전 space-around는 글자 길이(홈 20px, 입양·봉사 39px)에 따라
+     탭 사이 간격이 74·83·81·73px로 달라 보였음. 각 칸 전체를 누를 수 있게 링크가 칸을 꽉 채움 */
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+
+  & > a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-decoration: none;
+  }
 `;
 
 interface NavItemProps {

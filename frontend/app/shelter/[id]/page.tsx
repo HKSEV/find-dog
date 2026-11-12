@@ -1,18 +1,20 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { fetchShelterAnimals } from "../../redux/shelterSlice";
 import { genderLabel, statusLabel, toImageUrl, toMonthDay } from "../animalFormat";
 import { useLikedAnimals } from "../useLikedAnimals";
+import { fetchMyApplications, isActiveApplication } from "../adoptionApi";
 
 import Header from "@/app/components/Header";
-import { CustomAlert } from "@/app/components/CustomAlert";
 import * as S from "@/assets/css/Style.styles";
 
-const adoptSteps = ["신청서 작성", "보호소 연락", "방문 상담", "입양"];
+// 💡 운영팀(관리자)은 보호소가 아니라서, 실제 진행은 보호소가 맡음 (안내용 단계)
+const adoptSteps = ["신청서 보내기", "운영팀이 보호소에 전달", "보호소에서 연락"];
 
 export default function ShelterAnimalDetail() {
   const router = useRouter();
@@ -24,7 +26,15 @@ export default function ShelterAnimalDetail() {
   const {animals, loading, error} = useSelector((state: RootState) => state.shelter);
   const animal = animals.find((item) => item.id === id);
   const {isLiked, toggle} = useLikedAnimals();
-  const [isApplyAlertOpen, setIsApplyAlertOpen] = useState(false);
+  const [hasActiveApplication, setHasActiveApplication] = useState(false); // 이 친구에게 진행 중인 내 신청
+
+  // 로그인했으면 이 친구에게 이미 신청했는지 확인 (버튼을 "신청 내역 보기"로 바꿈)
+  useEffect(() => {
+    if (!localStorage.getItem("token")) return;
+    fetchMyApplications()
+      .then((list) => setHasActiveApplication(list.some((item) => item.animalId === id && isActiveApplication(item.status))))
+      .catch(() => {});
+  }, [id]);
 
   useEffect(() => {
     if (animals.length === 0) dispatch(fetchShelterAnimals());
@@ -102,6 +112,7 @@ export default function ShelterAnimalDetail() {
 
           <S.DetailSection>
             <S.DetailHeading>입양 절차</S.DetailHeading>
+            <S.DetailText>신청서를 보내면 운영팀이 확인해 보호소에 전달하고, 보호소에서 적어 주신 연락처로 직접 연락드려요.</S.DetailText>
             <S.DetailSteps>
               {adoptSteps.map((step, index) => (
                 <S.DetailStep key={step} $first={index === 0}>
@@ -121,18 +132,16 @@ export default function ShelterAnimalDetail() {
           onClick={() => toggle(animal.id)}>
             {liked ? <S.AdoptHeartFilledIcon/> : <S.AdoptHeartIcon/>}
           </S.DetailHeartButton>
-          <S.DetailApplyButton type="button" disabled={isDone} onClick={() => setIsApplyAlertOpen(true)}>
-            {isDone ? "입양이 완료된 친구예요" : "입양 신청하기"}
-          </S.DetailApplyButton>
+          {isDone ? (
+            <S.DetailApplyButton type="button" disabled>입양이 완료된 친구예요</S.DetailApplyButton>
+          ) : hasActiveApplication ? (
+            <S.DetailApplyButton as={Link} href="/mypage/applications">신청 내역 보기</S.DetailApplyButton>
+          ) : (
+            <S.DetailApplyButton as={Link} href={`/shelter/${animal.id}/apply`}>입양 신청하기</S.DetailApplyButton>
+          )}
         </S.DetailActionBar>
       </S.Container>
 
-      {/* 입양 신청서 화면은 다음 작업에서 */}
-      <CustomAlert
-      isOpen={isApplyAlertOpen}
-      message="입양 신청은 준비 중이에요. 공고번호로 보호소에 문의해 주세요."
-      type="info"
-      onConfirm={() => setIsApplyAlertOpen(false)}/>
     </S.AppWrapper>
   );
 };

@@ -64,10 +64,11 @@ export const LoginFloatingLabel = styled.label<{$isActive: boolean}>`
   z-index: 2;
 `;
 
-export const LoginFloatingInput = styled(FormControl)`
+export const LoginFloatingInput = styled(FormControl)<{$invalid?: boolean}>`
   width: 100%;
   padding: 14px 15px;
   background-color: transparent;
+  ${({$invalid}) => ($invalid ? `border-color: ${colors.danger} !important;` : "")}
 
   &::placeholder {
     color: transparent;
@@ -78,4 +79,11 @@ export const LoginFloatingInput = styled(FormControl)`
     box-shadow: none !important;
     border: 1px solid ${colors.brand} !important;
   }
+`;
+
+// 입력 칸 아래 오류 한 줄 (모달 대신)
+export const LoginError = styled.p`
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: ${colors.danger};
 `;
