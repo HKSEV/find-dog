@@ -358,7 +358,7 @@ export const DetailText = styled.p`
 
 export const DetailSteps = styled.ol`
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
   margin: 10px 0 0;
   padding: 0;
@@ -418,6 +418,9 @@ export const DetailHeartButton = styled.button<{$liked?: boolean}>`
 
 export const DetailApplyButton = styled.button`
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 52px;
   border: 0;
   border-radius: 12px;
@@ -425,7 +428,12 @@ export const DetailApplyButton = styled.button`
   color: ${colors.white};
   font-size: 16px;
   font-weight: ${fontWeight.semibold};
+  text-decoration: none;
   cursor: pointer;
+
+  &:hover {
+    color: ${colors.white}; /* 링크로 쓸 때 전역 a:hover 파란색 대신 */
+  }
 
   &:disabled {
     background-color: ${colors.gray200};

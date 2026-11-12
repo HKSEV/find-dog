@@ -17,7 +17,8 @@ import * as S from "@/assets/css/Style.styles";
 // 💡 아직 화면이 없는 메뉴는 "준비 중"으로 표시 (누를 수 없음)
 const activityMenus = [
   {label: "작성한 글", href: "/mypage/posts", needLogin: true},
-  {label: "입양·봉사 신청 내역"},
+  {label: "입양 신청 내역", href: "/mypage/applications", needLogin: true},
+  {label: "봉사 신청 내역"},
   {label: "관심 보호소"},
   {label: "알림 설정"}
 ];
