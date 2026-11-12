@@ -6,6 +6,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { compressImage } from "../compressImage";
 import { placeLabel, whenLabel } from "../missingFormat";
+import WhenPicker, { WhenValue, emptyWhen, fromOccurred, toOccurred } from "../WhenPicker";
+import MapPicker, { PickedPlace } from "../../components/map/MapPicker";
+import MiniMap from "../../components/map/MiniMap";
+import { MapPoint } from "../../components/map/kakaoMap";
 import { toImageUrl } from "../../shelter/animalFormat";
 import { MissingAnimal, missingAuthHeader } from "../../redux/missingSlice";
 import { toMissingError, updateMissingPost } from "../missingApi";
@@ -48,9 +52,12 @@ function MissingWriteForm() {
 
   // 홈 "발견했어요" 등에서 ?type=found로 들어오면 발견했어요가 먼저 선택됨
   const [kind, setKind] = useState<Kind>(searchParams.get("type") === "found" ? "FOUND" : "LOST");
-  const [form, setForm] = useState({breed: "", color: "", gender: "미상", age: "", weight: "", rescueLocation: "", occurredAt: "", content: ""});
+  const [form, setForm] = useState({breed: "", color: "", gender: "미상", age: "", weight: "", rescueLocation: "", content: ""});
+  const [when, setWhen] = useState<WhenValue>(emptyWhen); // 잃어버린 때 / 발견한 때 (날짜 필수)
+  const [point, setPoint] = useState<MapPoint | null>(null); // 지도에서 고른 장소 (선택)
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [photos, setPhotos] = useState<Photo[]>([]);
-  const [errors, setErrors] = useState<{rescueLocation?: string; content?: string; photos?: string; submit?: string}>({});
+  const [errors, setErrors] = useState<{rescueLocation?: string; when?: string; content?: string; photos?: string; submit?: string}>({});
   const [submitting, setSubmitting] = useState(false);
 
   // 💡 수정 모드 (/missing/write?edit=글번호): 내 글이면 내용을 채워서 고치기. 사진은 그대로 둠
@@ -74,9 +81,10 @@ function MissingWriteForm() {
           age: data.age ?? "",
           weight: data.weight ?? "",
           rescueLocation: data.rescueLocation ?? "",
-          occurredAt: data.occurredAt ? data.occurredAt.substring(0, 16) : "", // datetime-local 형식 (초 빼기)
           content: data.content ?? ""
         });
+        setWhen(fromOccurred(data.occurredAt, data.occurredTime));
+        setPoint(data.lat != null && data.lng != null ? {lat: data.lat, lng: data.lng} : null);
         setExistingPhotos((data.mediaUrls ?? []).map((url) => toImageUrl(url)).filter((url): url is string => Boolean(url)));
         setEditState("ready");
       })
@@ -119,6 +127,7 @@ function MissingWriteForm() {
 
     const nextErrors: typeof errors = {};
     if (!form.rescueLocation.trim()) nextErrors.rescueLocation = `${placeLabel(kind)}를 적어 주세요.`;
+    if (!when.date) nextErrors.when = "날짜를 골라 주세요.";
     if (!form.content.trim()) nextErrors.content = "자세한 내용을 적어 주세요.";
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
@@ -146,7 +155,9 @@ function MissingWriteForm() {
           age: form.age.trim(),
           weight: form.weight.trim(),
           rescueLocation: form.rescueLocation.trim(),
-          occurredAt: form.occurredAt || null,
+          ...toOccurred(when),
+          lat: point?.lat ?? null,
+          lng: point?.lng ?? null,
           content: form.content.trim()
         });
         queueToast("글을 고쳤어요");
@@ -169,7 +180,9 @@ function MissingWriteForm() {
         age: form.age.trim(),
         weight: form.weight.trim(),
         rescueLocation: form.rescueLocation.trim(),
-        occurredAt: form.occurredAt || null,
+        ...toOccurred(when),
+        lat: point?.lat ?? null,
+        lng: point?.lng ?? null,
         content: form.content.trim()
       };
 
@@ -324,20 +337,47 @@ function MissingWriteForm() {
 
       <S.WriteField>
         <S.WriteLabel htmlFor="mw-place">{placeLabel(kind)}</S.WriteLabel>
-        <S.WriteInput
-        id="mw-place"
-        placeholder="동네, 가까운 건물"
-        value={form.rescueLocation}
-        $invalid={Boolean(errors.rescueLocation)}
-        aria-invalid={Boolean(errors.rescueLocation)}
-        onChange={(e) => setField("rescueLocation", e.target.value)}/>
+        {/* 지도에서 고르면 작은 지도(보기만)가 생기고, 장소 칸에 주소가 채워짐 (고칠 수 있음) */}
+        {point && <MiniMap point={point} label={form.rescueLocation || placeLabel(kind)}/>}
+        <S.SignupInputRow>
+          <S.WriteInput
+          id="mw-place"
+          placeholder="동네, 가까운 건물"
+          value={form.rescueLocation}
+          $invalid={Boolean(errors.rescueLocation)}
+          aria-invalid={Boolean(errors.rescueLocation)}
+          onChange={(e) => setField("rescueLocation", e.target.value)}/>
+          <S.SignupSideButton type="button" onClick={() => setPickerOpen(true)}>
+            {point ? "다시 고르기" : "지도에서 선택"}
+          </S.SignupSideButton>
+        </S.SignupInputRow>
         {errors.rescueLocation && <S.WriteError>{errors.rescueLocation}</S.WriteError>}
+        {point && (
+          <S.WhenSubLabel>
+            다른 사람에게는 이 근처(약 300m)로만 보여요. <S.WhenLink type="button" onClick={() => setPoint(null)}>지도 빼기</S.WhenLink>
+          </S.WhenSubLabel>
+        )}
       </S.WriteField>
 
-      <S.WriteField>
-        <S.WriteLabel htmlFor="mw-when">{whenLabel(kind)} <span>(선택)</span></S.WriteLabel>
-        <S.WriteInput id="mw-when" type="datetime-local" value={form.occurredAt} onChange={(e) => setField("occurredAt", e.target.value)}/>
-      </S.WriteField>
+      <WhenPicker
+      label={whenLabel(kind)}
+      value={when}
+      error={errors.when}
+      onChange={(next) => {
+        setWhen(next);
+        if (next.date) setErrors((prev) => ({...prev, when: undefined}));
+      }}/>
+
+      {pickerOpen && (
+        <MapPicker
+        initial={point}
+        onClose={() => setPickerOpen(false)}
+        onSelect={(place: PickedPlace) => {
+          setPoint({lat: place.lat, lng: place.lng});
+          setField("rescueLocation", place.address);
+          setPickerOpen(false);
+        }}/>
+      )}
 
       <S.WriteField>
         <S.WriteLabel htmlFor="mw-note">자세한 내용</S.WriteLabel>

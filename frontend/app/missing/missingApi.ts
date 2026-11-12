@@ -12,6 +12,9 @@ export interface MissingUpdateRequest {
   weight: string;
   rescueLocation: string;
   occurredAt: string | null;
+  occurredTime: string | null;
+  lat: number | null;
+  lng: number | null;
   content: string;
 }
 

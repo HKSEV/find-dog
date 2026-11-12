@@ -2,6 +2,7 @@ package com.hbk.entity;
 
 import com.hbk.domain.PostStatus;
 import com.hbk.domain.PostType;
+import com.hbk.domain.TimeOfDay;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,8 +33,16 @@ public class MissingPost {
     @Enumerated(EnumType.STRING)
     private PostType type;
 
-    // 잃어버린 때 / 발견한 때
+    // 잃어버린 때 / 발견한 때 (시간대만 알면 날짜 0시 + occurredTime)
     private LocalDateTime occurredAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private TimeOfDay occurredTime;
+
+    // 잃어버린·발견한 장소 좌표 (지도에서 고른 경우만)
+    private Double lat;
+    private Double lng;
 
     private String breed;
     private String gender;

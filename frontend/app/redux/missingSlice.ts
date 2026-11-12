@@ -10,6 +10,9 @@ export interface MissingAnimal {
   status: "MISSING" | "COMPLETED";
   type: "LOST" | "FOUND"; // 잃어버렸어요 / 발견했어요
   occurredAt?: string; // 잃어버린 때 / 발견한 때
+  occurredTime?: "DAWN" | "MORNING" | "AFTERNOON" | "EVENING" | "NIGHT" | "UNKNOWN" | "EXACT" | null; // 시간대
+  lat?: number | null; // 지도에서 고른 장소 (약 100m 단위로 반올림된 값)
+  lng?: number | null;
   mine?: boolean; // 상세 조회에서 내 글인지 (로그인했을 때만)
   gender: string;
   age?: string;

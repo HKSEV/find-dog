@@ -12,6 +12,7 @@ import { formatWhen, genderText, missingBadge, placeLabel, timeAgo, whenLabel } 
 
 import Header from "@/app/components/Header";
 import DetailTopBar from "@/app/components/DetailTopBar";
+import MiniMap from "@/app/components/map/MiniMap";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
 import { queueToast, showToast } from "@/app/components/Toast";
 import { completeMissingPost, deleteMissingPost, toMissingError } from "../missingApi";
@@ -92,7 +93,7 @@ export default function MissingPostDetail() {
     {label: "나이", value: post.age},
     {label: "체중", value: post.weight},
     {label: "털색", value: post.color},
-    {label: whenLabel(post.type), value: formatWhen(post.occurredAt)}
+    {label: whenLabel(post.type), value: formatWhen(post.occurredAt, post.occurredTime)}
   ].filter((fact) => fact.value);
 
   // 3칸 격자의 마지막 줄이 비지 않게, 마지막 칸이 남은 자리를 채움
@@ -134,6 +135,16 @@ export default function MissingPostDetail() {
               </S.DetailFacts>
             )}
           </S.DetailSection>
+
+          {/* 지도에서 고른 장소가 있으면 근처 반경 원으로 */}
+          {post.lat != null && post.lng != null && (
+            <S.DetailSection>
+              <S.DetailHeading>{placeLabel(post.type)} 근처</S.DetailHeading>
+              <S.DetailMapWrap>
+                <MiniMap point={{lat: post.lat, lng: post.lng}} label={post.rescueLocation || placeLabel(post.type)}/>
+              </S.DetailMapWrap>
+            </S.DetailSection>
+          )}
 
           {post.content && (
             <S.DetailSection>

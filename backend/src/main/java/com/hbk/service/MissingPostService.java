@@ -88,6 +88,8 @@ public class MissingPostService {
         post.setStatus(PostStatus.MISSING);
         post.setType(type);
         post.setOccurredAt(requestDto.getOccurredAt());
+        post.setOccurredTime(requestDto.getOccurredTime());
+        setLocation(post, requestDto);
         post.setAuthor(member);
         post.setCreatedAt(LocalDateTime.now());
 
@@ -126,6 +128,14 @@ public class MissingPostService {
     }
 
     // 작성자가 없는 예전 글은 누구의 글도 아님
+    // 좌표는 둘 다 있고 한국 근처 범위일 때만 저장 (아니면 지도 없음)
+    private static void setLocation(MissingPost post, MissingPostRequestDto dto){
+        Double lat = dto.getLat(), lng = dto.getLng();
+        boolean valid = lat != null && lng != null && lat >= 32 && lat <= 39.5 && lng >= 124 && lng <= 132;
+        post.setLat(valid ? lat : null);
+        post.setLng(valid ? lng : null);
+    }
+
     private static boolean isAuthor(MissingPost post, String email){
         return email != null && post.getAuthor() != null && email.equals(post.getAuthor().getEmail());
     }
@@ -149,6 +159,8 @@ public class MissingPostService {
         post.setContent(requestDto.getContent() != null ? requestDto.getContent() : "");
         if (requestDto.getType() != null) post.setType(requestDto.getType());
         post.setOccurredAt(requestDto.getOccurredAt());
+        post.setOccurredTime(requestDto.getOccurredTime());
+        setLocation(post, requestDto);
         post.setBreed(requestDto.getBreed());
         post.setGender(requestDto.getGender());
         post.setAge(requestDto.getAge());

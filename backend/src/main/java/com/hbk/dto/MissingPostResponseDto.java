@@ -5,6 +5,7 @@ import com.hbk.entity.MissingPost;
 import lombok.Getter;
 import com.hbk.domain.PostStatus;
 import com.hbk.domain.PostType;
+import com.hbk.domain.TimeOfDay;
 
 
 import java.time.LocalDateTime;
@@ -17,6 +18,8 @@ private String title, content, breed, gender, age, weight, color, rescueLocation
 private PostStatus status;
 private PostType type;
 private LocalDateTime occurredAt;
+private TimeOfDay occurredTime;
+private Double lat, lng; // 소수 셋째 자리(약 100m)까지만 내려줌: 집 위치가 정확히 드러나지 않게
 private boolean mine; // 지금 로그인한 사람이 쓴 글인지 (상세 화면의 찾았어요·수정·삭제 버튼용)
 private List<String> mediaUrls;
 private LocalDateTime createdAt;
@@ -45,11 +48,18 @@ this.mediaUrls = post.getMediaUrls();
 this.createdAt = post.getCreatedAt();
 this.type = post.getType() != null ? post.getType() : PostType.LOST;
 this.occurredAt = post.getOccurredAt();
+this.occurredTime = post.getOccurredTime();
+this.lat = roundCoord(post.getLat());
+this.lng = roundCoord(post.getLng());
 }
 
 // 상세 조회에서 작성자 본인인지 표시
 public MissingPostResponseDto markMine(boolean mine){
     this.mine = mine;
     return this;
+}
+
+private static Double roundCoord(Double value){
+    return value == null ? null : Math.round(value * 1000.0) / 1000.0;
 }
 }
