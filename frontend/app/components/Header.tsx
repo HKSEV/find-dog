@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // 💡 useRouter 임포트
 
 import Logo from "./Logo";
+import { fetchHasUnread } from "../notifications/notificationApi";
 import * as S from "@/assets/css/Style.styles";
 
 interface HeaderProps {
@@ -18,6 +19,16 @@ interface HeaderProps {
 
 export default function Header({title, onBackClick, isMain, isTab, isModal, onClose, action}: HeaderProps) {
   const router = useRouter(); // 💡 라우터 초기화
+  const [hasUnread, setHasUnread] = useState(false); // 메인 헤더 종 아이콘 빨간 점
+
+  useEffect(() => {
+    if (!isMain) return;
+    let alive = true;
+    fetchHasUnread().then((value) => alive && setHasUnread(value));
+    return () => {
+      alive = false;
+    };
+  }, [isMain]);
 
   const handleBack = () => {
     if (onBackClick) {
@@ -47,9 +58,10 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
 
           {/* 우측 아이콘 그룹 (로그인·내 정보는 하단 "마이" 탭에서) */}
           <S.HeaderActions>
-            <S.NotificationIcon
-            onClick={() => router.push("/mypage")} // 필요시 알림 페이지 경로로 수정
-          />
+            <S.HeaderBell type="button" aria-label={hasUnread ? "알림 (새 알림 있음)" : "알림"} onClick={() => router.push("/notifications")}>
+              <S.NotificationIcon/>
+              {hasUnread && <S.HeaderBellDot aria-hidden="true"/>}
+            </S.HeaderBell>
           </S.HeaderActions>
         </S.Header>
       </>
