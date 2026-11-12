@@ -4,6 +4,7 @@ import Script from "next/script";
 import StyledComponentsRegistry from "@/lib/registry";
 
 import { Providers } from "./store/Providers";
+import { ToastHost } from "./components/Toast";
 import * as S from "@/assets/css/Style.styles";
 
 export const metadata: Metadata = {
@@ -58,6 +59,8 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
         <StyledComponentsRegistry>
           <S.GlobalStyle/>
           <Providers>{children}</Providers>
+          {/* 💡 토스트는 앱 전체에 하나만 (화면이 바뀌어도 사라지지 않게) */}
+          <ToastHost/>
         </StyledComponentsRegistry>
       </body>
     </html>
