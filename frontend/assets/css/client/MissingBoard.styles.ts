@@ -229,6 +229,9 @@ export const MissingWritePlus = styled(PlusIcon)`
 // 실종 상세 아래 작성자 버튼 (수정 / 삭제). "찾았어요"는 DetailApplyButton
 export const MissingOwnerButton = styled.button<{$danger?: boolean}>`
   flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   height: 52px;
   padding: 0 16px;
   border: 1px solid ${colors.border};
@@ -237,5 +240,10 @@ export const MissingOwnerButton = styled.button<{$danger?: boolean}>`
   color: ${({$danger}) => ($danger ? colors.danger : colors.gray800)};
   font-size: 15px;
   font-weight: ${fontWeight.medium};
+  text-decoration: none;
   cursor: pointer;
+
+  &:hover {
+    color: ${({$danger}) => ($danger ? colors.danger : colors.gray800)}; /* 링크(문자 보내기)로 쓸 때 전역 a:hover 대신 */
+  }
 `;

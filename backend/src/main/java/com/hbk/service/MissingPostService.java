@@ -119,7 +119,17 @@ public class MissingPostService {
     @Transactional(readOnly = true)
     public MissingPostResponseDto getPost(Long id, String viewerEmail){
         MissingPost post = findPost(id);
-        return new MissingPostResponseDto(post).markMine(isAuthor(post, viewerEmail));
+        boolean mine = isAuthor(post, viewerEmail);
+        return new MissingPostResponseDto(post)
+                .markMine(mine)
+                .withContactPhone(contactPhoneFor(post, viewerEmail, mine));
+    }
+
+    // 작성자 휴대폰은 로그인한 다른 회원에게만, 아직 찾는 중인 글에만 알려줌 (아무나 번호를 모으지 못하게)
+    private static String contactPhoneFor(MissingPost post, String viewerEmail, boolean mine){
+        if (viewerEmail == null || mine || post.getStatus() == PostStatus.COMPLETED || post.getAuthor() == null) return null;
+        String phone = post.getAuthor().getPhone();
+        return phone == null || phone.isBlank() ? null : phone.replaceAll("[^0-9]", "");
     }
 
     private MissingPost findPost(Long id){

@@ -14,6 +14,7 @@ export interface MissingAnimal {
   lat?: number | null; // 지도에서 고른 장소 (약 100m 단위로 반올림된 값)
   lng?: number | null;
   mine?: boolean; // 상세 조회에서 내 글인지 (로그인했을 때만)
+  contactPhone?: string | null; // 작성자 휴대폰 (로그인한 다른 회원 + 찾는 중인 글일 때만)
   gender: string;
   age?: string;
   weight?: string;

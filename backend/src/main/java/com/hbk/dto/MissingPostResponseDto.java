@@ -21,6 +21,7 @@ private LocalDateTime occurredAt;
 private TimeOfDay occurredTime;
 private Double lat, lng; // 소수 셋째 자리(약 100m)까지만 내려줌: 집 위치가 정확히 드러나지 않게
 private boolean mine; // 지금 로그인한 사람이 쓴 글인지 (상세 화면의 찾았어요·수정·삭제 버튼용)
+private String contactPhone; // 작성자 휴대폰 (상세에서 로그인한 다른 회원에게만, 찾는 중인 글만. 아니면 null)
 private List<String> mediaUrls;
 private LocalDateTime createdAt;
 
@@ -56,6 +57,12 @@ this.lng = roundCoord(post.getLng());
 // 상세 조회에서 작성자 본인인지 표시
 public MissingPostResponseDto markMine(boolean mine){
     this.mine = mine;
+    return this;
+}
+
+// 상세 조회에서 연락 버튼용 작성자 휴대폰
+public MissingPostResponseDto withContactPhone(String contactPhone){
+    this.contactPhone = contactPhone;
     return this;
 }
 
