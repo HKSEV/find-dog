@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -94,10 +96,10 @@ public class MissingPostService {
         return new MissingPostResponseDto(savePost);
     }
 
-    // 무한 스크롤 조회
-    public List<MissingPostResponseDto> getPostByScroll(Long cursorId, int size){
+    // 무한 스크롤 조회 (종류·상태로 거르기, null이면 전체)
+    public List<MissingPostResponseDto> getPostByScroll(Long cursorId, int size, PostType type, PostStatus status){
         Pageable pageable = PageRequest.of(0, size);
-        List<MissingPost> posts = missingPostRepository.findAllByCursor(cursorId, pageable);
+        List<MissingPost> posts = missingPostRepository.findByFilter(cursorId, type, status, pageable);
 
         return posts.stream().map(MissingPostResponseDto::new)
                 .collect(Collectors.toList());
@@ -111,27 +113,42 @@ public class MissingPostService {
                 .collect(Collectors.toList());
     }
 
-    // 글 하나 조회 (상세 화면)
+    // 글 하나 조회 (상세 화면). viewerEmail은 로그인 안 했으면 null
     @Transactional(readOnly = true)
-    public MissingPostResponseDto getPost(Long id){
-        MissingPost post = missingPostRepository.findById(id)
-                .orElseThrow(()->new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
-        return new MissingPostResponseDto(post);
+    public MissingPostResponseDto getPost(Long id, String viewerEmail){
+        MissingPost post = findPost(id);
+        return new MissingPostResponseDto(post).markMine(isAuthor(post, viewerEmail));
+    }
+
+    private MissingPost findPost(Long id){
+        return missingPostRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제됐거나 없는 글이에요."));
+    }
+
+    // 작성자가 없는 예전 글은 누구의 글도 아님
+    private static boolean isAuthor(MissingPost post, String email){
+        return email != null && post.getAuthor() != null && email.equals(post.getAuthor().getEmail());
+    }
+
+    private static void requireAuthor(MissingPost post, String email, String action){
+        if (!isAuthor(post, email)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "내가 쓴 글만 " + action + "할 수 있어요.");
+        }
     }
 
     // 글 수정 (본인 확인)
     @Transactional
     public MissingPostResponseDto updatePost(Long id, MissingPostRequestDto requestDto, String username){
-        MissingPost post = missingPostRepository.findById(id)
-                .orElseThrow(()->new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
+        MissingPost post = findPost(id);
+        requireAuthor(post, username, "수정");
 
-        if(!post.getAuthor().getEmail().equals(username)){
-            throw new SecurityException("수정권한이 없습니다");
+        // 수정 내용 반영 (제목이 비면 기존 제목 유지, 사진은 그대로)
+        if (requestDto.getTitle() != null && !requestDto.getTitle().isBlank()) {
+            post.setTitle(requestDto.getTitle());
         }
-
-        // 수정 내용 반영
-        post.setTitle(requestDto.getTitle());
-        post.setContent(requestDto.getContent());
+        post.setContent(requestDto.getContent() != null ? requestDto.getContent() : "");
+        if (requestDto.getType() != null) post.setType(requestDto.getType());
+        post.setOccurredAt(requestDto.getOccurredAt());
         post.setBreed(requestDto.getBreed());
         post.setGender(requestDto.getGender());
         post.setAge(requestDto.getAge());
@@ -143,18 +160,14 @@ public class MissingPostService {
             post.setMediaUrls(requestDto.getMediaUrls());
         }
 
-        return new MissingPostResponseDto(post);
+        return new MissingPostResponseDto(post).markMine(true);
     }
 
     // 글 삭제 (본인 확인)
     @Transactional
     public void deletePost(Long id, String username){
-        MissingPost post = missingPostRepository.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("해당 게시글이 없습니다  id=" + id));
-
-        if(!post.getAuthor().getEmail().equals(username)){
-            throw new SecurityException("삭제 권한이 없습니다");
-        }
+        MissingPost post = findPost(id);
+        requireAuthor(post, username, "삭제");
 
         missingPostRepository.delete(post);
     }
@@ -162,12 +175,8 @@ public class MissingPostService {
     // 완료 처리 (찾았을 경우 상태 변경)
     @Transactional
     public void completPost(Long id, String username){
-        MissingPost post = missingPostRepository.findById(id)
-                .orElseThrow(()->new IllegalArgumentException("해당 게시글이 없습니다 id=" + id));
-
-        if(!post.getAuthor().getEmail().equals(username)){
-            throw new SecurityException("권한이 없습니다");
-        }
+        MissingPost post = findPost(id);
+        requireAuthor(post, username, "변경");
         post.setStatus(PostStatus.COMPLETED);
     }
 }

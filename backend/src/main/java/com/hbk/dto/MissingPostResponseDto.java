@@ -17,6 +17,7 @@ private String title, content, breed, gender, age, weight, color, rescueLocation
 private PostStatus status;
 private PostType type;
 private LocalDateTime occurredAt;
+private boolean mine; // 지금 로그인한 사람이 쓴 글인지 (상세 화면의 찾았어요·수정·삭제 버튼용)
 private List<String> mediaUrls;
 private LocalDateTime createdAt;
 
@@ -44,5 +45,11 @@ this.mediaUrls = post.getMediaUrls();
 this.createdAt = post.getCreatedAt();
 this.type = post.getType() != null ? post.getType() : PostType.LOST;
 this.occurredAt = post.getOccurredAt();
+}
+
+// 상세 조회에서 작성자 본인인지 표시
+public MissingPostResponseDto markMine(boolean mine){
+    this.mine = mine;
+    return this;
 }
 }
