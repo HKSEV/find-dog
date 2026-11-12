@@ -28,14 +28,3 @@ export const ToastBox = styled.div`
   animation: ${toastIn} 0.2s ease-out;
   pointer-events: none;
 `;
-
-// 화면 안 배너 (예: 회원가입을 마치고 로그인 화면으로 왔을 때)
-export const NoticeBanner = styled.p`
-  margin: 0 0 16px;
-  padding: 12px 14px;
-  border-radius: 10px;
-  background-color: ${colors.brandBg};
-  color: ${colors.brand};
-  font-size: 13px;
-  line-height: 1.5;
-`;

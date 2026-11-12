@@ -59,9 +59,8 @@ function LoginForm() {
 
   const {email, password, isLoading} = useSelector((state: RootState) => state.login);
   const [errors, setErrors] = useState<LoginErrors>({});
-  const [joined, setJoined] = useState(false); // 회원가입을 마치고 온 경우
 
-  // 회원가입에서 넘어왔으면 이메일을 채우고 안내 배너를 보여줌
+  // 회원가입에서 넘어왔으면 이메일을 채움 ("가입이 끝났어요" 토스트는 회원가입 화면이 남겨 둠)
   useEffect(() => {
     const timer = setTimeout(() => {
       try {
@@ -69,7 +68,6 @@ function LoginForm() {
         if (joinedEmail) {
           sessionStorage.removeItem(SIGNUP_EMAIL_KEY);
           dispatch(setEmail(joinedEmail));
-          setJoined(true);
         };
       } catch {
         // 무시
@@ -113,8 +111,6 @@ function LoginForm() {
   return (
     <>
       <S.LayOutPadding>
-        {joined && <S.NoticeBanner>가입이 끝났어요. 로그인해 주세요.</S.NoticeBanner>}
-
         <S.LoginAnimItem $delay={0.1}>
           <AnimatedInput
           type="email"

@@ -16,6 +16,7 @@ import {
 import Header from "../components/Header";
 import { CustomAlert } from "../components/CustomAlert";
 import { SIGNUP_EMAIL_KEY } from "../components/loginLink";
+import { queueToast } from "../components/Toast";
 import * as S from "@/assets/css/Style.styles";
 
 type FormField = keyof RootState["signup"]["formData"];
@@ -194,7 +195,8 @@ export default function SignupPage() {
       profileFile
     }));
     if (submitSignup.fulfilled.match(resultAction)) {
-      // 모달 없이 로그인 화면으로. 로그인 화면이 "가입이 끝났어요" 배너와 이메일을 채워 줌
+      // 모달 없이 로그인 화면으로. 로그인 화면에서 "가입이 끝났어요" 토스트 + 이메일 채움
+      queueToast("가입이 끝났어요. 로그인해 주세요");
       try {
         sessionStorage.setItem(SIGNUP_EMAIL_KEY, formData.email.trim());
       } catch {
