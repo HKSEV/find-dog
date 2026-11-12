@@ -1,5 +1,7 @@
 package com.hbk.controller;
 
+import com.hbk.domain.PostStatus;
+import com.hbk.domain.PostType;
 import com.hbk.dto.MissingPostRequestDto;
 import com.hbk.dto.MissingPostResponseDto;
 import com.hbk.service.MissingPostService;
@@ -8,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.List;
@@ -44,12 +47,15 @@ public class MissingPostController {
     }
 
     // 2. 무한 스크롤 조회 API (GET /api/missing-posts?cursorId=10&size=10)
+    //    거르기: type=LOST|FOUND (실종/목격), status=MISSING|COMPLETED (찾는 중/찾았어요)
     @GetMapping
     public ResponseEntity<List<MissingPostResponseDto>> getPosts(
             @RequestParam(required = false) Long cursorId,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) PostType type,
+            @RequestParam(required = false) PostStatus status
     ){
-        List<MissingPostResponseDto> posts = service.getPostByScroll(cursorId, size);
+        List<MissingPostResponseDto> posts = service.getPostByScroll(cursorId, size, type, status);
         return ResponseEntity.ok(posts);
     }
 
@@ -63,41 +69,51 @@ public class MissingPostController {
     }
 
     // 글 하나 조회 API (GET /api/missing-posts/{id}) - 상세 화면
+    //    로그인했으면 mine(내 글인지)을 같이 알려줌
     @GetMapping("/{id}")
-    public ResponseEntity<MissingPostResponseDto> getPost(@PathVariable Long id){
-        try {
-            return ResponseEntity.ok(service.getPost(id));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<MissingPostResponseDto> getPost(@PathVariable Long id, Principal principal){
+        return ResponseEntity.ok(service.getPost(id, principal != null ? principal.getName() : null));
     }
 
     // 3. 글 수정 API (PUT /api/missing-posts/{id})
     @PutMapping("/{id}")
-    public ResponseEntity<MissingPostResponseDto> updatePost(
+    public ResponseEntity<?> updatePost(
             @PathVariable Long id,
             @RequestBody MissingPostRequestDto requestDto,
             Principal principal){
+        if (principal == null) return unauthorized();
         MissingPostResponseDto response = service.updatePost(id, requestDto, principal.getName());
         return ResponseEntity.ok(response);
     }
 
     // 4. 글 삭제 API (DELETE /api/missing-posts/{id})
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(
+    public ResponseEntity<?> deletePost(
             @PathVariable Long id, Principal principal
     ) {
+        if (principal == null) return unauthorized();
         service.deletePost(id, principal.getName());
         return ResponseEntity.ok().build();
     }
 
     // 5. 완료 처리 API (PATCH /api/missing-posts/{id}/complete)
     @PatchMapping("/{id}/complete")
-    public ResponseEntity<Void> completePost(
+    public ResponseEntity<?> completePost(
             @PathVariable Long id,
             Principal principal
     ) {
+        if (principal == null) return unauthorized();
         service.completPost(id, principal.getName());
         return ResponseEntity.ok().build();
+    }
+
+    // 서비스에서 던진 오류(없는 글 404, 남의 글 403 등)는 상태 코드와 한글 메시지 그대로
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<String> handle(ResponseStatusException e) {
+        return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+    }
+
+    private static ResponseEntity<String> unauthorized() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 정보가 없습니다. 다시 로그인해주세요.");
     }
 }

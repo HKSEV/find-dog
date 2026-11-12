@@ -4,7 +4,6 @@ import React from "react";
 import { useRouter } from "next/navigation"; // 💡 useRouter 임포트
 
 import Logo from "./Logo";
-import { ToastHost } from "./Toast";
 import * as S from "@/assets/css/Style.styles";
 
 interface HeaderProps {
@@ -16,7 +15,6 @@ interface HeaderProps {
   onClose?: () => void; // 닫기(X)를 눌렀을 때. 서브 헤더에 주면 오른쪽에 X가 생김
 }
 
-// 💡 토스트(ToastHost)도 여기서 같이 그려서, 헤더가 있는 사용자 화면 어디서든 토스트가 보이게 함
 export default function Header({title, onBackClick, isMain, isTab, isModal, onClose}: HeaderProps) {
   const router = useRouter(); // 💡 라우터 초기화
 
@@ -53,7 +51,6 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
           />
           </S.HeaderActions>
         </S.Header>
-        <ToastHost/>
       </>
     );
   };
@@ -65,7 +62,6 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
         <S.Header>
           <S.HeaderTabTitle>{title}</S.HeaderTabTitle>
         </S.Header>
-        <ToastHost/>
       </>
     );
   };
@@ -83,7 +79,6 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
 
           <S.HeaderSpacer/>
         </S.Header>
-        <ToastHost/>
       </>
     );
   };
@@ -106,7 +101,6 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
           <S.HeaderSpacer/>
         )}
       </S.Header>
-      <ToastHost/>
     </>
   );
 };

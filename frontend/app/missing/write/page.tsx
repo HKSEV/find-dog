@@ -6,6 +6,14 @@ import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { compressImage } from "../compressImage";
 import { placeLabel, whenLabel } from "../missingFormat";
+import WhenPicker, { WhenValue, emptyWhen, fromOccurred, toOccurred } from "../WhenPicker";
+import MapPicker, { PickedPlace } from "../../components/map/MapPicker";
+import MiniMap from "../../components/map/MiniMap";
+import { MapPoint } from "../../components/map/kakaoMap";
+import { toImageUrl } from "../../shelter/animalFormat";
+import { MissingAnimal, missingAuthHeader } from "../../redux/missingSlice";
+import { toMissingError, updateMissingPost } from "../missingApi";
+import { queueToast } from "../../components/Toast";
 import { loginHref } from "../../components/loginLink";
 
 import Header from "@/app/components/Header";
@@ -44,10 +52,44 @@ function MissingWriteForm() {
 
   // 홈 "발견했어요" 등에서 ?type=found로 들어오면 발견했어요가 먼저 선택됨
   const [kind, setKind] = useState<Kind>(searchParams.get("type") === "found" ? "FOUND" : "LOST");
-  const [form, setForm] = useState({breed: "", color: "", gender: "미상", age: "", weight: "", rescueLocation: "", occurredAt: "", content: ""});
+  const [form, setForm] = useState({breed: "", color: "", gender: "미상", age: "", weight: "", rescueLocation: "", content: ""});
+  const [when, setWhen] = useState<WhenValue>(emptyWhen); // 잃어버린 때 / 발견한 때 (날짜 필수)
+  const [point, setPoint] = useState<MapPoint | null>(null); // 지도에서 고른 장소 (선택)
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [photos, setPhotos] = useState<Photo[]>([]);
-  const [errors, setErrors] = useState<{rescueLocation?: string; content?: string; photos?: string; submit?: string}>({});
+  const [errors, setErrors] = useState<{rescueLocation?: string; when?: string; content?: string; photos?: string; submit?: string}>({});
   const [submitting, setSubmitting] = useState(false);
+
+  // 💡 수정 모드 (/missing/write?edit=글번호): 내 글이면 내용을 채워서 고치기. 사진은 그대로 둠
+  const editId = Number(searchParams.get("edit")) || null;
+  const [editState, setEditState] = useState<"loading" | "ready" | "forbidden" | "error">("loading");
+  const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!editId || !hasToken) return;
+    axios.get<MissingAnimal>(`/api/missing-posts/${editId}`, {headers: missingAuthHeader()})
+      .then(({data}) => {
+        if (!data.mine) {
+          setEditState("forbidden");
+          return;
+        };
+        setKind(data.type === "FOUND" ? "FOUND" : "LOST");
+        setForm({
+          breed: data.breed ?? "",
+          color: data.color ?? "",
+          gender: data.gender || "미상",
+          age: data.age ?? "",
+          weight: data.weight ?? "",
+          rescueLocation: data.rescueLocation ?? "",
+          content: data.content ?? ""
+        });
+        setWhen(fromOccurred(data.occurredAt, data.occurredTime));
+        setPoint(data.lat != null && data.lng != null ? {lat: data.lat, lng: data.lng} : null);
+        setExistingPhotos((data.mediaUrls ?? []).map((url) => toImageUrl(url)).filter((url): url is string => Boolean(url)));
+        setEditState("ready");
+      })
+      .catch(() => setEditState("error"));
+  }, [editId, hasToken]);
 
   // 화면을 떠날 때 미리보기 주소 정리
   const photosRef = useRef(photos);
@@ -85,6 +127,7 @@ function MissingWriteForm() {
 
     const nextErrors: typeof errors = {};
     if (!form.rescueLocation.trim()) nextErrors.rescueLocation = `${placeLabel(kind)}를 적어 주세요.`;
+    if (!when.date) nextErrors.when = "날짜를 골라 주세요.";
     if (!form.content.trim()) nextErrors.content = "자세한 내용을 적어 주세요.";
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
@@ -93,14 +136,41 @@ function MissingWriteForm() {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      router.push(loginHref("/missing/write"));
+      router.push(loginHref(editId ? `/missing/write?edit=${editId}` : "/missing/write"));
+      return;
+    };
+
+    // 시안처럼 제목은 "품종 · 털색·특징" (예: 비글 믹스 · 노란 스카프)
+    const title = [form.breed.trim() || "품종 모름", form.color.trim()].filter(Boolean).join(" · ");
+
+    if (editId) {
+      setSubmitting(true);
+      try {
+        await updateMissingPost(editId, {
+          type: kind,
+          title,
+          breed: form.breed.trim(),
+          color: form.color.trim(),
+          gender: form.gender,
+          age: form.age.trim(),
+          weight: form.weight.trim(),
+          rescueLocation: form.rescueLocation.trim(),
+          ...toOccurred(when),
+          lat: point?.lat ?? null,
+          lng: point?.lng ?? null,
+          content: form.content.trim()
+        });
+        queueToast("글을 고쳤어요");
+        router.replace(`/missing/${editId}`);
+      } catch (error) {
+        setErrors({submit: toMissingError(error, "고치지 못했어요. 잠시 후 다시 시도해 주세요.")});
+        setSubmitting(false);
+      };
       return;
     };
 
     setSubmitting(true);
     try {
-      // 시안처럼 제목은 "품종 · 털색·특징" (예: 비글 믹스 · 노란 스카프)
-      const title = [form.breed.trim() || "품종 모름", form.color.trim()].filter(Boolean).join(" · ");
       const dto = {
         type: kind,
         title,
@@ -110,7 +180,9 @@ function MissingWriteForm() {
         age: form.age.trim(),
         weight: form.weight.trim(),
         rescueLocation: form.rescueLocation.trim(),
-        occurredAt: form.occurredAt || null,
+        ...toOccurred(when),
+        lat: point?.lat ?? null,
+        lng: point?.lng ?? null,
         content: form.content.trim()
       };
 
@@ -137,16 +209,40 @@ function MissingWriteForm() {
     };
   };
 
+  const header = (
+    <Header
+    title={editId ? "글 고치기" : "신고·제보하기"}
+    onBackClick={() => (window.history.length > 1 ? router.back() : router.push(editId ? `/missing/${editId}` : "/missing"))}/>
+  );
+
   if (hasToken === false) {
     return (
-      <S.WriteLoginNotice>
-        <p>로그인하면 실종 신고와<br/>목격 제보를 올릴 수 있어요</p>
-        <Link href={loginHref("/missing/write")}>로그인</Link>
-      </S.WriteLoginNotice>
+      <>
+        {header}
+        <S.HeaderOffset/>
+        <S.WriteLoginNotice>
+          <p>로그인하면 실종 신고와<br/>목격 제보를 올릴 수 있어요</p>
+          <Link href={loginHref(editId ? `/missing/write?edit=${editId}` : "/missing/write")}>로그인</Link>
+        </S.WriteLoginNotice>
+      </>
+    );
+  };
+
+  if (editId && editState !== "ready") {
+    const message = editState === "forbidden" ? "내가 쓴 글만 고칠 수 있어요" : editState === "error" ? "글을 불러오지 못했어요" : "불러오는 중이에요";
+    return (
+      <>
+        {header}
+        <S.HeaderOffset/>
+        <S.AdoptEmpty>{message}</S.AdoptEmpty>
+      </>
     );
   };
 
   return (
+    <>
+    {header}
+    <S.HeaderOffset/>
     <S.WriteForm id="missing-write-form" onSubmit={handleSubmit} noValidate>
       <S.WriteKindGroup role="radiogroup" aria-label="글 종류">
         <S.WriteKindButton type="button" role="radio" aria-checked={kind === "LOST"} $checked={kind === "LOST"} onClick={() => setKind("LOST")}>
@@ -159,6 +255,23 @@ function MissingWriteForm() {
         </S.WriteKindButton>
       </S.WriteKindGroup>
 
+      {editId ? (
+        <S.WriteField>
+          <S.WriteLabel as="span">사진 <span>(고치기에서는 바꿀 수 없어요)</span></S.WriteLabel>
+          {existingPhotos.length > 0 ? (
+            <S.WritePhotos>
+              {existingPhotos.map((url, index) => (
+                <S.WritePhoto key={url}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={url} alt={`올린 사진 ${index + 1}`}/>
+                </S.WritePhoto>
+              ))}
+            </S.WritePhotos>
+          ) : (
+            <S.SignupHint>올린 사진이 없어요</S.SignupHint>
+          )}
+        </S.WriteField>
+      ) : (
       <S.WriteField>
         <S.WriteLabel as="span">사진 <span>(최대 {MAX_PHOTOS}장, 얼굴과 무늬가 잘 보이게)</span></S.WriteLabel>
         <S.WritePhotos>
@@ -181,6 +294,7 @@ function MissingWriteForm() {
         </S.WritePhotos>
         {errors.photos && <S.WriteError>{errors.photos}</S.WriteError>}
       </S.WriteField>
+      )}
 
       <S.WriteRow>
         <S.WriteField>
@@ -223,21 +337,36 @@ function MissingWriteForm() {
 
       <S.WriteField>
         <S.WriteLabel htmlFor="mw-place">{placeLabel(kind)}</S.WriteLabel>
-        <S.WriteInput
-        id="mw-place"
-        placeholder="동네, 가까운 건물"
-        value={form.rescueLocation}
-        $invalid={Boolean(errors.rescueLocation)}
-        aria-invalid={Boolean(errors.rescueLocation)}
-        onChange={(e) => setField("rescueLocation", e.target.value)}/>
+        {/* 지도에서 고르면 작은 지도(보기만)가 생기고, 장소 칸에 주소가 채워짐 (고칠 수 있음) */}
+        {point && <MiniMap point={point} label={form.rescueLocation || placeLabel(kind)}/>}
+        <S.SignupInputRow>
+          <S.WriteInput
+          id="mw-place"
+          placeholder="동네, 가까운 건물"
+          value={form.rescueLocation}
+          $invalid={Boolean(errors.rescueLocation)}
+          aria-invalid={Boolean(errors.rescueLocation)}
+          onChange={(e) => setField("rescueLocation", e.target.value)}/>
+          <S.SignupSideButton type="button" onClick={() => setPickerOpen(true)}>
+            {point ? "다시 고르기" : "지도에서 선택"}
+          </S.SignupSideButton>
+        </S.SignupInputRow>
         {errors.rescueLocation && <S.WriteError>{errors.rescueLocation}</S.WriteError>}
+        {point && (
+          <S.WhenSubLabel>
+            다른 사람에게는 이 근처(약 300m)로만 보여요. <S.WhenLink type="button" onClick={() => setPoint(null)}>지도 빼기</S.WhenLink>
+          </S.WhenSubLabel>
+        )}
       </S.WriteField>
 
-      <S.WriteField>
-        <S.WriteLabel htmlFor="mw-when">{whenLabel(kind)} <span>(선택)</span></S.WriteLabel>
-        <S.WriteInput id="mw-when" type="datetime-local" value={form.occurredAt} onChange={(e) => setField("occurredAt", e.target.value)}/>
-      </S.WriteField>
-
+      <WhenPicker
+      label={whenLabel(kind)}
+      value={when}
+      error={errors.when}
+      onChange={(update) => {
+        setWhen(update);
+        setErrors((prev) => ({...prev, when: undefined}));
+      }}/>
       <S.WriteField>
         <S.WriteLabel htmlFor="mw-note">자세한 내용</S.WriteLabel>
         <S.WriteTextArea
@@ -253,21 +382,32 @@ function MissingWriteForm() {
 
       <S.WriteBar>
         {errors.submit ? <S.WriteError as="p">{errors.submit}</S.WriteError> : <p>연락은 로그인한 계정의 연락처로 받아요.</p>}
-        <S.WriteSubmit type="submit" disabled={submitting}>{submitting ? "등록하는 중..." : "등록하기"}</S.WriteSubmit>
+        <S.WriteSubmit type="submit" disabled={submitting}>
+          {submitting ? (editId ? "고치는 중..." : "등록하는 중...") : (editId ? "고치기" : "등록하기")}
+        </S.WriteSubmit>
       </S.WriteBar>
     </S.WriteForm>
+
+    {/* 지도 고르기는 글쓰기 form 밖에 둠 (안에 검색 form이 있어서 form이 겹치지 않게) */}
+    {pickerOpen && (
+      <MapPicker
+      initial={point}
+      onClose={() => setPickerOpen(false)}
+      onSelect={(place: PickedPlace) => {
+        setPoint({lat: place.lat, lng: place.lng});
+        setField("rescueLocation", place.address);
+        setPickerOpen(false);
+      }}/>
+    )}
+    </>
   );
 };
 
 // 💡 실종·제보 글쓰기 (/missing/write). 홈 "잃어버렸어요"와 실종·제보 탭 "신고·제보하기"에서 들어옴
 export default function MissingWritePage() {
-  const router = useRouter();
-
   return (
     <S.AppWrapper>
       <S.Container>
-        <Header title="신고·제보하기" onBackClick={() => (window.history.length > 1 ? router.back() : router.push("/missing"))}/>
-        <S.HeaderOffset/>
         <Suspense>
           <MissingWriteForm/>
         </Suspense>

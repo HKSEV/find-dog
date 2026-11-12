@@ -279,3 +279,204 @@ export const WriteLoginNotice = styled.div`
     color: ${colors.white};
   }
 `;
+
+// ==========================================
+// 잃어버린 때 / 발견한 때 (날짜 칩 + 시간대 칩 + 달력)
+// ==========================================
+
+export const WhenChips = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`;
+
+export const WhenChip = styled.button<{$checked?: boolean}>`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid ${({$checked}) => ($checked ? colors.brand : colors.border)};
+  border-radius: 10px;
+  background-color: ${({$checked}) => ($checked ? colors.brandBg : colors.white)};
+  color: ${({$checked}) => ($checked ? colors.brand : colors.gray800)};
+  font-size: 14px;
+  font-weight: ${({$checked}) => ($checked ? fontWeight.semibold : fontWeight.regular)};
+  cursor: pointer;
+
+  svg {
+    font-size: 18px;
+  }
+`;
+
+export const WhenSubLabel = styled.p`
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: ${colors.gray500};
+`;
+
+export const WhenLink = styled.button`
+  align-self: flex-start;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  color: ${colors.brand};
+  font-size: 13px;
+  cursor: pointer;
+`;
+
+export const WhenSummary = styled.p`
+  margin: 4px 0 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background-color: ${colors.bgLight};
+  font-size: 13px;
+  color: ${colors.gray800};
+`;
+
+export const WhenExact = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  input {
+    width: 64px;
+    height: 46px;
+    box-sizing: border-box;
+    border: 1px solid ${colors.border};
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 15px;
+    text-align: center;
+    outline: none;
+  }
+
+  input:focus {
+    border-color: ${colors.brand};
+  }
+`;
+
+export const WhenAmPm = styled.div`
+  display: flex;
+  overflow: hidden;
+  border: 1px solid ${colors.border};
+  border-radius: 10px;
+
+  button {
+    height: 44px;
+    padding: 0 14px;
+    border: 0;
+    background: ${colors.white};
+    color: ${colors.gray500};
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  button[aria-pressed="true"] {
+    background: ${colors.brandBg};
+    color: ${colors.brand};
+    font-weight: ${fontWeight.semibold};
+  }
+`;
+
+// 날짜 고르기 (아래에서 올라오는 달력, 연도는 숨김)
+export const WhenSheetOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 10003;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.45);
+`;
+
+export const WhenSheet = styled.div`
+  width: 100%;
+  max-width: 480px;
+  box-sizing: border-box;
+  padding: 12px 20px 20px;
+  border-radius: 18px 18px 0 0;
+  background-color: ${colors.white};
+`;
+
+export const WhenSheetHandle = styled.span`
+  display: block;
+  width: 40px;
+  height: 4px;
+  margin: 0 auto 12px;
+  border-radius: 2px;
+  background-color: ${colors.gray200};
+`;
+
+export const WhenMonthHead = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: ${fontWeight.semibold};
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: ${colors.gray900};
+    cursor: pointer;
+  }
+
+  button:disabled {
+    color: ${colors.gray200};
+    cursor: default;
+  }
+`;
+
+export const WhenGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  row-gap: 6px;
+  text-align: center;
+`;
+
+export const WhenWeekday = styled.span`
+  font-size: 13px;
+  color: ${colors.gray400};
+`;
+
+// 칸 너비와 상관없이 가운데 36×36 정원
+export const WhenDayCell = styled.span`
+  display: flex;
+  justify-content: center;
+`;
+
+export const WhenDay = styled.button<{$selected?: boolean; $today?: boolean}>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background-color: ${({$selected}) => ($selected ? colors.brand : "transparent")};
+  box-shadow: ${({$today, $selected}) => ($today && !$selected ? `inset 0 0 0 1.5px ${colors.brand}` : "none")};
+  color: ${({$selected, $today}) => ($selected ? colors.white : $today ? colors.brand : colors.gray900)};
+  font-size: 14px;
+  font-weight: ${({$today}) => ($today ? fontWeight.semibold : fontWeight.regular)};
+  cursor: pointer;
+
+  &:disabled {
+    color: ${colors.gray200};
+    cursor: default;
+  }
+`;
+
+export const WhenSheetNote = styled.p`
+  margin: 8px 0 12px;
+  font-size: 11px;
+  color: ${colors.gray400};
+`;

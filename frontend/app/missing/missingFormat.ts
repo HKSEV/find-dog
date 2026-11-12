@@ -14,16 +14,22 @@ export const missingBadge = (post: Pick<MissingAnimal, "status" | "type">): {lab
 export const placeLabel = (type?: string) => (type === "FOUND" ? "발견한 장소" : "잃어버린 장소");
 export const whenLabel = (type?: string) => (type === "FOUND" ? "발견한 때" : "잃어버린 때");
 
-// "2026-11-11T14:30:00" -> "11.11 오후 2:30"
-export const formatWhen = (iso?: string) => {
+const bandText: Record<string, string> = {DAWN: "새벽", MORNING: "오전", AFTERNOON: "오후", EVENING: "저녁", NIGHT: "밤", UNKNOWN: "(시간 모름)"};
+
+// 잃어버린 때 표시: "11.11 오후" / "11.11 (시간 모름)" / "11.11 오후 2:30" (연도는 안 보임)
+export const formatWhen = (iso?: string, occurredTime?: string | null) => {
   if (!iso) return "";
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return "";
-  const hours = date.getHours();
-  const minutes = String(date.getMinutes()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
-  return `${month}.${day} ${hours < 12 ? "오전" : "오후"} ${hours % 12 || 12}:${minutes}`;
+  const hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  // 정확한 시각 (예전 글은 occurredTime 없이 시각만 있음)
+  if (occurredTime === "EXACT" || (!occurredTime && (hours || date.getMinutes()))) {
+    return `${month}.${day} ${hours < 12 ? "오전" : "오후"} ${hours % 12 || 12}:${minutes}`;
+  };
+  return `${month}.${day} ${bandText[occurredTime ?? "UNKNOWN"] ?? ""}`.trim();
 };
 
 // 작성 시각 -> "방금 전", "N분 전", "N시간 전", "어제", "N일 전", "11.07"

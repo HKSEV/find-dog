@@ -225,3 +225,17 @@ export const MissingWritePlus = styled(PlusIcon)`
     font-size: 20px;
   }
 `;
+
+// 실종 상세 아래 작성자 버튼 (수정 / 삭제). "찾았어요"는 DetailApplyButton
+export const MissingOwnerButton = styled.button<{$danger?: boolean}>`
+  flex: none;
+  height: 52px;
+  padding: 0 16px;
+  border: 1px solid ${colors.border};
+  border-radius: 12px;
+  background-color: ${colors.white};
+  color: ${({$danger}) => ($danger ? colors.danger : colors.gray800)};
+  font-size: 15px;
+  font-weight: ${fontWeight.medium};
+  cursor: pointer;
+`;

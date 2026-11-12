@@ -5,8 +5,8 @@ import * as S from "@/assets/css/Style.styles";
 
 // 💡 토스트 (아이콘 없이 문장만, 2초 뒤 사라짐)
 //    - showToast: 지금 화면에 바로 띄움
-//    - queueToast: 다른 화면으로 이동한 뒤에 띄움 (예: 로그인하고 홈으로 가서 "○○님, 반가워요")
-//    ToastHost는 Header 안에 있어서 사용자 화면 어디서든 보임
+//    - queueToast: 다른 화면으로 이동하면서 띄움 (예: 로그인하고 홈으로 가서 "○○님, 반가워요")
+//    ToastHost는 app/layout.tsx에 하나만 있어서 화면이 바뀌어도 사라지지 않음
 
 const EVENT = "app-toast";
 const PENDING_KEY = "pending-toast";
@@ -16,7 +16,13 @@ export const showToast = (message: string) => {
   window.dispatchEvent(new CustomEvent<string>(EVENT, {detail: message}));
 };
 
-export const queueToast = (message: string) => {
+// ToastHost가 app/layout.tsx에 하나만 있어서 화면을 옮겨도(router.push/replace) 그대로 남음
+// → 이동하기 직전에 바로 띄우면 됨. 새로고침으로 이동할 때만 세션에 남겨 다음 화면에서 띄움
+export const queueToast = (message: string, options?: {afterReload?: boolean}) => {
+  if (!options?.afterReload) {
+    showToast(message);
+    return;
+  };
   try {
     sessionStorage.setItem(PENDING_KEY, message);
   } catch {
