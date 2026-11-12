@@ -11,6 +11,7 @@ import { toImageUrl } from "../../shelter/animalFormat";
 import { formatWhen, genderText, missingBadge, placeLabel, timeAgo, whenLabel } from "../missingFormat";
 
 import Header from "@/app/components/Header";
+import DetailTopBar from "@/app/components/DetailTopBar";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
 import { queueToast, showToast } from "@/app/components/Toast";
 import { completeMissingPost, deleteMissingPost, toMissingError } from "../missingApi";
@@ -100,6 +101,7 @@ export default function MissingPostDetail() {
   return (
     <S.AppWrapper>
       <S.Container>
+        <DetailTopBar title={post.title || post.breed} onBack={handleBack}/>
         <S.DetailPage>
           <S.DetailHero>
             {photos.length > 0 ? (
@@ -111,9 +113,6 @@ export default function MissingPostDetail() {
             ) : (
               <S.AdoptPhotoEmpty $height="400px" $square>사진 없음</S.AdoptPhotoEmpty>
             )}
-            <S.DetailBackButton type="button" aria-label="뒤로" onClick={handleBack}>
-              <S.DetailBackIcon/>
-            </S.DetailBackButton>
             {photos.length > 1 && <S.DetailPhotoCount>사진 {photos.length}장 · 옆으로 넘겨 보세요</S.DetailPhotoCount>}
           </S.DetailHero>
 

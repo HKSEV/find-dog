@@ -11,6 +11,7 @@ import { useLikedAnimals } from "../useLikedAnimals";
 import { fetchMyApplications, isActiveApplication } from "../adoptionApi";
 
 import Header from "@/app/components/Header";
+import DetailTopBar from "@/app/components/DetailTopBar";
 import * as S from "@/assets/css/Style.styles";
 
 // 💡 운영팀(관리자)은 보호소가 아니라서, 실제 진행은 보호소가 맡음 (안내용 단계)
@@ -77,6 +78,7 @@ export default function ShelterAnimalDetail() {
   return (
     <S.AppWrapper>
       <S.Container>
+        <DetailTopBar title={`${animal.breed} · ${gender}`} onBack={handleBack}/>
         <S.DetailPage>
           <S.DetailHero>
             {imageUrl ? (
@@ -84,9 +86,6 @@ export default function ShelterAnimalDetail() {
             ) : (
               <S.AdoptPhotoEmpty $height="400px" $square>사진 준비 중</S.AdoptPhotoEmpty>
             )}
-            <S.DetailBackButton type="button" aria-label="뒤로" onClick={handleBack}>
-              <S.DetailBackIcon/>
-            </S.DetailBackButton>
           </S.DetailHero>
 
           <S.DetailSection>

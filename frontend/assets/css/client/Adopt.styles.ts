@@ -247,10 +247,29 @@ export const DetailPhotoCount = styled.span`
   font-size: 12px;
 `;
 
-export const DetailBackButton = styled.button`
-  position: absolute;
-  top: 12px;
-  left: 12px;
+// 💡 상세 화면 상단 바: 사진 위에서는 투명(뒤로 버튼만 흰 동그라미),
+//    사진을 지나 스크롤하면 흰 헤더 + 제목으로 바뀌고 계속 위에 고정 (다른 앱들의 상세 화면 방식)
+export const DetailTopBar = styled.header<{$solid: boolean}>`
+  position: fixed;
+  top: 0;
+  left: 50%;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  max-width: 480px;
+  height: 56px;
+  box-sizing: border-box;
+  padding: 0 12px;
+  border-bottom: 1px solid ${({$solid}) => ($solid ? colors.border : "transparent")};
+  background-color: ${({$solid}) => ($solid ? colors.white : "transparent")};
+  transform: translateX(-50%);
+  transition: background-color 0.2s, border-color 0.2s;
+`;
+
+export const DetailBackButton = styled.button<{$solid?: boolean}>`
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -259,9 +278,25 @@ export const DetailBackButton = styled.button`
   padding: 0;
   border: 0;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.94);
+  background: ${({$solid}) => ($solid ? "transparent" : "rgba(255, 255, 255, 0.94)")};
   color: ${colors.gray900};
   cursor: pointer;
+  transition: background-color 0.2s;
+`;
+
+export const DetailTopTitle = styled.span<{$show: boolean}>`
+  flex: 1;
+  min-width: 0;
+  margin-right: 44px; /* 뒤로 버튼만큼 비워서 제목을 가운데로 */
+  overflow: hidden;
+  font-size: 17px;
+  font-weight: ${fontWeight.semibold};
+  color: ${colors.gray900};
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  opacity: ${({$show}) => ($show ? 1 : 0)};
+  transition: opacity 0.2s;
 `;
 
 export const DetailBackIcon = styled(BackIcon)`
