@@ -27,6 +27,31 @@ export const HeaderAccountIcon = styled(PersonOutlineIcon)`
   }
 `;
 
+// 💡 메인 헤더 종 아이콘 (누르면 알림 화면). 안 읽은 알림이 있으면 오른쪽 위에 빨간 점
+export const HeaderBell = styled.button`
+  && {
+    position: relative;
+    display: flex;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+`;
+
+export const HeaderBellDot = styled.span`
+  && {
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    width: 8px;
+    height: 8px;
+    border: 2px solid #FFF;
+    border-radius: 999px;
+    background-color: #E5484D;
+  }
+`;
+
 export const NotificationIcon = styled(NotificationsNoneIcon)`
   && {
     cursor: pointer;
