@@ -29,8 +29,8 @@ export default function Logo({width = 150, height = 36, className, onClick}: Log
     $cursor={onClick ? "pointer" : "default"}>
       {/* --- 1. 강아지 심볼 영역 (36x36) --- */}
       <g transform="translate(0, 0)">
-        {/* 흰색 얼굴 바탕 */}
-        <ellipse cx="18" cy="18" rx="14" ry="13" fill={colors.white}/>
+        {/* 흰색 얼굴 바탕 (흰 헤더에서도 얼굴이 보이게 앞발처럼 갈색 테두리) */}
+        <ellipse cx="18" cy="18" rx="14" ry="13" fill={colors.white} stroke={brownColor} strokeWidth="1.5"/>
 
         {/* 왼쪽 귀 (아래로 쳐진 둥근 형태) */}
         <ellipse cx="8" cy="14" rx="6.5" ry="11" transform="rotate(-25 8 14)" fill={brownColor}/>
