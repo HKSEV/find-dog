@@ -1,6 +1,7 @@
 package com.hbk.service;
 
 import com.hbk.domain.ApplicationStatus;
+import com.hbk.domain.NotificationType;
 import com.hbk.domain.ShelterStatus;
 import com.hbk.dto.AdoptionApplicationRequestDto;
 import com.hbk.dto.AdoptionApplicationResponseDto;
@@ -32,6 +33,7 @@ public class AdoptionApplicationService {
     private final AdoptionApplicationRepository applicationRepository;
     private final MemberRepository memberRepository;
     private final ShelterAnimalRepository shelterAnimalRepository;
+    private final NotificationService notificationService;
 
     // 신청서 첫 화면에 미리 채울 값 (로그인한 회원의 이름·연락처)
     public Map<String, String> getPrefill(String email) {
@@ -132,6 +134,7 @@ public class AdoptionApplicationService {
         if (reason.length() > 255) throw badRequest("사유는 255자까지 적을 수 있어요.");
         application.setStatus(next);
         application.setStatusReason(reason.isEmpty() ? null : reason);
+        notifyApplicant(application);
 
         if (next == ApplicationStatus.ADOPTED) {
             ShelterAnimal animal = application.getShelterAnimal();
@@ -141,9 +144,26 @@ public class AdoptionApplicationService {
                     .forEach(other -> {
                         other.setStatus(ApplicationStatus.REJECTED);
                         other.setStatusReason(AUTO_REJECT_REASON);
+                        notifyApplicant(other);
                     });
         }
         return new AdoptionApplicationResponseDto(application);
+    }
+
+    // 관리자가 상태를 바꾸면 신청한 회원에게 알림 (누르면 마이 > 입양 신청 내역)
+    private void notifyApplicant(AdoptionApplication application) {
+        String breed = application.getShelterAnimal().getBreed();
+        String animal = breed == null || breed.isBlank() ? "보호 동물" : breed;
+        String message = switch (application.getStatus()) {
+            case FORWARDED -> animal + " 입양 신청서가 보호소에 전달됐어요. 보호소에서 곧 연락드려요.";
+            case ADOPTED -> animal + " 입양이 확정됐어요. 새 가족이 된 걸 축하해요!";
+            case REJECTED -> animal + " 입양 신청이 이번에는 어려워졌어요."
+                    + (application.getStatusReason() != null ? " (" + application.getStatusReason() + ")" : "");
+            default -> null;
+        };
+        if (message != null) {
+            notificationService.notify(application.getMember(), NotificationType.ADOPTION, message, "/mypage/applications");
+        }
     }
 
     private Member findMember(String email) {
