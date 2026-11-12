@@ -10,6 +10,7 @@ export interface MissingAnimal {
   status: "MISSING" | "COMPLETED";
   type: "LOST" | "FOUND"; // 잃어버렸어요 / 발견했어요
   occurredAt?: string; // 잃어버린 때 / 발견한 때
+  mine?: boolean; // 상세 조회에서 내 글인지 (로그인했을 때만)
   gender: string;
   age?: string;
   weight?: string;
@@ -55,13 +56,19 @@ const toErrorMessage = (error: unknown, fallback: string) =>
     ? error.response.data
     : undefined) || fallback;
 
-// 실종/제보 목록 조회 (cursorId를 주면 그 글보다 오래된 글을 이어서 가져옴)
+export interface MissingListQuery {
+  cursorId?: number; // 이 글보다 오래된 글을 이어서 가져옴
+  type?: "LOST" | "FOUND"; // 실종 / 목격 (없으면 전체)
+  status?: "MISSING" | "COMPLETED"; // 찾는 중 / 찾았어요 (없으면 전체)
+}
+
+// 실종/제보 목록 조회 (거르기는 서버에서)
 export const fetchMissingAnimals = createAsyncThunk(
   "missing/fetchMissingAnimals",
-  async (cursorId: number | undefined, {rejectWithValue}) => {
+  async (query: MissingListQuery | undefined, {rejectWithValue}) => {
     try {
       const response = await axios.get("/api/missing-posts", {
-        params: {size: MISSING_PAGE_SIZE, ...(cursorId ? {cursorId} : {})}
+        params: {size: MISSING_PAGE_SIZE, ...(query ?? {})}
       });
       return response.data as MissingAnimal[];
     } catch (error: unknown) {
@@ -70,10 +77,16 @@ export const fetchMissingAnimals = createAsyncThunk(
   }
 );
 
+// 로그인 토큰이 있으면 같이 보냄 (상세의 mine, 수정·삭제·찾았어요)
+export const missingAuthHeader = (): Record<string, string> => {
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  return token ? {Authorization: `Bearer ${token}`} : {};
+};
+
 // 실종/제보 글 하나 조회 (상세 화면)
 export const fetchMissingPost = createAsyncThunk("missing/fetchMissingPost", async (id: number, {rejectWithValue}) => {
   try {
-    const response = await axios.get(`/api/missing-posts/${id}`);
+    const response = await axios.get(`/api/missing-posts/${id}`, {headers: missingAuthHeader()});
     return response.data as MissingAnimal;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response?.status === 404) {
@@ -108,7 +121,7 @@ export const missingSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchMissingAnimals.pending, (state, action) => {
-        if (action.meta.arg) {
+        if (action.meta.arg?.cursorId) {
           state.loadingMore = true;
         } else {
           state.loading = true;
@@ -116,7 +129,7 @@ export const missingSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchMissingAnimals.fulfilled, (state, action) => {
-        const isNextPage = Boolean(action.meta.arg);
+        const isNextPage = Boolean(action.meta.arg?.cursorId);
         state.loading = false;
         state.loadingMore = false;
         state.animalList = isNextPage ? [...state.animalList, ...action.payload] : action.payload;

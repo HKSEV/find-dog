@@ -27,15 +27,16 @@ export default function MissingReportPage() {
   const [typeTab, setTypeTab] = useState<(typeof typeTabs)[number]["label"]>("전체");
   const [onlySearching, setOnlySearching] = useState(true); // 💡 시안 기준: 찾는 중인 글만 먼저
 
-  useEffect(() => {
-    dispatch(fetchMissingAnimals(undefined));
-  }, [dispatch]);
+  // 탭·체크를 바꾸면 서버에서 다시 걸러서 받음 (글이 많아도 거른 결과로 10개씩)
+  const pickedType = typeTabs.find((tab) => tab.label === typeTab)?.type ?? undefined;
+  const query = {type: pickedType, status: onlySearching ? "MISSING" as const : undefined};
 
-  // 서버가 최신순(id 큰 순)으로 주므로 순서는 그대로
-  const pickedType = typeTabs.find((tab) => tab.label === typeTab)?.type ?? null;
-  const posts = animalList
-    .filter((post) => !pickedType || (post.type ?? "LOST") === pickedType)
-    .filter((post) => !onlySearching || post.status === "MISSING");
+  useEffect(() => {
+    dispatch(fetchMissingAnimals({type: pickedType, status: onlySearching ? "MISSING" : undefined}));
+  }, [dispatch, pickedType, onlySearching]);
+
+  // 서버가 최신순(id 큰 순)으로 거른 결과를 줌
+  const posts = animalList;
   const lastId = animalList.length > 0 ? animalList[animalList.length - 1].id : undefined;
 
   return (
@@ -82,7 +83,7 @@ export default function MissingReportPage() {
             <S.MissingEmptyText>글을 불러오지 못했어요. 잠시 후 다시 시도해 주세요</S.MissingEmptyText>
           ) : posts.length === 0 ? (
             <S.MissingEmptyText>
-              {onlySearching && animalList.length > 0 ? "지금 찾는 중인 글이 없어요" : "등록된 실종·제보 글이 없어요"}
+              {onlySearching ? "지금 찾는 중인 글이 없어요" : pickedType === "FOUND" ? "올라온 목격 제보가 없어요" : "등록된 실종·제보 글이 없어요"}
             </S.MissingEmptyText>
           ) : (
             posts.map((post) => {
@@ -113,7 +114,7 @@ export default function MissingReportPage() {
             <S.MissingMoreButton
             type="button"
             disabled={loadingMore}
-            onClick={() => dispatch(fetchMissingAnimals(lastId))}>
+            onClick={() => dispatch(fetchMissingAnimals({...query, cursorId: lastId}))}>
               {loadingMore ? "불러오는 중..." : "이전 글 더 보기"}
             </S.MissingMoreButton>
           )}

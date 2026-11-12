@@ -1,6 +1,7 @@
 export * from "./Adopt.styles";
 export * from "./Apply.styles";
 export * from "./Breed.styles";
+export * from "./Dialog.styles";
 export * from "./Campain.styles";
 export * from "./Guide.styles";
 export * from "./Home.styles";
