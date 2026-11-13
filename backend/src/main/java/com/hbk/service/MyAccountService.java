@@ -43,10 +43,15 @@ public class MyAccountService {
         member.setName(name);
         member.setPhone(phone);
         member.setAddress(address.isEmpty() ? null : address);
-        // 사진: null이면 그대로, ""이면 지움, 값이 있으면 바꿈
+        // 사진: null이면 그대로, ""이면 지움, 값이 있으면 바꿈 (우리 서버에 올린 사진만)
         if (request.profileImageUrl() != null) {
             String url = request.profileImageUrl().trim();
-            member.setProfileImageUrl(url.isEmpty() ? null : url);
+            if (url.isEmpty()) member.setProfileImageUrl(null);
+            else {
+                String uploaded = uploadedImageOrNull(url);
+                if (uploaded == null) throw badRequest("사진을 다시 골라 주세요.");
+                member.setProfileImageUrl(uploaded);
+            }
         }
         return MyAccountDto.Response.of(member);
     }
@@ -65,6 +70,13 @@ public class MyAccountService {
         member.setUserType(userType);
         member.setMarketingAgreed(Boolean.TRUE.equals(request.marketingAgreed()));
         return updateMe(email, new MyAccountDto.UpdateRequest(request.nickname(), request.name(), request.phone(), null, null));
+    }
+
+    // 우리 서버에 올린 사진 주소만 받음 (/uploads/..., 예전 방식 http://localhost:8080/uploads/...)
+    public static String uploadedImageOrNull(String url) {
+        String value = trim(url);
+        if (value.startsWith("http://localhost:8080/uploads/")) value = value.substring("http://localhost:8080".length());
+        return value.matches("^/uploads/[A-Za-z0-9._-]+$") ? value : null;
     }
 
     private Member findMember(String email) {

@@ -20,7 +20,7 @@ export const submitLogin = createAsyncThunk(
   "login/submitLogin",
   async ({email, password}: {email: string; password: string}, {rejectWithValue}) => {
     try {
-      const res = await fetch("http://localhost:8080/api/members/login", {
+      const res = await fetch("/api/members/login", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({email, password})

@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
-import { fetchCampaigns, fetchHomeExtras } from "../redux/homeSlice";
+import { fetchCampaigns, fetchNeedHelps } from "../redux/homeSlice";
 import { toImageUrl } from "./animalFormat";
 
 import { PlayArrow as PlayIcon } from "@mui/icons-material";
@@ -24,7 +24,7 @@ export default function TogetherTab() {
   const [pickedTag, setPickedTag] = useState<string | null>(null);
 
   useEffect(() => {
-    dispatch(fetchHomeExtras());
+    dispatch(fetchNeedHelps());
     dispatch(fetchCampaigns(""));
   }, [dispatch]);
 

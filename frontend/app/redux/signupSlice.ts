@@ -1,5 +1,6 @@
 // src/redux/signupSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { compressImage } from "../missing/compressImage";
 
 export interface SignupState {
   step: number;
@@ -53,9 +54,9 @@ export const submitSignup = createAsyncThunk(
       // 1. 프로필 사진이 있으면 먼저 업로드
       if (profileFile) {
         const imageFormData = new FormData();
-        imageFormData.append("file", profileFile);
+        imageFormData.append("file", await compressImage(profileFile)); // 큰 사진은 줄이고 jpg로 (서버는 사진 파일만 받음)
 
-        const uploadRes = await fetch("http://localhost:8080/api/members/upload-profile", {
+        const uploadRes = await fetch("/api/members/upload-profile", {
           method: "POST",
           body: imageFormData
         });
@@ -71,7 +72,7 @@ export const submitSignup = createAsyncThunk(
         : formData.address;
 
       // 2. 회원가입 요청 전송
-      const res = await fetch("http://localhost:8080/api/members/signup", {
+      const res = await fetch("/api/members/signup", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
