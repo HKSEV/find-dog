@@ -5,10 +5,8 @@ import {
   Fixed,
   FlexBetween,
   Fw500,
-  IconColor,
   MainColor,
   Pointer,
-  Sticky,
   W100
 } from "@/assets/css/common/CommonBase.styles";
 
@@ -44,25 +42,5 @@ export const Back = styled.span`
 
   &:hover {
     color: #333;
-  }
-`;
-
-export const ShelterHeader = styled.header`
-  background-color: #FFF;
-  padding: 15px 20px;
-  ${FlexBetween};
-  ${Sticky};
-  top: 0;
-  z-index: 10;
-`;
-
-export const SectionHeader = styled.div`
-  ${FlexBetween};
-  padding-right: 20px;
-  margin-bottom: 15px;
-  .more-link {
-    font-size: 0.85rem;
-    ${IconColor};
-    text-decoration: none;
   }
 `;

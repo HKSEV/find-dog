@@ -1,7 +1,5 @@
 "use client";
 
-import { CheckCircle2, AlertCircle } from "lucide-react";
-
 import styled from "styled-components";
 import { ModalContent, SubmitButton } from "@/assets/css/modal/ModalBase.styles";
 import { AlertInfo } from "@/assets/css/common/Alert.styles";
@@ -20,17 +18,6 @@ export const AlertSummary = styled(AlertInfo)`
     flex-direction: column;
   }
 `;
-
-export const AlertIconCircle = styled.div<{$error: boolean}>`
-  && {
-    width: 48px;
-    height: 48px;
-    background-color: ${({$error}) => ($error ? "#FFEEEE" : "#F8F5F4")};
-  }
-`;
-
-export const ErrorAlertIcon = styled(AlertCircle).attrs({color: "#FF6B6B", size: 24})``;
-export const SuccessAlertIcon = styled(CheckCircle2).attrs({color: "#8A4E4B", size: 24})``;
 
 export const AlertTextGroup = styled.div`
   && {

@@ -2,7 +2,6 @@
 
 import {
   NotificationsOutlined as NotificationsNoneIcon,
-  PersonOutlined as PersonOutlineIcon,
   ArrowBackIosNewRounded as BackIcon,
   CloseRounded as CloseIcon,
   SettingsOutlined as SettingsIcon
@@ -16,14 +15,6 @@ export const HeaderActions = styled.div`
     display: flex;
     align-items: center;
     gap: 12px;
-  }
-`;
-
-export const HeaderAccountIcon = styled(PersonOutlineIcon)`
-  && {
-    cursor: pointer;
-    color: #8A4E4B;
-    font-size: 30px;
   }
 `;
 

@@ -6,7 +6,6 @@ export * from "./Faq.styles";
 export * from "./Home.styles";
 export * from "./Login.styles";
 export * from "./Map.styles";
-export * from "./Missing.styles";
 export * from "./MissingBoard.styles";
 export * from "./MissingWrite.styles";
 export * from "./MyTab.styles";

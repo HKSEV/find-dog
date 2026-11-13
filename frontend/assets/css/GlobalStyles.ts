@@ -1,6 +1,5 @@
 "use client";
 import { createGlobalStyle } from "styled-components";
-import { SwiperBaseStyles } from "@/assets/css/common/SwiperBase.styles";
 
 export const GlobalStyle = createGlobalStyle`
   *, *::before, *::after {
@@ -162,6 +161,4 @@ export const GlobalStyle = createGlobalStyle`
     margin: 0; 
     padding: 0;
   }
-
-  ${SwiperBaseStyles}
 `;
