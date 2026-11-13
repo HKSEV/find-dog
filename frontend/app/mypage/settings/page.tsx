@@ -13,7 +13,7 @@ import Header from "@/app/components/Header";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
 import * as S from "@/assets/css/Style.styles";
 
-// 💡 마이 > 설정 (헤더 톱니바퀴): 정보 수정, 알림 설정, 로그아웃
+// 💡 마이 > 설정 (헤더 톱니바퀴): 정보 수정, 로그아웃
 export default function SettingsPage() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
@@ -42,10 +42,6 @@ export default function SettingsPage() {
           <S.MyMenuItem as={Link} href={isLoggedIn ? "/mypage/settings/profile" : loginHref("/mypage/settings/profile")}>
             <span>정보 수정</span>
             <S.MyMenuChevron aria-hidden="true"/>
-          </S.MyMenuItem>
-          <S.MyMenuItem as="div" $disabled aria-disabled="true">
-            <span>알림 설정</span>
-            <small>준비 중</small>
           </S.MyMenuItem>
         </S.MyMenu>
 
