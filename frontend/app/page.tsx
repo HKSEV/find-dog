@@ -90,8 +90,8 @@ export default function HomePage() {
   const campaign = campaigns[0];
   const helps = needHelps.slice(0, HELP_COUNT);
 
-  // 함께 도와주세요 → 입양·봉사 탭의 봉사·후원 화면으로
-  const openVolunteerTab = () => dispatch(setActiveTab("봉사·후원"));
+  // 함께 도와주세요 → 입양·봉사 탭의 함께해요 화면으로
+  const openVolunteerTab = () => dispatch(setActiveTab("함께해요"));
 
   // 💡 showSplash가 true일 때는 스플래시 화면만 렌더링
   if (showSplash) {

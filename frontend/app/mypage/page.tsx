@@ -19,12 +19,11 @@ import * as S from "@/assets/css/Style.styles";
 const activityMenus = [
   {label: "작성한 글", href: "/mypage/posts", needLogin: true},
   {label: "입양 신청 내역", href: "/mypage/applications", needLogin: true},
-  {label: "봉사 신청 내역"},
+  {label: "봉사 신청 내역", href: "/mypage/volunteers", needLogin: true},
   {label: "관심 보호소"},
 ];
 
 const guideMenus = [
-  {label: "어서찾아주개 소개"},
   {label: "공지사항"},
   {label: "자주 묻는 질문"},
   {label: "문의하기"}
@@ -87,7 +86,7 @@ export default function MyPage() {
       title="마이페이지"
       isTab
       action={(
-        // 💡 설정: 정보 수정, 알림 설정, 로그아웃, 회원 탈퇴 (로그아웃은 실수로 누르지 않게 설정 안으로 옮김)
+        // 💡 설정: 정보 수정, 알림 설정, 로그아웃 (로그아웃은 실수로 누르지 않게 설정 안으로 옮김)
         <S.HeaderIconButton as={Link} href="/mypage/settings" $side="right" aria-label="설정">
           <S.HeaderSettingsIcon/>
         </S.HeaderIconButton>

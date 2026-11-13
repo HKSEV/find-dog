@@ -3,7 +3,7 @@
 import styled from "styled-components";
 import { colors, fontWeight, fluid } from "./theme";
 
-// 💡 입양·봉사 탭 > 봉사·후원, 보호소 (디자인 개편 시안 기준)
+// 💡 입양·봉사 탭 > 함께해요 (디자인 개편 시안 기준)
 
 export const VolunteerSection = styled.section<{$first?: boolean}>`
   padding: ${({$first}) => ($first ? "8px 20px 0" : "24px 20px 0")};
@@ -43,25 +43,6 @@ export const VolunteerEmpty = styled.p`
   padding: 16px 0 0;
   font-size: 13px;
   color: ${colors.gray500};
-`;
-
-// 아직 없는 기능 안내 카드
-export const VolunteerNotice = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: 14px;
-  padding: 18px 16px;
-  border: 1px dashed ${colors.gray200};
-  border-radius: 14px;
-  color: ${colors.gray500};
-  font-size: 13px;
-  line-height: 1.5;
-
-  strong {
-    font-size: 15px;
-    color: ${colors.gray900};
-  }
 `;
 
 // 도움이 필요해요
@@ -173,18 +154,19 @@ export const VolunteerTag = styled.button<{$active?: boolean}>`
   cursor: pointer;
 `;
 
-export const VolunteerCampaign = styled.button`
+// 링크가 있으면 a(새 창), 없으면 div
+export const VolunteerCampaign = styled.div`
   display: flex;
   align-items: center;
   gap: 14px;
   width: 100%;
   margin-top: 14px;
-  padding: 0;
-  border: 0;
-  background: transparent;
   color: ${colors.gray900};
-  text-align: left;
-  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    color: ${colors.gray900}; /* 전역 a:hover 파란색 대신 */
+  }
 `;
 
 export const VolunteerCampaignThumbWrap = styled.span`
@@ -241,36 +223,4 @@ export const VolunteerCampaignText = styled.span`
   color: ${colors.gray500};
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-`;
-
-// 후원하기
-export const SupportGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin-top: 14px;
-  padding-bottom: 24px;
-`;
-
-export const SupportCard = styled.button<{$primary?: boolean}>`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 16px;
-  border: 1px solid ${({$primary}) => ($primary ? colors.brandBg : colors.border)};
-  border-radius: 12px;
-  background-color: ${({$primary}) => ($primary ? colors.brandBg : colors.white)};
-  color: ${colors.gray900};
-  text-align: left;
-  cursor: pointer;
-
-  strong {
-    font-size: 15px;
-    font-weight: ${fontWeight.semibold};
-  }
-
-  span {
-    font-size: 12px;
-    color: ${({$primary}) => ($primary ? colors.brand : colors.gray500)};
-  }
 `;
