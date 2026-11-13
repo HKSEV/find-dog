@@ -11,7 +11,7 @@ import { colors, fontWeight, fluid } from "./theme";
 
 // 💡 입양·봉사 탭 > 입양 목록, 동물 상세 (디자인 개편 시안 기준)
 
-// 입양 / 봉사·후원 / 보호소
+// 입양 / 함께해요
 export const AdoptSubTabs = styled.nav`
   display: flex;
   gap: 20px;

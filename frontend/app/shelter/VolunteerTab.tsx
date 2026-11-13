@@ -6,16 +6,15 @@ import { AppDispatch, RootState } from "../store/store";
 import { fetchCampaigns, fetchHomeExtras } from "../redux/homeSlice";
 import { toImageUrl } from "./animalFormat";
 
-import { showToast } from "@/app/components/Toast";
 import { PlayArrow as PlayIcon } from "@mui/icons-material";
 import * as S from "@/assets/css/Style.styles";
 
 const HELP_COUNT = 3;
 const CAMPAIGN_COUNT = 3;
 
-// 💡 입양·봉사 탭 > 봉사·후원
+// 💡 입양·봉사 탭 > 함께해요
 //    도움이 필요해요(/api/need-help), 입양 캠페인(/api/campaigns)은 관리자가 올린 글을 보여줌
-//    봉사 모집, 후원은 백엔드가 아직 없어서 안내만
+//    봉사 모집·후원은 만들지 않기로 해서 뺌 (보호소 후원 링크가 생기면 다시 넣기)
 export default function VolunteerTab() {
   const dispatch = useDispatch<AppDispatch>();
   const {campaigns, needHelps} = useSelector((state: RootState) => state.home);
@@ -41,31 +40,11 @@ export default function VolunteerTab() {
 
   const visibleHelps = showAllHelps ? needHelps : needHelps.slice(0, HELP_COUNT);
 
-  const openCampaign = (mediaUrl?: string) => {
-    if (mediaUrl) {
-      window.open(mediaUrl, "_blank", "noopener,noreferrer");
-    } else {
-      showToast("캠페인 자세한 내용은 준비 중이에요.");
-    };
-  };
 
   return (
     <>
-      {/* 봉사 모집 */}
-      <S.VolunteerSection $first>
-        <S.VolunteerSectionHead>
-          <S.VolunteerSectionTitle>봉사 모집</S.VolunteerSectionTitle>
-        </S.VolunteerSectionHead>
-        <S.VolunteerNotice>
-          <strong>보호소 봉사 모집을 준비하고 있어요</strong>
-          <span>산책, 견사 청소, 미용·목욕 봉사를 여기서 신청할 수 있게 할게요.</span>
-        </S.VolunteerNotice>
-      </S.VolunteerSection>
-
-      <S.VolunteerBand/>
-
       {/* 도움이 필요해요 */}
-      <S.VolunteerSection>
+      <S.VolunteerSection $first>
         <S.VolunteerSectionHead>
           <S.VolunteerSectionTitle>도움이 필요해요</S.VolunteerSectionTitle>
           {needHelps.length > HELP_COUNT && (
@@ -131,7 +110,13 @@ export default function VolunteerTab() {
           {visibleCampaigns.map((campaign) => {
             const thumbnail = toImageUrl(campaign.thumbnailUrl);
             return (
-              <S.VolunteerCampaign key={campaign.id} type="button" onClick={() => openCampaign(campaign.mediaUrl)}>
+              // 영상·자세히 보기 링크가 있으면 새 창으로, 없으면 누를 수 없는 카드
+              <S.VolunteerCampaign
+              key={campaign.id}
+              as={campaign.mediaUrl ? "a" : "div"}
+              href={campaign.mediaUrl || undefined}
+              target={campaign.mediaUrl ? "_blank" : undefined}
+              rel={campaign.mediaUrl ? "noopener noreferrer" : undefined}>
                 <S.VolunteerCampaignThumbWrap>
                   {thumbnail ? <S.VolunteerCampaignThumb src={thumbnail} alt=""/> : <S.VolunteerThumbEmpty $size="96px"/>}
                   {campaign.mediaType && campaign.mediaType !== "IMAGE" && (
@@ -147,25 +132,6 @@ export default function VolunteerTab() {
           })}
         </S.VolunteerSection>
       )}
-
-      <S.VolunteerBand/>
-
-      {/* 후원하기 */}
-      <S.VolunteerSection>
-        <S.VolunteerSectionHead>
-          <S.VolunteerSectionTitle>후원하기</S.VolunteerSectionTitle>
-        </S.VolunteerSectionHead>
-        <S.SupportGrid>
-          <S.SupportCard type="button" $primary onClick={() => showToast("정기 후원은 준비 중이에요.")}>
-            <strong>정기 후원</strong>
-            <span>보호소 운영비를 매달 함께</span>
-          </S.SupportCard>
-          <S.SupportCard type="button" onClick={() => showToast("물품 후원은 준비 중이에요.")}>
-            <strong>물품 후원</strong>
-            <span>사료, 패드, 담요 보내기</span>
-          </S.SupportCard>
-        </S.SupportGrid>
-      </S.VolunteerSection>
     </>
   );
 };

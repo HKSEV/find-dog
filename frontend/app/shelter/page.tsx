@@ -9,11 +9,10 @@ import Header from "@/app/components/Header";
 import Footer from "../components/Footer";
 import AdoptTab from "./AdoptTab";
 import VolunteerTab from "./VolunteerTab";
-import ShelterTab from "./ShelterTab";
 import * as S from "@/assets/css/Style.styles";
 
 // 💡 입양·봉사 탭의 하위 메뉴
-const subTabs = ["입양", "봉사·후원", "보호소"];
+const subTabs = ["입양", "함께해요"]; // 보호소는 데이터가 없어서 뺌 (공공 API로 다시 넣을 수 있음)
 
 export default function Shelter() {
   const dispatch = useDispatch<AppDispatch>();
@@ -43,8 +42,7 @@ export default function Shelter() {
         </S.AdoptSubTabs>
 
         {currentTab === "입양" && <AdoptTab/>}
-        {currentTab === "봉사·후원" && <VolunteerTab/>}
-        {currentTab === "보호소" && <ShelterTab/>}
+        {currentTab === "함께해요" && <VolunteerTab/>}
       </S.Container>
       <Footer/>
     </S.AppWrapper>
