@@ -32,12 +32,6 @@ export const VolunteerMoreButton = styled.button`
   cursor: pointer;
 `;
 
-export const VolunteerBand = styled.div`
-  height: 8px;
-  margin-top: 24px;
-  background-color: ${colors.bgSubtle};
-`;
-
 export const VolunteerEmpty = styled.p`
   margin: 0;
   padding: 16px 0 0;
@@ -163,10 +157,6 @@ export const VolunteerCampaign = styled.div`
   margin-top: 14px;
   color: ${colors.gray900};
   text-decoration: none;
-
-  &:hover {
-    color: ${colors.gray900}; /* 전역 a:hover 파란색 대신 */
-  }
 `;
 
 export const VolunteerCampaignThumbWrap = styled.span`

@@ -94,10 +94,6 @@ export const AdoptCardLink = styled.a`
   display: block;
   color: ${colors.gray900};
   text-decoration: none;
-
-  &:hover {
-    color: ${colors.gray900}; /* 전역 a:hover 파란색 대신 */
-  }
 `;
 
 export const AdoptPhotoWrap = styled.span`
@@ -465,10 +461,6 @@ export const DetailApplyButton = styled.button`
   font-weight: ${fontWeight.semibold};
   text-decoration: none;
   cursor: pointer;
-
-  &:hover {
-    color: ${colors.white}; /* 링크로 쓸 때 전역 a:hover 파란색 대신 */
-  }
 
   &:disabled {
     background-color: ${colors.gray200};

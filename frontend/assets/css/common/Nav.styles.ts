@@ -7,9 +7,7 @@ import {
   Mauto,
   FlexColumn,
   Pointer,
-  W100,
-  IconColor,
-  Fw600
+  W100
 } from "@/assets/css/common/CommonBase.styles";
 
 export const BottomNav = styled.nav`
@@ -61,22 +59,5 @@ export const NavItem = styled.div<NavItemProps>`
     font-size: 0.65rem;
     color: ${(props) => (props.$active ? "#8A4E4B" : "#6B6361")};
     font-weight: ${(props) => (props.$active ? "700" : "400")};
-  }
-`;
-
-export const MenuText = styled.div`
-  ${IconColor};
-  font-size: 0.6875rem;
-  ${Fw600};
-`;
-
-export const FilterContainer = styled.div`
-  padding: 15px 20px;
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  background-color: #FFF;
-  &::-webkit-scrollbar {
-    display: none;
   }
 `;

@@ -1,6 +1,5 @@
 "use client";
 import { createGlobalStyle } from "styled-components";
-import { SwiperBaseStyles } from "@/assets/css/common/SwiperBase.styles";
 
 export const GlobalStyle = createGlobalStyle`
   *, *::before, *::after {
@@ -153,15 +152,9 @@ export const GlobalStyle = createGlobalStyle`
     color: inherit;
   }
 
-  a:hover {
-    color: #0056B3;
-  }
-
   ol, ul, li {
     list-style: none; 
     margin: 0; 
     padding: 0;
   }
-
-  ${SwiperBaseStyles}
 `;

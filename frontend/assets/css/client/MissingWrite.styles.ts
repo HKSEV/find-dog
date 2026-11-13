@@ -282,10 +282,6 @@ export const WriteLoginNotice = styled.div`
     font-weight: ${fontWeight.semibold};
     text-decoration: none;
   }
-
-  a:hover {
-    color: ${colors.white};
-  }
 `;
 
 // ==========================================

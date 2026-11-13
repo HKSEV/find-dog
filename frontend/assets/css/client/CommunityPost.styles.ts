@@ -19,10 +19,6 @@ export const CommunityPostRow = styled.div`
   border-bottom: 1px solid ${colors.border};
   color: ${colors.gray900};
   text-decoration: none;
-
-  &:hover {
-    color: ${colors.gray900}; /* 전역 a:hover 파란색 대신 */
-  }
 `;
 
 export const CommunityPostBody = styled.span`
@@ -165,9 +161,5 @@ export const NewsLinks = styled.div`
     font-size: 14px;
     font-weight: ${fontWeight.medium};
     text-decoration: none;
-  }
-
-  a:hover {
-    color: ${colors.gray800};
   }
 `;

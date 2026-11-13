@@ -154,9 +154,9 @@ export const LoginSocial = styled.div`
 export const LoginSocialButton = styled.button<{$variant: "kakao" | "apple"}>`
   width: 100%;
   height: 48px;
-  border: 1px solid ${({$variant}) => ($variant === "kakao" ? "#FEE500" : colors.gray200)};
+  border: 1px solid ${({$variant}) => ($variant === "kakao" ? colors.kakao : colors.gray200)};
   border-radius: 12px;
-  background-color: ${({$variant}) => ($variant === "kakao" ? "#FEE500" : colors.white)}; /* 카카오 규정 노란색 */
+  background-color: ${({$variant}) => ($variant === "kakao" ? colors.kakao : colors.white)};
   color: ${({$variant}) => ($variant === "kakao" ? "rgba(0, 0, 0, 0.85)" : colors.gray900)};
   font-size: 15px;
   font-weight: 600;

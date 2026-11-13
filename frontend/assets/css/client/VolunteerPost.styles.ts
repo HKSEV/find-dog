@@ -25,10 +25,6 @@ export const VolunteerPostRow = styled.div<{$done?: boolean}>`
   color: ${colors.gray900};
   text-decoration: none;
   opacity: ${({$done}) => ($done ? 0.55 : 1)};
-
-  &:hover {
-    color: ${colors.gray900}; /* 전역 a:hover 파란색 대신 */
-  }
 `;
 
 // 달력 한 칸처럼: 월 / 일 / 요일
@@ -93,7 +89,7 @@ export const VolunteerPostFoot = styled.span`
 
 const badgeColors = {
   open: {color: colors.brand, background: colors.brandBg},
-  soon: {color: "#b45309", background: "#fdf0e1"},
+  soon: {color: colors.warning, background: colors.warningBg},
   done: {color: colors.gray500, background: colors.bgSubtle}
 } as const;
 

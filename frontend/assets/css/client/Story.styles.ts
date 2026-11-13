@@ -83,10 +83,6 @@ export const StoryNewsRow = styled.div`
   &:last-child {
     border-bottom: 0;
   }
-
-  &:hover {
-    color: inherit; /* 링크(상세로)로 쓸 때 전역 a:hover 파란색 대신 */
-  }
 `;
 
 export const StoryNewsThumbEmpty = styled.span`
