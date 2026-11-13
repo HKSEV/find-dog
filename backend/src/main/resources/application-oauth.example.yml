@@ -1,0 +1,10 @@
+# application-oauth.yml 로 복사한 뒤 값을 채워요. 실제 키 파일은 git에 올리지 않아요.
+# 카카오 개발자 콘솔 > 앱 > 플랫폼 키 > REST API 키 / 클라이언트 시크릿
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: REST_API_키
+            client-secret: 클라이언트_시크릿

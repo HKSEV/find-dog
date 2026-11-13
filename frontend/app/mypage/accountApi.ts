@@ -10,6 +10,7 @@ export interface MyAccount {
   profileImageUrl?: string | null;
   userType?: string;
   provider?: string;
+  signupCompleted?: boolean;
 }
 
 export interface MyAccountUpdate {
@@ -29,6 +30,19 @@ export const fetchMyAccount = async () => (await axios.get<MyAccount>("/api/memb
 
 export const updateMyAccount = async (body: MyAccountUpdate) =>
   (await axios.put<MyAccount>("/api/members/me", body, {headers: authHeader()})).data;
+
+// 카카오로 처음 가입할 때 추가 정보 (아직 로그인 상태가 아니라 토큰을 직접 넘김)
+export interface KakaoSignupRequest {
+  nickname: string;
+  name: string;
+  phone: string;
+  userType: string;
+  agreed: boolean;
+  marketingAgreed: boolean;
+}
+
+export const completeKakaoSignup = async (token: string, body: KakaoSignupRequest) =>
+  (await axios.post<MyAccount>("/api/members/me/complete-signup", body, {headers: {Authorization: `Bearer ${token}`}})).data;
 
 // 프로필 사진 올리기 (회원가입과 같은 API). 올린 사진 주소를 돌려줌
 export const uploadProfileImage = async (file: File) => {

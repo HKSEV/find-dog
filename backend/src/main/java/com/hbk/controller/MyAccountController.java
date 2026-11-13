@@ -30,6 +30,13 @@ public class MyAccountController {
         return ResponseEntity.ok(service.updateMe(principal.getName(), request));
     }
 
+    // 카카오 첫 가입 추가 정보
+    @PostMapping("/complete-signup")
+    public ResponseEntity<?> completeSignup(@RequestBody MyAccountDto.CompleteSignupRequest request, Principal principal) {
+        if (principal == null) return unauthorized();
+        return ResponseEntity.ok(service.completeSignup(principal.getName(), request));
+    }
+
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<String> handle(ResponseStatusException e) {
         return ResponseEntity.status(e.getStatusCode()).body(e.getReason());

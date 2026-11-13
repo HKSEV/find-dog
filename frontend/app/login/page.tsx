@@ -6,7 +6,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { setEmail, setPassword, submitLogin } from "../redux/loginSlice";
 import { SIGNUP_EMAIL_KEY, safeNext } from "../components/loginLink";
-import { queueToast } from "../components/Toast";
+import { queueToast, showToast } from "../components/Toast";
+import { startKakaoLogin } from "../oauth/kakao/kakaoLogin";
 
 import Header from "../components/Header";
 import * as S from "@/assets/css/Style.styles";
@@ -76,6 +77,19 @@ function LoginForm() {
     return () => clearTimeout(timer);
   }, [dispatch]);
 
+  // 이미 로그인한 상태로 들어오면 (카카오 로그인 뒤 뒤로 가기 등) 로그인 화면을 건너뜀
+  useEffect(() => {
+    if (localStorage.getItem("token")) router.replace(safeNext(searchParams.get("next")));
+  }, [router, searchParams]);
+
+  // 카카오 로그인을 취소했거나 실패해서 돌아온 경우
+  useEffect(() => {
+    if (searchParams.get("error") !== "kakao") return;
+    const timer = setTimeout(() => showToast("카카오 로그인을 하지 못했어요. 다시 시도해 주세요."), 0);
+    router.replace("/login");
+    return () => clearTimeout(timer);
+  }, [searchParams, router]);
+
   const handleLogin = async () => {
     const next: LoginErrors = {};
     if (!email.trim()) next.email = "이메일을 적어 주세요.";
@@ -102,10 +116,6 @@ function LoginForm() {
     if (e.key === "Enter") {
       handleLogin();
     };
-  };
-
-  const handleKakaoLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
   };
 
   return (
@@ -157,8 +167,7 @@ function LoginForm() {
       <S.LoginAnimItem $delay={0.25}>
         <S.LoginDivider>또는</S.LoginDivider>
         <S.LoginSocial>
-          <S.LoginSocialButton type="button" $variant="kakao" onClick={handleKakaoLogin}>카카오로 시작하기</S.LoginSocialButton>
-          <S.LoginSocialButton type="button" $variant="apple">Apple로 로그인</S.LoginSocialButton>
+          <S.LoginSocialButton type="button" onClick={() => startKakaoLogin(searchParams.get("next"))}>카카오로 시작하기</S.LoginSocialButton>
         </S.LoginSocial>
       </S.LoginAnimItem>
 

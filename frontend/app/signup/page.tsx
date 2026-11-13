@@ -16,6 +16,8 @@ import {
 import Header from "../components/Header";
 import { SIGNUP_EMAIL_KEY } from "../components/loginLink";
 import { queueToast, showToast } from "../components/Toast";
+import { startKakaoLogin } from "../oauth/kakao/kakaoLogin";
+import { agreements, Check } from "./signupParts";
 import * as S from "@/assets/css/Style.styles";
 
 type FormField = keyof RootState["signup"]["formData"];
@@ -24,14 +26,6 @@ type ErrorKey = "email" | "nickname" | "password" | "passwordConfirm" | "name" |
 // 입력하면 그 칸의 오류 문구를 지움
 const errorsKeys: Record<ErrorKey, true> = {email: true, nickname: true, password: true, passwordConfirm: true, name: true, phone: true};
 
-
-// 💡 약관 (필수 3개 + 선택 1개). 본문은 아직 임시 문구
-const agreements: {field: FormField; label: string; text?: string}[] = [
-  {field: "agreeTerms", label: "이용약관 (필수)", text: "제 1조 (목적) ..."},
-  {field: "agreePrivacy", label: "개인정보 수집·이용 (필수)", text: "수집 항목: 이메일..."},
-  {field: "agreeAge", label: "만 14세 이상이에요 (필수)"},
-  {field: "marketingAgreed", label: "마케팅 정보 메일·문자 수신 (선택)"}
-];
 
 // 로고와 같은 강아지 얼굴 (흰 배경에서도 보이게 얼굴 테두리)
 const DogMark = () => (
@@ -45,14 +39,6 @@ const DogMark = () => (
     <circle cx="12.5" cy="31" r="5.5" fill="#fff" stroke="#c17f4a" strokeWidth="1.5"/>
     <circle cx="23.5" cy="31" r="5.5" fill="#fff" stroke="#c17f4a" strokeWidth="1.5"/>
   </svg>
-);
-
-// 네모 체크 (진짜 checkbox + 모양)
-const Check = ({checked, onChange, label}: {checked: boolean; onChange: (checked: boolean) => void; label?: string}) => (
-  <S.SignupCheck>
-    <input type="checkbox" checked={checked} aria-label={label} onChange={(e) => onChange(e.target.checked)}/>
-    <i><S.SignupCheckIcon/></i>
-  </S.SignupCheck>
 );
 
 // ==========================================
@@ -110,10 +96,6 @@ export default function SignupPage() {
   };
 
   const isAllAgreed = formData.agreeTerms && formData.agreePrivacy && formData.agreeAge && formData.marketingAgreed;
-
-  const handleKakaoSignup = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
-  };
 
   const goNextFromAgree = () => {
     if (!formData.agreeTerms || !formData.agreePrivacy || !formData.agreeAge) {
@@ -221,7 +203,7 @@ export default function SignupPage() {
             </S.SignupIntro>
 
             <S.SignupBottom>
-              <S.SignupButton type="button" $variant="kakao" onClick={handleKakaoSignup}>카카오로 시작하기</S.SignupButton>
+              <S.SignupButton type="button" $variant="kakao" onClick={() => startKakaoLogin()}>카카오로 시작하기</S.SignupButton>
               <S.SignupButton type="button" onClick={() => dispatch(setStep(1))}>이메일로 가입하기</S.SignupButton>
               <S.SignupLoginLink>이미 계정이 있나요? <Link href="/login">로그인</Link></S.SignupLoginLink>
             </S.SignupBottom>
