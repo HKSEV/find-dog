@@ -4,11 +4,11 @@ import React, { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "./store/store";
-import { fetchCampaigns, fetchHomeExtras } from "./redux/homeSlice";
+import { fetchCampaigns, fetchNeedHelps } from "./redux/homeSlice";
 import { fetchMissingAnimals } from "./redux/missingSlice";
 import { fetchShelterAnimals, setActiveTab } from "./redux/shelterSlice";
 import { timeAgo } from "./missing/missingFormat";
-import { genderLabel } from "./shelter/animalFormat";
+import { genderLabel, toImageUrl } from "./shelter/animalFormat";
 import { VolunteerPost, dateParts, fetchVolunteers } from "./volunteer/volunteerApi";
 
 import {
@@ -31,7 +31,6 @@ const HELP_COUNT = 2;
 const VOLUNTEER_COUNT = 2;
 
 // 백엔드에 올린 이미지(/uploads/...)는 백엔드 주소를 붙여서 사용
-const toImageUrl = (url?: string) => (url && url.startsWith("/uploads/") ? `http://localhost:8080${url}` : url);
 
 // "2026-11-07" -> "11.07"
 const toMonthDay = (date: string) => (date ? date.substring(5, 10).replace("-", ".") : "");
@@ -86,7 +85,7 @@ export default function HomePage() {
     dispatch(fetchMissingAnimals(undefined));
     dispatch(fetchShelterAnimals());
     dispatch(fetchCampaigns(""));
-    dispatch(fetchHomeExtras());
+    dispatch(fetchNeedHelps());
   }, [dispatch]);
 
   // 찾는 중인 실종 신고를 먼저 보여줌

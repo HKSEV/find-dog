@@ -4,6 +4,7 @@
 //    3. 처음 온 회원(signup=1)은 /signup/kakao 에서 약관 동의와 이름·휴대폰을 받은 뒤에 로그인 상태가 됨
 import { safeNext } from "../../components/loginLink";
 
+// 프록시를 거치지 않고 백엔드로 바로 보냄 (카카오가 돌려보내는 주소가 백엔드 8080이라 세션이 같은 곳에 있어야 함)
 const KAKAO_START_URL = "http://localhost:8080/oauth2/authorization/kakao";
 const NEXT_KEY = "kakao-next"; // 로그인 뒤 돌아갈 화면
 const PENDING_KEY = "kakao-signup"; // 가입을 아직 안 마친 카카오 회원의 토큰

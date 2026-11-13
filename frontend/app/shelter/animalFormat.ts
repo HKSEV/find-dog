@@ -6,6 +6,7 @@ export const genderLabel: Record<string, string> = {MALE: "수컷", FEMALE: "암
 export const statusLabel: Record<string, string> = {ACTIVE: "보호 중", COMPLETED: "입양 완료"};
 
 // 백엔드에 올린 이미지(/uploads/...)는 백엔드 주소를 붙여서 사용
+// (배포할 때 바꿀 곳. API는 next.config의 /api 프록시를 씀)
 export const toImageUrl = (url?: string | null) =>
   url && url.startsWith("/uploads/") ? `http://localhost:8080${url}` : url || undefined;
 

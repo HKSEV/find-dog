@@ -16,7 +16,6 @@ export interface Animal {
 
 interface ShelterState {
   activeTab: string;
-  isAlertOn: boolean;
   animals: Animal[];
   loading: boolean;
   error: string | null;
@@ -25,7 +24,6 @@ interface ShelterState {
 
 const initialState: ShelterState = {
   activeTab: "입양",
-  isAlertOn: false,
   animals: [],
   loading: false,
   error: null,
@@ -35,7 +33,7 @@ const initialState: ShelterState = {
 // 보호 동물 데이터 비동기 조회 Thunk
 export const fetchShelterAnimals = createAsyncThunk("shelter/fetchShelterAnimals", async (_, {rejectWithValue}) => {
   try {
-    const response = await axios.get("http://localhost:8080/api/shelter-animals");
+    const response = await axios.get("/api/shelter-animals");
     return response.data as Animal[];
   } catch (error: unknown) {
     return rejectWithValue(
@@ -51,9 +49,6 @@ export const shelterSlice = createSlice({
   reducers: {
     setActiveTab: (state, action: PayloadAction<string>) => {
       state.activeTab = action.payload;
-    },
-    toggleAlert: (state) => {
-      state.isAlertOn = !state.isAlertOn;
     },
     setLikedIds: (state, action: PayloadAction<number[]>) => {
       state.likedIds = action.payload;
@@ -82,5 +77,5 @@ export const shelterSlice = createSlice({
   }
 });
 
-export const {setActiveTab, toggleAlert, setLikedIds, toggleLike} = shelterSlice.actions;
+export const {setActiveTab, setLikedIds, toggleLike} = shelterSlice.actions;
 export default shelterSlice.reducer;

@@ -44,23 +44,26 @@ public class MissingPostService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 입니다"));
 
         // 2. 사진을 서버에 저장하고 주소를 mediaUrls에 추가 (/uploads/... 는 WebMvcConfig가 내려줌)
+        //    화면이 보낸 사진 주소는 받지 않음 (아무 주소나 글에 넣지 못하게)
         List<String> mediaUrls = new java.util.ArrayList<>();
-        if (requestDto.getMediaUrls() != null) mediaUrls.addAll(requestDto.getMediaUrls());
         for (int i = 0; i < files.size(); i++) {
             MultipartFile file = files.get(i);
+            if (file.getContentType() == null || !file.getContentType().startsWith("image/")) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "사진 파일만 올릴 수 있어요.");
+            }
             try {
                 // 여러 장을 같은 순간에 저장해도 겹치지 않게 순번을 붙이고, 파일 이름의 특수문자는 _로 바꿈
                 String original = file.getOriginalFilename() != null ? file.getOriginalFilename() : "photo.jpg";
                 String filename = System.currentTimeMillis() + "_" + i + "_" + original.replaceAll("[^A-Za-z0-9._-]", "_");
-                String uploadDir = System.getProperty("user.dir") + "/uploads/";
-                java.nio.file.Path path = java.nio.file.Paths.get(uploadDir + filename);
+                java.nio.file.Path path = java.nio.file.Paths.get(System.getProperty("user.dir"), "uploads", filename);
 
                 java.nio.file.Files.createDirectories(path.getParent());
                 java.nio.file.Files.write(path, file.getBytes());
 
                 mediaUrls.add("/uploads/" + filename);
             } catch (Exception e) {
-                e.printStackTrace();
+                // 사진 없이 글만 올라가지 않게 멈춤
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "사진을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.");
             }
         }
         requestDto.setMediaUrls(mediaUrls);
@@ -94,7 +97,6 @@ public class MissingPostService {
         post.setCreatedAt(LocalDateTime.now());
 
         MissingPost savePost = missingPostRepository.save(post);
-        System.out.println("========== [DB 저장 완료 ID: " + savePost.getId() + "] ==========");
         return new MissingPostResponseDto(savePost);
     }
 
@@ -177,10 +179,6 @@ public class MissingPostService {
         post.setWeight(requestDto.getWeight());
         post.setColor(requestDto.getColor());
         post.setRescueLocation(requestDto.getRescueLocation());
-
-        if (requestDto.getMediaUrls() != null && !requestDto.getMediaUrls().isEmpty()) {
-            post.setMediaUrls(requestDto.getMediaUrls());
-        }
 
         return new MissingPostResponseDto(post).markMine(true);
     }
