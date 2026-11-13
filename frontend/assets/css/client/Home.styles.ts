@@ -143,6 +143,34 @@ export const HomeListThumb = styled.img`
   border-radius: 8px;
 `;
 
+// 함께 도와주세요의 봉사 모집: 사진 자리에 날짜 칸 (봉사 탭 목록과 같은 모양, 크기는 사진과 같게)
+export const HomeVolunteerDate = styled.span`
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 8px;
+  background-color: ${colors.brandBg};
+  color: ${colors.brand};
+  line-height: 1.15;
+
+  && small {
+    margin: 0;
+    font-size: 11px;
+    color: ${colors.brand};
+  }
+
+  && strong {
+    display: block;
+    font-size: 22px;
+    font-weight: ${fontWeight.bold};
+    color: ${colors.brand};
+  }
+`;
+
 export const HomeListBody = styled.span`
   display: flex;
   flex: 1;

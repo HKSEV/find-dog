@@ -5,6 +5,7 @@ import StyledComponentsRegistry from "@/lib/registry";
 
 import { Providers } from "./store/Providers";
 import { ToastHost } from "./components/Toast";
+import SessionWatcher from "./components/SessionWatcher";
 import * as S from "@/assets/css/Style.styles";
 
 export const metadata: Metadata = {
@@ -58,7 +59,11 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
         </Script>
         <StyledComponentsRegistry>
           <S.GlobalStyle/>
-          <Providers>{children}</Providers>
+          <Providers>
+            {/* 💡 회원 로그인이 끝났는지 확인 (끝났으면 로그아웃 상태로 바꾸고 알림) */}
+            <SessionWatcher/>
+            {children}
+          </Providers>
           {/* 💡 토스트는 앱 전체에 하나만 (화면이 바뀌어도 사라지지 않게) */}
           <ToastHost/>
         </StyledComponentsRegistry>

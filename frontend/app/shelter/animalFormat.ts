@@ -1,6 +1,7 @@
 // 💡 보호 동물 표시용 함수 (입양 목록, 동물 상세, 홈에서 같이 사용)
 
-export const genderLabel: Record<string, string> = {MALE: "남", FEMALE: "여", UNKNOWN: "성별 모름"};
+// 실종·제보와 같게 동물 성별은 수컷/암컷으로
+export const genderLabel: Record<string, string> = {MALE: "수컷", FEMALE: "암컷", UNKNOWN: "성별 모름"};
 
 export const statusLabel: Record<string, string> = {ACTIVE: "보호 중", COMPLETED: "입양 완료"};
 

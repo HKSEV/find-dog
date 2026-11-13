@@ -13,7 +13,7 @@ import Header from "@/app/components/Header";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
 import * as S from "@/assets/css/Style.styles";
 
-// 💡 마이 > 설정 (헤더 톱니바퀴): 정보 수정, 알림 설정, 로그아웃
+// 💡 마이 > 설정 (헤더 톱니바퀴): 정보 수정, 로그아웃
 export default function SettingsPage() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
@@ -37,22 +37,23 @@ export default function SettingsPage() {
         <Header title="설정"/>
         <S.HeaderOffset/>
 
-        <S.MyMenu>
-          <S.MyMenuTitle>계정</S.MyMenuTitle>
-          <S.MyMenuItem as={Link} href={isLoggedIn ? "/mypage/settings/profile" : loginHref("/mypage/settings/profile")}>
-            <span>정보 수정</span>
-            <S.MyMenuChevron aria-hidden="true"/>
-          </S.MyMenuItem>
-          <S.MyMenuItem as="div" $disabled aria-disabled="true">
-            <span>알림 설정</span>
-            <small>준비 중</small>
-          </S.MyMenuItem>
-        </S.MyMenu>
-
+        {/* 로그아웃 상태에서는 고칠 정보가 없으니 로그인 안내만 */}
         {isLoggedIn ? (
-          <S.SettingsLogout type="button" onClick={() => setConfirmLogout(true)}>로그아웃</S.SettingsLogout>
+          <>
+            <S.MyMenu>
+              <S.MyMenuTitle>계정</S.MyMenuTitle>
+              <S.MyMenuItem as={Link} href="/mypage/settings/profile">
+                <span>정보 수정</span>
+                <S.MyMenuChevron aria-hidden="true"/>
+              </S.MyMenuItem>
+            </S.MyMenu>
+            <S.SettingsLogout type="button" onClick={() => setConfirmLogout(true)}>로그아웃</S.SettingsLogout>
+          </>
         ) : (
-          <S.SettingsLogout as={Link} href={loginHref("/mypage/settings")}>로그인</S.SettingsLogout>
+          <S.WriteLoginNotice>
+            <p>로그인하면 닉네임, 연락처 같은<br/>내 정보를 고칠 수 있어요</p>
+            <Link href={loginHref("/mypage/settings")}>로그인</Link>
+          </S.WriteLoginNotice>
         )}
       </S.Container>
 

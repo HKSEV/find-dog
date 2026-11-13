@@ -19,14 +19,11 @@ import * as S from "@/assets/css/Style.styles";
 const activityMenus = [
   {label: "작성한 글", href: "/mypage/posts", needLogin: true},
   {label: "입양 신청 내역", href: "/mypage/applications", needLogin: true},
-  {label: "봉사 신청 내역", href: "/mypage/volunteers", needLogin: true},
-  {label: "관심 보호소"},
+  {label: "봉사 신청 내역", href: "/mypage/volunteers", needLogin: true}
 ];
 
 const guideMenus = [
-  {label: "공지사항"},
-  {label: "자주 묻는 질문"},
-  {label: "문의하기"}
+  {label: "자주 묻는 질문", href: "/mypage/faq"}
 ];
 
 type Menu = {label: string; href?: string; needLogin?: boolean};
@@ -86,7 +83,7 @@ export default function MyPage() {
       title="마이페이지"
       isTab
       action={(
-        // 💡 설정: 정보 수정, 알림 설정, 로그아웃 (로그아웃은 실수로 누르지 않게 설정 안으로 옮김)
+        // 💡 설정: 정보 수정, 로그아웃 (로그아웃은 실수로 누르지 않게 설정 안으로 옮김)
         <S.HeaderIconButton as={Link} href="/mypage/settings" $side="right" aria-label="설정">
           <S.HeaderSettingsIcon/>
         </S.HeaderIconButton>
@@ -107,7 +104,7 @@ export default function MyPage() {
           </S.MyProfile>
         ) : (
           <S.MyLoginCard>
-            <S.MyLoginTitle>로그인하면 실종 신고를 올리고<br/>작성한 글을 모아 볼 수 있어요</S.MyLoginTitle>
+            <S.MyLoginTitle>로그인하면 입양·봉사를 신청하고<br/>글을 쓸 수 있어요</S.MyLoginTitle>
             <S.MyLoginButtons>
               <S.MyLoginButton as={Link} href={loginHref("/mypage")} $primary>로그인</S.MyLoginButton>
               <S.MyLoginButton as={Link} href="/signup">회원가입</S.MyLoginButton>

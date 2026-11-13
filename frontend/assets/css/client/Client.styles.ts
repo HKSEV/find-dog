@@ -16,6 +16,8 @@ export * from "./MyPage.styles";
 export * from "./MyTab.styles";
 export * from "./Notification.styles";
 export * from "./VolunteerPost.styles";
+export * from "./Faq.styles";
+export * from "./CommunityPost.styles";
 export * from "./Shelter.styles";
 export * from "./Signup.styles";
 export * from "./Story.styles";

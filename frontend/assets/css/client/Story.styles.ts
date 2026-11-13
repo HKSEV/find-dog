@@ -5,26 +5,6 @@ import { colors, fontWeight } from "./theme";
 
 // 💡 커뮤니티 탭 (디자인 개편 시안 기준)
 
-export const CommunityTabs = styled.div`
-  display: flex;
-  gap: 20px;
-  padding: 0 20px;
-  border-bottom: 1px solid ${colors.border};
-`;
-
-export const CommunityTab = styled.button<{$active: boolean}>`
-  height: 44px;
-  padding: 0;
-  margin-bottom: -1px;
-  border: 0;
-  border-bottom: 2px solid ${({$active}) => ($active ? colors.brand : "transparent")};
-  background: transparent;
-  font-size: 15px;
-  font-weight: ${({$active}) => ($active ? fontWeight.bold : fontWeight.medium)};
-  color: ${({$active}) => ($active ? colors.gray900 : colors.gray500)};
-  cursor: pointer;
-`;
-
 export const CategoryChips = styled.div`
   display: flex;
   gap: 6px;
@@ -97,10 +77,24 @@ export const StoryNewsRow = styled.div`
   gap: 14px;
   padding: 14px 0;
   border-bottom: 1px solid ${colors.border};
+  color: inherit;
+  text-decoration: none;
 
   &:last-child {
     border-bottom: 0;
   }
+
+  &:hover {
+    color: inherit; /* 링크(상세로)로 쓸 때 전역 a:hover 파란색 대신 */
+  }
+`;
+
+export const StoryNewsThumbEmpty = styled.span`
+  flex: none;
+  width: 76px;
+  height: 76px;
+  border-radius: 8px;
+  background-color: ${colors.bgSubtle};
 `;
 
 export const StoryNewsThumb = styled.img`
