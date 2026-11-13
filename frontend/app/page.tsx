@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useSyncExternalStore } from "react";
+import React, { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "./store/store";
@@ -8,6 +8,8 @@ import { fetchCampaigns, fetchHomeExtras } from "./redux/homeSlice";
 import { fetchMissingAnimals } from "./redux/missingSlice";
 import { fetchShelterAnimals, setActiveTab } from "./redux/shelterSlice";
 import { timeAgo } from "./missing/missingFormat";
+import { genderLabel } from "./shelter/animalFormat";
+import { VolunteerPost, dateParts, fetchVolunteers } from "./volunteer/volunteerApi";
 
 import {
   Campaign as CampaignIcon,
@@ -26,8 +28,7 @@ import * as S from "@/assets/css/Style.styles";
 const MISSING_COUNT = 2;
 const ANIMAL_COUNT = 6;
 const HELP_COUNT = 2;
-
-const genderLabel: Record<string, string> = {MALE: "남", FEMALE: "여", UNKNOWN: "성별 모름"};
+const VOLUNTEER_COUNT = 2;
 
 // 백엔드에 올린 이미지(/uploads/...)는 백엔드 주소를 붙여서 사용
 const toImageUrl = (url?: string) => (url && url.startsWith("/uploads/") ? `http://localhost:8080${url}` : url);
@@ -69,6 +70,18 @@ export default function HomePage() {
   const {animals: shelterAnimals} = useSelector((state: RootState) => state.shelter);
 
   // 컴포넌트 마운트 시 데이터 로드 (캠페인은 해시태그 없이 전체)
+  // 함께 도와주세요에 보여줄 신청할 수 있는 봉사 (가까운 날짜 순)
+  const [volunteers, setVolunteers] = useState<VolunteerPost[]>([]);
+  useEffect(() => {
+    let alive = true;
+    fetchVolunteers()
+      .then((list) => alive && setVolunteers(list.filter((post) => post.state === "OPEN").slice(0, VOLUNTEER_COUNT)))
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   useEffect(() => {
     dispatch(fetchMissingAnimals(undefined));
     dispatch(fetchShelterAnimals());
@@ -184,14 +197,31 @@ export default function HomePage() {
 
         <S.HomeBand/>
 
-        {/* 함께 도와주세요: 입양 캠페인 + 도움이 필요해요 */}
-        {(campaign || helps.length > 0) && (
+        {/* 함께 도와주세요: 봉사 모집 + 입양 캠페인 + 도움이 필요해요 */}
+        {(volunteers.length > 0 || campaign || helps.length > 0) && (
           <S.HomeSection>
             <S.HomeSectionHead>
               <S.HomeSectionTitle><EarMark/>함께 도와주세요</S.HomeSectionTitle>
               <S.HomeMoreLink as={Link} href="/shelter" onClick={openVolunteerTab}>더보기</S.HomeMoreLink>
             </S.HomeSectionHead>
             <S.HomeList>
+              {volunteers.map((post) => {
+                const {month, day, weekday} = dateParts(post.activityDate);
+                return (
+                  <S.HomeListRow key={`v${post.id}`} as={Link} href={`/volunteer/${post.id}`}>
+                    <S.HomeVolunteerDate aria-hidden="true">
+                      <small>{month}</small>
+                      <strong>{day}</strong>
+                      <small>{weekday}</small>
+                    </S.HomeVolunteerDate>
+                    <S.HomeListBody>
+                      <S.HomeKicker>봉사 모집 · {post.capacity - post.appliedCount}자리 남음</S.HomeKicker>
+                      <S.HomeListTitle>{post.title}</S.HomeListTitle>
+                      <S.HomeListMeta>{post.startTime}~{post.endTime} · {post.place}</S.HomeListMeta>
+                    </S.HomeListBody>
+                  </S.HomeListRow>
+                );
+              })}
               {campaign && (
                 <S.HomeListRow as={Link} href="/shelter" onClick={openVolunteerTab}>
                   <S.HomeThumbWrap>

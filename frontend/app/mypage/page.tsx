@@ -104,7 +104,7 @@ export default function MyPage() {
           </S.MyProfile>
         ) : (
           <S.MyLoginCard>
-            <S.MyLoginTitle>로그인하면 실종 신고를 올리고<br/>작성한 글을 모아 볼 수 있어요</S.MyLoginTitle>
+            <S.MyLoginTitle>로그인하면 입양·봉사를 신청하고<br/>글을 쓸 수 있어요</S.MyLoginTitle>
             <S.MyLoginButtons>
               <S.MyLoginButton as={Link} href={loginHref("/mypage")} $primary>로그인</S.MyLoginButton>
               <S.MyLoginButton as={Link} href="/signup">회원가입</S.MyLoginButton>

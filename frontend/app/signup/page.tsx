@@ -228,8 +228,8 @@ export default function SignupPage() {
               <S.SignupTitle as="h2">잃어버린 아이와<br/>새 가족을 이어 줘요</S.SignupTitle>
               <S.SignupIntroList>
                 <li><SpeakerIcon aria-hidden="true"/>실종 신고와 목격 제보</li>
-                <li><HeartIcon aria-hidden="true"/>관심 동물 모아 보기</li>
-                <li><FormIcon aria-hidden="true"/>입양 신청과 진행 상황 확인</li>
+                <li><FormIcon aria-hidden="true"/>입양·봉사 신청과 진행 상황 확인</li>
+                <li><HeartIcon aria-hidden="true"/>커뮤니티에 이야기 나누기</li>
               </S.SignupIntroList>
             </S.SignupIntro>
 

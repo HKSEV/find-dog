@@ -40,6 +40,9 @@ export const PAGE_SIZE = 10;
 export const fetchCommunityPosts = async (category?: CommunityCategory, cursorId?: number, size = PAGE_SIZE) =>
   (await axios.get<CommunityPost[]>("/api/community-posts", {params: {category, cursorId, size}})).data;
 
+export const fetchMyCommunityPosts = async () =>
+  (await axios.get<CommunityPost[]>("/api/community-posts/mine", {headers: authHeader()})).data;
+
 export const fetchCommunityPost = async (id: number) =>
   (await axios.get<CommunityPost>(`/api/community-posts/${id}`, {headers: authHeader()})).data;
 

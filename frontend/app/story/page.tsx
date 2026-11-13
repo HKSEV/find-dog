@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { fetchStoryContents, setCategory, storyCategories, ShelterNews, StoryVideo } from "../redux/storySlice";
-import { CommunityPost, PAGE_SIZE, categoryLabel, categoryValue, fetchCommunityPosts } from "./communityApi";
+import { CommunityPost, PAGE_SIZE, categoryValue, fetchCommunityPosts } from "./communityApi";
+import PostList from "./PostList";
 import { toImageUrl } from "../shelter/animalFormat";
-import { timeAgo } from "../missing/missingFormat";
 
 import { PlayArrow as PlayIcon } from "@mui/icons-material";
 import Header from "../components/Header";
@@ -49,28 +49,6 @@ const VideoGrid = ({items}: {items: StoryVideo[]}) => (
       </S.StoryVideoCard>
     ))}
   </S.StoryVideoGrid>
-);
-
-// 회원 글 한 줄: 분류 · 제목 · 내용 한 줄 · 닉네임과 시간, 사진이 있으면 오른쪽에 첫 장
-const PostList = ({items, showCategory}: {items: CommunityPost[]; showCategory?: boolean}) => (
-  <S.CommunityPostList>
-    {items.map((post) => {
-      const thumb = toImageUrl(post.mediaUrls[0]);
-      return (
-        <li key={post.id}>
-          <S.CommunityPostRow as={Link} href={`/story/${post.id}`}>
-            <S.CommunityPostBody>
-              {showCategory && <S.CommunityPostKind>{categoryLabel(post.category)}</S.CommunityPostKind>}
-              <S.CommunityPostTitle>{post.title}</S.CommunityPostTitle>
-              <S.CommunityPostSummary>{post.content}</S.CommunityPostSummary>
-              <S.CommunityPostMeta>{post.authorName} · {timeAgo(post.createdAt)}</S.CommunityPostMeta>
-            </S.CommunityPostBody>
-            {thumb && <S.CommunityPostThumb src={thumb} alt=""/>}
-          </S.CommunityPostRow>
-        </li>
-      );
-    })}
-  </S.CommunityPostList>
 );
 
 // 💡 커뮤니티 탭: 분류 칩 하나로 모두 봄

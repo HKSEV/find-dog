@@ -25,8 +25,8 @@ type Kind = "LOST" | "FOUND";
 
 // 💡 화면에는 남/여/모름으로 보이고, 저장은 예전 글과 같은 값(수컷/암컷/미상)으로
 const genderOptions = [
-  {label: "남", value: "수컷"},
-  {label: "여", value: "암컷"},
+  {label: "수컷", value: "수컷"},
+  {label: "암컷", value: "암컷"},
   {label: "모름", value: "미상"}
 ];
 
