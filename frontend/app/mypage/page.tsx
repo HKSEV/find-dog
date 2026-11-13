@@ -34,6 +34,7 @@ export default function MyPage() {
   const {animals} = useSelector((state: RootState) => state.shelter);
   const {isLiked} = useLikedAnimals();
   const [photo, setPhoto] = useState<string | null>(null);
+  const [isKakao, setIsKakao] = useState(false); // 카카오 회원은 이메일 대신 "카카오 계정"
 
   useEffect(() => {
     dispatch(loadUserFromStorage()); // 로컬스토리지에서 로그인 정보 로드
@@ -45,7 +46,11 @@ export default function MyPage() {
     if (!isLoggedIn) return;
     let alive = true;
     fetchMyAccount()
-      .then((me) => alive && setPhoto(toImageUrl(me.profileImageUrl) ?? null))
+      .then((me) => {
+        if (!alive) return;
+        setPhoto(toImageUrl(me.profileImageUrl) ?? null);
+        setIsKakao(me.provider === "KAKAO");
+      })
       .catch(() => alive && setPhoto(null)); // 못 받아도 기본 아이콘으로
     return () => {
       alive = false;
@@ -99,7 +104,7 @@ export default function MyPage() {
             </S.MyAvatar>
             <S.MyProfileText>
               <strong>{nickname}</strong>
-              {email && <span>{email}</span>}
+              {isKakao ? <span>카카오 계정</span> : email && <span>{email}</span>}
             </S.MyProfileText>
           </S.MyProfile>
         ) : (

@@ -164,8 +164,8 @@ export default function ProfileEditPage() {
         </S.SignupAvatar>
 
         <S.WriteField>
-          <S.WriteLabel as="span">이메일</S.WriteLabel>
-          <S.SignupHint>{account.email} (바꿀 수 없어요)</S.SignupHint>
+          <S.WriteLabel as="span">{account.provider === "KAKAO" ? "계정" : "이메일"}</S.WriteLabel>
+          <S.SignupHint>{account.provider === "KAKAO" ? "카카오 계정으로 가입했어요" : `${account.email} (바꿀 수 없어요)`}</S.SignupHint>
         </S.WriteField>
 
         <S.WriteField>

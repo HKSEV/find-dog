@@ -51,6 +51,22 @@ public class MyAccountService {
         return MyAccountDto.Response.of(member);
     }
 
+    // 카카오 첫 가입: 약관 동의와 이름·휴대폰을 받아 가입을 마침
+    @Transactional
+    public MyAccountDto.Response completeSignup(String email, MyAccountDto.CompleteSignupRequest request) {
+        Member member = findMember(email);
+        if (!KakaoMemberService.needsSignup(member)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 가입을 마쳤어요.");
+        }
+        if (!Boolean.TRUE.equals(request.agreed())) throw badRequest("필수 약관에 모두 동의해 주세요.");
+        String userType = trim(request.userType());
+        if (!userType.equals("GENERAL") && !userType.equals("BUSINESS")) throw badRequest("가입 유형을 골라 주세요.");
+
+        member.setUserType(userType);
+        member.setMarketingAgreed(Boolean.TRUE.equals(request.marketingAgreed()));
+        return updateMe(email, new MyAccountDto.UpdateRequest(request.nickname(), request.name(), request.phone(), null, null));
+    }
+
     private Member findMember(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인 정보가 없습니다. 다시 로그인해주세요."));

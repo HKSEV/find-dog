@@ -151,13 +151,14 @@ export const LoginSocial = styled.div`
   gap: 8px;
 `;
 
-export const LoginSocialButton = styled.button<{$variant: "kakao" | "apple"}>`
+// 카카오 로그인 버튼 (카카오 노란색)
+export const LoginSocialButton = styled.button`
   width: 100%;
   height: 48px;
-  border: 1px solid ${({$variant}) => ($variant === "kakao" ? colors.kakao : colors.gray200)};
+  border: 1px solid ${colors.kakao};
   border-radius: 12px;
-  background-color: ${({$variant}) => ($variant === "kakao" ? colors.kakao : colors.white)};
-  color: ${({$variant}) => ($variant === "kakao" ? "rgba(0, 0, 0, 0.85)" : colors.gray900)};
+  background-color: ${colors.kakao};
+  color: rgba(0, 0, 0, 0.85);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
