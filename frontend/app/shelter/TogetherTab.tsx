@@ -15,7 +15,7 @@ const CAMPAIGN_COUNT = 3;
 // 💡 입양·봉사 탭 > 함께해요
 //    도움이 필요해요(/api/need-help), 입양 캠페인(/api/campaigns)은 관리자가 올린 글을 보여줌
 //    봉사 모집·후원은 만들지 않기로 해서 뺌 (보호소 후원 링크가 생기면 다시 넣기)
-export default function VolunteerTab() {
+export default function TogetherTab() {
   const dispatch = useDispatch<AppDispatch>();
   const {campaigns, needHelps} = useSelector((state: RootState) => state.home);
 

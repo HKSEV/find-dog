@@ -15,6 +15,7 @@ export * from "./MissingWrite.styles";
 export * from "./MyPage.styles";
 export * from "./MyTab.styles";
 export * from "./Notification.styles";
+export * from "./VolunteerPost.styles";
 export * from "./Shelter.styles";
 export * from "./Signup.styles";
 export * from "./Story.styles";
