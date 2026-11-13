@@ -274,15 +274,3 @@ export const MyMenuChevron = styled(ChevronIcon)`
     color: ${colors.gray400};
   }
 `;
-
-export const MyLogoutButton = styled.button`
-  height: 40px;
-  margin-top: 18px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: ${colors.gray500};
-  font-size: 13px;
-  text-decoration: underline;
-  cursor: pointer;
-`;

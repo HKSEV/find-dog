@@ -32,12 +32,6 @@ export const VolunteerMoreButton = styled.button`
   cursor: pointer;
 `;
 
-export const VolunteerBand = styled.div`
-  height: 8px;
-  margin-top: 24px;
-  background-color: ${colors.bgSubtle};
-`;
-
 export const VolunteerEmpty = styled.p`
   margin: 0;
   padding: 16px 0 0;

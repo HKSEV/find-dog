@@ -17,7 +17,7 @@ export const NoticeRow = styled.div<{$unread?: boolean}>`
   gap: 12px;
   padding: 16px 20px;
   border-bottom: 1px solid ${colors.border};
-  background-color: ${({$unread}) => ($unread ? "#fdf6f4" : colors.white)}; /* brandBg보다 옅게: 상태 라벨 색이 묻히지 않게 */
+  background-color: ${({$unread}) => ($unread ? colors.brandBgSoft : colors.white)};
   color: inherit;
   text-decoration: none;
 
@@ -67,7 +67,7 @@ export const NoticeHead = styled.div`
 
 const badgeColors = {
   brand: {color: colors.brand, background: colors.brandBg},
-  success: {color: "#1f7a4d", background: "#e6f4ec"},
+  success: {color: colors.successText, background: colors.successBg},
   muted: {color: colors.gray500, background: colors.bgSubtle}
 } as const;
 

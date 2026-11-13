@@ -4,18 +4,21 @@
 export const colors = {
   // 브랜드
   brand: "#8a4e4b",        // 버튼, 강조 글자, 입력창 포커스
-  brandLight: "#b5a196",   // 브랜드 보조색
   brandBg: "#fbefec",      // 브랜드 연한 배경 (홈 "발견했어요", 모두 만나기 카드)
-  accent: "#ff8c00",       // 마이페이지 상단 메뉴 아이콘, 스토리 탭·추천 배지 (예전 #ff7a00 포함)
-  accentBg: "#fff5eb",     // 스토리 추천 카드 배경
-  accentBorder: "#ffe8d6", // 스토리 추천 카드 테두리
+  brandBgSoft: "#fdf6f4",  // brandBg보다 옅은 배경 (알림의 새 알림: 상태 라벨 색이 묻히지 않게)
   logo: "#c17f4a",         // 로고 귀·글자
   logoFeature: "#2c2522",  // 로고 눈·코
 
   // 상태
   success: "#198754",
-  info: "#0d6efd",
+  successText: "#1f7a4d",  // 연한 초록 배지 글자 (알림 "입양 확정")
+  successBg: "#e6f4ec",
+  warning: "#b45309",      // 연한 주황 배지 글자 (봉사 "마감 임박")
+  warningBg: "#fdf0e1",
   danger: "#dc3545",
+
+  // 바깥 서비스 규정 색
+  kakao: "#FEE500",        // 카카오 로그인 버튼 노란색 (카카오 디자인 가이드)
 
   // 글자 (진함 -> 흐림)
   gray900: "#222",         // 강조 제목 (예전 #111 포함)

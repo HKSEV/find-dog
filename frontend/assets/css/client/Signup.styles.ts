@@ -115,7 +115,7 @@ export const SignupButton = styled.button<{$variant?: "kakao" | "primary"}>`
   height: 52px;
   border: 0;
   border-radius: 12px;
-  background-color: ${({$variant}) => ($variant === "kakao" ? "#FEE500" : colors.brand)}; /* 카카오 규정 노란색 */
+  background-color: ${({$variant}) => ($variant === "kakao" ? colors.kakao : colors.brand)};
   color: ${({$variant}) => ($variant === "kakao" ? "rgba(0, 0, 0, 0.85)" : colors.white)};
   font-size: 16px;
   font-weight: ${fontWeight.semibold};

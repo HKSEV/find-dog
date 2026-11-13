@@ -93,7 +93,7 @@ export const VolunteerPostFoot = styled.span`
 
 const badgeColors = {
   open: {color: colors.brand, background: colors.brandBg},
-  soon: {color: "#b45309", background: "#fdf0e1"},
+  soon: {color: colors.warning, background: colors.warningBg},
   done: {color: colors.gray500, background: colors.bgSubtle}
 } as const;
 
