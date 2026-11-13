@@ -13,7 +13,7 @@ import { toImageUrl } from "../../shelter/animalFormat";
 
 import Header from "@/app/components/Header";
 import { loginHref } from "@/app/components/loginLink";
-import { CustomAlert } from "@/app/components/CustomAlert";
+import { showToast } from "@/app/components/Toast";
 import * as S from "@/assets/css/Style.styles";
 
 // 상태 문구: 확정(다가오는 봉사) / 다녀온 봉사 / 취소
@@ -29,7 +29,6 @@ export default function MyVolunteersPage() {
   const [status, setStatus] = useState<"loading" | "ready" | "login" | "error">("loading");
   const [confirmId, setConfirmId] = useState<number | null>(null);
   const [cancelingId, setCancelingId] = useState<number | null>(null);
-  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     let alive = true;
@@ -61,7 +60,8 @@ export default function MyVolunteersPage() {
       const updated = await cancelVolunteerApplication(id);
       setItems((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
     } catch (error) {
-      setNotice(toVolunteerError(error, "취소하지 못했어요. 잠시 후 다시 시도해 주세요."));
+      const message = toVolunteerError(error, "취소하지 못했어요. 잠시 후 다시 시도해 주세요.");
+      if (message !== "UNAUTHORIZED") showToast(message); // 로그인이 끝난 경우는 SessionWatcher가 알려 줌
     } finally {
       setCancelingId(null);
     };
@@ -125,7 +125,6 @@ export default function MyVolunteersPage() {
         {renderBody()}
       </S.Container>
 
-      <CustomAlert isOpen={notice !== ""} message={notice} type="error" onConfirm={() => setNotice("")}/>
     </S.AppWrapper>
   );
 };

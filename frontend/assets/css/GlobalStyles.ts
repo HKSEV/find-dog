@@ -152,10 +152,6 @@ export const GlobalStyle = createGlobalStyle`
     color: inherit;
   }
 
-  a:hover {
-    color: #0056B3;
-  }
-
   ol, ul, li {
     list-style: none; 
     margin: 0; 

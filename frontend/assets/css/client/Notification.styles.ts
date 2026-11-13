@@ -20,10 +20,6 @@ export const NoticeRow = styled.div<{$unread?: boolean}>`
   background-color: ${({$unread}) => ($unread ? colors.brandBgSoft : colors.white)};
   color: inherit;
   text-decoration: none;
-
-  &:hover {
-    color: inherit; /* 링크로 쓸 때 전역 a:hover 파란색 대신 */
-  }
 `;
 
 export const NoticeThumb = styled.img`

@@ -49,10 +49,6 @@ export const MissingShelterHint = styled.a<{$flush?: boolean}>`
   line-height: 1.5;
   text-decoration: none;
 
-  &:hover {
-    color: ${colors.gray900};
-  }
-
   span {
     flex: 1;
   }
@@ -86,10 +82,6 @@ export const MissingRow = styled.a<{$done?: boolean}>`
   color: ${colors.gray900};
   text-decoration: none;
   opacity: ${({$done}) => ($done ? 0.6 : 1)};
-
-  &:hover {
-    color: ${colors.gray900}; /* 전역 a:hover 파란색 대신 */
-  }
 `;
 
 export const MissingRowThumb = styled.img`
@@ -214,10 +206,6 @@ export const MissingWriteFab = styled.button`
   font-weight: ${fontWeight.semibold};
   text-decoration: none;
   cursor: pointer;
-
-  &:hover {
-    color: ${colors.white};
-  }
 `;
 
 export const MissingWritePlus = styled(PlusIcon)`
@@ -242,8 +230,4 @@ export const MissingOwnerButton = styled.button<{$danger?: boolean}>`
   font-weight: ${fontWeight.medium};
   text-decoration: none;
   cursor: pointer;
-
-  &:hover {
-    color: ${({$danger}) => ($danger ? colors.danger : colors.gray800)}; /* 링크(문자 보내기)로 쓸 때 전역 a:hover 대신 */
-  }
 `;

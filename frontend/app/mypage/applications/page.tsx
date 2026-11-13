@@ -18,7 +18,7 @@ import {
 
 import Header from "@/app/components/Header";
 import { loginHref } from "@/app/components/loginLink";
-import { CustomAlert } from "@/app/components/CustomAlert";
+import { showToast } from "@/app/components/Toast";
 import * as S from "@/assets/css/Style.styles";
 
 // 💡 마이 > 입양 신청 내역 (최신순). 진행 중인 신청은 취소할 수 있음
@@ -27,7 +27,6 @@ export default function MyApplicationsPage() {
   const [status, setStatus] = useState<"loading" | "ready" | "login" | "error">("loading");
   const [confirmId, setConfirmId] = useState<number | null>(null); // "정말 취소할까요?"를 띄운 신청
   const [cancelingId, setCancelingId] = useState<number | null>(null);
-  const [notice, setNotice] = useState("");
 
   const load = useCallback(async () => {
     if (!localStorage.getItem("token")) {
@@ -55,7 +54,8 @@ export default function MyApplicationsPage() {
       const updated = await cancelApplication(id);
       setApplications((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
     } catch (error) {
-      setNotice(toApplicationError(error, "취소하지 못했어요. 잠시 후 다시 시도해 주세요."));
+      const message = toApplicationError(error, "취소하지 못했어요. 잠시 후 다시 시도해 주세요.");
+      if (message !== "UNAUTHORIZED") showToast(message); // 로그인이 끝난 경우는 SessionWatcher가 알려 줌
     } finally {
       setCancelingId(null);
     };
@@ -138,7 +138,6 @@ export default function MyApplicationsPage() {
         {renderBody()}
       </S.Container>
 
-      <CustomAlert isOpen={notice !== ""} message={notice} type="error" onConfirm={() => setNotice("")}/>
     </S.AppWrapper>
   );
 };

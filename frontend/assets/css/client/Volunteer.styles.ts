@@ -157,10 +157,6 @@ export const VolunteerCampaign = styled.div`
   margin-top: 14px;
   color: ${colors.gray900};
   text-decoration: none;
-
-  &:hover {
-    color: ${colors.gray900}; /* 전역 a:hover 파란색 대신 */
-  }
 `;
 
 export const VolunteerCampaignThumbWrap = styled.span`

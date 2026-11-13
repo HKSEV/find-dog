@@ -131,10 +131,6 @@ export const ApplyButton = styled.a<{$primary?: boolean}>`
   font-weight: ${fontWeight.semibold};
   text-decoration: none;
   cursor: pointer;
-
-  &:hover {
-    color: ${({$primary}) => ($primary ? colors.white : colors.gray900)};
-  }
 `;
 
 // ==========================================
@@ -163,10 +159,6 @@ export const ApplicationHead = styled.a`
   gap: 12px;
   color: ${colors.gray900};
   text-decoration: none;
-
-  &:hover {
-    color: ${colors.gray900};
-  }
 `;
 
 export const ApplicationTitle = styled.span`

@@ -28,10 +28,6 @@ export const HomeEntryButton = styled.a<{$primary?: boolean}>`
   color: ${({$primary}) => ($primary ? colors.white : colors.gray900)};
   text-decoration: none;
 
-  &:hover {
-    color: ${({$primary}) => ($primary ? colors.white : colors.gray900)}; /* 전역 a:hover 파란색 대신 */
-  }
-
   strong {
     position: relative;
     font-size: 16px;
@@ -125,10 +121,6 @@ export const HomeListRow = styled.a`
   border-bottom: 1px solid ${colors.border};
   color: ${colors.gray900};
   text-decoration: none;
-
-  &:hover {
-    color: ${colors.gray900}; /* 전역 a:hover 파란색 대신 */
-  }
 
   &:last-child {
     border-bottom: 0;
@@ -228,10 +220,6 @@ export const HomeAnimalCard = styled.a`
   width: 156px;
   color: ${colors.gray900};
   text-decoration: none;
-
-  &:hover {
-    color: ${colors.gray900};
-  }
 `;
 
 export const HomeAnimalImage = styled.img`

@@ -14,9 +14,8 @@ import {
   DescriptionOutlined as FormIcon
 } from "@mui/icons-material";
 import Header from "../components/Header";
-import { CustomAlert } from "../components/CustomAlert";
 import { SIGNUP_EMAIL_KEY } from "../components/loginLink";
-import { queueToast } from "../components/Toast";
+import { queueToast, showToast } from "../components/Toast";
 import * as S from "@/assets/css/Style.styles";
 
 type FormField = keyof RootState["signup"]["formData"];
@@ -72,18 +71,6 @@ export default function SignupPage() {
   const [errors, setErrors] = useState<Partial<Record<ErrorKey, string>>>({});
   // 중복 확인을 통과한 값 (값을 바꾸면 다시 확인해야 함)
   const [checked, setChecked] = useState<{email: string; nickname: string}>({email: "", nickname: ""});
-
-  const [alertConfig, setAlertConfig] = useState({
-    isOpen: false,
-    message: "",
-    type: "info" as "success" | "error" | "info",
-    onConfirm: () => {}
-  });
-
-  const closeAlert = () => setAlertConfig((prev) => ({...prev, isOpen: false}));
-  const showAlert = (message: string, type: "success" | "error" | "info" = "info", customConfirm?: () => void) => {
-    setAlertConfig({isOpen: true, message, type, onConfirm: customConfirm || closeAlert});
-  };
 
   // 단계가 바뀌면 화면 맨 위로
   useEffect(() => {
@@ -157,7 +144,7 @@ export default function SignupPage() {
         setErrors((prev) => ({...prev, [kind]: undefined}));
       };
     } catch {
-      showAlert("서버와 연결하지 못했어요. 잠시 후 다시 시도해 주세요.", "error");
+      showToast("서버와 연결하지 못했어요. 잠시 후 다시 시도해 주세요.");
     };
   };
 
@@ -205,7 +192,7 @@ export default function SignupPage() {
       dispatch(setStep(0));
       router.replace("/login");
     } else {
-      showAlert(`가입하지 못했어요. ${resultAction.payload ?? ""}`, "error");
+      showToast(`가입하지 못했어요. ${resultAction.payload ?? ""}`.trim());
     };
   };
 
@@ -483,12 +470,6 @@ export default function SignupPage() {
           </S.SignupPostcodeSheet>
         </S.SignupPostcode>
       )}
-
-      <CustomAlert
-      isOpen={alertConfig.isOpen}
-      message={alertConfig.message}
-      type={alertConfig.type}
-      onConfirm={alertConfig.onConfirm}/>
     </S.AppWrapper>
   );
 };

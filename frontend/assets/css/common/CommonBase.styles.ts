@@ -42,10 +42,6 @@ export const Pointer = css`
 export const BoxShadow = css`
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 `;
-export const TransitionAll = css`
-  transition: all 0.2s ease-in-out;
-`;
-
 export const Fw500 = css`
   font-weight: 500;
 `;
@@ -55,15 +51,8 @@ export const Fw600 = css`
 export const W100 = css`
   width: 100%;
 `;
-export const H100 = css`
-  height: 100%;
-`;
 export const Ohidden = css`
   overflow: hidden;
-`;
-
-export const BgWhite = css`
-  background-color: #FFF;
 `;
 
 export const TextCenterMixin = css`

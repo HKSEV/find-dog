@@ -43,10 +43,6 @@ export const MyLoginButton = styled.a<{$primary?: boolean}>`
   font-size: 15px;
   font-weight: ${fontWeight.semibold};
   text-decoration: none;
-
-  &:hover {
-    color: ${({$primary}) => ($primary ? colors.white : colors.gray900)};
-  }
 `;
 
 // 로그인 후: 프로필
@@ -160,10 +156,6 @@ export const MyLikedCard = styled.a`
   width: 104px;
   color: ${colors.gray900};
   text-decoration: none;
-
-  &:hover {
-    color: ${colors.gray900};
-  }
 `;
 
 export const MyLikedImage = styled.img`
@@ -222,10 +214,6 @@ export const SettingsLogout = styled.button`
   text-align: center;
   line-height: 46px;
   cursor: pointer;
-
-  &&:hover {
-    color: ${colors.gray500};
-  }
 `;
 
 export const MyMenuTitle = styled.h2`
@@ -253,10 +241,6 @@ export const MyMenuItem = styled.a<{$disabled?: boolean}>`
   font-size: 15px;
   text-decoration: none;
   cursor: ${({$disabled}) => ($disabled ? "default" : "pointer")};
-
-  &:hover {
-    color: ${({$disabled}) => ($disabled ? colors.gray400 : colors.gray900)};
-  }
 
   span {
     flex: 1;
