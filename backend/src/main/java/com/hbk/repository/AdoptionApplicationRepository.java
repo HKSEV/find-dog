@@ -3,10 +3,13 @@ package com.hbk.repository;
 import com.hbk.domain.ApplicationStatus;
 import com.hbk.entity.AdoptionApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AdoptionApplicationRepository extends JpaRepository<AdoptionApplication, Long> {
@@ -21,6 +24,9 @@ public interface AdoptionApplicationRepository extends JpaRepository<AdoptionApp
     List<AdoptionApplication> findAllByOrderByIdDesc();
 
     List<AdoptionApplication> findByStatusOrderByIdDesc(ApplicationStatus status);
+
+    @Query("select a.shelterAnimal.id from AdoptionApplication a where a.id = :id")
+    Optional<Long> findShelterAnimalId(@Param("id") Long id);
 
     // 입양이 확정되면 같은 동물의 다른 진행 중 신청을 정리할 때 사용
     List<AdoptionApplication> findByShelterAnimalIdAndStatusIn(Long shelterAnimalId, Collection<ApplicationStatus> statuses);

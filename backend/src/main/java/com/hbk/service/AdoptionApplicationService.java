@@ -15,6 +15,7 @@ import com.hbk.repository.ShelterAnimalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -47,11 +48,9 @@ public class AdoptionApplicationService {
     // 입양 신청
     @Transactional
     public AdoptionApplicationResponseDto apply(AdoptionApplicationRequestDto request, String email) {
-        Member member = findMember(email);
-
         if (request.getShelterAnimalId() == null) throw badRequest("신청할 동물이 없어요.");
-        ShelterAnimal animal = shelterAnimalRepository.findById(request.getShelterAnimalId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "공고가 끝났거나 없는 친구예요."));
+        ShelterAnimal animal = findAnimalForUpdate(request.getShelterAnimalId());
+        Member member = findMember(email);
         if (animal.getStatus() != ShelterStatus.ACTIVE) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 입양이 끝난 친구예요.");
         }
@@ -92,9 +91,9 @@ public class AdoptionApplicationService {
     }
 
     // 신청 취소 (본인, 아직 진행 중일 때만)
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public AdoptionApplicationResponseDto cancel(Long id, String email) {
-        AdoptionApplication application = findApplication(id);
+        AdoptionApplication application = findApplicationForUpdate(id);
         if (!application.getMember().getEmail().equals(email)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "내 신청만 취소할 수 있어요.");
         }
@@ -117,7 +116,7 @@ public class AdoptionApplicationService {
     // [관리자] 상태 바꾸기
     // 운영자가 보호소에 전달하면 FORWARDED, 보호소 결과를 듣고 ADOPTED / REJECTED
     // ADOPTED가 되면 동물 공고를 COMPLETED로 바꾸고, 같은 동물의 다른 진행 중 신청은 REJECTED로 정리
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public AdoptionApplicationResponseDto changeStatus(Long id, AdoptionApplicationStatusRequestDto request) {
         ApplicationStatus next = request.getStatus();
         if (next == null) throw badRequest("바꿀 상태를 골라 주세요.");
@@ -125,7 +124,7 @@ public class AdoptionApplicationService {
             throw badRequest("관리자는 보호소에 전달, 입양 확정, 입양 불가로만 바꿀 수 있어요.");
         }
 
-        AdoptionApplication application = findApplication(id);
+        AdoptionApplication application = findApplicationForUpdate(id);
         if (!application.getStatus().isActive()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 끝난 신청이에요.");
         }
@@ -179,7 +178,15 @@ public class AdoptionApplicationService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인 정보가 없습니다. 다시 로그인해주세요."));
     }
 
-    private AdoptionApplication findApplication(Long id) {
+    private ShelterAnimal findAnimalForUpdate(Long id) {
+        return shelterAnimalRepository.findByIdForUpdate(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "공고가 끝났거나 없는 친구예요."));
+    }
+
+    private AdoptionApplication findApplicationForUpdate(Long id) {
+        Long animalId = applicationRepository.findShelterAnimalId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "없는 신청이에요."));
+        findAnimalForUpdate(animalId);
         return applicationRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "없는 신청이에요."));
     }

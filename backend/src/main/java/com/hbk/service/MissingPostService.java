@@ -2,6 +2,7 @@ package com.hbk.service;
 
 import com.hbk.domain.PostStatus;
 import com.hbk.domain.PostType;
+import com.hbk.dto.AdminMemberPostResponse;
 import com.hbk.dto.MissingPostRequestDto;
 import com.hbk.dto.MissingPostResponseDto;
 import com.hbk.entity.Member;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,6 +33,19 @@ public class MissingPostService {
     private final MemberRepository memberRepository;
 
     public static final int MAX_PHOTOS = 5;
+
+    public List<AdminMemberPostResponse> getAllForAdmin() {
+        return missingPostRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).stream()
+                .map(post -> new AdminMemberPostResponse(post.getId(), post.getTitle(),
+                        post.getType() == null ? PostType.LOST.name() : post.getType().name(),
+                        post.getStatus().name(), post.getCreatedAt()))
+                .toList();
+    }
+
+    @Transactional
+    public void deleteByAdmin(Long id) {
+        missingPostRepository.delete(findPost(id));
+    }
 
     // 실종 신고글 작성 (DTO, 사진 여러 장, 유저 이메일 수신)
     @Transactional

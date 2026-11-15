@@ -23,7 +23,7 @@ export default function Intergrate() {
     dispatch(updateIntegrateField({name: name as keyof RootState["integrateAdmin"]["formData"], value}));
   };
 
-  const handleBoardTypeChange = (type: "YOUTUBE" | "FELLOW" | "HELP") => {
+  const handleBoardTypeChange = (type: "YOUTUBE" | "FELLOW") => {
     dispatch(setBoardType(type));
   };
 
@@ -44,9 +44,9 @@ export default function Intergrate() {
   return (
     <S.AdminSettingPage>
       <S.AdminSettingHeader>
-        <S.AdminSettingCaption>관리자 / 통합 게시물 설정</S.AdminSettingCaption>
-        <S.AdminSettingTitle>통합 콘텐츠 등록관리</S.AdminSettingTitle>
-        <S.AdminSettingDescription>유튜브 영상과 센터 소식, 도움이 필요한 사연을 한곳에서 관리하세요.</S.AdminSettingDescription>
+        <S.AdminSettingCaption>관리자 / 커뮤니티</S.AdminSettingCaption>
+        <S.AdminSettingTitle>보호소 소식·영상 관리</S.AdminSettingTitle>
+        <S.AdminSettingDescription>커뮤니티에 표시할 보호소 소식과 영상을 등록하고 관리하세요.</S.AdminSettingDescription>
       </S.AdminSettingHeader>
 
       <S.AdminSettingGrid>
@@ -65,7 +65,7 @@ export default function Intergrate() {
                     name="boardType"
                     checked={boardType === "YOUTUBE"}
                     onChange={() => handleBoardTypeChange("YOUTUBE")}/>
-                    어서찾아주개 유튜브
+                    보호소 영상
                   </S.AdminSettingOption>
                   <S.AdminSettingOption>
                     <input
@@ -73,15 +73,7 @@ export default function Intergrate() {
                     name="boardType"
                     checked={boardType === "FELLOW"}
                     onChange={() => handleBoardTypeChange("FELLOW")}/>
-                    펠로우 소식
-                  </S.AdminSettingOption>
-                  <S.AdminSettingOption>
-                    <input
-                    type="radio"
-                    name="boardType"
-                    checked={boardType === "HELP"}
-                    onChange={() => handleBoardTypeChange("HELP")}/>
-                    도움이 필요해요
+                    보호소 소식
                   </S.AdminSettingOption>
                 </S.AdminSettingOptions>
               </S.AdminSettingChoiceField>
@@ -136,7 +128,7 @@ export default function Intergrate() {
                 </S.AdminSettingFields>
               )}
 
-              {(boardType === "FELLOW" || boardType === "HELP") && (
+              {boardType === "FELLOW" && (
                 <S.AdminSettingFields>
                   <S.AdminSettingField>
                     <S.AdminSettingLabel htmlFor="integrate-content">상세 내용 (본문 글)</S.AdminSettingLabel>
@@ -202,10 +194,8 @@ export default function Intergrate() {
                 {isLoading
                   ? "등록 중..."
                   : boardType === "YOUTUBE"
-                    ? "유튜브영상 등록하기"
-                    : boardType === "FELLOW"
-                      ? "펠로우 소식 등록하기"
-                      : "도움 요청글 등록하기"}
+                    ? "보호소 영상 등록"
+                    : "보호소 소식 등록"}
               </S.AdminSettingSubmit>
             </S.AdminSettingForm>
           </S.AdminSettingCardBody>
@@ -217,21 +207,15 @@ export default function Intergrate() {
           </S.AdminSettingCardHeader>
           <S.AdminSettingGuideBody>
             <p>
-              <strong>어서찾아주개 유튜브</strong>
+              <strong>보호소 영상</strong>
               <br/>
-              유튜브 영상 주소를 입력하면 썸네일과 함께 메인 화면에 노출됩니다.
+              유튜브 영상 주소를 입력하면 커뮤니티의 보호소 영상에 표시됩니다.
             </p>
             <hr/>
             <p>
-              <strong>펠로우 소식</strong>
+              <strong>보호소 소식</strong>
               <br/>
-              센터의 소식이나 근황을 등록합니다. 게시물에 사용할 대표 이미지를 함께 입력해 주세요.
-            </p>
-            <hr/>
-            <p>
-              <strong>도움이 필요해요</strong>
-              <br/>
-              긴급한 구조나 지원이 필요한 동물들의 사연을 등록합니다. 필요한 도움을 본문에 자세히 적어 주세요.
+              보호소의 소식이나 근황을 대표 이미지와 함께 등록합니다.
             </p>
           </S.AdminSettingGuideBody>
         </S.AdminSettingGuide>

@@ -1,8 +1,8 @@
 export const dashboardSources = [
-  {key: "animals", label: "추천 동물", endpoint: "/api/animals/recommended"},
+  {key: "volunteers", label: "봉사 모집", endpoint: "/api/admin/volunteers"},
   {key: "campaigns", label: "캠페인", endpoint: "/api/campaigns"},
-  {key: "youtubePosts", label: "유튜브", endpoint: "/api/youtube"},
-  {key: "fellowNews", label: "펠로우 소식", endpoint: "/api/fellow-news"},
+  {key: "youtubePosts", label: "보호소 영상", endpoint: "/api/youtube"},
+  {key: "fellowNews", label: "보호소 소식", endpoint: "/api/fellow-news"},
   {key: "needHelps", label: "도움 요청", endpoint: "/api/need-help"},
   {key: "shelterAnimals", label: "보호 동물", endpoint: "/api/shelter-animals"}
 ] as const;
@@ -22,7 +22,7 @@ export type DashboardData = Record<DashboardSource, DashboardRecord[]>;
 export const dashboardPostSources: DashboardSource[] = ["youtubePosts", "fellowNews", "needHelps"];
 
 export const createDashboardData = (): DashboardData => ({
-  animals: [],
+  volunteers: [],
   campaigns: [],
   youtubePosts: [],
   fellowNews: [],
@@ -57,13 +57,13 @@ export const getDashboardMetrics = (data: DashboardData, failedSources: Dashboar
       : sources.reduce((total, source) => total + data[source].length, 0);
 
   return [
-    {label: "추천 동물", value: count(["animals"]), unit: "마리", description: "홈에 노출되는 추천 동물 수입니다."},
+    {label: "봉사 모집", value: count(["volunteers"]), unit: "건", description: "전체 등록된 봉사 모집 수입니다."},
     {label: "등록 캠페인", value: count(["campaigns"]), unit: "건", description: "전체 등록된 캠페인 수입니다."},
     {
       label: "등록 게시물",
       value: count(dashboardPostSources),
       unit: "건",
-      description: "유튜브·펠로우 소식·도움 요청 합계입니다."
+      description: "보호소 영상·소식·도움 요청 합계입니다."
     },
     {label: "보호 동물", value: count(["shelterAnimals"]), unit: "마리", description: "보호소에 등록된 동물 수입니다."}
   ];

@@ -1,6 +1,7 @@
 package com.hbk.service;
 
 import com.hbk.domain.CommunityCategory;
+import com.hbk.dto.AdminMemberPostResponse;
 import com.hbk.dto.CommunityDto;
 import com.hbk.entity.CommunityPost;
 import com.hbk.entity.Member;
@@ -8,6 +9,7 @@ import com.hbk.repository.CommunityPostRepository;
 import com.hbk.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,6 +82,13 @@ public class CommunityPostService {
         CommunityPost post = findPost(id);
         requireAuthor(post, email, "지울");
         postRepository.delete(post);
+    }
+
+    public List<AdminMemberPostResponse> getAllForAdmin() {
+        return postRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).stream()
+                .map(post -> new AdminMemberPostResponse(post.getId(), post.getTitle(),
+                        post.getCategory().name(), null, post.getCreatedAt()))
+                .toList();
     }
 
     // [관리자] 운영 정책에 맞지 않는 글 지우기

@@ -5,6 +5,7 @@ import { fetchAdminRegistrations } from "@/app/redux/registrationAdminSlice";
 import type { AdminRegistrationKind } from "@/lib/adminRegistrations";
 import { getAdminRemainingSeconds, getAdminSession, getAdminSessionId } from "@/lib/adminAuth";
 import { isAdminSessionRenewing } from "@/lib/adminApi";
+import { adminOperationHref, adminOperationPages } from "@/lib/adminOperations";
 
 const registrationPages: Record<string, AdminRegistrationKind> = {
   "/admin/pick": "recommended",
@@ -19,7 +20,7 @@ export const loadAdminPageData = (dispatch: AppDispatch, pathname: string) => {
     return {completed: Promise.resolve(false), cancel: () => undefined};
   };
   const profileRequest = dispatch(fetchAdminProfile());
-  const kind = registrationPages[pathname];
+  const kind = registrationPages[pathname] ?? adminOperationPages.find(({slug}) => adminOperationHref(slug) === pathname)?.kind;
   const pageRequest = kind
     ? dispatch(fetchAdminRegistrations(kind))
     : pathname === "/admin"

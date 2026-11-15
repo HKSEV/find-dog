@@ -3,6 +3,8 @@ package com.hbk.controller;
 import com.hbk.dto.AdminRegistrationRequest;
 import com.hbk.service.AdminRegistrationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,7 +33,11 @@ public class AdminRegistrationController {
 
     @DeleteMapping("/{source}/{id}")
     public ResponseEntity<?> deleteRegistration(@PathVariable String source, @PathVariable Long id) {
-        registrationService.deleteRegistration(source, id);
+        try {
+            registrationService.deleteRegistration(source, id);
+        } catch (DataIntegrityViolationException error) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "연결된 데이터가 있어 삭제할 수 없습니다.");
+        }
         return ResponseEntity.ok(Collections.singletonMap("message", "삭제가 완료되었습니다."));
     }
 

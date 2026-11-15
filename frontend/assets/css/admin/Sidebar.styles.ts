@@ -94,7 +94,23 @@ export const SidebarDivider = styled.hr`
 `;
 
 export const SidebarNavigation = styled.nav`
-  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 12px;
+`;
+
+export const SidebarGroupLabel = styled.p<{$isCollapsed: boolean}>`
+  display: ${({$isCollapsed}) => ($isCollapsed ? "none" : "block")};
+  margin: 0 0 4px;
+  padding: 0 26px;
+  color: ${coolGray[400]};
+  font-size: 0.75rem;
+  font-weight: 650;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
 `;
 
 export const SidebarMenu = styled.ul`

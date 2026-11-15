@@ -3,6 +3,7 @@ import axios from "axios";
 import adminApi from "@/lib/adminApi";
 import { adminSessionCleared } from "./adminSessionActions";
 import {
+  AdminCreateKind,
   AdminRegistrationKind,
   AdminRegistrationRow,
   createRegistrationRows,
@@ -27,7 +28,12 @@ const initialState: Record<AdminRegistrationKind, RegistrationListState> = {
   recommended: createListState(),
   campaign: createListState(),
   integrate: createListState(),
-  shelter: createListState()
+  shelter: createListState(),
+  needHelp: createListState(),
+  volunteer: createListState(),
+  adoption: createListState(),
+  missing: createListState(),
+  community: createListState()
 };
 
 interface RegistrationTarget {
@@ -35,7 +41,16 @@ interface RegistrationTarget {
   row: AdminRegistrationRow;
 }
 
-const registrationEndpoint = (row: AdminRegistrationRow) => `/api/admin/registrations/${row.source}/${row.id}`;
+const registrationEndpoint = ({kind, row}: RegistrationTarget) => {
+  const endpoint = getRegistrationSources(kind).find(({key}) => key === row.source)?.endpoint;
+  return endpoint?.startsWith("/api/admin/")
+    ? `${endpoint}/${row.id}`
+    : `/api/admin/registrations/${row.source}/${row.id}`;
+};
+
+const volunteerPayload = (values: Record<string, string>) => ({
+  ...values, capacity: Number(values.capacity), closed: values.closed === "true"
+});
 
 const registrationError = (error: unknown) => {
   if (axios.isAxiosError<string | {message?: string}>(error)) {
@@ -51,8 +66,20 @@ export const fetchAdminRegistration = createAsyncThunk(
   "registrationAdmin/fetchOne",
   async ({kind, row}: RegistrationTarget, {rejectWithValue, signal}) => {
     try {
-      const response = await adminApi.get<unknown>(registrationEndpoint(row), {timeout: 15000, signal});
+      const response = await adminApi.get<unknown>(registrationEndpoint({kind, row}), {timeout: 15000, signal});
       return createRegistrationRows(kind, row.source, [response.data])[0];
+    } catch (error: unknown) {
+      return rejectWithValue(registrationError(error));
+    }
+  }
+);
+
+export const createAdminRegistration = createAsyncThunk(
+  "registrationAdmin/create",
+  async ({kind, values}: {kind: AdminCreateKind; values: Record<string, string>}, {rejectWithValue}) => {
+    try {
+      const [{endpoint}] = getRegistrationSources(kind);
+      await adminApi.post(endpoint, kind === "volunteer" ? volunteerPayload(values) : values, {timeout: 30000});
     } catch (error: unknown) {
       return rejectWithValue(registrationError(error));
     }
@@ -66,10 +93,17 @@ export const updateAdminRegistration = createAsyncThunk(
     {rejectWithValue}
   ) => {
     try {
+      const endpoint = registrationEndpoint({kind, row});
+      if (row.source === "volunteers" || row.source === "adoptionApplications") {
+        const response = row.source === "volunteers"
+          ? await adminApi.put<unknown>(endpoint, volunteerPayload(values), {timeout: 30000})
+          : await adminApi.patch<unknown>(`${endpoint}/status`, {status: values.status, reason: values.reason}, {timeout: 30000});
+        return createRegistrationRows(kind, row.source, [response.data])[0];
+      };
       const data = new FormData();
       Object.entries(values).forEach(([key, value]) => data.append(key, value));
       if (imageFile) data.append("imageFile", imageFile);
-      const response = await adminApi.put<unknown>(registrationEndpoint(row), data, {timeout: 30000});
+      const response = await adminApi.put<unknown>(endpoint, data, {timeout: 30000});
       return createRegistrationRows(kind, row.source, [response.data])[0];
     } catch (error: unknown) {
       return rejectWithValue(registrationError(error));
@@ -79,10 +113,10 @@ export const updateAdminRegistration = createAsyncThunk(
 
 export const deleteAdminRegistration = createAsyncThunk(
   "registrationAdmin/delete",
-  async ({row}: RegistrationTarget, {rejectWithValue}) => {
+  async (target: RegistrationTarget, {rejectWithValue}) => {
     try {
-      await adminApi.delete(registrationEndpoint(row), {timeout: 15000});
-      return row.key;
+      await adminApi.delete(registrationEndpoint(target), {timeout: 15000});
+      return target.row.key;
     } catch (error: unknown) {
       return rejectWithValue(registrationError(error));
     }

@@ -15,7 +15,7 @@ interface IntegrateFormState {
 }
 
 interface IntegrateAdminState {
-  boardType: "YOUTUBE" | "FELLOW" | "HELP";
+  boardType: "YOUTUBE" | "FELLOW";
   formData: IntegrateFormState;
   isLoading: boolean;
   error: string | null;
@@ -47,7 +47,7 @@ const extractYoutubeId = (url: string) => {
 export const submitIntegrateContent = createAsyncThunk(
   "integrateAdmin/submitContent",
   async (
-    {boardType, formData}: {boardType: "YOUTUBE" | "FELLOW" | "HELP"; formData: IntegrateFormState},
+    {boardType, formData}: {boardType: IntegrateAdminState["boardType"]; formData: IntegrateFormState},
     {rejectWithValue}
   ) => {
     try {
@@ -61,17 +61,8 @@ export const submitIntegrateContent = createAsyncThunk(
           youtubeUrl: formData.youtubeUrl,
           thumbnailUrl: formData.thumbnailUrl
         };
-      } else if (boardType === "FELLOW") {
+      } else {
         endpoint = "/api/fellow-news";
-        payload = {
-          title: formData.title,
-          content: formData.content,
-          imageUrl: formData.imageUrl,
-          videoUrl: formData.videoUrl,
-          attachmentUrl: formData.attachmentUrl
-        };
-      } else if (boardType === "HELP") {
-        endpoint = "/api/need-help";
         payload = {
           title: formData.title,
           content: formData.content,
@@ -97,7 +88,7 @@ export const integrateAdminSlice = createSlice({
   name: "integrateAdmin",
   initialState,
   reducers: {
-    setBoardType: (state, action: PayloadAction<"YOUTUBE" | "FELLOW" | "HELP">) => {
+    setBoardType: (state, action: PayloadAction<IntegrateAdminState["boardType"]>) => {
       state.boardType = action.payload;
       state.formData = {
         title: "",

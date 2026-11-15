@@ -1,6 +1,7 @@
 package com.hbk.controller;
 
 import com.hbk.domain.CommunityCategory;
+import com.hbk.dto.AdminMemberPostResponse;
 import com.hbk.dto.CommunityDto;
 import com.hbk.service.CommunityPostService;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +66,11 @@ public class CommunityPostController {
         if (principal == null) return unauthorized();
         service.delete(id, principal.getName());
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/api/admin/community-posts")
+    public List<AdminMemberPostResponse> getAllForAdmin() {
+        return service.getAllForAdmin();
     }
 
     // [관리자] 글 지우기 (DELETE /api/admin/community-posts/{id}) - 관리자 토큰 필요

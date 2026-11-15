@@ -2,8 +2,8 @@
 
 import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaPaw, FaBullhorn } from "react-icons/fa";
-import { FiCalendar, FiChevronRight, FiDownload, FiFileText, FiHome, FiRefreshCw } from "react-icons/fi";
+import { FaBullhorn } from "react-icons/fa";
+import { FiCalendar, FiChevronRight, FiClipboard, FiDownload, FiFileText, FiHome, FiRefreshCw } from "react-icons/fi";
 import { AppDispatch, RootState } from "../store/store";
 import { fetchDashboard } from "../redux/dashboardAdminSlice";
 import {
@@ -16,16 +16,17 @@ import {
   getDashboardPosts,
   getDashboardTrend
 } from "@/lib/adminDashboard";
+import { adminOperationHref } from "@/lib/adminOperations";
 import * as S from "@/assets/css/Style.styles";
 
 const quickLinks = [
-  {href: "/admin/pick", title: "추천 동물 설정", description: "홈에 노출할 동물을 관리하세요.", icon: FaPaw},
-  {href: "/admin/campaign", title: "캠페인 관리", description: "등록된 캠페인을 확인하세요.", icon: FaBullhorn},
-  {href: "/admin/intergrate", title: "통합 게시물 관리", description: "등록할 게시물을 관리하세요.", icon: FiFileText},
-  {href: "/admin/sheltersetting", title: "보호소 설정", description: "보호 동물 정보를 관리하세요.", icon: FiHome}
+  {href: "/admin/sheltersetting", title: "보호 동물", description: "입양 공고를 관리하세요.", icon: FiHome},
+  {href: adminOperationHref("adoptions"), title: "입양 신청", description: "신청서를 확인하고 처리하세요.", icon: FiClipboard},
+  {href: adminOperationHref("volunteers"), title: "봉사 모집", description: "봉사 일정과 신청자를 확인하세요.", icon: FiCalendar},
+  {href: "/admin/campaign", title: "캠페인", description: "홈에 표시할 캠페인을 관리하세요.", icon: FaBullhorn}
 ];
 
-const metricIcons = [FaPaw, FaBullhorn, FiFileText, FiHome];
+const metricIcons = [FiCalendar, FaBullhorn, FiFileText, FiHome];
 
 export default function DashBoard() {
   const dispatch = useDispatch<AppDispatch>();
@@ -69,7 +70,7 @@ export default function DashBoard() {
 
   return (
     <S.DashboardPage>
-      <S.DashboardBreadcrumb aria-label="현재 위치">관리자 / Dashboard</S.DashboardBreadcrumb>
+      <S.DashboardBreadcrumb aria-label="현재 위치">관리자 / 대시보드</S.DashboardBreadcrumb>
       <S.DashboardHeader>
         <div>
           <S.DashboardTitle>대시보드</S.DashboardTitle>
@@ -290,7 +291,7 @@ export default function DashBoard() {
           ? "등록 데이터를 불러오고 있습니다."
           : failedSources.length
             ? "조회된 데이터만 표시하며, 조회에 실패한 수치는 —로 표시합니다."
-            : "기존에 등록된 데이터를 기준으로 표시합니다. 게시물은 유튜브·펠로우 소식·도움 요청을 집계합니다."}
+            : "등록 게시물은 보호소 영상·소식·도움 요청을 집계합니다."}
       </S.DashboardFootnote>
     </S.DashboardPage>
   );

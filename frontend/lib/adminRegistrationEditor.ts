@@ -1,5 +1,4 @@
-import { DashboardSource } from "@/lib/adminDashboard";
-import { AdminRegistrationRow } from "@/lib/adminRegistrations";
+import { AdminRegistrationRow, AdminRegistrationSource, adoptionStates } from "@/lib/adminRegistrations";
 
 interface RegistrationOption {
   value: string;
@@ -9,10 +8,13 @@ interface RegistrationOption {
 export interface RegistrationEditField {
   name: string;
   label: string;
-  type?: "text" | "url" | "number" | "date" | "textarea" | "select" | "radio" | "image";
+  type?: "text" | "url" | "number" | "date" | "time" | "textarea" | "select" | "radio" | "image";
   options?: RegistrationOption[];
   optional?: boolean;
   maxLength?: number;
+  min?: number;
+  max?: number;
+  step?: number;
   wide?: boolean;
   when?: (values: Record<string, string>) => boolean;
 }
@@ -29,7 +31,7 @@ const storyFields: RegistrationEditField[] = [
   {name: "attachmentUrl", label: "기타 첨부파일 URL (선택)", optional: true, maxLength: 1000}
 ];
 
-export const registrationEditFields: Record<DashboardSource, RegistrationEditField[]> = {
+export const registrationEditFields: Record<AdminRegistrationSource, RegistrationEditField[]> = {
   animals: [
     {
       name: "sourceType", label: "등록 출처 선택", type: "radio", wide: true,
@@ -69,13 +71,30 @@ export const registrationEditFields: Record<DashboardSource, RegistrationEditFie
     {name: "rescueLocation", label: "구조장소", maxLength: 255},
     {name: "imageUrl", label: "대표 사진", type: "image", maxLength: 1000, wide: true},
     {...content, label: "특이사항 및 상세 설명"}
-  ]
+  ],
+  volunteers: [
+    {...title, maxLength: 100},
+    {name: "place", label: "봉사 장소", maxLength: 255, wide: true},
+    {name: "activityDate", label: "봉사일", type: "date"},
+    {name: "capacity", label: "모집 인원", type: "number", min: 1, max: 500, step: 1},
+    {name: "startTime", label: "시작 시간", type: "time"},
+    {name: "endTime", label: "종료 시간", type: "time"},
+    {name: "closed", label: "관리자 마감", type: "select", options: [option("false", "일정·정원에 따라 모집"), option("true", "마감")]},
+    {name: "imageUrl", label: "대표 이미지 URL", maxLength: 500, optional: true, wide: true},
+    {...content, optional: true}
+  ],
+  adoptionApplications: [
+    {name: "status", label: "변경할 상태", type: "select", options: ["FORWARDED", "ADOPTED", "REJECTED"].map((value) => option(value, adoptionStates[value]))},
+    {name: "reason", label: "처리 사유 (선택)", optional: true, maxLength: 255, wide: true}
+  ],
+  missingPosts: [],
+  communityPosts: []
 };
 
 export const getRegistrationEditValues = (row: AdminRegistrationRow) =>
   Object.fromEntries(registrationEditFields[row.source].map(({name}) => {
     const value = row.record[name];
-    return [name, typeof value === "string" || typeof value === "number" ? String(value) : ""];
+    return [name, typeof value === "string" || typeof value === "number" || typeof value === "boolean" ? String(value) : ""];
   }));
 
 export const getRegistrationThumbnail = (url: string) => {

@@ -2,7 +2,7 @@
 
 import { useId, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FiChevronLeft, FiChevronRight, FiEdit2, FiRefreshCw, FiSearch, FiTrash2, FiX } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiEdit2, FiExternalLink, FiRefreshCw, FiSearch, FiTrash2, FiX } from "react-icons/fi";
 import { AppDispatch, RootState } from "../../store/store";
 import { deleteAdminRegistration, fetchAdminRegistration, fetchAdminRegistrations } from "../../redux/registrationAdminSlice";
 import useAdminModal from "../contexts/AdminModalContext";
@@ -28,6 +28,9 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
   const busyRef = useRef(false);
   const id = useId();
   const config = registrationConfigs[kind];
+  const canDelete = config.deletable !== false;
+  const editLabel = config.postPath ? "보기" : config.editLabel || "수정";
+  const categories = [...new Set([...rows.map((row) => row.category), category].filter(Boolean))];
   const sources = getRegistrationSources(kind);
   const isLoading = status === "idle" || status === "loading";
   const filteredRows = useMemo(() => filterRegistrationRows(rows, query, category), [rows, query, category]);
@@ -38,6 +41,10 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
 
   const handleEdit = async (row: AdminRegistrationRow) => {
     if (busyRef.current) return;
+    if (kind === "volunteer" || kind === "adoption") {
+      setEditingRow(row);
+      return;
+    };
     busyRef.current = true;
     setBusyKey(row.key);
     const result = await dispatch(fetchAdminRegistration({kind, row}));
@@ -107,17 +114,17 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
             setPage(1);
           }}/>
         </S.AdminListSearch>
-        {kind === "integrate" && (
+        {config.filterLabel && (
           <S.AdminListFilter
-          aria-label="게시물 유형 필터"
+          aria-label={config.filterLabel}
           value={category}
           onChange={(event) => {
             setCategory(event.target.value);
             setPage(1);
           }}>
-            <option value="">전체 유형</option>
-            {sources.map(({key, label}) => (
-              <option key={key} value={label}>
+            <option value="">전체</option>
+            {categories.map((label) => (
+              <option key={label} value={label}>
                 {label}
               </option>
             ))}
@@ -147,21 +154,21 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
           <colgroup>
             {config.columns.map((column) => <col key={column}/>)}
             <S.AdminListActionColumn/>
-            <S.AdminListActionColumn/>
+            {canDelete && <S.AdminListActionColumn/>}
           </colgroup>
           <thead>
             <tr>
               {config.columns.map((column) => (
                 <th key={column} scope="col">{column}</th>
               ))}
-              <th scope="col">수정</th>
-              <th scope="col">삭제</th>
+              <th scope="col">{editLabel}</th>
+              {canDelete && <th scope="col">삭제</th>}
             </tr>
           </thead>
           <tbody>
             {isLoading || !visibleRows.length ? (
               <tr>
-                <S.AdminListEmpty colSpan={config.columns.length + 2}>
+                <S.AdminListEmpty colSpan={config.columns.length + (canDelete ? 2 : 1)}>
                   {isLoading
                     ? "등록 목록을 불러오는 중입니다."
                     : allFailed
@@ -178,26 +185,40 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
                     <td key={config.columns[index]}>{cell}</td>
                   ))}
                   <td>
-                    <S.AdminListActionButton
-                    type="button"
-                    aria-label={`${row.cells[0]} 수정`}
-                    disabled={busyKey !== null}
-                    onClick={() => handleEdit(row)}>
-                      <FiEdit2 aria-hidden="true"/>
-                      수정
-                    </S.AdminListActionButton>
+                    {config.postPath ? (
+                      <S.AdminListActionButton
+                      as="a"
+                      href={`${config.postPath}/${row.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${row.cells[0]} 보기 (새 탭)`}>
+                        <FiExternalLink aria-hidden="true"/>
+                        보기
+                      </S.AdminListActionButton>
+                    ) : (
+                      <S.AdminListActionButton
+                      type="button"
+                      aria-label={`${row.cells[0]} ${editLabel}`}
+                      disabled={busyKey !== null}
+                      onClick={() => handleEdit(row)}>
+                        <FiEdit2 aria-hidden="true"/>
+                        {editLabel}
+                      </S.AdminListActionButton>
+                    )}
                   </td>
-                  <td>
-                    <S.AdminListActionButton
-                    type="button"
-                    aria-label={`${row.cells[0]} 삭제`}
-                    $danger
-                    disabled={busyKey !== null}
-                    onClick={() => handleDelete(row)}>
-                      <FiTrash2 aria-hidden="true"/>
-                      삭제
-                    </S.AdminListActionButton>
-                  </td>
+                  {canDelete && (
+                    <td>
+                      <S.AdminListActionButton
+                      type="button"
+                      aria-label={`${row.cells[0]} 삭제`}
+                      $danger
+                      disabled={busyKey !== null}
+                      onClick={() => handleDelete(row)}>
+                        <FiTrash2 aria-hidden="true"/>
+                        삭제
+                      </S.AdminListActionButton>
+                    </td>
+                  )}
                 </tr>
               ))
             )}

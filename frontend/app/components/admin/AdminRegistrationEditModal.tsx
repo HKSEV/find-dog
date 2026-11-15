@@ -4,23 +4,40 @@ import { ChangeEvent, FormEvent, useEffect, useId, useRef, useState } from "reac
 import { useDispatch } from "react-redux";
 import { FiX } from "react-icons/fi";
 import { AppDispatch } from "../../store/store";
-import { updateAdminRegistration } from "../../redux/registrationAdminSlice";
+import { createAdminRegistration, fetchAdminRegistrations, updateAdminRegistration } from "../../redux/registrationAdminSlice";
 import useAdminModal from "../contexts/AdminModalContext";
-import { AdminRegistrationKind, AdminRegistrationRow } from "@/lib/adminRegistrations";
+import AdminVolunteerApplicants from "./AdminVolunteerApplicants";
+import { AdminCreateKind, AdminRegistrationKind, AdminRegistrationRow } from "@/lib/adminRegistrations";
 import { getRegistrationEditValues, getRegistrationThumbnail, registrationEditFields } from "@/lib/adminRegistrationEditor";
 import { lockModalScroll } from "@/lib/modalScrollLock";
 import * as S from "@/assets/css/Style.styles";
 
-interface AdminRegistrationEditModalProps {
-  kind: AdminRegistrationKind;
-  row: AdminRegistrationRow;
-  onClose: () => void;
-}
+type AdminRegistrationEditModalProps = {onClose: () => void} & (
+  | {kind: AdminRegistrationKind; row: AdminRegistrationRow; mode?: "edit"}
+  | {kind: AdminCreateKind; row?: never; mode: "create"}
+);
 
-export default function AdminRegistrationEditModal({kind, row, onClose}: AdminRegistrationEditModalProps) {
+const housingLabels: Record<string, string> = {APARTMENT: "아파트", HOUSE: "단독 주택", OTHER: "기타"};
+
+export default function AdminRegistrationEditModal(props: AdminRegistrationEditModalProps) {
+  const {kind, row, onClose} = props;
+  const creating = props.mode === "create";
+  const isVolunteer = kind === "volunteer";
+  const isAdoption = kind === "adoption";
+  const source = row?.source ?? (isVolunteer ? "volunteers" : "needHelps");
+  const readOnly = isAdoption && row?.record.status !== "RECEIVED" && row?.record.status !== "FORWARDED";
+  const title = isAdoption
+    ? "입양 신청서"
+    : isVolunteer
+      ? (creating ? "봉사 모집 등록" : "봉사 모집 상세")
+      : creating ? "도움 요청 등록" : `${row?.category} 정보 수정`;
   const dispatch = useDispatch<AppDispatch>();
   const {openAlertModal} = useAdminModal();
-  const [values, setValues] = useState<Record<string, string>>(() => getRegistrationEditValues(row));
+  const [values, setValues] = useState<Record<string, string>>(() => {
+    if (!row) return isVolunteer ? {closed: "false"} : {};
+    const initial = getRegistrationEditValues(row);
+    return isAdoption ? {...initial, status: ""} : initial;
+  });
   const [imageMode, setImageMode] = useState<"LINK" | "UPLOAD">("LINK");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState("");
@@ -29,8 +46,8 @@ export default function AdminRegistrationEditModal({kind, row, onClose}: AdminRe
   const previewRef = useRef("");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const id = useId();
-  const fields = registrationEditFields[row.source].filter(({when}) => !when || when(values));
-  const imageUrl = row.source === "shelterAnimals" && imageMode === "UPLOAD"
+  const fields = readOnly ? [] : registrationEditFields[source].filter(({when}) => !when || when(values));
+  const imageUrl = source === "shelterAnimals" && imageMode === "UPLOAD"
     ? filePreview
     : values.imageUrl || values.thumbnailUrl;
 
@@ -85,20 +102,21 @@ export default function AdminRegistrationEditModal({kind, row, onClose}: AdminRe
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (savingRef.current) return;
+    if (readOnly || savingRef.current) return;
     savingRef.current = true;
     setIsSaving(true);
-    const result = await dispatch(updateAdminRegistration({
-      kind, row, values, imageFile: imageMode === "UPLOAD" ? imageFile : null
-    }));
+    const result = props.mode === "create"
+      ? await dispatch(createAdminRegistration({kind: props.kind, values}))
+      : await dispatch(updateAdminRegistration({kind, row: props.row, values, imageFile: imageMode === "UPLOAD" ? imageFile : null}));
     savingRef.current = false;
     setIsSaving(false);
-    if (updateAdminRegistration.fulfilled.match(result)) {
+    if (createAdminRegistration.fulfilled.match(result) || updateAdminRegistration.fulfilled.match(result)) {
+      if (creating || isAdoption) dispatch(fetchAdminRegistrations(kind));
       dialogRef.current?.close();
       onClose();
-      openAlertModal("수정이 완료되었습니다.", undefined, {variant: "success"});
+      openAlertModal(creating ? "등록이 완료되었습니다." : "수정이 완료되었습니다.", undefined, {variant: "success"});
     } else {
-      openAlertModal(result.payload || "수정하지 못했습니다. 다시 시도해 주세요.", undefined, {variant: "error"});
+      openAlertModal(result.payload || "저장하지 못했습니다. 다시 시도해 주세요.", undefined, {variant: "error"});
     };
   };
 
@@ -114,15 +132,39 @@ export default function AdminRegistrationEditModal({kind, row, onClose}: AdminRe
     }}>
       <S.RegistrationEditHeader>
         <div>
-          <S.AdminSettingCardTitle id={`${id}-title`}>{row.category} 정보 수정</S.AdminSettingCardTitle>
-          <p id={`${id}-description`}>등록된 정보를 확인하고 변경 사항을 저장해 주세요.</p>
+          <S.AdminSettingCardTitle id={`${id}-title`}>{title}</S.AdminSettingCardTitle>
+          <p id={`${id}-description`}>
+            {isAdoption && !readOnly
+              ? "입양을 확정하면 동물은 입양 완료로 바뀌고, 다른 진행 중 신청은 입양 불가로 처리됩니다."
+              : readOnly ? "처리가 끝난 신청서입니다." : "내용을 확인하고 저장해 주세요."}
+          </p>
         </div>
-        <S.AdminSettingSecondaryButton type="button" aria-label="수정 창 닫기" disabled={isSaving} onClick={handleClose}>
+        <S.AdminSettingSecondaryButton type="button" aria-label="닫기" disabled={isSaving} onClick={handleClose}>
           <FiX aria-hidden="true"/>
         </S.AdminSettingSecondaryButton>
       </S.RegistrationEditHeader>
       <S.AdminSettingCardBody>
         <S.AdminSettingForm onSubmit={handleSubmit} aria-busy={isSaving}>
+          {isAdoption && row && (
+            <S.RegistrationEditFields as="dl">
+              {[
+                ["보호 동물", `${row.cells[0]} (${row.cells[1]})`],
+                ["신청자", row.record.applicantName],
+                ["연락처", row.record.applicantPhone],
+                ["거주 형태", housingLabels[String(row.record.housingType)]],
+                ["반려 경험", row.record.hasPetExperience ? "있음" : "없음"],
+                ["가족 동의", row.record.familyAgreed ? "동의" : "미동의"],
+                ["현재 상태", row.category],
+                ["처리 사유", row.record.statusReason],
+                ["신청 내용", row.record.message]
+              ].map(([label, value]) => (
+                <S.RegistrationEditField key={String(label)} $wide={label === "신청 내용"}>
+                  <dt>{String(label)}</dt>
+                  <dd>{value ? String(value) : "—"}</dd>
+                </S.RegistrationEditField>
+              ))}
+            </S.RegistrationEditFields>
+          )}
           <S.RegistrationEditFields>
             {fields.map((field) => {
               const fieldId = `${id}-${field.name}`;
@@ -172,7 +214,9 @@ export default function AdminRegistrationEditModal({kind, row, onClose}: AdminRe
                         <S.AdminSettingSelect id={fieldId} name={field.name} value={value} disabled={isSaving} onChange={handleChange} required={!field.optional}>
                           <option value="">선택해 주세요</option>
                           {value && !field.options?.some((option) => option.value === value) && <option value={value}>{value}</option>}
-                          {field.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                          {field.options?.filter(({value}) => !isAdoption || value !== row?.record.status).map((option) => (
+                            <option key={option.value} value={option.value}>{option.label}</option>
+                          ))}
                         </S.AdminSettingSelect>
                       ) : field.type === "textarea" ? (
                         <S.AdminSettingTextarea id={fieldId} name={field.name} value={value} rows={5} disabled={isSaving} onChange={handleChange} required={!field.optional}/>
@@ -182,8 +226,9 @@ export default function AdminRegistrationEditModal({kind, row, onClose}: AdminRe
                         name={field.name}
                         type={field.type || "text"}
                         value={value}
-                        min={field.type === "number" ? 0 : undefined}
-                        step={field.type === "number" ? "0.1" : undefined}
+                        min={field.min ?? (field.type === "number" ? 0 : undefined)}
+                        max={field.max}
+                        step={field.step ?? (field.type === "number" ? "0.1" : undefined)}
                         maxLength={field.maxLength}
                         disabled={isSaving}
                         onChange={handleChange}
@@ -201,10 +246,13 @@ export default function AdminRegistrationEditModal({kind, row, onClose}: AdminRe
             </S.AdminSettingPreview>
           )}
           <S.RegistrationEditActions>
-            <S.AdminSettingSecondaryButton type="button" disabled={isSaving} onClick={handleClose}>취소</S.AdminSettingSecondaryButton>
-            <S.AdminSettingSubmit type="submit" disabled={isSaving}>{isSaving ? "저장 중..." : "수정 내용 저장"}</S.AdminSettingSubmit>
+            <S.AdminSettingSecondaryButton type="button" disabled={isSaving} onClick={handleClose}>
+              {readOnly ? "닫기" : "취소"}
+            </S.AdminSettingSecondaryButton>
+            {!readOnly && <S.AdminSettingSubmit type="submit" disabled={isSaving}>{isSaving ? "저장 중..." : "저장"}</S.AdminSettingSubmit>}
           </S.RegistrationEditActions>
         </S.AdminSettingForm>
+        {isVolunteer && row && <AdminVolunteerApplicants postId={row.id}/>}
       </S.AdminSettingCardBody>
     </S.RegistrationEditDialog>
   );

@@ -57,8 +57,7 @@ public class VolunteerService {
         // 💡 글 잠금이 이 트랜잭션의 첫 조회여야 함
         //    MariaDB(REPEATABLE READ)는 첫 일반 조회 때 읽기 시점을 고정해서, 잠금 전에 다른 걸 먼저 읽으면
         //    앞사람이 막 넣은 신청이 인원 수에 안 보여 정원을 넘길 수 있음
-        VolunteerPost post = postRepository.findByIdForUpdate(postId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제됐거나 없는 봉사예요."));
+        VolunteerPost post = findPostForUpdate(postId);
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인 정보가 없습니다. 다시 로그인해주세요."));
 
@@ -121,7 +120,7 @@ public class VolunteerService {
 
     @Transactional
     public VolunteerDto.Post update(Long id, VolunteerDto.PostRequest request) {
-        VolunteerPost post = findPost(id);
+        VolunteerPost post = findPostForUpdate(id);
         long applied = applicationRepository.countByPostIdAndStatus(id, CONFIRMED);
         fill(post, request, applied);
         return VolunteerDto.Post.of(post, applied, null);
@@ -130,7 +129,7 @@ public class VolunteerService {
     // 신청자가 있으면 지우지 않고 마감으로 바꾸게 함 (신청 내역이 사라지지 않게)
     @Transactional
     public void delete(Long id) {
-        VolunteerPost post = findPost(id);
+        VolunteerPost post = findPostForUpdate(id);
         if (applicationRepository.countByPostIdAndStatus(id, CONFIRMED) > 0) {
             throw conflict("신청한 사람이 있어서 지울 수 없어요. 마감으로 바꿔 주세요.");
         }
@@ -181,6 +180,11 @@ public class VolunteerService {
 
     private VolunteerPost findPost(Long id) {
         return postRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제됐거나 없는 봉사예요."));
+    }
+
+    private VolunteerPost findPostForUpdate(Long id) {
+        return postRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제됐거나 없는 봉사예요."));
     }
 
