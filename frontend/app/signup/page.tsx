@@ -18,6 +18,7 @@ import { SIGNUP_EMAIL_KEY } from "../components/loginLink";
 import { queueToast, showToast } from "../components/Toast";
 import { startKakaoLogin } from "../oauth/kakao/kakaoLogin";
 import { agreements, Check } from "./signupParts";
+import { withBasePath } from "@/lib/deploymentPath";
 import * as S from "@/assets/css/Style.styles";
 
 type FormField = keyof RootState["signup"]["formData"];
@@ -117,7 +118,7 @@ export default function SignupPage() {
       return;
     };
     try {
-      const res = await fetch(`/api/members/check-${kind}?${kind}=${encodeURIComponent(value)}`);
+      const res = await fetch(withBasePath(`/api/members/check-${kind}?${kind}=${encodeURIComponent(value)}`));
       if (!res.ok) throw new Error();
       if (await res.json()) {
         setErrors((prev) => ({...prev, [kind]: kind === "email" ? "이미 가입된 이메일이에요." : "이미 누군가 쓰고 있는 닉네임이에요."}));

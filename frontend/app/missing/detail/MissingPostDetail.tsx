@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { fetchMissingPost } from "../../redux/missingSlice";
@@ -20,11 +20,9 @@ import { loginHref } from "@/app/components/loginLink";
 import { completeMissingPost, deleteMissingPost, toMissingError } from "../missingApi";
 import * as S from "@/assets/css/Style.styles";
 
-export default function MissingPostDetail() {
+export default function MissingPostDetail({id}: {id: number}) {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const params = useParams<{id: string}>();
-  const id = Number(params.id);
 
   const {detail, detailError} = useSelector((state: RootState) => state.missing);
   const {isLoggedIn} = useSelector((state: RootState) => state.user);
@@ -185,7 +183,7 @@ export default function MissingPostDetail() {
         {!post.mine && !done && (
           <S.DetailActionBar>
             {!isLoggedIn ? (
-              <S.DetailApplyButton as={Link} href={loginHref(`/missing/${post.id}`)}>로그인하고 연락하기</S.DetailApplyButton>
+              <S.DetailApplyButton as={Link} href={loginHref(`/missing/detail/?id=${post.id}`)}>로그인하고 연락하기</S.DetailApplyButton>
             ) : post.contactPhone ? (
               <>
                 <S.MissingOwnerButton as="a" href={`sms:${post.contactPhone}`}>문자 보내기</S.MissingOwnerButton>

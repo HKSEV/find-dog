@@ -40,7 +40,7 @@ export default function VolunteerTab() {
             const badge = volunteerBadge(post);
             return (
               <li key={post.id}>
-                <S.VolunteerPostRow as={Link} href={`/volunteer/${post.id}`} $done={badge.tone === "done"}>
+                <S.VolunteerPostRow as={Link} href={`/volunteer/detail/?id=${post.id}`} $done={badge.tone === "done"}>
                   <S.VolunteerDate aria-hidden="true">
                     <small>{month}</small>
                     <strong>{day}</strong>

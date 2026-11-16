@@ -91,7 +91,7 @@ export const registrationConfigs: Record<
     placeholder: "제목·유형·상태 검색",
     sources: ["missingPosts"],
     filterLabel: "제보 유형",
-    postPath: "/missing"
+    postPath: "/missing/detail"
   },
   community: {
     title: "커뮤니티 회원 게시물",
@@ -99,7 +99,7 @@ export const registrationConfigs: Record<
     placeholder: "제목·분류 검색",
     sources: ["communityPosts"],
     filterLabel: "게시물 분류",
-    postPath: "/story"
+    postPath: "/story/detail"
   }
 };
 

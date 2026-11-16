@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { VolunteerPost, fetchVolunteer, formatVolunteerWhen, volunteerBadge } from "../volunteerApi";
 import { toImageUrl } from "../../shelter/animalFormat";
 
@@ -10,11 +10,9 @@ import Header from "@/app/components/Header";
 import { loginHref } from "@/app/components/loginLink";
 import * as S from "@/assets/css/Style.styles";
 
-// 💡 봉사 상세 (/volunteer/[id]). 선착순이라 신청하면 바로 확정
-export default function VolunteerDetailPage() {
+// 💡 봉사 상세 (/volunteer/detail/?id=...). 선착순이라 신청하면 바로 확정
+export default function VolunteerDetail({id}: {id: number}) {
   const router = useRouter();
-  const params = useParams<{id: string}>();
-  const id = Number(params.id);
 
   const [post, setPost] = useState<VolunteerPost | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "missing">("loading");
@@ -43,7 +41,7 @@ export default function VolunteerDetailPage() {
     if (data.myApplicationId) return <S.DetailApplyButton as={Link} href="/mypage/volunteers">신청 내역 보기</S.DetailApplyButton>;
     if (data.state === "CLOSED") return <S.DetailApplyButton type="button" disabled>모집이 끝났어요</S.DetailApplyButton>;
     if (data.state === "FULL") return <S.DetailApplyButton type="button" disabled>정원이 다 찼어요</S.DetailApplyButton>;
-    const applyPath = `/volunteer/${data.id}/apply`;
+    const applyPath = `/volunteer/apply/?id=${data.id}`;
     return <S.DetailApplyButton as={Link} href={loggedIn ? applyPath : loginHref(applyPath)}>{loggedIn ? "신청하기" : "로그인하고 신청하기"}</S.DetailApplyButton>;
   };
 

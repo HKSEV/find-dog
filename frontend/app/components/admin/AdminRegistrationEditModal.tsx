@@ -10,6 +10,7 @@ import AdminVolunteerApplicants from "./AdminVolunteerApplicants";
 import { AdminCreateKind, AdminRegistrationKind, AdminRegistrationRow } from "@/lib/adminRegistrations";
 import { getRegistrationEditValues, getRegistrationThumbnail, registrationEditFields } from "@/lib/adminRegistrationEditor";
 import { lockModalScroll } from "@/lib/modalScrollLock";
+import { toImageUrl } from "@/app/shelter/animalFormat";
 import * as S from "@/assets/css/Style.styles";
 
 type AdminRegistrationEditModalProps = {onClose: () => void} & (
@@ -49,7 +50,7 @@ export default function AdminRegistrationEditModal(props: AdminRegistrationEditM
   const fields = readOnly ? [] : registrationEditFields[source].filter(({when}) => !when || when(values));
   const imageUrl = source === "shelterAnimals" && imageMode === "UPLOAD"
     ? filePreview
-    : values.imageUrl || values.thumbnailUrl;
+    : toImageUrl(values.imageUrl || values.thumbnailUrl);
 
   useEffect(() => {
     const dialog = dialogRef.current;

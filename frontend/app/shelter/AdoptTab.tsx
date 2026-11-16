@@ -70,7 +70,7 @@ export default function AdoptTab() {
             const imageUrl = toImageUrl(animal.imageUrl);
             return (
               <S.AdoptCard key={animal.id}>
-                <S.AdoptCardLink as={Link} href={`/shelter/${animal.id}`}>
+                <S.AdoptCardLink as={Link} href={`/shelter/detail/?id=${animal.id}`}>
                   <S.AdoptPhotoWrap>
                     {imageUrl ? (
                       <S.AdoptPhoto src={imageUrl} alt={`${animal.breed} 사진`}/>

@@ -2,12 +2,12 @@
 
 import React, { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
-import { fetchShelterAnimals } from "../../../redux/shelterSlice";
-import { genderLabel, toImageUrl, toMonthDay } from "../../animalFormat";
-import { HousingType, fetchApplyPrefill, submitApplication, toApplicationError } from "../../adoptionApi";
+import { AppDispatch, RootState } from "../../store/store";
+import { fetchShelterAnimals } from "../../redux/shelterSlice";
+import { genderLabel, toImageUrl, toMonthDay } from "../animalFormat";
+import { HousingType, fetchApplyPrefill, submitApplication, toApplicationError } from "../adoptionApi";
 
 import Header from "@/app/components/Header";
 import { loginHref } from "@/app/components/loginLink";
@@ -29,12 +29,10 @@ const subscribeStorage = (onChange: () => void) => {
 const getHasToken = () => Boolean(localStorage.getItem("token"));
 const getServerHasToken = () => null;
 
-// 💡 입양 신청서 (/shelter/[id]/apply). 신청서는 운영팀이 받아 보호소에 전달
-export default function AdoptionApplyPage() {
+// 💡 입양 신청서 (/shelter/apply/?id=...). 신청서는 운영팀이 받아 보호소에 전달
+export default function AdoptionApplyForm({id: animalId}: {id: number}) {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const params = useParams<{id: string}>();
-  const animalId = Number(params.id);
   const hasToken = useSyncExternalStore(subscribeStorage, getHasToken, getServerHasToken);
 
   const {animals, loading} = useSelector((state: RootState) => state.shelter);
@@ -61,7 +59,7 @@ export default function AdoptionApplyPage() {
       .catch(() => {});
   }, [hasToken]);
 
-  const handleBack = () => (window.history.length > 1 ? router.back() : router.push(`/shelter/${animalId}`));
+  const handleBack = () => (window.history.length > 1 ? router.back() : router.push(`/shelter/detail/?id=${animalId}`));
 
   const clearError = (key: keyof Errors) => setErrors((prev) => ({...prev, [key]: undefined, submit: undefined}));
 
@@ -107,7 +105,7 @@ export default function AdoptionApplyPage() {
       return (
         <S.WriteLoginNotice>
           <p>로그인하면 입양 신청서를<br/>보낼 수 있어요</p>
-          <Link href={loginHref(`/shelter/${animalId}/apply`)}>로그인</Link>
+          <Link href={loginHref(`/shelter/apply/?id=${animalId}`)}>로그인</Link>
         </S.WriteLoginNotice>
       );
     };

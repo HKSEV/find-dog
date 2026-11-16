@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 
+import { withBasePath } from "@/lib/deploymentPath";
 import StyledComponentsRegistry from "@/lib/registry";
 
 import { Providers } from "./store/Providers";
@@ -15,9 +16,10 @@ export const metadata: Metadata = {
 
 const adminEntryGuard = String.raw`
   (function () {
-    const loginPath = "/admin/login";
+    const adminPath = ${JSON.stringify(withBasePath("/admin"))};
+    const loginPath = adminPath + "/login";
     const pathname = window.location.pathname.replace(/\/+$/, "");
-    const isAdminPath = pathname === "/admin" || pathname.startsWith("/admin/");
+    const isAdminPath = pathname === adminPath || pathname.startsWith(adminPath + "/");
     if (!isAdminPath || pathname === loginPath) return;
 
     let hasSession = false;
@@ -38,7 +40,7 @@ const adminEntryGuard = String.raw`
       hasSession = false;
     }
 
-    if (!hasSession) window.location.replace(loginPath);
+    if (!hasSession) window.location.replace(loginPath + "/");
   })();
 `;
 

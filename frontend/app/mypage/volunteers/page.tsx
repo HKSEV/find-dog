@@ -84,7 +84,7 @@ export default function MyVolunteersPage() {
           const text = statusText(item);
           return (
             <S.ApplicationCard key={item.id} $muted={item.status === "CANCELED"}>
-              <S.ApplicationHead as={Link} href={`/volunteer/${item.postId}`}>
+              <S.ApplicationHead as={Link} href={`/volunteer/detail/?id=${item.postId}`}>
                 {imageUrl ? <S.ApplyThumb src={imageUrl} alt=""/> : <S.ApplyThumbEmpty/>}
                 <S.ApplicationTitle>
                   <small>봉사 신청</small>

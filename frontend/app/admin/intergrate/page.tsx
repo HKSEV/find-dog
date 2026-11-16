@@ -9,6 +9,7 @@ import AdminRegistrationList from "../../components/admin/AdminRegistrationList"
 import { fetchAdminRegistrations } from "../../redux/registrationAdminSlice";
 
 import useAdminModal from "@/app/components/contexts/AdminModalContext";
+import { toImageUrl } from "@/app/shelter/animalFormat";
 import * as S from "@/assets/css/Style.styles";
 
 export default function Intergrate() {
@@ -117,7 +118,7 @@ export default function Intergrate() {
                   {formData.thumbnailUrl && (
                     <S.AdminSettingPreview>
                       <S.AdminSettingPreviewImage
-                      src={formData.thumbnailUrl}
+                      src={toImageUrl(formData.thumbnailUrl) ?? ""}
                       alt="썸네일 미리보기"
                       width={0}
                       height={0}
@@ -156,7 +157,7 @@ export default function Intergrate() {
                   {formData.imageUrl && (
                     <S.AdminSettingPreview>
                       <S.AdminSettingPreviewImage
-                      src={formData.imageUrl}
+                      src={toImageUrl(formData.imageUrl) ?? ""}
                       alt="이미지 미리보기"
                       width={0}
                       height={0}

@@ -1,5 +1,6 @@
 // src/redux/storySlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { withBasePath } from "@/lib/deploymentPath";
 
 // 💡 커뮤니티 탭: 분류 칩 하나로 모두 봄
 // 관리자 글(보호소 소식, 보호소 영상)은 여기서 불러오고, 회원 글(자유 이야기, 입양 후기, 구조 이야기, 질문)은 story/communityApi.ts에서 불러옴
@@ -46,7 +47,7 @@ const initialState: StoryState = {
 // 영상과 보호소 소식을 함께 불러오는 비동기 Thunk
 export const fetchStoryContents = createAsyncThunk("story/fetchStoryContents", async (_, {rejectWithValue}) => {
   try {
-    const [videoRes, newsRes] = await Promise.all([fetch("/api/youtube"), fetch("/api/fellow-news")]);
+    const [videoRes, newsRes] = await Promise.all([fetch(withBasePath("/api/youtube")), fetch(withBasePath("/api/fellow-news"))]);
     if (!videoRes.ok || !newsRes.ok) {
       throw new Error("이야기를 불러오지 못했습니다.");
     };

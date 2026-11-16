@@ -16,7 +16,7 @@ import useAdminModal from "../contexts/AdminModalContext";
 
 export default function AdminSessionManager() {
   const dispatch = useDispatch();
-  const pathname = usePathname();
+  const pathname = usePathname().replace(/\/+$/, "") || "/";
   const router = useRouter();
   const {openAlertModal} = useAdminModal();
   const {session, isHydrating} = useAdminSession();

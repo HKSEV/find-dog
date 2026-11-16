@@ -27,7 +27,7 @@ const menuGroups = [
 ];
 
 export const Sidebar: React.FC = () => {
-  const pathname = usePathname();
+  const pathname = usePathname().replace(/\/+$/, "") || "/";
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (

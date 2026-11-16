@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import { fetchStoryContents } from "../../../redux/storySlice";
@@ -13,12 +13,10 @@ import * as S from "@/assets/css/Style.styles";
 // "2026-11-10T09:30:00" -> "2026.11.10"
 const toDate = (iso: string) => (iso ? iso.substring(0, 10).replaceAll("-", ".") : "");
 
-// 💡 보호소 소식 상세 (/story/news/[id]). 상세 API가 없어서 목록을 받아 같은 id를 찾음
-export default function ShelterNewsDetail() {
+// 💡 보호소 소식 상세 (/story/news/detail/?id=...). 상세 API가 없어서 목록을 받아 같은 id를 찾음
+export default function ShelterNewsDetail({id}: {id: number}) {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const params = useParams<{id: string}>();
-  const id = Number(params.id);
 
   const {news, loading, error} = useSelector((state: RootState) => state.story);
   const item = news.find((entry) => entry.id === id);
@@ -43,7 +41,7 @@ export default function ShelterNewsDetail() {
   };
 
   const imageUrl = toImageUrl(item.imageUrl);
-  const videoUrl = item.videoUrl?.trim();
+  const videoUrl = toImageUrl(item.videoUrl?.trim());
   const attachmentUrl = toImageUrl(item.attachmentUrl?.trim());
 
   return (

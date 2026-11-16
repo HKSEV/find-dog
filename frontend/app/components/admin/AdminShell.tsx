@@ -11,12 +11,15 @@ import {
   useAdminSession
 } from "@/lib/adminAuth";
 import { isAdminSessionRenewing } from "@/lib/adminApi";
+import { withBasePath } from "@/lib/deploymentPath";
 import * as S from "@/assets/css/Style.styles";
 
 const loginPath = "/admin/login";
+const adminDocumentPath = withBasePath("/admin");
+const loginDocumentPath = withBasePath(loginPath);
 
 export default function AdminShell({children}: {children: ReactNode}) {
-  const pathname = usePathname();
+  const pathname = usePathname().replace(/\/+$/, "") || "/";
   const {session, isHydrating} = useAdminSession();
   const documentNavigationStarted = useRef(false);
   const token = session?.token;
@@ -33,8 +36,8 @@ export default function AdminShell({children}: {children: ReactNode}) {
 
     const checkRedirect = () => {
       const currentPath = window.location.pathname.replace(/\/+$/, "");
-      const isAdminPath = currentPath === "/admin" || currentPath.startsWith("/admin/");
-      if (!isAdminPath || currentPath === loginPath || documentNavigationStarted.current) return;
+      const isAdminPath = currentPath === adminDocumentPath || currentPath.startsWith(`${adminDocumentPath}/`);
+      if (!isAdminPath || currentPath === loginDocumentPath || documentNavigationStarted.current) return;
 
       const current = getAdminSession();
       if (current && (getAdminRemainingSeconds(current) > 0 || isAdminSessionRenewing(current.token))) return;
@@ -46,7 +49,7 @@ export default function AdminShell({children}: {children: ReactNode}) {
       };
 
       documentNavigationStarted.current = true;
-      window.location.replace(loginPath);
+      window.location.replace(`${loginDocumentPath}/`);
     };
 
     const scheduleRedirectCheck = () => {

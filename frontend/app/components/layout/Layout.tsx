@@ -32,7 +32,7 @@ React.ReactNode는 React가 화면에 그릴 수 있는
 */
 
 export const Layout: React.FC<LayoutProps> = ({children}) => {
-  const pathname = usePathname();
+  const pathname = usePathname().replace(/\/+$/, "") || "/";
   const {session} = useAdminSession();
   return (
     <S.AdminShellWrapper id="wrapper">

@@ -11,6 +11,7 @@ import { showToast } from "../../../components/Toast";
 import { loginHref } from "../../../components/loginLink";
 
 import Header from "@/app/components/Header";
+import { withBasePath } from "@/lib/deploymentPath";
 import * as S from "@/assets/css/Style.styles";
 
 type Errors = Partial<Record<"nickname" | "name" | "phone" | "submit", string>>;
@@ -62,7 +63,7 @@ export default function ProfileEditPage() {
       return;
     };
     try {
-      const res = await fetch(`/api/members/check-nickname?nickname=${encodeURIComponent(value)}`);
+      const res = await fetch(withBasePath(`/api/members/check-nickname?nickname=${encodeURIComponent(value)}`));
       if (!res.ok) throw new Error();
       if (await res.json()) {
         setErrors((prev) => ({...prev, nickname: "이미 누군가 쓰고 있는 닉네임이에요."}));

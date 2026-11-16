@@ -133,7 +133,7 @@ export default function MyPage() {
               {likedAnimals.map((animal) => {
                 const imageUrl = toImageUrl(animal.imageUrl);
                 return (
-                  <S.MyLikedCard key={animal.id} as={Link} href={`/shelter/${animal.id}`}>
+                  <S.MyLikedCard key={animal.id} as={Link} href={`/shelter/detail/?id=${animal.id}`}>
                     {imageUrl ? (
                       <S.MyLikedImage src={imageUrl} alt={`${animal.breed} 사진`}/>
                     ) : (

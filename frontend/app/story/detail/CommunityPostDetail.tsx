@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { CommunityPost, categoryLabel, deleteCommunityPost, fetchCommunityPost, toCommunityError } from "../communityApi";
 import { toImageUrl } from "../../shelter/animalFormat";
 import { timeAgo } from "../../missing/missingFormat";
@@ -12,11 +12,9 @@ import ConfirmDialog from "@/app/components/ConfirmDialog";
 import { queueToast, showToast } from "@/app/components/Toast";
 import * as S from "@/assets/css/Style.styles";
 
-// 💡 커뮤니티 회원 글 상세 (/story/[id]). 내 글이면 아래에 고치기·지우기
-export default function CommunityPostDetail() {
+// 💡 커뮤니티 회원 글 상세 (/story/detail/?id=...). 내 글이면 아래에 고치기·지우기
+export default function CommunityPostDetail({id}: {id: number}) {
   const router = useRouter();
-  const params = useParams<{id: string}>();
-  const id = Number(params.id);
 
   const [post, setPost] = useState<CommunityPost | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "missing">("loading");

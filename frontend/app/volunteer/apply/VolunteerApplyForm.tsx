@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { VolunteerPost, applyVolunteer, dateParts, fetchVolunteer, formatVolunteerWhen, toVolunteerError } from "../../volunteerApi";
-import { fetchApplyPrefill } from "../../../shelter/adoptionApi";
+import { useRouter } from "next/navigation";
+import { VolunteerPost, applyVolunteer, dateParts, fetchVolunteer, formatVolunteerWhen, toVolunteerError } from "../volunteerApi";
+import { fetchApplyPrefill } from "../../shelter/adoptionApi";
 
 import Header from "@/app/components/Header";
 import { loginHref } from "@/app/components/loginLink";
@@ -12,11 +12,9 @@ import * as S from "@/assets/css/Style.styles";
 
 type Errors = Partial<Record<"name" | "phone" | "submit", string>>;
 
-// 💡 봉사 신청 (/volunteer/[id]/apply). 이름·연락처는 회원 정보로 미리 채움
-export default function VolunteerApplyPage() {
+// 💡 봉사 신청 (/volunteer/apply/?id=...). 이름·연락처는 회원 정보로 미리 채움
+export default function VolunteerApplyForm({id}: {id: number}) {
   const router = useRouter();
-  const params = useParams<{id: string}>();
-  const id = Number(params.id);
 
   const [post, setPost] = useState<VolunteerPost | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "login" | "missing">("loading");
@@ -50,7 +48,7 @@ export default function VolunteerApplyPage() {
     };
   }, [id]);
 
-  const handleBack = () => (window.history.length > 1 ? router.back() : router.push(`/volunteer/${id}`));
+  const handleBack = () => (window.history.length > 1 ? router.back() : router.push(`/volunteer/detail/?id=${id}`));
 
   const setField = (key: "name" | "phone" | "message", value: string) => {
     setForm((prev) => ({...prev, [key]: value}));
@@ -85,7 +83,7 @@ export default function VolunteerApplyPage() {
       return (
         <S.WriteLoginNotice>
           <p>로그인하면 봉사를<br/>신청할 수 있어요</p>
-          <Link href={loginHref(`/volunteer/${id}/apply`)}>로그인</Link>
+          <Link href={loginHref(`/volunteer/apply/?id=${id}`)}>로그인</Link>
         </S.WriteLoginNotice>
       );
     };

@@ -9,6 +9,7 @@ import AdminRegistrationList from "../../components/admin/AdminRegistrationList"
 import { fetchAdminRegistrations } from "../../redux/registrationAdminSlice";
 
 import useAdminModal from "@/app/components/contexts/AdminModalContext";
+import { toImageUrl } from "@/app/shelter/animalFormat";
 import * as S from "@/assets/css/Style.styles";
 
 export default function ShelterAdmin() {
@@ -175,7 +176,7 @@ export default function ShelterAdmin() {
               {(formData.imageUrl || imageFile) && (
                 <S.AdminSettingPreview>
                   <S.AdminSettingPreviewImage
-                  src={imageFile ? URL.createObjectURL(imageFile) : formData.imageUrl}
+                  src={imageFile ? URL.createObjectURL(imageFile) : toImageUrl(formData.imageUrl) ?? ""}
                   alt="대표사진 미리보기"
                   width={0}
                   height={0}

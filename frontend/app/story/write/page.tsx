@@ -113,7 +113,7 @@ function CommunityWriteForm() {
     setErrors((prev) => ({...prev, [key]: undefined, submit: undefined}));
   };
 
-  const handleBack = () => (window.history.length > 1 ? router.back() : router.push(editId ? `/story/${editId}` : "/story"));
+  const handleBack = () => (window.history.length > 1 ? router.back() : router.push(editId ? `/story/detail/?id=${editId}` : "/story"));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,7 +139,7 @@ function CommunityWriteForm() {
         router.back();
       } else {
         // 방금 쓴 글로 이동 (뒤로 가면 글쓰기 대신 들어왔던 화면으로)
-        router.replace(`/story/${saved.id}`);
+        router.replace(`/story/detail/?id=${saved.id}`);
       };
     } catch (error) {
       const message = toCommunityError(error, editId ? "고치지 못했어요. 잠시 후 다시 시도해 주세요." : "올리지 못했어요. 잠시 후 다시 시도해 주세요.");

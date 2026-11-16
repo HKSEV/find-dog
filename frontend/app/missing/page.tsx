@@ -93,7 +93,7 @@ export default function MissingReportPage() {
                 .filter(Boolean)
                 .join(" · ");
               return (
-                <S.MissingRow key={post.id} as={Link} href={`/missing/${post.id}`} $done={done}>
+                <S.MissingRow key={post.id} as={Link} href={`/missing/detail/?id=${post.id}`} $done={done}>
                   {photo ? (
                     <S.MissingRowThumb src={photo} alt={`${post.breed || "실종 동물"} 사진`}/>
                   ) : (

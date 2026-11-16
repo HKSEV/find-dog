@@ -17,7 +17,7 @@ export default function PostList({items, showCategory}: {items: CommunityPost[];
         const thumb = toImageUrl(post.mediaUrls[0]);
         return (
           <li key={post.id}>
-            <S.CommunityPostRow as={Link} href={`/story/${post.id}`}>
+            <S.CommunityPostRow as={Link} href={`/story/detail/?id=${post.id}`}>
               <S.CommunityPostBody>
                 {showCategory && <S.CommunityPostKind>{categoryLabel(post.category)}</S.CommunityPostKind>}
                 <S.CommunityPostTitle>{post.title}</S.CommunityPostTitle>

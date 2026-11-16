@@ -25,7 +25,7 @@ const toDate = (iso: string) => (iso ? iso.substring(0, 10).replaceAll("-", ".")
 const NewsList = ({items}: {items: ShelterNews[]}) => (
   <S.StoryNewsList>
     {items.map((news) => (
-      <S.StoryNewsRow key={news.id} as={Link} href={`/story/news/${news.id}`}>
+      <S.StoryNewsRow key={news.id} as={Link} href={`/story/news/detail/?id=${news.id}`}>
         {toImageUrl(news.imageUrl) ? <S.StoryNewsThumb src={toImageUrl(news.imageUrl)} alt=""/> : <S.StoryNewsThumbEmpty aria-hidden="true"/>}
         <S.StoryNewsBody>
           <S.StoryNewsTitle>{news.title}</S.StoryNewsTitle>

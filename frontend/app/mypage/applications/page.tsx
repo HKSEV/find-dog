@@ -80,7 +80,7 @@ export default function MyApplicationsPage() {
           const imageUrl = toImageUrl(item.animalImageUrl);
           return (
             <S.ApplicationCard key={item.id} $muted={item.status === "CANCELED"}>
-              <S.ApplicationHead as={Link} href={`/shelter/${item.animalId}`}>
+              <S.ApplicationHead as={Link} href={`/shelter/detail/?id=${item.animalId}`}>
                 {imageUrl ? <S.ApplyThumb src={imageUrl} alt=""/> : <S.ApplyThumbEmpty/>}
                 <S.ApplicationTitle>
                   <small>입양 신청</small>

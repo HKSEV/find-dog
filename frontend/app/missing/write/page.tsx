@@ -161,7 +161,7 @@ function MissingWriteForm() {
           content: form.content.trim()
         });
         queueToast("글을 고쳤어요");
-        router.replace(`/missing/${editId}`);
+        router.replace(`/missing/detail/?id=${editId}`);
       } catch (error) {
         setErrors({submit: toMissingError(error, "고치지 못했어요. 잠시 후 다시 시도해 주세요.")});
         setSubmitting(false);
@@ -196,7 +196,7 @@ function MissingWriteForm() {
       });
 
       // 방금 쓴 글로 이동 (뒤로 가면 글쓰기 대신 들어왔던 화면으로)
-      router.replace(`/missing/${response.data.id}`);
+      router.replace(`/missing/detail/?id=${response.data.id}`);
     } catch (error: unknown) {
       const status = axios.isAxiosError(error) ? error.response?.status : undefined;
       const message = axios.isAxiosError(error) && typeof error.response?.data === "string" ? error.response.data : "";
@@ -212,7 +212,7 @@ function MissingWriteForm() {
   const header = (
     <Header
     title={editId ? "글 고치기" : "신고·제보하기"}
-    onBackClick={() => (window.history.length > 1 ? router.back() : router.push(editId ? `/missing/${editId}` : "/missing"))}/>
+    onBackClick={() => (window.history.length > 1 ? router.back() : router.push(editId ? `/missing/detail/?id=${editId}` : "/missing"))}/>
   );
 
   if (hasToken === false) {

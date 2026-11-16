@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { FiChevronLeft, FiChevronRight, FiEdit2, FiExternalLink, FiRefreshCw, FiSearch, FiTrash2, FiX } from "react-icons/fi";
 import { AppDispatch, RootState } from "../../store/store";
@@ -187,8 +188,8 @@ export default function AdminRegistrationList({kind}: {kind: AdminRegistrationKi
                   <td>
                     {config.postPath ? (
                       <S.AdminListActionButton
-                      as="a"
-                      href={`${config.postPath}/${row.id}`}
+                      as={Link}
+                      href={`${config.postPath}/?id=${row.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${row.cells[0]} 보기 (새 탭)`}>

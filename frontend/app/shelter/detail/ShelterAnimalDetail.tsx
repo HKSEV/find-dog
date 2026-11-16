@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { fetchShelterAnimals } from "../../redux/shelterSlice";
@@ -17,11 +17,9 @@ import * as S from "@/assets/css/Style.styles";
 // 💡 운영팀(관리자)은 보호소가 아니라서, 실제 진행은 보호소가 맡음 (안내용 단계)
 const adoptSteps = ["신청서 보내기", "운영팀이 보호소에 전달", "보호소에서 연락"];
 
-export default function ShelterAnimalDetail() {
+export default function ShelterAnimalDetail({id}: {id: number}) {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const params = useParams<{id: string}>();
-  const id = Number(params.id);
 
   // 💡 상세 조회 API가 아직 없어서 목록을 받아 같은 id를 찾음 (목록을 이미 받았으면 그대로 사용)
   const {animals, loading, error} = useSelector((state: RootState) => state.shelter);
@@ -136,7 +134,7 @@ export default function ShelterAnimalDetail() {
           ) : hasActiveApplication ? (
             <S.DetailApplyButton as={Link} href="/mypage/applications">신청 내역 보기</S.DetailApplyButton>
           ) : (
-            <S.DetailApplyButton as={Link} href={`/shelter/${animal.id}/apply`}>입양 신청하기</S.DetailApplyButton>
+            <S.DetailApplyButton as={Link} href={`/shelter/apply/?id=${animal.id}`}>입양 신청하기</S.DetailApplyButton>
           )}
         </S.DetailActionBar>
       </S.Container>

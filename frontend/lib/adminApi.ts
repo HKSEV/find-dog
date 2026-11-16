@@ -1,4 +1,5 @@
 import axios, { CanceledError, InternalAxiosRequestConfig } from "axios";
+import { APP_BASE_PATH } from "./deploymentPath";
 import {
   AdminLoginResponse,
   clearAdminSession,
@@ -18,7 +19,7 @@ let renewal: {token: string; sessionId: string; promise: Promise<void>} | null =
 
 export const isAdminSessionRenewing = (token: string) => renewal?.token === token;
 
-const adminApi = axios.create({timeout: 15000, withCredentials: false});
+const adminApi = axios.create({baseURL: APP_BASE_PATH, timeout: 15000, withCredentials: false});
 const getRequestToken = (authorization: unknown) =>
   typeof authorization === "string" && authorization.startsWith("Bearer ") ? authorization.substring(7) : null;
 

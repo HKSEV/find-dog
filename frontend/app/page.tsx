@@ -30,7 +30,7 @@ const ANIMAL_COUNT = 6;
 const HELP_COUNT = 2;
 const VOLUNTEER_COUNT = 2;
 
-// 백엔드에 올린 이미지(/uploads/...)는 백엔드 주소를 붙여서 사용
+// 업로드 사진은 배포 경로를 붙여서 사용
 
 // "2026-11-07" -> "11.07"
 const toMonthDay = (date: string) => (date ? date.substring(5, 10).replace("-", ".") : "");
@@ -144,7 +144,7 @@ export default function HomePage() {
           ) : (
             <S.HomeList>
               {recentMissing.map((post) => (
-                <S.HomeListRow key={post.id} as={Link} href={`/missing/${post.id}`}>
+                <S.HomeListRow key={post.id} as={Link} href={`/missing/detail/?id=${post.id}`}>
                   {post.mediaUrls && post.mediaUrls.length > 0 ? (
                     <S.HomeListThumb src={toImageUrl(post.mediaUrls[0])} alt={`${post.breed} 사진`}/>
                   ) : (
@@ -173,7 +173,7 @@ export default function HomePage() {
           </S.HomeSectionHead>
           <S.HomeStrip>
             {waitingAnimals.map((animal) => (
-              <S.HomeAnimalCard key={animal.id} as={Link} href={`/shelter/${animal.id}`}>
+              <S.HomeAnimalCard key={animal.id} as={Link} href={`/shelter/detail/?id=${animal.id}`}>
                 {animal.imageUrl ? (
                   <S.HomeAnimalImage src={toImageUrl(animal.imageUrl)} alt={`${animal.breed} 사진`}/>
                 ) : (
@@ -207,7 +207,7 @@ export default function HomePage() {
               {volunteers.map((post) => {
                 const {month, day, weekday} = dateParts(post.activityDate);
                 return (
-                  <S.HomeListRow key={`v${post.id}`} as={Link} href={`/volunteer/${post.id}`}>
+                  <S.HomeListRow key={`v${post.id}`} as={Link} href={`/volunteer/detail/?id=${post.id}`}>
                     <S.HomeVolunteerDate aria-hidden="true">
                       <small>{month}</small>
                       <strong>{day}</strong>
@@ -224,7 +224,7 @@ export default function HomePage() {
               {campaign && (
                 <S.HomeListRow as={Link} href="/shelter" onClick={openVolunteerTab}>
                   <S.HomeThumbWrap>
-                    <S.HomeListThumb src={campaign.thumbnailUrl} alt=""/>
+                    <S.HomeListThumb src={toImageUrl(campaign.thumbnailUrl)} alt=""/>
                     {campaign.mediaType !== "IMAGE" && (
                       <S.HomePlayBadge><PlayIcon/></S.HomePlayBadge>
                     )}
@@ -237,7 +237,7 @@ export default function HomePage() {
               )}
               {helps.map((help) => (
                 <S.HomeListRow key={help.id} as={Link} href="/shelter" onClick={openVolunteerTab}>
-                  <S.HomeListThumb src={help.imageUrl} alt=""/>
+                  <S.HomeListThumb src={toImageUrl(help.imageUrl)} alt=""/>
                   <S.HomeListBody>
                     <S.HomeKicker $tone="danger">도움이 필요해요</S.HomeKicker>
                     <S.HomeListTitle>{help.title}</S.HomeListTitle>
