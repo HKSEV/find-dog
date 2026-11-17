@@ -63,3 +63,6 @@ build/
 ### application-secret 등 민감 정보 파일 (예시)
 application-secret.yml
 application-oauth.yml
+
+### env files (can opt-in for committing if needed) ###
+.env*
