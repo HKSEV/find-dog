@@ -39,7 +39,7 @@ public class KakaoLoginHandlers {
                 // 회원 저장 실패 등: 서버 오류 화면 대신 로그인 화면으로
                 log.error("카카오 회원 처리 실패", e);
                 if (request.getSession(false) != null) request.getSession(false).invalidate();
-                response.sendRedirect(frontendUrl + "/login?error=kakao");
+                response.sendRedirect(frontendUrl + "/login/?error=kakao");
                 return;
             }
             String token = jwtTokenProvider.createToken(member.getEmail());
@@ -47,7 +47,7 @@ public class KakaoLoginHandlers {
             // 카카오 로그인용 세션은 더 쓰지 않음 (우리 서비스는 토큰으로 로그인 유지)
             if (request.getSession(false) != null) request.getSession(false).invalidate();
 
-            response.sendRedirect(frontendUrl + "/oauth/kakao#token=" + encode(token)
+            response.sendRedirect(frontendUrl + "/oauth/kakao/#token=" + encode(token)
                     + "&nickname=" + encode(member.getNickname())
                     + "&signup=" + (KakaoMemberService.needsSignup(member) ? "1" : "0"));
         };
@@ -57,7 +57,7 @@ public class KakaoLoginHandlers {
     public AuthenticationFailureHandler failure() {
         return (request, response, exception) -> {
             if (request.getSession(false) != null) request.getSession(false).invalidate();
-            response.sendRedirect(frontendUrl + "/login?error=kakao");
+            response.sendRedirect(frontendUrl + "/login/?error=kakao");
         };
     }
 

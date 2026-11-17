@@ -1,5 +1,6 @@
 package com.hbk.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -13,6 +14,10 @@ import java.util.Arrays;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
+    // 프런트 주소 (쉼표로 여러 개, 예: http://localhost:3000,http://heartbreakkid.co.kr)
+    @Value("${app.cors-origins}")
+    private String[] corsOrigins;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**")
@@ -22,7 +27,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "${app.frontend-url}"));
+        config.setAllowedOrigins(Arrays.asList(corsOrigins));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")); // 💡 OPTIONS 필수!
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);

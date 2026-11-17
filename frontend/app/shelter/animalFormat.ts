@@ -1,4 +1,4 @@
-import { withBasePath } from "@/lib/deploymentPath";
+import { apiUrl } from "@/lib/deploymentPath";
 
 // 💡 보호 동물 표시용 함수 (입양 목록, 동물 상세, 홈에서 같이 사용)
 
@@ -7,9 +7,9 @@ export const genderLabel: Record<string, string> = {MALE: "수컷", FEMALE: "암
 
 export const statusLabel: Record<string, string> = {ACTIVE: "보호 중", COMPLETED: "입양 완료"};
 
-// 백엔드 업로드 주소에 배포 경로를 붙여서 사용
+// 백엔드에 올린 사진(/uploads/...)은 백엔드 주소를 붙여서 사용
 export const toImageUrl = (url?: string | null) =>
-  url?.startsWith("/uploads/") ? withBasePath(url) : url || undefined;
+  url?.startsWith("/uploads/") ? apiUrl(url) : url || undefined;
 
 // "2026-11-07" -> "11.07"
 export const toMonthDay = (date?: string) => (date ? date.substring(5, 10).replace("-", ".") : "");
