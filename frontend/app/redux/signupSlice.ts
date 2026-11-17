@@ -1,6 +1,6 @@
 // src/redux/signupSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { withBasePath } from "@/lib/deploymentPath";
+import { apiUrl } from "@/lib/deploymentPath";
 import { compressImage } from "../missing/compressImage";
 
 export interface SignupState {
@@ -57,7 +57,7 @@ export const submitSignup = createAsyncThunk(
         const imageFormData = new FormData();
         imageFormData.append("file", await compressImage(profileFile)); // 큰 사진은 줄이고 jpg로 (서버는 사진 파일만 받음)
 
-        const uploadRes = await fetch(withBasePath("/api/members/upload-profile"), {
+        const uploadRes = await fetch(apiUrl("/api/members/upload-profile"), {
           method: "POST",
           body: imageFormData
         });
@@ -73,7 +73,7 @@ export const submitSignup = createAsyncThunk(
         : formData.address;
 
       // 2. 회원가입 요청 전송
-      const res = await fetch(withBasePath("/api/members/signup"), {
+      const res = await fetch(apiUrl("/api/members/signup"), {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({

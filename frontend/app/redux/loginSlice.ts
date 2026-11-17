@@ -1,6 +1,6 @@
 // src/redux/loginSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { withBasePath } from "@/lib/deploymentPath";
+import { apiUrl } from "@/lib/deploymentPath";
 
 interface LoginState {
   email: string;
@@ -21,7 +21,7 @@ export const submitLogin = createAsyncThunk(
   "login/submitLogin",
   async ({email, password}: {email: string; password: string}, {rejectWithValue}) => {
     try {
-      const res = await fetch(withBasePath("/api/members/login"), {
+      const res = await fetch(apiUrl("/api/members/login"), {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({email, password})
