@@ -23,7 +23,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("/api/members")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "${app.frontend-url}")
 @RequiredArgsConstructor // 👈 2. 생성자 주입을 위해 롬복 어노테이션 추가
 public class MemberController {
 

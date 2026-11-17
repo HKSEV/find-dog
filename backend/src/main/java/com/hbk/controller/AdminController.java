@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(origins = "${app.frontend-url}", allowCredentials = "true")
 @RestController
 //이 클래스는 화면(HTML)을 뱉는 게 아니라,
 // 데이터(JSON)만 깔끔하게 뱉는 전문 서빙 점원이야!" 라고 선언합니다.

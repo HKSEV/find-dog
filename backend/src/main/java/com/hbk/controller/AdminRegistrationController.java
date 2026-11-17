@@ -13,7 +13,7 @@ import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/admin/registrations")
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(origins = "${app.frontend-url}", allowCredentials = "true")
 @RequiredArgsConstructor
 public class AdminRegistrationController {
     private final AdminRegistrationService registrationService;

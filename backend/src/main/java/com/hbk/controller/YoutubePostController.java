@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 //출처허용옵션
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(origins = "${app.frontend-url}", allowCredentials = "true")
 @RestController//프론트로는 사용하지 않고 db로만 json
 @RequestMapping("/api/youtube")
 public class YoutubePostController {

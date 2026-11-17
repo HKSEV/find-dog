@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/campaigns")
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(origins = "${app.frontend-url}", allowCredentials = "true")
 public class AdoptionCampaignController {
     private final AdoptionCampaignService adoptionCampaignService;
 

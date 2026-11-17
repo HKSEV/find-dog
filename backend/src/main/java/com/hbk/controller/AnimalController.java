@@ -21,7 +21,7 @@ import com.hbk.repository.RecommendedAnimalRepository;
 데이터(JSON 형태)를 프론트엔드에 
 전달해주는 'REST API 전용 컨트롤러'임을 선언합니다.*/
 @RequestMapping("/api/animals")
-@CrossOrigin(origins="http://localhost:3000", allowCredentials = "true")//nextjs와 연동
+@CrossOrigin(origins="${app.frontend-url}", allowCredentials = "true")//nextjs와 연동
 public class AnimalController {
 	
 	private final RecommendedAnimalRepository recommendedanimalRepository;
