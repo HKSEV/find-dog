@@ -4,7 +4,7 @@
 export const POLICY_EFFECTIVE_DATE = "2026년 11월 18일";
 
 // 문의받을 곳 (운영자 이메일이 정해지면 여기만 바꾸면 됨)
-export const POLICY_CONTACT = "운영팀 이메일 (준비 중)";
+export const POLICY_CONTACT = "contact@example.com (포트폴리오용 예시 주소)";
 
 export interface PolicySection {
   title: string;

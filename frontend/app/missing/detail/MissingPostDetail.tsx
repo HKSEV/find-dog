@@ -175,6 +175,16 @@ export default function MissingPostDetail({id}: {id: number}) {
               </S.MissingShelterHint>
             </S.DetailSection>
           )}
+          {/* 💡 내 글이고 찾는 중이면 전단지 만들기 안내 */}
+          {post.mine && !done && (
+            <S.DetailSection>
+              <S.FlyerEntry as={Link} href={`/missing/flyer/?id=${post.id}`}>
+                <S.FlyerEntryIcon aria-hidden="true"/>
+                <span><strong>전단지 만들기</strong>사진과 연락처, QR이 들어간 A4 전단지를 바로 만들어요.</span>
+                <S.FlyerEntryChevron aria-hidden="true"/>
+              </S.FlyerEntry>
+            </S.DetailSection>
+          )}
         </S.DetailPage>
 
         {/* 내 글이면 아래에 관리 버튼 */}

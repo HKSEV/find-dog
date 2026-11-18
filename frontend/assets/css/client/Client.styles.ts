@@ -17,3 +17,4 @@ export * from "./Volunteer.styles";
 export * from "./VolunteerPost.styles";
 export * from "./Share.styles";
 export * from "./Policy.styles";
+export * from "./Flyer.styles";
