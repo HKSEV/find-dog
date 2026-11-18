@@ -10,7 +10,7 @@ import Header from "@/app/components/Header";
 import { loginHref } from "@/app/components/loginLink";
 import * as S from "@/assets/css/Style.styles";
 
-type Errors = Partial<Record<"name" | "phone" | "submit", string>>;
+type Errors = Partial<Record<"name" | "phone" | "agree" | "submit", string>>;
 
 // 💡 봉사 신청 (/volunteer/apply/?id=...). 이름·연락처는 회원 정보로 미리 채움
 export default function VolunteerApplyForm({id}: {id: number}) {
@@ -20,6 +20,7 @@ export default function VolunteerApplyForm({id}: {id: number}) {
   const [status, setStatus] = useState<"loading" | "ready" | "login" | "missing">("loading");
   const [form, setForm] = useState({name: "", phone: "", message: ""});
   const [errors, setErrors] = useState<Errors>({});
+  const [agree, setAgree] = useState(false); // 이름·연락처를 보호소에 전달하는 데 동의
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
 
@@ -60,6 +61,7 @@ export default function VolunteerApplyForm({id}: {id: number}) {
     const next: Errors = {};
     if (!form.name.trim()) next.name = "이름을 적어 주세요.";
     if (!/^\d{9,11}$/.test(form.phone.replace(/[^0-9]/g, ""))) next.phone = "연락처를 숫자로 적어 주세요.";
+    if (!agree) next.agree = "신청 내용을 보호소에 전달하려면 동의가 필요해요.";
     if (Object.keys(next).length > 0) {
       setErrors(next);
       return;
@@ -161,6 +163,20 @@ export default function VolunteerApplyForm({id}: {id: number}) {
           placeholder="봉사 경험이나 궁금한 점을 적어 주세요"
           value={form.message}
           onChange={(e) => setField("message", e.target.value)}/>
+        </S.WriteField>
+
+        <S.WriteField>
+          <S.ApplyAgree>
+            <input
+            type="checkbox"
+            checked={agree}
+            onChange={(e) => {
+              setAgree(e.target.checked);
+              setErrors((prev) => ({...prev, agree: undefined, submit: undefined}));
+            }}/>
+            이름과 연락처를 보호소에 전달하는 데 동의해요 (필수)
+          </S.ApplyAgree>
+          {errors.agree && <S.WriteError>{errors.agree}</S.WriteError>}
         </S.WriteField>
 
         <S.WriteBar>

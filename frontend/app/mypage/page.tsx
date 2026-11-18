@@ -23,7 +23,9 @@ const activityMenus = [
 ];
 
 const guideMenus = [
-  {label: "자주 묻는 질문", href: "/mypage/faq"}
+  {label: "자주 묻는 질문", href: "/mypage/faq"},
+  {label: "이용약관", href: "/mypage/terms"},
+  {label: "개인정보처리방침", href: "/mypage/privacy"}
 ];
 
 type Menu = {label: string; href?: string; needLogin?: boolean};
@@ -157,6 +159,9 @@ export default function MyPage() {
           {guideMenus.map(renderMenu)}
 
         </S.MyMenu>
+        <S.MyCopyright>
+          {"© 2026 어서찾아주개 · 포트폴리오 프로젝트\n글꼴 Pretendard (SIL Open Font License 1.1) · 지도 ⓒ Kakao"}
+        </S.MyCopyright>
       </S.Container>
       <Footer/>
     </S.AppWrapper>

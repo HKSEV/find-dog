@@ -246,7 +246,7 @@ function CommunityWriteForm() {
         </S.WriteField>
 
         <S.WriteBar>
-          {errors.submit ? <S.WriteError as="p">{errors.submit}</S.WriteError> : <p>닉네임으로 올라가요. 실명과 연락처는 보이지 않아요.</p>}
+          {errors.submit ? <S.WriteError as="p">{errors.submit}</S.WriteError> : <p>닉네임으로 올라가요. 직접 찍었거나 써도 되는 사진만 올려 주세요.</p>}
           <S.WriteSubmit type="submit" disabled={submitting}>
             {submitting ? (editId ? "고치는 중..." : "올리는 중...") : (editId ? "고치기" : "올리기")}
           </S.WriteSubmit>

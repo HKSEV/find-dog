@@ -16,3 +16,4 @@ export * from "./Toast.styles";
 export * from "./Volunteer.styles";
 export * from "./VolunteerPost.styles";
 export * from "./Share.styles";
+export * from "./Policy.styles";

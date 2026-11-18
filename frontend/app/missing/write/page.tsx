@@ -18,6 +18,7 @@ import { loginHref } from "../../components/loginLink";
 
 import Header from "@/app/components/Header";
 import * as S from "@/assets/css/Style.styles";
+import DemoNotice from "@/app/components/DemoNotice";
 
 const MAX_PHOTOS = 5;
 
@@ -243,6 +244,7 @@ function MissingWriteForm() {
     <>
     {header}
     <S.HeaderOffset/>
+    {!editId && <DemoNotice/>}
     <S.WriteForm id="missing-write-form" onSubmit={handleSubmit} noValidate>
       <S.WriteKindGroup role="radiogroup" aria-label="글 종류">
         <S.WriteKindButton type="button" role="radio" aria-checked={kind === "LOST"} $checked={kind === "LOST"} onClick={() => setKind("LOST")}>
@@ -381,7 +383,7 @@ function MissingWriteForm() {
       </S.WriteField>
 
       <S.WriteBar>
-        {errors.submit ? <S.WriteError as="p">{errors.submit}</S.WriteError> : <p>로그인한 회원에게 내 휴대폰으로 연락하는 버튼이 보여요.</p>}
+        {errors.submit ? <S.WriteError as="p">{errors.submit}</S.WriteError> : <p>로그인한 회원에게 내 휴대폰으로 연락하는 버튼이 보여요. 직접 찍었거나 써도 되는 사진만 올려 주세요.</p>}
         <S.WriteSubmit type="submit" disabled={submitting}>
           {submitting ? (editId ? "고치는 중..." : "등록하는 중...") : (editId ? "고치기" : "등록하기")}
         </S.WriteSubmit>
