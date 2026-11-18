@@ -15,3 +15,4 @@ export * from "./Story.styles";
 export * from "./Toast.styles";
 export * from "./Volunteer.styles";
 export * from "./VolunteerPost.styles";
+export * from "./Share.styles";

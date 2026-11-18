@@ -280,10 +280,10 @@ export const DetailBackButton = styled.button<{$solid?: boolean}>`
   transition: background-color 0.2s;
 `;
 
-export const DetailTopTitle = styled.span<{$show: boolean}>`
+export const DetailTopTitle = styled.span<{$show: boolean; $hasAction?: boolean}>`
   flex: 1;
   min-width: 0;
-  margin-right: 44px; /* 뒤로 버튼만큼 비워서 제목을 가운데로 */
+  margin-right: ${({$hasAction}) => ($hasAction ? "0" : "44px")}; /* 오른쪽 버튼이 없으면 뒤로 버튼만큼 비워서 제목을 가운데로 */
   overflow: hidden;
   font-size: 17px;
   font-weight: ${fontWeight.semibold};

@@ -12,6 +12,7 @@ import { fetchMyApplications, isActiveApplication } from "../adoptionApi";
 
 import Header from "@/app/components/Header";
 import DetailTopBar from "@/app/components/DetailTopBar";
+import ShareSheet from "@/app/components/ShareSheet";
 import * as S from "@/assets/css/Style.styles";
 
 // 💡 운영팀(관리자)은 보호소가 아니라서, 실제 진행은 보호소가 맡음 (안내용 단계)
@@ -26,6 +27,7 @@ export default function ShelterAnimalDetail({id}: {id: number}) {
   const animal = animals.find((item) => item.id === id);
   const {isLiked, toggle} = useLikedAnimals();
   const [hasActiveApplication, setHasActiveApplication] = useState(false); // 이 친구에게 진행 중인 내 신청
+  const [sharing, setSharing] = useState(false); // 공유 시트 열림
 
   // 로그인했으면 이 친구에게 이미 신청했는지 확인 (버튼을 "신청 내역 보기"로 바꿈)
   useEffect(() => {
@@ -72,11 +74,17 @@ export default function ShelterAnimalDetail({id}: {id: number}) {
   const gender = genderLabel[animal.gender] ?? animal.gender;
   const status = statusLabel[animal.status] ?? animal.status;
   const regDate = toMonthDay(animal.regDate);
+  const shareContent = {
+    title: `[입양] ${animal.breed} · ${gender}`,
+    description: `${animal.rescueLocation}에서 구조 · 공고 ${regDate}`,
+    imageUrl,
+    path: `/shelter/detail/?id=${animal.id}`
+  };
 
   return (
     <S.AppWrapper>
       <S.Container>
-        <DetailTopBar title={`${animal.breed} · ${gender}`} onBack={handleBack}/>
+        <DetailTopBar title={`${animal.breed} · ${gender}`} onBack={handleBack} onShare={() => setSharing(true)}/>
         <S.DetailPage>
           <S.DetailHero>
             {imageUrl ? (
@@ -137,6 +145,9 @@ export default function ShelterAnimalDetail({id}: {id: number}) {
             <S.DetailApplyButton as={Link} href={`/shelter/apply/?id=${animal.id}`}>입양 신청하기</S.DetailApplyButton>
           )}
         </S.DetailActionBar>
+      {sharing && (
+        <ShareSheet content={shareContent} note="새 가족을 기다리는 친구를 알려 주세요." onClose={() => setSharing(false)}/>
+      )}
       </S.Container>
 
     </S.AppWrapper>

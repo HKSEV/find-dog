@@ -15,6 +15,7 @@ import Header from "@/app/components/Header";
 import DetailTopBar from "@/app/components/DetailTopBar";
 import MiniMap from "@/app/components/map/MiniMap";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
+import ShareSheet from "@/app/components/ShareSheet";
 import { queueToast, showToast } from "@/app/components/Toast";
 import { loginHref } from "@/app/components/loginLink";
 import { completeMissingPost, deleteMissingPost, toMissingError } from "../missingApi";
@@ -30,6 +31,7 @@ export default function MissingPostDetail({id}: {id: number}) {
 
   const [confirm, setConfirm] = useState<"complete" | "delete" | null>(null); // 한 번 더 묻는 중인 일
   const [busy, setBusy] = useState(false);
+  const [sharing, setSharing] = useState(false); // 공유 시트 열림
 
   useEffect(() => {
     dispatch(loadUserFromStorage()); // 연락 버튼: 로그인 전이면 "로그인하고 연락하기"
@@ -101,10 +103,19 @@ export default function MissingPostDetail({id}: {id: number}) {
   // 3칸 격자의 마지막 줄이 비지 않게, 마지막 칸이 남은 자리를 채움
   const lastSpan = 1 + ((3 - (facts.length % 3)) % 3);
 
+  // 공유 카드: "[실종] 진돗개 믹스 · 흰색" / 장소 · 때
+  const shareTag = done ? "[찾았어요]" : post.type === "FOUND" ? "[목격]" : "[실종]";
+  const shareContent = {
+    title: `${shareTag} ${post.title || post.breed}`,
+    description: [post.rescueLocation, formatWhen(post.occurredAt, post.occurredTime)].filter(Boolean).join(" · ") || "어서찾아주개 실종·제보",
+    imageUrl: photos[0],
+    path: `/missing/detail/?id=${post.id}`
+  };
+
   return (
     <S.AppWrapper>
       <S.Container>
-        <DetailTopBar title={post.title || post.breed} onBack={handleBack}/>
+        <DetailTopBar title={post.title || post.breed} onBack={handleBack} onShare={() => setSharing(true)}/>
         <S.DetailPage>
           <S.DetailHero>
             {photos.length > 0 ? (
@@ -196,6 +207,7 @@ export default function MissingPostDetail({id}: {id: number}) {
             )}
           </S.DetailActionBar>
         )}
+      {sharing && <ShareSheet content={shareContent} onClose={() => setSharing(false)}/>}
       </S.Container>
 
       <ConfirmDialog
