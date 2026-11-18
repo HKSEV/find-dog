@@ -9,7 +9,7 @@ import { fetchMissingPost } from "../../redux/missingSlice";
 import { setActiveTab } from "../../redux/shelterSlice";
 import { loadUserFromStorage } from "../../redux/userSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
-import { formatWhen, genderText, missingBadge, placeLabel, timeAgo, whenLabel } from "../missingFormat";
+import { ageText, formatWhen, genderText, missingBadge, placeLabel, timeAgo, weightText, whenLabel } from "../missingFormat";
 
 import Header from "@/app/components/Header";
 import DetailTopBar from "@/app/components/DetailTopBar";
@@ -92,8 +92,8 @@ export default function MissingPostDetail({id}: {id: number}) {
   const facts = [
     {label: "품종", value: post.breed},
     {label: "성별", value: genderText(post.gender)},
-    {label: "나이", value: post.age},
-    {label: "체중", value: post.weight},
+    {label: "나이", value: ageText(post.age)},
+    {label: "체중", value: weightText(post.weight)},
     {label: "털색", value: post.color},
     {label: whenLabel(post.type), value: formatWhen(post.occurredAt, post.occurredTime)}
   ].filter((fact) => fact.value);

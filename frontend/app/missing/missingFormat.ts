@@ -46,6 +46,14 @@ export const timeAgo = (iso?: string) => {
   return iso.substring(5, 10).replace("-", ".");
 };
 
+// 나이·체중이 숫자만 있으면 단위를 붙여서 보여줌 ("2" -> "2살", "3" -> "3kg", "6개월"은 그대로)
+const withUnit = (value: string | undefined, unit: string) => {
+  const text = value?.trim() ?? "";
+  return /^\d+(\.\d+)?$/.test(text) ? `${text}${unit}` : text;
+};
+export const ageText = (age?: string) => withUnit(age, "살");
+export const weightText = (weight?: string) => withUnit(weight, "kg");
+
 // 저장값 "미상"은 화면에서 "성별 모름"으로
 export const genderText = (gender?: string) => (gender === "미상" ? "성별 모름" : gender ?? "");
 
@@ -55,8 +63,8 @@ export const missingRowTraits = (post: MissingAnimal) => {
   return [
     post.breed && !title.includes(post.breed) ? post.breed : "",
     genderText(post.gender),
-    post.age,
-    post.weight,
+    ageText(post.age),
+    weightText(post.weight),
     post.color && !title.includes(post.color) ? post.color : ""
   ].filter(Boolean).join(" · ");
 };
