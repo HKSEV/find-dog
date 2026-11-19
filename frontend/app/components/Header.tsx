@@ -51,20 +51,31 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
   };
 
   // 💡 1. 메인 페이지용 헤더
+  //    hidden(아래로 스크롤)이면 헤더는 위로 숨고 오른쪽 위에 둥근 알림 버튼만 남음
   if (isMain) {
+    const bellLabel = hasUnread ? "알림 (새 알림 있음)" : "알림";
     return (
       <>
-        <S.Header>
+        <S.Header
+        aria-hidden={hidden || undefined}
+        style={{transform: hidden ? "translate(-50%, -100%)" : undefined, transition: "transform 0.2s"}}>
           <Logo onClick={() => router.push("/")}/>
 
           {/* 우측 아이콘 그룹 (로그인·내 정보는 하단 "마이" 탭에서) */}
           <S.HeaderActions>
-            <S.HeaderBell type="button" aria-label={hasUnread ? "알림 (새 알림 있음)" : "알림"} onClick={() => router.push("/notifications")}>
+            <S.HeaderBell type="button" aria-label={bellLabel} onClick={() => router.push("/notifications")}>
               <S.NotificationIcon/>
               {hasUnread && <S.HeaderBellDot aria-hidden="true"/>}
             </S.HeaderBell>
           </S.HeaderActions>
         </S.Header>
+
+        <S.FloatingHeaderActions $show={Boolean(hidden)} aria-hidden={!hidden}>
+          <S.FloatingRoundButton type="button" aria-label={bellLabel} tabIndex={hidden ? 0 : -1} onClick={() => router.push("/notifications")}>
+            <S.NotificationIcon/>
+            {hasUnread && <S.FloatingBadgeDot aria-hidden="true"/>}
+          </S.FloatingRoundButton>
+        </S.FloatingHeaderActions>
       </>
     );
   };

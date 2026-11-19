@@ -53,6 +53,7 @@ export const FloatingHeaderActions = styled.div<{$show: boolean}>`
 `;
 
 export const FloatingRoundButton = styled.button`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -72,6 +73,18 @@ export const FloatingRoundButton = styled.button`
 `;
 
 export const HeaderSearchIcon = styled(SearchIcon)``;
+
+// 둥근 버튼 오른쪽 위 빨간 점 (새 알림)
+export const FloatingBadgeDot = styled.span`
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid ${colors.white};
+  border-radius: 999px;
+  background-color: ${colors.danger};
+`;
 
 // 검색 중일 때 헤더 자리를 채우는 검색창
 export const SearchBar = styled.div`

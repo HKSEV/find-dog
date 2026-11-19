@@ -3,6 +3,7 @@
 import { MapOutlined as MapIcon, ChevronRightRounded as ChevronIcon, FormatListBulletedRounded as ListIcon } from "@mui/icons-material";
 import styled, { createGlobalStyle } from "styled-components";
 import { colors, fontWeight } from "./theme";
+import { MissingWriteFab } from "./MissingBoard.styles";
 
 // 💡 지도로 보기: 실종·목격 글, 보호 동물, 봉사 모집을 사진 마커로 표시
 
@@ -229,28 +230,17 @@ export const MapEntryIcon = styled(MapIcon)`
   }
 `;
 
-// 홈의 "지도로 보기" 줄
-export const HomeMapEntry = styled.a`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 12px 20px 0;
-  padding: 12px 14px;
-  border: 1px solid ${colors.border};
-  border-radius: 12px;
+
+
+// 홈 우하단 "지도보기" (글쓰기 버튼과 같은 자리·동작, 흰 바탕으로 구분)
+//    $compact: 아래로 스크롤하면 글자를 숨기고 아이콘 동그라미로
+export const HomeMapFab = styled(MissingWriteFab)`
+  border: 1px solid ${colors.gray200};
   background-color: ${colors.white};
-  color: ${colors.gray800};
-  font-size: 14px;
-  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
+  color: ${colors.gray900};
 
-  span {
-    flex: 1;
-    min-width: 0;
-  }
-
-  strong {
-    font-weight: ${fontWeight.semibold};
-    color: ${colors.gray900};
+  svg {
+    font-size: 24px;
   }
 `;
-

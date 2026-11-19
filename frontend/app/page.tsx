@@ -24,6 +24,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import * as S from "@/assets/css/Style.styles";
 import { setCategory } from "./redux/storySlice";
+import { useScrollCollapse } from "@/app/components/useScrollCollapse";
 
 // 💡 홈 노출 개수
 const MISSING_COUNT = 2;
@@ -60,6 +61,7 @@ const getSplashSnapshot = () => !sessionStorage.getItem("hasSeenSplash");
 
 export default function HomePage() {
   const dispatch = useDispatch<AppDispatch>();
+  const collapsed = useScrollCollapse(); // 💡 아래로 스크롤하면 헤더 숨김·지도보기 버튼 줄임
 
   // 서버와 첫 렌더에서는 본문을 표시하고, 접속한 세션에 따라 스플래시를 표시합니다.
   const showSplash = useSyncExternalStore(subscribeSplash, getSplashSnapshot, () => false);
@@ -117,7 +119,7 @@ export default function HomePage() {
 
   return (
     <S.AppWrapper>
-      <Header isMain={true}/>
+      <Header isMain={true} hidden={collapsed}/>
       <S.Container>
         <S.HeaderOffset/>
 
@@ -135,13 +137,6 @@ export default function HomePage() {
             <SeenIcon aria-hidden="true"/>
           </S.HomeEntryButton>
         </S.HomeEntryGrid>
-
-        {/* 💡 지도로 보기 (실종·목격, 보호 동물, 봉사를 사진 마커로) */}
-        <S.HomeMapEntry as={Link} href="/map">
-          <S.MapEntryIcon aria-hidden="true"/>
-          <span><strong>우리 동네 지도로 보기</strong> · 실종·목격, 보호 동물, 봉사</span>
-          <S.MapCardChevron aria-hidden="true"/>
-        </S.HomeMapEntry>
 
         <S.HomeBand/>
 
@@ -260,6 +255,12 @@ export default function HomePage() {
             </S.HomeList>
           </S.HomeSection>
         )}
+
+        {/* 💡 지도보기 (실종·목격, 보호 동물, 봉사를 사진 마커로). 아래로 스크롤하면 아이콘만 */}
+        <S.HomeMapFab as={Link} href="/map" $compact={collapsed} aria-label="지도보기">
+          <S.MapPillIcon aria-hidden="true"/>
+          <span>지도보기</span>
+        </S.HomeMapFab>
 
         <Footer/>
       </S.Container>
