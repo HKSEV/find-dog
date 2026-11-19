@@ -38,7 +38,9 @@ public class MissingPostService {
 
     public List<AdminMemberPostResponse> getAllForAdmin() {
         return missingPostRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).stream()
-                .map(post -> new AdminMemberPostResponse(post.getId(), post.getTitle(),
+                // 관리자 목록 제목: 이름이 있으면 "보리 · 푸들 · 갈색"처럼 이름을 앞에
+                .map(post -> new AdminMemberPostResponse(post.getId(),
+                        post.getPetName() != null && !post.getPetName().isBlank() ? post.getPetName() + " · " + post.getTitle() : post.getTitle(),
                         post.getType() == null ? PostType.LOST.name() : post.getType().name(),
                         post.getStatus().name(), post.getCreatedAt()))
                 .toList();

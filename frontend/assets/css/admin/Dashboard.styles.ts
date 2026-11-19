@@ -141,7 +141,7 @@ export const DashboardRetry = styled.button`
 
 export const DashboardMetrics = styled.section`
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* 카드 6개 = 3개씩 두 줄 */
   gap: 18px;
   margin-bottom: 22px;
 

@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaBullhorn } from "react-icons/fa";
-import { FiCalendar, FiChevronRight, FiClipboard, FiDownload, FiFileText, FiHome, FiRefreshCw } from "react-icons/fi";
+import { FiCalendar, FiChevronRight, FiClipboard, FiDownload, FiFileText, FiHome, FiMessageCircle, FiRefreshCw, FiUsers } from "react-icons/fi";
 import { AppDispatch, RootState } from "../store/store";
 import { fetchDashboard } from "../redux/dashboardAdminSlice";
 import {
@@ -26,7 +26,7 @@ const quickLinks = [
   {href: "/admin/campaign", title: "캠페인", description: "홈에 표시할 캠페인을 관리하세요.", icon: FaBullhorn}
 ];
 
-const metricIcons = [FiCalendar, FaBullhorn, FiFileText, FiHome];
+const metricIcons = [FiCalendar, FaBullhorn, FiFileText, FiHome, FiUsers, FiMessageCircle];
 
 export default function DashBoard() {
   const dispatch = useDispatch<AppDispatch>();

@@ -1,7 +1,7 @@
-import { dashboardSources, getDashboardDate } from "@/lib/adminDashboard";
+import { adminContentSources, getDashboardDate } from "@/lib/adminDashboard";
 
 const registrationSources = [
-  ...dashboardSources,
+  ...adminContentSources,
   {key: "animals", label: "추천 동물", endpoint: "/api/animals/recommended"},
   {key: "adoptionApplications", label: "입양 신청", endpoint: "/api/admin/adoption-applications"},
   {key: "missingPosts", label: "실종·제보 글", endpoint: "/api/admin/missing-posts"},

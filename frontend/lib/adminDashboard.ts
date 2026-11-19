@@ -1,10 +1,19 @@
-export const dashboardSources = [
+// 관리자가 등록하는 콘텐츠 (등록 관리 목록에서도 같이 씀)
+export const adminContentSources = [
   {key: "volunteers", label: "봉사 모집", endpoint: "/api/admin/volunteers"},
   {key: "campaigns", label: "캠페인", endpoint: "/api/campaigns"},
   {key: "youtubePosts", label: "보호소 영상", endpoint: "/api/youtube"},
   {key: "fellowNews", label: "보호소 소식", endpoint: "/api/fellow-news"},
   {key: "needHelps", label: "도움 요청", endpoint: "/api/need-help"},
   {key: "shelterAnimals", label: "보호 동물", endpoint: "/api/shelter-animals"}
+] as const;
+
+// 대시보드: 관리자 콘텐츠 + 회원 게시글 + 채팅 (집계용)
+export const dashboardSources = [
+  ...adminContentSources,
+  {key: "missingPosts", label: "실종·목격 글", endpoint: "/api/admin/missing-posts"},
+  {key: "communityPosts", label: "이야기 글", endpoint: "/api/admin/community-posts"},
+  {key: "chatRooms", label: "채팅", endpoint: "/api/admin/chats"}
 ] as const;
 
 export type DashboardSource = (typeof dashboardSources)[number]["key"];
@@ -27,7 +36,10 @@ export const createDashboardData = (): DashboardData => ({
   youtubePosts: [],
   fellowNews: [],
   needHelps: [],
-  shelterAnimals: []
+  shelterAnimals: [],
+  missingPosts: [],
+  communityPosts: [],
+  chatRooms: []
 });
 
 export const getDashboardDate = (value?: string | null) => {
@@ -65,7 +77,14 @@ export const getDashboardMetrics = (data: DashboardData, failedSources: Dashboar
       unit: "건",
       description: "보호소 영상·소식·도움 요청 합계입니다."
     },
-    {label: "보호 동물", value: count(["shelterAnimals"]), unit: "마리", description: "보호소에 등록된 동물 수입니다."}
+    {label: "보호 동물", value: count(["shelterAnimals"]), unit: "마리", description: "보호소에 등록된 동물 수입니다."},
+    {
+      label: "회원 게시글",
+      value: count(["missingPosts", "communityPosts"]),
+      unit: "건",
+      description: "회원이 쓴 실종·목격 글과 이야기 글 합계입니다."
+    },
+    {label: "채팅", value: count(["chatRooms"]), unit: "개", description: "실종·목격 글에서 시작된 대화방 수입니다. 대화 내용은 보지 않아요."}
   ];
 };
 

@@ -115,6 +115,17 @@ public class ChatService {
         return roomRepository.findMine(me.getId()).stream().mapToLong(room -> unread(room, me)).sum();
     }
 
+    // 관리자 대시보드: 대화방 수·만든 날짜만 (대화 내용·참여자는 보내지 않음)
+    @Transactional(readOnly = true)
+    public List<java.util.Map<String, Object>> adminRoomSummaries(){
+        return roomRepository.findAll().stream().map(room -> {
+            java.util.Map<String, Object> row = new java.util.LinkedHashMap<>();
+            row.put("id", room.getId());
+            row.put("createdAt", room.getCreatedAt());
+            return row;
+        }).toList();
+    }
+
     private ChatDtos.Room toRoom(ChatRoom room, Member me){
         MissingPost post = room.getPost();
         boolean iAmOwner = room.getOwner().getId().equals(me.getId());
