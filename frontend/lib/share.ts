@@ -1,7 +1,7 @@
 // 💡 공유 (카카오톡, 링크 복사, 휴대폰 기본 공유)
 //    카카오 키는 지도와 같은 JavaScript 키 (frontend/.env.local 의 NEXT_PUBLIC_KAKAO_MAP_KEY)
 //    카카오 개발자 콘솔 > 플랫폼 > Web 사이트 도메인에 이 사이트 주소가 있어야 카카오톡 공유가 됨
-import { withBasePath } from "./deploymentPath";
+import { SITE_URL, withBasePath } from "./deploymentPath";
 
 // 카카오 SDK는 타입 정의가 없어서 필요한 만큼만 느슨하게 씀
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,7 +21,8 @@ export interface ShareContent {
 }
 
 // 공유할 전체 주소 (예: http://heartbreakkid.co.kr/group/one/1/missing/detail/?id=3)
-export const shareUrl = (path: string) => `${window.location.origin}${withBasePath(path)}`;
+// 카카오는 등록되지 않은 주소(www, localhost 등)를 첫 번째 등록 주소로 바꿔 버려서 대표 주소로 고정
+export const shareUrl = (path: string) => `${SITE_URL || window.location.origin}${withBasePath(path)}`;
 
 const KAKAO_SDK_URL = "https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js";
 let loading: Promise<KakaoSdk> | null = null;

@@ -119,7 +119,7 @@ export const FlyerBody = styled.div`
 export const FlyerPhoto = styled.img`
   display: block;
   width: 100%;
-  height: 400px;
+  height: 340px;
   border-radius: 16px;
   object-fit: cover;
   object-position: center 30%; /* 세로 사진은 얼굴이 위쪽에 있어서 가운데보다 조금 위를 보여줌 */
@@ -147,10 +147,13 @@ export const FlyerName = styled.h2<{$hasName?: boolean}>`
   line-height: 1.2;
   letter-spacing: -1px;
 
+  /* 품종·성별·나이 같은 정보는 이름 아래 한 줄로 (정보가 많아도 이름이 밀리지 않게) */
   span {
-    margin-left: 12px;
+    display: block;
+    margin-top: 8px;
     font-size: 26px;
     font-weight: ${fontWeight.semibold};
+    letter-spacing: -0.5px;
     color: ${colors.gray500};
   }
 `;
@@ -172,7 +175,7 @@ export const FlyerFacts = styled.dl`
     margin: 0;
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
 `;

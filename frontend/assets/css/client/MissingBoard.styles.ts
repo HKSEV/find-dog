@@ -231,3 +231,11 @@ export const MissingOwnerButton = styled.button<{$danger?: boolean}>`
   text-decoration: none;
   cursor: pointer;
 `;
+
+// 실종 상세: 이름이 있을 때 이름 아래 줄 (품종 · 털색·특징)
+export const MissingTitleSub = styled.p`
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-weight: ${fontWeight.medium};
+  color: ${colors.gray500};
+`;

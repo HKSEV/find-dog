@@ -23,6 +23,24 @@ const formatPhone = (phone: string) => {
   return phone;
 };
 
+// 전단지에 쓸 사진 주소: 이미지 저장 때 사진을 다시 받아야 해서,
+// 예전에 받아 둔 사진(다른 사이트 허용 표시 없음)을 쓰지 않게 주소를 살짝 바꿈
+const flyerPhotoUrl = (url?: string) => {
+  const photo = toImageUrl(url);
+  return photo ? `${photo}${photo.includes("?") ? "&" : "?"}flyer=1` : undefined;
+};
+
+// 사진을 data URL로 바꿔 둠 (Safari는 이미지 저장 때 바깥 주소 사진을 빼먹는 일이 있어서)
+const toDataUrl = async (url: string) => {
+  const blob = await (await fetch(url, {mode: "cors"})).blob();
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+};
+
 // 💡 실종·목격 전단지 (내 글만). A4로 인쇄하거나 PDF·이미지로 저장
 //    연락처가 크게 들어가서 글쓴이만 만들 수 있음 (번호는 내 정보에서 가져옴)
 export default function MissingFlyer({id}: {id: number}) {
@@ -32,6 +50,7 @@ export default function MissingFlyer({id}: {id: number}) {
 
   const [phone, setPhone] = useState<string | null>(null); // null: 불러오는 중
   const [qr, setQr] = useState("");
+  const [photoData, setPhotoData] = useState<{src: string; data: string} | null>(null); // 미리 받아 둔 사진
   const [scale, setScale] = useState(0.4);
   const [saving, setSaving] = useState(false);
   const frameRef = useRef<HTMLDivElement>(null);
@@ -52,6 +71,19 @@ export default function MissingFlyer({id}: {id: number}) {
       .catch(() => setQr(""));
   }, [post]);
 
+  // 사진을 미리 data URL로 받아 둠 (못 받으면 주소 그대로 씀)
+  const photoSrc = post ? flyerPhotoUrl(post.mediaUrls?.[0]) : undefined;
+  useEffect(() => {
+    if (!photoSrc) return;
+    let alive = true;
+    toDataUrl(photoSrc)
+      .then((data) => alive && setPhotoData({src: photoSrc, data}))
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [photoSrc]);
+
   // 화면 폭에 맞춰 전단지를 줄여서 보여줌
   useEffect(() => {
     const frame = frameRef.current;
@@ -66,9 +98,13 @@ export default function MissingFlyer({id}: {id: number}) {
     setSaving(true);
     try {
       const {toPng} = await import("html-to-image");
-      const options = {pixelRatio: 2, backgroundColor: "#ffffff", width: S.FLYER_WIDTH, height: S.FLYER_HEIGHT};
+      // skipFonts: 웹 글꼴(Pretendard)은 글자 묶음별 파일이 200개가 넘어서 넣지 않고 기기 한글 글꼴로 그림
+      const options = {pixelRatio: 2, backgroundColor: "#ffffff", width: S.FLYER_WIDTH, height: S.FLYER_HEIGHT, skipFonts: true};
       // 글꼴을 못 넣으면(다른 사이트 글꼴 파일) 기본 글꼴로 다시 시도
-      const dataUrl = await toPng(sheetRef.current, options).catch(() => toPng(sheetRef.current!, {...options, skipFonts: true}));
+      const draw = () => toPng(sheetRef.current!, options);
+      // Safari는 첫 번째 그림에서 사진이 빠지는 일이 있어서 한 번 더 그린 결과를 씀
+      await draw();
+      const dataUrl = await draw();
       const link = document.createElement("a");
       link.href = dataUrl;
       link.download = `${post.type === "FOUND" ? "목격" : "실종"}전단지_${post.breed || "강아지"}.png`;
@@ -111,9 +147,7 @@ export default function MissingFlyer({id}: {id: number}) {
 
   const found = post.type === "FOUND";
   const name = found ? "" : petNameOf(post); // 이름은 잃어버린 아이만
-  const photo = toImageUrl(post.mediaUrls?.[0]);
-  // 이미지 저장 때 사진을 다시 받아야 해서, 예전에 받아 둔 사진(다른 사이트 허용 표시 없음)을 쓰지 않게 주소를 살짝 바꿈
-  const photoForFlyer = photo ? `${photo}${photo.includes("?") ? "&" : "?"}flyer=1` : undefined;
+  const photoForFlyer = photoData?.src === photoSrc ? photoData?.data : photoSrc;
   const when = formatWhen(post.occurredAt, post.occurredTime);
   // 이름이 있으면 품종도 옆 작은 글씨로 내려감
   const traits = [name && (post.breed || "품종 모름"), genderText(post.gender), ageText(post.age), weightText(post.weight), post.color].filter(Boolean).join(" · ");

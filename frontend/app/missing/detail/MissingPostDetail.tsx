@@ -132,10 +132,9 @@ export default function MissingPostDetail({id}: {id: number}) {
 
           <S.DetailSection>
             <S.MissingBadge $tone={missingBadge(post).tone}>{missingBadge(post).label}</S.MissingBadge>
-            {/* 이름이 있으면 이름을 크게, 품종·특징은 옆에 작게 (찾았을 때 부를 수 있게) */}
-            <S.DetailTitle>
-              {petNameOf(post) ? <>{petNameOf(post)}<span>{post.title || post.breed}</span></> : (post.title || post.breed)}
-            </S.DetailTitle>
+            {/* 이름이 있으면 이름을 크게, 품종·특징은 아래 줄에 (찾았을 때 부를 수 있게) */}
+            <S.DetailTitle>{petNameOf(post) || post.title || post.breed}</S.DetailTitle>
+            {petNameOf(post) && <S.MissingTitleSub>{post.title || post.breed}</S.MissingTitleSub>}
             <S.DetailNotice>{[author && `작성자 ${author}`, timeAgo(post.createdAt)].filter(Boolean).join(" · ")}</S.DetailNotice>
 
             {facts.length > 0 && (
