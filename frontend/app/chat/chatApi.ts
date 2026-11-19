@@ -37,6 +37,24 @@ export const fetchChatMessages = async (id: number, after: number) =>
   (await axios.get<ChatMessage[]>(`/api/chats/${id}/messages`, {...auth(), params: {after}})).data;
 export const sendChatMessage = async (id: number, body: {type: "TEXT" | "LOCATION"; content?: string; lat?: number; lng?: number}) =>
   (await axios.post<ChatMessage>(`/api/chats/${id}/messages`, body, auth())).data;
+// 💡 채팅 상대 프로필 (대화 참여자만): 닉네임·사진·쓴 글
+export interface ChatProfilePost {
+  id: number;
+  title: string;
+  kind: string; // 실종·제보: LOST / FOUND, 커뮤니티: 카테고리
+  status: "MISSING" | "COMPLETED" | null;
+  image: string | null;
+  createdAt: string | null;
+}
+export interface ChatProfile {
+  nickname: string;
+  image: string | null;
+  blocked: boolean;
+  missingPosts: ChatProfilePost[];
+  communityPosts: ChatProfilePost[];
+}
+export const fetchChatProfile = async (id: number) => (await axios.get<ChatProfile>(`/api/chats/${id}/profile`, auth())).data;
+
 export type ChatReportReason = "SPAM" | "ABUSE" | "FAKE" | "PRIVACY" | "ETC";
 export const chatReportReasons: {value: ChatReportReason; label: string}[] = [
   {value: "SPAM", label: "광고·스팸이에요"},

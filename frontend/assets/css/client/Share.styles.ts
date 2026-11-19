@@ -25,6 +25,9 @@ export const ShareSheetOverlay = styled.div`
 export const ShareSheet = styled.div`
   width: 100%;
   max-width: 480px;
+  max-height: calc(100dvh - 24px); /* 창이 낮아도 시트 안에서 스크롤해 닫기·제출 버튼까지 닿게 */
+  overflow-y: auto;
+  overscroll-behavior: contain;
   box-sizing: border-box;
   padding: 12px 20px calc(20px + env(safe-area-inset-bottom));
   border-radius: 18px 18px 0 0;

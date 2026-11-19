@@ -1,6 +1,7 @@
 package com.hbk.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 // 💡 채팅 주고받는 값들
 public final class ChatDtos {
@@ -28,6 +29,10 @@ public final class ChatDtos {
     public record SendRequest(String type, String content, Double lat, Double lng) {}
 
     public record OpenRequest(Long postId) {}
+
+    // 💡 채팅 상대 프로필 (대화 참여자만 볼 수 있음): 닉네임·사진·쓴 글 (연락처·이메일은 없음)
+    public record Profile(String nickname, String image, boolean blocked, List<ProfilePost> missingPosts, List<ProfilePost> communityPosts) {}
+    public record ProfilePost(Long id, String title, String kind, String status, String image, LocalDateTime createdAt) {}
 
     // 신고하기 (block = true 면 이 대화를 바로 차단)
     public record ReportRequest(String reason, String detail, Boolean block) {}

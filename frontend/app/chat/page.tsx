@@ -8,6 +8,7 @@ import { loginHref } from "@/app/components/loginLink";
 import { useScrollCollapse } from "@/app/components/useScrollCollapse";
 import { toImageUrl } from "../shelter/animalFormat";
 import { ChatRoom, chatTime, fetchChatRooms } from "./chatApi";
+import ChatAvatar from "./ChatAvatar";
 import * as S from "@/assets/css/Style.styles";
 
 const subscribeStorage = (onChange: () => void) => {
@@ -68,7 +69,7 @@ export default function ChatListPage() {
           return (
             <li key={room.id}>
               <S.ChatRow as={Link} href={`/chat/room/?id=${room.id}`}>
-                {thumb ? <S.ChatThumb src={thumb} alt=""/> : <S.ChatThumbEmpty aria-hidden="true"><S.ChatPinIcon/></S.ChatThumbEmpty>}
+                <ChatAvatar image={room.otherImage} size={48}/>
                 <S.ChatRowBody>
                   <strong>{room.otherNickname}</strong>
                   <small>{chatTime(room.lastMessageAt)}</small>
@@ -76,6 +77,8 @@ export default function ChatListPage() {
                   <em>{room.postType === "FOUND" ? "목격" : "실종"} · {room.postTitle}{room.postStatus === "COMPLETED" ? " · 찾았어요" : ""}</em>
                 </S.ChatRowBody>
                 {room.unread > 0 && <S.ChatUnread aria-label={`안 읽은 메시지 ${room.unread}개`}>{room.unread > 99 ? "99+" : room.unread}</S.ChatUnread>}
+                {/* 어떤 글로 시작한 대화인지 (글 사진) */}
+                {thumb ? <S.ChatThumb src={thumb} alt=""/> : <S.ChatThumbEmpty aria-hidden="true"><S.ChatPinIcon/></S.ChatThumbEmpty>}
               </S.ChatRow>
             </li>
           );

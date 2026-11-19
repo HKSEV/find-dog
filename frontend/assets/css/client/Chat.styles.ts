@@ -1,6 +1,6 @@
 "use client";
 
-import { SendRounded as SendIcon, PlaceOutlined as PinIcon, ChatBubbleOutlineRounded as ChatIcon, OutlinedFlagRounded as FlagIcon } from "@mui/icons-material";
+import { SendRounded as SendIcon, PlaceOutlined as PinIcon, ChatBubbleOutlineRounded as ChatIcon, OutlinedFlagRounded as FlagIcon, PersonRounded as PersonIcon } from "@mui/icons-material";
 import styled from "styled-components";
 import { colors, fontWeight } from "./theme";
 
@@ -22,11 +22,12 @@ export const ChatRow = styled.a`
   text-decoration: none;
 `;
 
+// 목록 오른쪽: 어떤 글로 시작한 대화인지 글 사진
 export const ChatThumb = styled.img`
   flex: none;
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
   object-fit: cover;
   background-color: ${colors.bgSubtle};
 `;
@@ -36,9 +37,9 @@ export const ChatThumbEmpty = styled.span`
   flex: none;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
   background-color: ${colors.bgSubtle};
   color: ${colors.gray400};
 `;
@@ -413,4 +414,160 @@ export const ChatClosedBar = styled.div`
   text-align: center;
   color: ${colors.gray500};
   transform: translateX(-50%);
+`;
+
+// 💡 프로필 사진 (없으면 사람 아이콘)
+export const ChatAvatar = styled.span<{$size: number}>`
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: ${({$size}) => $size}px;
+  height: ${({$size}) => $size}px;
+  overflow: hidden;
+  border-radius: 999px;
+  background-color: ${colors.bgMuted};
+  color: ${colors.white};
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  svg {
+    font-size: ${({$size}) => Math.round($size * 0.6)}px;
+  }
+`;
+
+export const ChatAvatarIcon = styled(PersonIcon)``;
+
+// 상대 말풍선 왼쪽 프로필 자리 (연속 메시지는 빈 자리)
+export const ChatBubbleAvatar = styled.a`
+  flex: none;
+  align-self: flex-start;
+  width: 32px;
+  text-decoration: none;
+`;
+
+// 대화 맨 위: 누구와, 어떤 글로 시작한 대화인지
+export const ChatStartCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 12px;
+  text-align: center;
+
+  strong {
+    margin-top: 4px;
+    font-size: 16px;
+    font-weight: ${fontWeight.semibold};
+    color: ${colors.gray900};
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: ${colors.gray500};
+  }
+
+  b {
+    font-weight: ${fontWeight.semibold};
+    color: ${colors.gray800};
+  }
+
+  a[data-pill] {
+    margin-top: 4px;
+    padding: 6px 14px;
+    border: 1px solid ${colors.border};
+    border-radius: 999px;
+    font-size: 13px;
+    color: ${colors.gray800};
+    text-decoration: none;
+  }
+`;
+
+// ---- 채팅 상대 프로필 ----
+export const ChatProfileHead = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 20px 20px;
+  border-bottom: 8px solid ${colors.bgLight};
+
+  strong {
+    font-size: 18px;
+    font-weight: ${fontWeight.bold};
+    color: ${colors.gray900};
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: ${colors.gray500};
+  }
+`;
+
+export const ChatProfileSection = styled.section`
+  padding: 20px 20px 4px;
+
+  h2 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: ${fontWeight.semibold};
+    color: ${colors.gray900};
+  }
+
+  h2 span {
+    margin-left: 4px;
+    color: ${colors.brand};
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  & > p {
+    margin: 12px 0 16px;
+    font-size: 14px;
+    color: ${colors.gray400};
+  }
+
+  &:last-of-type {
+    padding-bottom: 40px;
+  }
+`;
+
+export const ChatProfilePost = styled.a`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid ${colors.border};
+  color: ${colors.gray900};
+  text-decoration: none;
+
+  div {
+    flex: 1;
+    min-width: 0;
+  }
+
+  strong {
+    display: block;
+    overflow: hidden;
+    font-size: 15px;
+    font-weight: ${fontWeight.medium};
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  small {
+    font-size: 12px;
+    color: ${colors.gray400};
+  }
 `;

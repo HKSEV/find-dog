@@ -56,6 +56,12 @@ public class ChatController {
         return chatService.send(id, request, email(principal));
     }
 
+    // GET /api/chats/{id}/profile : 대화 상대 프로필
+    @GetMapping("/{id}/profile")
+    public ChatDtos.Profile profile(@PathVariable Long id, Principal principal){
+        return chatService.otherProfile(id, email(principal));
+    }
+
     // POST /api/chats/{id}/report {reason, detail, block}
     @PostMapping("/{id}/report")
     public Map<String, String> report(@PathVariable Long id, @RequestBody ChatDtos.ReportRequest request, Principal principal){

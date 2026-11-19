@@ -34,6 +34,7 @@ public class ChatService {
     private final MemberRepository memberRepository;
     private final MissingPostRepository postRepository;
     private final com.hbk.repository.ChatReportRepository reportRepository;
+    private final com.hbk.repository.CommunityPostRepository communityPostRepository;
 
     private static final java.util.Set<String> REASONS = java.util.Set.of("SPAM", "ABUSE", "FAKE", "PRIVACY", "ETC");
 
@@ -117,6 +118,29 @@ public class ChatService {
     public long unreadTotal(String email){
         Member me = member(email);
         return roomRepository.findMine(me.getId()).stream().mapToLong(room -> unread(room, me)).sum();
+    }
+
+    // 💡 채팅 상대 프로필: 대화 참여자만, 상대가 쓴 실종·제보 글과 커뮤니티 글 (최근 20개씩)
+    @Transactional(readOnly = true)
+    public ChatDtos.Profile otherProfile(Long roomId, String email){
+        Member me = member(email);
+        ChatRoom room = participantRoom(roomId, me);
+        Member other = room.getOwner().getId().equals(me.getId()) ? room.getGuest() : room.getOwner();
+        List<ChatDtos.ProfilePost> missing = other.getEmail() == null ? List.of() : postRepository.findByAuthorEmailOrderByIdDesc(other.getEmail()).stream()
+                .limit(20)
+                .map(post -> new ChatDtos.ProfilePost(post.getId(), postTitle(post),
+                        post.getType() != null ? post.getType().name() : PostType.LOST.name(),
+                        post.getStatus() != null ? post.getStatus().name() : null,
+                        post.getMediaUrls() == null || post.getMediaUrls().isEmpty() ? null : post.getMediaUrls().get(0),
+                        post.getCreatedAt()))
+                .toList();
+        List<ChatDtos.ProfilePost> community = other.getEmail() == null ? List.of() : communityPostRepository.findByAuthorEmailOrderByIdDesc(other.getEmail()).stream()
+                .limit(20)
+                .map(post -> new ChatDtos.ProfilePost(post.getId(), post.getTitle(), post.getCategory().name(), null,
+                        post.getMediaUrls() == null || post.getMediaUrls().isEmpty() ? null : post.getMediaUrls().get(0),
+                        post.getCreatedAt()))
+                .toList();
+        return new ChatDtos.Profile(other.getNickname(), other.getProfileImageUrl(), room.isBlocked(), missing, community);
     }
 
     // 💡 신고하기: 같은 사람이 다시 신고하면 사유·내용만 바꾸고 다시 "처리 전"으로

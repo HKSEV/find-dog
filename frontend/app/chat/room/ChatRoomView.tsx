@@ -12,6 +12,7 @@ import { useImeSafeSubmit } from "@/app/components/imeSafeSubmit";
 import { toImageUrl } from "../../shelter/animalFormat";
 import { ChatMessage, ChatRoom, chatTime, fetchChatMessages, fetchChatRoom, sendChatMessage, toChatError } from "../chatApi";
 import ChatReportSheet from "./ChatReportSheet";
+import ChatAvatar from "../ChatAvatar";
 import * as S from "@/assets/css/Style.styles";
 
 const POLL_MS = 3000; // 새 메시지 확인 간격
@@ -128,6 +129,8 @@ export default function ChatRoomView({id}: {id: number}) {
   };
 
   const thumb = toImageUrl(room.postImage ?? undefined);
+  const postKind = room.postType === "FOUND" ? "목격 제보" : "실종 신고";
+  const profileHref = `/chat/profile/?id=${room.id}`;
 
   return (
     <S.AppWrapper>
@@ -141,30 +144,52 @@ export default function ChatRoomView({id}: {id: number}) {
           {thumb ? <img src={thumb} alt=""/> : <span data-empty aria-hidden="true"/>}
           <div>
             <strong>{room.postTitle}</strong>
-            <small>{room.postType === "FOUND" ? "목격 제보" : "실종 신고"}{room.postStatus === "COMPLETED" ? " · 찾았어요" : ""}{room.iAmOwner ? " · 내 글" : ""}</small>
+            {/* 누가 어떤 글을 보고 연락했는지 */}
+            <small>{room.iAmOwner ? `${room.otherNickname}님이 내 글을 보고 연락했어요` : "이 글을 보고 연락했어요"} · {postKind}{room.postStatus === "COMPLETED" ? " · 찾았어요" : ""}</small>
           </div>
           <S.MapCardChevron aria-hidden="true"/>
         </S.ChatPostCard>
 
         <S.ChatMessages>
+          {/* 대화 맨 위: 상대 프로필 + 어떤 글로 시작했는지 */}
+          <S.ChatStartCard>
+            <Link href={profileHref} aria-label={`${room.otherNickname}님 프로필 보기`}>
+              <ChatAvatar image={room.otherImage} size={56}/>
+            </Link>
+            <strong>{room.otherNickname}</strong>
+            <p>
+              {room.iAmOwner ? `${room.otherNickname}님이 내 ` : "내가 "}
+              <b>{room.postTitle}</b> {postKind} 글을 보고<br/>시작한 대화예요
+            </p>
+            <Link href={profileHref} data-pill>프로필 보기</Link>
+          </S.ChatStartCard>
           <S.ChatNotice>전화번호 없이 대화해요. 연락처는 꼭 필요할 때만 알려 주세요.</S.ChatNotice>
-          {messages.map((message) => (
-            <S.ChatBubbleRow key={message.id} $mine={message.mine}>
-              {message.type === "LOCATION" && message.lat != null && message.lng != null ? (
-                <S.ChatLocation
-                $mine={message.mine}
-                href={kakaoMapLink(message.content || "알려준 위치", {lat: message.lat, lng: message.lng})}
-                target="_blank"
-                rel="noopener noreferrer">
-                  <div><S.ChatPinIcon aria-hidden="true"/></div>
-                  <p>{message.content || "위치를 보냈어요"}<small>카카오맵에서 보기 ›</small></p>
-                </S.ChatLocation>
-              ) : (
-                <S.ChatBubble $mine={message.mine}>{message.content}</S.ChatBubble>
-              )}
-              <time dateTime={message.createdAt}>{chatTime(message.createdAt)}</time>
-            </S.ChatBubbleRow>
-          ))}
+          {messages.map((message, index) => {
+            // 상대 메시지: 연속된 메시지 중 첫 번째에만 프로필 사진
+            const firstOfGroup = index === 0 || messages[index - 1].mine;
+            return (
+              <S.ChatBubbleRow key={message.id} $mine={message.mine}>
+                {!message.mine && (firstOfGroup ? (
+                  <S.ChatBubbleAvatar as={Link} href={profileHref} aria-label={`${room.otherNickname}님 프로필 보기`}>
+                    <ChatAvatar image={room.otherImage} size={32}/>
+                  </S.ChatBubbleAvatar>
+                ) : <S.ChatBubbleAvatar as="span" aria-hidden="true"/>)}
+                {message.type === "LOCATION" && message.lat != null && message.lng != null ? (
+                  <S.ChatLocation
+                  $mine={message.mine}
+                  href={kakaoMapLink(message.content || "알려준 위치", {lat: message.lat, lng: message.lng})}
+                  target="_blank"
+                  rel="noopener noreferrer">
+                    <div><S.ChatPinIcon aria-hidden="true"/></div>
+                    <p>{message.content || "위치를 보냈어요"}<small>카카오맵에서 보기 ›</small></p>
+                  </S.ChatLocation>
+                ) : (
+                  <S.ChatBubble $mine={message.mine}>{message.content}</S.ChatBubble>
+                )}
+                <time dateTime={message.createdAt}>{chatTime(message.createdAt)}</time>
+              </S.ChatBubbleRow>
+            );
+          })}
           <div ref={bottomRef}/>
         </S.ChatMessages>
 
