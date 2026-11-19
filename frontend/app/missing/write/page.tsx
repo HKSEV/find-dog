@@ -406,7 +406,7 @@ function MissingWriteForm() {
       {!editId && <DemoNotice/>}
 
       <S.WriteBar>
-        {errors.submit ? <S.WriteError as="p">{errors.submit}</S.WriteError> : <p>로그인한 회원에게 내 휴대폰으로 연락하는 버튼이 보여요. 직접 찍었거나 써도 되는 사진만 올려 주세요.</p>}
+        {errors.submit ? <S.WriteError as="p">{errors.submit}</S.WriteError> : <p>번호는 보이지 않고, 본 사람은 채팅으로 연락해요. 직접 찍었거나 써도 되는 사진만 올려 주세요.</p>}
         <S.WriteSubmit type="submit" disabled={submitting} {...imeSafeSubmit}>
           {submitting ? (editId ? "고치는 중..." : "등록하는 중...") : (editId ? "고치기" : "등록하기")}
         </S.WriteSubmit>

@@ -21,3 +21,4 @@ export * from "./Flyer.styles";
 export * from "./MapExplore.styles";
 export * from "./ScrollHeader.styles";
 export * from "./Area.styles";
+export * from "./Chat.styles";

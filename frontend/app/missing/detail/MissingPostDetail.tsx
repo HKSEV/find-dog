@@ -21,6 +21,7 @@ import { loginHref } from "@/app/components/loginLink";
 import { completeMissingPost, deleteMissingPost, fetchNearbyPosts, toMissingError } from "../missingApi";
 import * as S from "@/assets/css/Style.styles";
 import MissingRowLines from "../MissingRowLines";
+import { openChat, toChatError } from "../../chat/chatApi";
 
 export default function MissingPostDetail({id}: {id: number}) {
   const router = useRouter();
@@ -33,6 +34,19 @@ export default function MissingPostDetail({id}: {id: number}) {
   const [confirm, setConfirm] = useState<"complete" | "delete" | null>(null); // 한 번 더 묻는 중인 일
   const [busy, setBusy] = useState(false);
   const [sharing, setSharing] = useState(false); // 공유 시트 열림
+  const [openingChat, setOpeningChat] = useState(false);
+
+  // 채팅하기: 이 글의 대화방을 열고(있으면 그 방) 채팅방으로
+  const startChat = async () => {
+    setOpeningChat(true);
+    try {
+      const room = await openChat(id);
+      router.push(`/chat/room/?id=${room.id}`);
+    } catch (error) {
+      showToast(toChatError(error, "대화방을 열지 못했어요. 잠시 후 다시 시도해 주세요."));
+      setOpeningChat(false);
+    };
+  };
   const [nearby, setNearby] = useState<{id: number; posts: MissingAnimal[]} | null>(null); // 근처 목격·실종 글
 
   useEffect(() => {
@@ -247,17 +261,13 @@ export default function MissingPostDetail({id}: {id: number}) {
         {/* 💡 남의 글이고 찾는 중이면 아래에 연락 버튼 (번호는 로그인한 회원에게만 내려옴) */}
         {!post.mine && !done && (
           <S.DetailActionBar>
+            {/* 💡 전화번호 대신 앱 안 채팅으로 연락 (번호를 서로 알리지 않음) */}
             {!isLoggedIn ? (
-              <S.DetailApplyButton as={Link} href={loginHref(`/missing/detail/?id=${post.id}`)}>로그인하고 연락하기</S.DetailApplyButton>
-            ) : post.contactPhone ? (
-              <>
-                <S.MissingOwnerButton as="a" href={`sms:${post.contactPhone}`}>문자 보내기</S.MissingOwnerButton>
-                <S.DetailApplyButton as="a" href={`tel:${post.contactPhone}`}>
-                  {post.type === "FOUND" ? "제 아이 같아요, 전화하기" : "봤어요, 전화하기"}
-                </S.DetailApplyButton>
-              </>
+              <S.DetailApplyButton as={Link} href={loginHref(`/missing/detail/?id=${post.id}`)}>로그인하고 채팅하기</S.DetailApplyButton>
             ) : (
-              <S.DetailApplyButton type="button" disabled>작성자 연락처가 없어요</S.DetailApplyButton>
+              <S.DetailApplyButton type="button" disabled={openingChat} onClick={startChat}>
+                {openingChat ? "대화방 여는 중..." : post.type === "FOUND" ? "제 아이 같아요, 채팅하기" : "봤어요, 채팅하기"}
+              </S.DetailApplyButton>
             )}
           </S.DetailActionBar>
         )}

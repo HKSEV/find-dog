@@ -31,6 +31,8 @@ public class MissingPostService {
 
     private final MissingPostRepository missingPostRepository;
     private final MemberRepository memberRepository;
+    private final com.hbk.repository.ChatRoomRepository chatRoomRepository;
+    private final com.hbk.repository.ChatMessageRepository chatMessageRepository;
 
     public static final int MAX_PHOTOS = 5;
 
@@ -44,7 +46,9 @@ public class MissingPostService {
 
     @Transactional
     public void deleteByAdmin(Long id) {
-        missingPostRepository.delete(findPost(id));
+        MissingPost target = findPost(id);
+        deleteChats(target.getId());
+        missingPostRepository.delete(target);
     }
 
     // 실종 신고글 작성 (DTO, 사진 여러 장, 유저 이메일 수신)
@@ -167,9 +171,9 @@ public class MissingPostService {
     public MissingPostResponseDto getPost(Long id, String viewerEmail){
         MissingPost post = findPost(id);
         boolean mine = isAuthor(post, viewerEmail);
+        // 💡 전화번호는 더 이상 내려주지 않음 (채팅으로 연락). contactPhoneFor 는 다시 쓸 때를 위해 남겨 둠
         return new MissingPostResponseDto(post)
-                .markMine(mine)
-                .withContactPhone(contactPhoneFor(post, viewerEmail, mine));
+                .markMine(mine);
     }
 
     // 💡 근처 글: 실종 글이면 근처 목격 제보, 목격 글이면 근처 실종 신고
@@ -240,6 +244,12 @@ public class MissingPostService {
         return value == null || value.isBlank();
     }
 
+    // 글에 딸린 채팅(메시지 -> 대화방 순서로) 지우기
+    private void deleteChats(Long postId){
+        chatMessageRepository.deleteByPostId(postId);
+        chatRoomRepository.deleteByPostId(postId);
+    }
+
     // 이름은 앞뒤 공백을 빼고 30자까지 (비어 있으면 저장 안 함)
     private static String petName(String value){
         if (value == null || value.isBlank()) return null;
@@ -300,6 +310,7 @@ public class MissingPostService {
         MissingPost post = findPost(id);
         requireAuthor(post, username, "삭제");
 
+        deleteChats(post.getId());
         missingPostRepository.delete(post);
     }
 

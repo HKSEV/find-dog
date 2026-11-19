@@ -61,3 +61,27 @@ export const NavItem = styled.div<NavItemProps>`
     font-weight: ${(props) => (props.$active ? "700" : "400")};
   }
 `;
+
+// 탭 아이콘 + 오른쪽 위 빨간 숫자 (안 읽은 채팅)
+export const NavIconWrap = styled.span`
+  position: relative;
+  display: inline-flex;
+`;
+
+export const NavBadge = styled.span`
+  position: absolute;
+  top: -4px;
+  right: -10px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border: 1.5px solid #FFF;
+  border-radius: 999px;
+  background-color: #DC3545;
+  font-size: 9px !important;
+  font-weight: 600;
+  line-height: 13px;
+  color: #FFF;
+  text-align: center;
+`;
