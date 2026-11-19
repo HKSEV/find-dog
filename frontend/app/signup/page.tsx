@@ -96,10 +96,10 @@ export default function SignupPage() {
     setIsOpenPostcode(false);
   };
 
-  const isAllAgreed = formData.agreeTerms && formData.agreePrivacy && formData.agreeAge && formData.marketingAgreed;
+  const isAllAgreed = formData.agreeTerms && formData.agreePrivacy && formData.agreeOverseas && formData.agreeAge && formData.marketingAgreed;
 
   const goNextFromAgree = () => {
-    if (!formData.agreeTerms || !formData.agreePrivacy || !formData.agreeAge) {
+    if (!formData.agreeTerms || !formData.agreePrivacy || !formData.agreeOverseas || !formData.agreeAge) {
       setAgreeError("필수 약관에 모두 동의해 주세요.");
       return;
     };

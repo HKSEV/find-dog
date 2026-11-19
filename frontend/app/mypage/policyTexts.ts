@@ -6,6 +6,18 @@ export const POLICY_EFFECTIVE_DATE = "2026년 11월 18일";
 // 문의받을 곳 (운영자 이메일이 정해지면 여기만 바꾸면 됨)
 export const POLICY_CONTACT = "contact@example.com";
 
+// 개인정보 국외 이전 (서버·DB를 Render 에 둠). 서버 지역을 바꾸면 country 를 같이 바꿔야 함
+//    Render 대시보드 > 서비스 > Settings > Region (Oregon·Ohio·Virginia = 미국, Frankfurt = 독일, Singapore = 싱가포르)
+export const OVERSEAS = {
+  company: "Render Services, Inc.",
+  country: "미국",
+  contact: "render.com/privacy",
+  items: "회원 정보(이메일, 비밀번호 암호화 값, 이름, 휴대폰 번호, 닉네임, 주소), 실종·목격 글과 사진, 입양·봉사 신청 내용, 접속 기록",
+  purpose: "서비스 서버 운영과 데이터 보관",
+  when: "회원가입·글쓰기·신청 등 정보를 입력할 때마다 인터넷(암호화된 연결)으로 전송",
+  period: "회원 탈퇴 또는 위탁 계약이 끝날 때까지"
+};
+
 export interface PolicySection {
   title: string;
   body: string;
@@ -61,7 +73,17 @@ export const privacySections: PolicySection[] = [
   },
   {
     title: "4. 맡기는 일 (처리 위탁·국외 이전)",
-    body: "· Render Services, Inc. (미국): 서버 운영과 데이터 보관 - 회원가입 때 모은 정보를 포함해 서비스 데이터 전체가 인터넷으로 옮겨져 보관돼요.\n· 카카오: 카카오 로그인, 지도, 카카오톡 공유\n· 웹 호스팅(heartbreakkid.co.kr): 화면 파일 제공 (개인정보는 보관하지 않음)"
+    body: `[국외 이전]
+· 이전받는 곳: ${OVERSEAS.company} (${OVERSEAS.country}, ${OVERSEAS.contact})
+· 이전하는 항목: ${OVERSEAS.items}
+· 이전 목적: ${OVERSEAS.purpose}
+· 이전 시기와 방법: ${OVERSEAS.when}
+· 보유·이용 기간: ${OVERSEAS.period}
+· 국외 이전을 원하지 않으면 동의하지 않을 수 있지만, 서비스 데이터가 이 서버에만 보관돼서 회원가입과 서비스 이용을 할 수 없어요.
+
+[처리 위탁]
+· 카카오: 카카오 로그인, 지도, 카카오톡 공유
+· 웹 호스팅(heartbreakkid.co.kr): 화면 파일 제공 (개인정보는 보관하지 않음)`
   },
   {
     title: "5. 이 기기에 저장하는 정보",
@@ -87,6 +109,16 @@ export const signupTermsSummary =
 
 export const signupPrivacySummary =
   "· 모으는 항목: 이메일, 비밀번호, 이름, 휴대폰 번호, 닉네임, 주소(선택) (카카오 가입은 카카오 회원번호, 닉네임, 프로필 사진)\n· 이유: 회원 확인, 실종·입양·봉사 관련 연락\n· 보관 기간: 탈퇴할 때까지\n· 동의하지 않을 수 있지만, 동의하지 않으면 회원가입을 할 수 없어요.\n\n전문은 마이 > 개인정보처리방침에서 볼 수 있어요.";
+
+export const signupOverseasSummary =
+  `· 이전받는 곳: ${OVERSEAS.company} (${OVERSEAS.country})
+· 항목: ${OVERSEAS.items}
+· 목적: ${OVERSEAS.purpose}
+· 시기와 방법: ${OVERSEAS.when}
+· 보유 기간: ${OVERSEAS.period}
+· 동의하지 않을 수 있지만, 동의하지 않으면 회원가입을 할 수 없어요.
+
+자세한 내용은 마이 > 개인정보처리방침에서 볼 수 있어요.`;
 
 export const signupMarketingSummary =
   "새 보호 동물, 봉사 모집 같은 소식을 메일·문자로 보내요. 동의하지 않아도 서비스를 모두 쓸 수 있고, 언제든 그만 받을 수 있어요.";

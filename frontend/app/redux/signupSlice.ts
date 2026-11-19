@@ -8,6 +8,7 @@ export interface SignupState {
   formData: {
     agreeTerms: boolean;
     agreePrivacy: boolean;
+    agreeOverseas: boolean; // 개인정보 국외 이전 (필수)
     agreeAge: boolean;
     marketingAgreed: boolean;
     email: string;
@@ -29,6 +30,7 @@ const initialState: SignupState = {
   formData: {
     agreeTerms: false,
     agreePrivacy: false,
+    agreeOverseas: false,
     agreeAge: false,
     marketingAgreed: false,
     email: "",
@@ -119,6 +121,7 @@ export const signupSlice = createSlice({
       const isChecked = action.payload;
       state.formData.agreeTerms = isChecked;
       state.formData.agreePrivacy = isChecked;
+      state.formData.agreeOverseas = isChecked;
       state.formData.agreeAge = isChecked;
       state.formData.marketingAgreed = isChecked;
     }

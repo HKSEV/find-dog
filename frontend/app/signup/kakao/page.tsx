@@ -13,7 +13,7 @@ import Header from "../../components/Header";
 import { agreements, Check } from "../signupParts";
 import * as S from "@/assets/css/Style.styles";
 
-type Agree = "agreeTerms" | "agreePrivacy" | "agreeAge" | "marketingAgreed";
+type Agree = "agreeTerms" | "agreePrivacy" | "agreeOverseas" | "agreeAge" | "marketingAgreed";
 type Field = "nickname" | "name" | "phone";
 
 const userTypes = [{label: "일반 회원", value: "GENERAL"}, {label: "업체 (보호소·병원 등)", value: "BUSINESS"}];
@@ -27,7 +27,7 @@ export default function KakaoSignupPage() {
   const dispatch = useDispatch<AppDispatch>();
 
   const [pending, setPending] = useState<KakaoPending | null>(null);
-  const [agree, setAgree] = useState<Record<Agree, boolean>>({agreeTerms: false, agreePrivacy: false, agreeAge: false, marketingAgreed: false});
+  const [agree, setAgree] = useState<Record<Agree, boolean>>({agreeTerms: false, agreePrivacy: false, agreeOverseas: false, agreeAge: false, marketingAgreed: false});
   const [openTerms, setOpenTerms] = useState<Agree | null>(null);
   const [form, setForm] = useState({userType: "GENERAL", nickname: "", name: "", phone: ""});
   const [errors, setErrors] = useState<Partial<Record<Field | "agree", string>>>({});
@@ -66,7 +66,7 @@ export default function KakaoSignupPage() {
     const next: Partial<Record<Field | "agree", string>> = {};
     const nickname = form.nickname.trim();
     const phone = form.phone.replace(/-/g, "");
-    if (!agree.agreeTerms || !agree.agreePrivacy || !agree.agreeAge) next.agree = "필수 약관에 모두 동의해 주세요.";
+    if (!agree.agreeTerms || !agree.agreePrivacy || !agree.agreeOverseas || !agree.agreeAge) next.agree = "필수 약관에 모두 동의해 주세요.";
     if (!form.name.trim()) next.name = "이름을 적어 주세요.";
     if (!/^\d{9,11}$/.test(phone)) next.phone = "휴대폰 번호를 숫자로 적어 주세요.";
     if (!nickname) next.nickname = "닉네임을 적어 주세요.";
@@ -138,7 +138,7 @@ export default function KakaoSignupPage() {
               checked={allAgreed}
               label="모두 동의해요"
               onChange={(value) => {
-                setAgree({agreeTerms: value, agreePrivacy: value, agreeAge: value, marketingAgreed: value});
+                setAgree({agreeTerms: value, agreePrivacy: value, agreeOverseas: value, agreeAge: value, marketingAgreed: value});
                 setErrors((prev) => ({...prev, agree: undefined}));
               }}/>
               모두 동의해요
