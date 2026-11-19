@@ -10,7 +10,7 @@ export const POLICY_CONTACT = "contact@example.com";
 //    Render 대시보드 > 서비스 > Settings > Region (Oregon·Ohio·Virginia = 미국, Frankfurt = 독일, Singapore = 싱가포르)
 export const OVERSEAS = {
   company: "Render Services, Inc.",
-  country: "미국",
+  country: "싱가포르",
   contact: "render.com/privacy",
   items: "회원 정보(이메일, 비밀번호 암호화 값, 이름, 휴대폰 번호, 닉네임, 주소), 실종·목격 글과 사진, 입양·봉사 신청 내용, 접속 기록",
   purpose: "서비스 서버 운영과 데이터 보관",
