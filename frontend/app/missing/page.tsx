@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
-import { fetchMissingAnimals } from "../redux/missingSlice";
+import { fetchMissingAnimals, type MissingAnimal } from "../redux/missingSlice";
 import { setActiveTab } from "../redux/shelterSlice";
 import { toImageUrl } from "../shelter/animalFormat";
 import { missingBadge, timeAgo, formatWhen } from "./missingFormat";
@@ -14,6 +14,8 @@ import Footer from "@/app/components/Footer";
 import { useScrollCollapse } from "@/app/components/useScrollCollapse";
 import * as S from "@/assets/css/Style.styles";
 import MissingRowLines from "./MissingRowLines";
+import AreaSheet from "@/app/components/AreaSheet";
+import { distanceKm, formatDistance, useMyArea } from "@/lib/myArea";
 
 // 💡 글 종류 탭 (시안 기준: 전체 / 실종 / 목격)
 const typeTabs = [
@@ -58,8 +60,15 @@ export default function MissingReportPage() {
     dispatch(fetchMissingAnimals({type: pickedType, status: onlySearching ? "MISSING" : undefined, keyword: keyword || undefined}));
   }, [dispatch, pickedType, onlySearching, keyword]);
 
-  // 서버가 최신순(id 큰 순)으로 거른 결과를 줌
-  const posts = animalList;
+  // 💡 정렬: 최신순(서버 순서) / 가까운 순(내 동네 기준, 지도 장소가 없는 글은 뒤로)
+  const area = useMyArea();
+  const [sortNear, setSortNear] = useState(false);
+  const [areaOpen, setAreaOpen] = useState(false);
+  const nearOf = (post: MissingAnimal) =>
+    area && post.lat != null && post.lng != null ? distanceKm(area, {lat: post.lat, lng: post.lng}) : null;
+  const posts = sortNear && area
+    ? [...animalList].sort((a, b) => (nearOf(a) ?? Infinity) - (nearOf(b) ?? Infinity))
+    : animalList;
   const lastId = animalList.length > 0 ? animalList[animalList.length - 1].id : undefined;
 
   return (
@@ -136,8 +145,27 @@ export default function MissingReportPage() {
             <input type="checkbox" checked={onlySearching} onChange={(e) => setOnlySearching(e.target.checked)}/>
             찾는 중인 글만
           </S.MissingOnlyToggle>
-          <span>최신순</span>
+          <S.SortToggle role="group" aria-label="정렬">
+            <button type="button" aria-pressed={!sortNear} onClick={() => setSortNear(false)}>최신순</button>
+            <button
+            type="button"
+            aria-pressed={sortNear && Boolean(area)}
+            onClick={() => {
+              setSortNear(true);
+              if (!area) setAreaOpen(true); // 내 동네가 없으면 먼저 고르게
+            }}>
+              가까운 순
+            </button>
+          </S.SortToggle>
         </S.MissingToolbar>
+
+        {/* 내 동네 기준 (거리 표시·가까운 순) */}
+        <S.AreaBasis>
+          <S.AreaChip type="button" onClick={() => setAreaOpen(true)}>
+            <S.AreaPinIcon aria-hidden="true"/>{area ? area.label : "내 동네 설정"}<S.AreaDownIcon aria-hidden="true"/>
+          </S.AreaChip>
+          {area ? "기준으로 거리를 보여줘요" : "동네를 고르면 거리와 가까운 순을 볼 수 있어요"}
+        </S.AreaBasis>
 
         {pickedType !== "FOUND" && (
         <S.MissingShelterHint as={Link} href="/shelter" onClick={() => dispatch(setActiveTab("입양"))}>
@@ -163,7 +191,8 @@ export default function MissingReportPage() {
               const done = post.status === "COMPLETED";
               const photo = toImageUrl(post.mediaUrls?.[0]);
               // 목격 글은 둘째 줄에 동네가 있으니 본 때를, 실종 글은 장소를
-              const meta = [post.type === "FOUND" ? formatWhen(post.occurredAt, post.occurredTime) : post.rescueLocation, timeAgo(post.createdAt), done ? "가족 품으로 돌아갔어요" : ""]
+              const near = nearOf(post);
+              const meta = [near != null ? formatDistance(near) : "", post.type === "FOUND" ? formatWhen(post.occurredAt, post.occurredTime) : post.rescueLocation, timeAgo(post.createdAt), done ? "가족 품으로 돌아갔어요" : ""]
                 .filter(Boolean)
                 .join(" · ");
               return (
@@ -201,6 +230,8 @@ export default function MissingReportPage() {
           <S.MissingWritePlus aria-hidden="true"/>
           <span>글쓰기</span>
         </S.MissingWriteFab>
+
+        {areaOpen && <AreaSheet current={area} onClose={() => setAreaOpen(false)}/>}
       </S.Container>
       <Footer/>
     </S.AppWrapper>

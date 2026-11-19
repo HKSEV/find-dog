@@ -12,6 +12,8 @@ import type { MissingAnimal } from "../redux/missingSlice";
 import type { Animal } from "../redux/shelterSlice";
 import type { VolunteerPost } from "../volunteer/volunteerApi";
 import * as S from "@/assets/css/Style.styles";
+import AreaSheet from "@/app/components/AreaSheet";
+import { distanceKm, formatDistance, useMyArea } from "@/lib/myArea";
 
 type Kind = keyof typeof S.MAP_PIN_COLORS;
 
@@ -100,6 +102,14 @@ function MapExplore() {
   const firstViewRef = useRef(filter); // 처음 지도 범위를 맞출 묶음 (칩을 바꿔도 다시 맞추지 않음)
   const listHref = startView === "missing" ? "/missing" : startView === "shelter" ? "/shelter" : null; // 헤더 "목록" 버튼
   const [selected, setSelected] = useState<Place | null>(null);
+  // 💡 내 동네: 처음엔 내 동네를 가운데로, 카드에 거리 표시, 지도에 "내 동네" 표시
+  const area = useMyArea();
+  const areaRef = useRef(area); // 마커를 처음 그릴 때 쓸 내 동네 (최신 값으로 맞춰 둠)
+  useEffect(() => {
+    areaRef.current = area;
+  }, [area]);
+  const [areaOpen, setAreaOpen] = useState(false);
+  const [mapReady, setMapReady] = useState(false);
   const [message, setMessage] = useState("불러오는 중이에요");
 
   // 지도와 데이터를 불러와서 마커 정보 만들기
@@ -110,6 +120,7 @@ function MapExplore() {
         const kakao = await loadKakaoMaps();
         if (!alive || !canvasRef.current) return;
         mapRef.current = new kakao.maps.Map(canvasRef.current, {center: new kakao.maps.LatLng(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng), level: 8});
+        setMapReady(true);
 
         const [missing, animals, volunteers] = await Promise.all([
           axios.get<MissingAnimal[]>("/api/missing-posts", {params: {size: 200, status: "MISSING"}}).then((r) => r.data).catch(() => []),
@@ -209,7 +220,11 @@ function MapExplore() {
     const firstKinds = kindsOf(firstViewRef.current);
     const firstBounds = new kakao.maps.LatLngBounds();
     places.filter((place) => firstKinds.includes(place.kind)).forEach((place) => firstBounds.extend(new kakao.maps.LatLng(place.lat, place.lng)));
-    if (!firstBounds.isEmpty()) map.setBounds(firstBounds, 60, 40, 120, 40);
+    if (areaRef.current) {
+      // 내 동네가 있으면 내 동네를 가운데로 (주변 2~3km가 보이는 정도)
+      map.setCenter(new kakao.maps.LatLng(areaRef.current.lat, areaRef.current.lng));
+      map.setLevel(6);
+    } else if (!firstBounds.isEmpty()) map.setBounds(firstBounds, 60, 40, 120, 40);
     else if (places.length > 0) map.setBounds(bounds, 60, 40, 120, 40);
 
     const close = () => setSelected(null);
@@ -229,6 +244,24 @@ function MapExplore() {
       element.classList.toggle("is-selected", selected?.key === place.key);
     });
   }, [filter, selected, places]);
+
+  // 내 동네 표시 (파란 점 + "내 동네"), 동네를 바꾸면 그쪽으로 이동
+  const firstAreaRef = useRef(true);
+  useEffect(() => {
+    const map = mapRef.current;
+    const kakao = typeof window !== "undefined" ? window.kakao : null;
+    if (!mapReady || !map || !kakao || !area) return;
+    const element = document.createElement("div");
+    element.className = "fd-area";
+    element.innerHTML = '<span class="fd-area-dot"></span><span class="fd-area-label"></span>';
+    (element.querySelector(".fd-area-label") as HTMLElement).textContent = area.label;
+    const position = new kakao.maps.LatLng(area.lat, area.lng);
+    const overlay = new kakao.maps.CustomOverlay({position, content: element, yAnchor: 0.5, zIndex: 0});
+    overlay.setMap(map);
+    if (!firstAreaRef.current) map.panTo(position); // 처음 위치는 마커를 그릴 때 맞춤
+    firstAreaRef.current = false;
+    return () => overlay.setMap(null);
+  }, [mapReady, area]);
 
   const counts = useMemo(() => {
     const result = {} as Record<View, number>;
@@ -256,6 +289,9 @@ function MapExplore() {
           <S.MapCanvas ref={canvasRef}/>
 
           <S.MapFilters role="radiogroup" aria-label="보여줄 종류">
+            <S.AreaChip type="button" onClick={() => setAreaOpen(true)}>
+              <S.AreaPinIcon aria-hidden="true"/>{area ? area.label : "내 동네"}<S.AreaDownIcon aria-hidden="true"/>
+            </S.AreaChip>
             {views.map((item) => (
               <S.MapFilterChip
               key={item.key}
@@ -282,12 +318,13 @@ function MapExplore() {
               <S.MapCardBody>
                 <small style={{backgroundColor: S.MAP_PIN_COLORS[visibleSelected.kind]}}>{kindLabel[visibleSelected.kind]}</small>
                 <strong>{visibleSelected.title}</strong>
-                <p>{visibleSelected.meta}</p>
+                <p>{[area ? formatDistance(distanceKm(area, visibleSelected)) : "", visibleSelected.meta].filter(Boolean).join(" · ")}</p>
               </S.MapCardBody>
               <S.MapCardChevron aria-hidden="true"/>
             </S.MapCard>
           )}
         </S.MapPage>
+        {areaOpen && <AreaSheet current={area} onClose={() => setAreaOpen(false)}/>}
       </S.Container>
     </S.AppWrapper>
   );

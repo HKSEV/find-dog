@@ -15,7 +15,7 @@ export const DetailShareIcon = styled(ShareIcon)`
 export const ShareSheetOverlay = styled.div`
   position: fixed;
   inset: 0;
-  z-index: 10003;
+  z-index: 1000000; /* 하단 탭(999999)보다 위에 */
   display: flex;
   align-items: flex-end;
   justify-content: center;

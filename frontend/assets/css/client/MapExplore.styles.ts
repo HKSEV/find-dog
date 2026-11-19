@@ -78,6 +78,34 @@ export const MapPinStyle = createGlobalStyle`
     transform: translateX(-50%);
   }
 
+  /* 내 동네 (파란 점 + 이름) */
+  .fd-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    pointer-events: none;
+  }
+
+  .fd-area-dot {
+    width: 14px;
+    height: 14px;
+    border: 3px solid ${colors.white};
+    border-radius: 999px;
+    background-color: #1a73e8;
+    box-shadow: 0 0 0 6px rgba(26, 115, 232, 0.2);
+  }
+
+  .fd-area-label {
+    padding: 1px 6px;
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.95);
+    font-size: 11px;
+    font-weight: ${fontWeight.semibold};
+    color: #1a73e8;
+    white-space: nowrap;
+  }
+
   .fd-pin.is-selected {
     z-index: 2;
     width: 60px;
