@@ -53,9 +53,10 @@ public class MissingPostController {
             @RequestParam(required = false) Long cursorId,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) PostType type,
-            @RequestParam(required = false) PostStatus status
+            @RequestParam(required = false) PostStatus status,
+            @RequestParam(required = false) String keyword // 검색어 (띄어쓰기로 여러 개: 모두 들어간 글만)
     ){
-        List<MissingPostResponseDto> posts = service.getPostByScroll(cursorId, size, type, status);
+        List<MissingPostResponseDto> posts = service.getPostByScroll(cursorId, size, type, status, keyword);
         return ResponseEntity.ok(posts);
     }
 

@@ -14,10 +14,11 @@ interface HeaderProps {
   isTab?: boolean; // 하단 탭 첫 화면 (입양·봉사, 실종·제보, 커뮤니티, 마이)
   isModal?: boolean; // 잠깐 띄운 작업 창 (로그인 등): 왼쪽에 닫기(X)
   onClose?: () => void; // 닫기(X)를 눌렀을 때. 서브 헤더에 주면 오른쪽에 X가 생김
+  hidden?: boolean; // 탭 헤더: true면 위로 숨김 (아래로 스크롤할 때, useScrollCollapse)
   action?: React.ReactNode; // 오른쪽 버튼 (예: 마이의 설정 톱니바퀴, 지도의 "목록"). 탭 헤더와 서브 페이지 헤더에서 씀
 }
 
-export default function Header({title, onBackClick, isMain, isTab, isModal, onClose, action}: HeaderProps) {
+export default function Header({title, onBackClick, isMain, isTab, isModal, onClose, action, hidden}: HeaderProps) {
   const router = useRouter(); // 💡 라우터 초기화
   const [hasUnread, setHasUnread] = useState(false); // 메인 헤더 종 아이콘 빨간 점
 
@@ -72,7 +73,9 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
   if (isTab) {
     return (
       <>
-        <S.Header>
+        <S.Header
+        aria-hidden={hidden || undefined}
+        style={{transform: hidden ? "translate(-50%, -100%)" : undefined, transition: "transform 0.2s"}}>
           <S.HeaderTabTitle>{title}</S.HeaderTabTitle>
           {action}
         </S.Header>

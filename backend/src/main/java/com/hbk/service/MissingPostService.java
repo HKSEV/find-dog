@@ -117,12 +117,38 @@ public class MissingPostService {
     }
 
     // 무한 스크롤 조회 (종류·상태로 거르기, null이면 전체)
-    public List<MissingPostResponseDto> getPostByScroll(Long cursorId, int size, PostType type, PostStatus status){
-        Pageable pageable = PageRequest.of(0, size);
-        List<MissingPost> posts = missingPostRepository.findByFilter(cursorId, type, status, pageable);
+    public List<MissingPostResponseDto> getPostByScroll(Long cursorId, int size, PostType type, PostStatus status, String keyword){
+        List<String> words = keyword == null ? List.of()
+                : java.util.Arrays.stream(keyword.trim().toLowerCase().split("\\s+")).filter(word -> !word.isEmpty()).toList();
+        if (words.isEmpty()) {
+            Pageable pageable = PageRequest.of(0, size);
+            return missingPostRepository.findByFilter(cursorId, type, status, pageable).stream()
+                    .map(MissingPostResponseDto::new)
+                    .collect(Collectors.toList());
+        }
 
-        return posts.stream().map(MissingPostResponseDto::new)
+        // 💡 검색: 이름·품종·털색·장소·제목·내용 중 어디에든 검색어가 모두 들어간 글 (예: "망원동 푸들")
+        //    글 수가 많지 않아 거른 목록을 받아서 서버에서 한 번 더 거름 (최신순, 커서는 그대로)
+        Pageable candidates = PageRequest.of(0, SEARCH_SCAN_LIMIT);
+        return missingPostRepository.findByFilter(cursorId, type, status, candidates).stream()
+                .filter(post -> matchesAll(post, words))
+                .limit(size)
+                .map(MissingPostResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    private static final int SEARCH_SCAN_LIMIT = 1000;
+
+    private static boolean matchesAll(MissingPost post, List<String> words){
+        String text = String.join(" ",
+                java.util.Objects.toString(post.getPetName(), ""),
+                java.util.Objects.toString(post.getBreed(), ""),
+                java.util.Objects.toString(post.getColor(), ""),
+                java.util.Objects.toString(post.getRescueLocation(), ""),
+                java.util.Objects.toString(post.getTitle(), ""),
+                java.util.Objects.toString(post.getContent(), ""),
+                java.util.Objects.toString(post.getGender(), "")).toLowerCase();
+        return words.stream().allMatch(text::contains);
     }
 
     // 내가 쓴 글 (마이 > 작성한 글)

@@ -186,17 +186,28 @@ export const MissingMoreButton = styled.button`
   }
 `;
 
-// 신고·제보하기 (하단 탭 위에 떠 있는 버튼, 화면 폭 480px 안쪽 오른쪽에 맞춤)
-export const MissingWriteFab = styled.button`
+// 글쓰기 (하단 탭 위에 떠 있는 버튼, 화면 폭 480px 안쪽 오른쪽에 맞춤)
+//    $compact: 아래로 스크롤하면 글자를 숨기고 + 동그라미로 줄어듦 (글자는 span 으로 감쌈)
+export const MissingWriteFab = styled.button<{$compact?: boolean}>`
   position: fixed;
   bottom: 76px;
   right: max(20px, calc(50% - 240px + 20px));
   z-index: 100;
   display: flex;
   align-items: center;
-  gap: 6px;
-  height: 50px;
-  padding: 0 20px;
+  justify-content: center;
+  gap: ${({$compact}) => ($compact ? "0" : "6px")};
+  min-width: 56px;
+  height: ${({$compact}) => ($compact ? "56px" : "50px")};
+  padding: ${({$compact}) => ($compact ? "0" : "0 20px")};
+  transition: height 0.2s, padding 0.2s;
+
+  span {
+    overflow: hidden;
+    max-width: ${({$compact}) => ($compact ? "0" : "80px")};
+    white-space: nowrap;
+    transition: max-width 0.2s;
+  }
   border: 0;
   border-radius: 999px;
   background-color: ${colors.brand};
@@ -210,7 +221,7 @@ export const MissingWriteFab = styled.button`
 
 export const MissingWritePlus = styled(PlusIcon)`
   && {
-    font-size: 20px;
+    font-size: 24px;
   }
 `;
 

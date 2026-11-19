@@ -66,6 +66,7 @@ export interface MissingListQuery {
   cursorId?: number; // 이 글보다 오래된 글을 이어서 가져옴
   type?: "LOST" | "FOUND"; // 실종 / 목격 (없으면 전체)
   status?: "MISSING" | "COMPLETED"; // 찾는 중 / 찾았어요 (없으면 전체)
+  keyword?: string; // 검색어 (이름·품종·털색·장소 등, 띄어쓰기로 여러 개)
 }
 
 // 실종/제보 목록 조회 (거르기는 서버에서)
