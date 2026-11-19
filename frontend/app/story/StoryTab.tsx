@@ -54,7 +54,7 @@ const VideoGrid = ({items}: {items: StoryVideo[]}) => (
 //    전체 = 회원 글 최신 + 보호소 소식 + 보호소 영상
 //    자유 이야기·입양 후기·구조 이야기·질문 = 그 말머리의 회원 글
 //    보호소 = 관리자 글 (도움이 필요해요, 입양 캠페인, 보호소 소식, 보호소 영상)
-export default function StoryTab() {
+export default function StoryTab({compact}: {compact?: boolean}) {
   const dispatch = useDispatch<AppDispatch>();
   const {category, videos, news, loading, error} = useSelector((state: RootState) => state.story);
   const memberCategory = categoryValue(category); // 회원 글 분류면 값, 아니면 undefined
@@ -211,9 +211,9 @@ export default function StoryTab() {
       {renderBody()}
 
       {/* 💡 실종·제보의 글쓰기 버튼과 같은 모양 (보고 있는 말머리로 바로 씀) */}
-      <S.MissingWriteFab as={Link} href={writeHref}>
+      <S.MissingWriteFab as={Link} href={writeHref} $compact={compact} aria-label="글쓰기">
         <S.MissingWritePlus aria-hidden="true"/>
-        글쓰기
+        <span>글쓰기</span>
       </S.MissingWriteFab>
     </>
   );
