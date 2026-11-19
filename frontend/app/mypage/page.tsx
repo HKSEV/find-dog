@@ -160,7 +160,7 @@ export default function MyPage() {
 
         </S.MyMenu>
         <S.MyCopyright>
-          {"© 2026 어서찾아주개 · 포트폴리오 프로젝트\n글꼴 Pretendard (SIL Open Font License 1.1) · 지도 ⓒ Kakao"}
+          {"© 2026 어서찾아주개\n글꼴 Pretendard (SIL Open Font License 1.1) · 지도 ⓒ Kakao"}
         </S.MyCopyright>
       </S.Container>
       <Footer/>

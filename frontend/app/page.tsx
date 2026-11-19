@@ -23,7 +23,6 @@ import SplashScreen from "./components/SplashScreen"; // 💡 스플래시 컴�
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import * as S from "@/assets/css/Style.styles";
-import DemoNotice from "@/app/components/DemoNotice";
 
 // 💡 홈 노출 개수
 const MISSING_COUNT = 2;
@@ -116,7 +115,6 @@ export default function HomePage() {
       <Header isMain={true}/>
       <S.Container>
         <S.HeaderOffset/>
-        <DemoNotice/>
 
         {/* 잃어버렸어요 / 발견했어요 */}
         <S.HomeEntryGrid>

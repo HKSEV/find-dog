@@ -3,7 +3,7 @@
 import styled from "styled-components";
 import { colors, fontWeight } from "./theme";
 
-// 💡 이용약관 · 개인정보처리방침 문서 화면, 데모 안내 띠, 마이 아래 저작권 표기
+// 💡 이용약관 · 개인정보처리방침 문서 화면, 실종 글쓰기 신고 안내 띠, 마이 아래 저작권 표기
 
 export const PolicyPage = styled.article`
   padding: 8px 20px 40px;
@@ -44,7 +44,7 @@ export const PolicyBody = styled.p`
   word-break: keep-all;
 `;
 
-// 홈·글쓰기 위에 보이는 "데모 사이트" 안내
+// 실종 글쓰기 위에 보이는 공식 신고처 안내
 export const DemoNotice = styled.p`
   margin: 0;
   padding: 10px 20px;
