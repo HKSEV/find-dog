@@ -51,7 +51,7 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
   };
 
   // 💡 1. 메인 페이지용 헤더
-  //    hidden(아래로 스크롤)이면 헤더는 위로 숨고 오른쪽 위에 둥근 알림 버튼만 남음
+  //    hidden(아래로 스크롤)이면 헤더가 위로 숨음 (알림 버튼도 같이 숨김)
   if (isMain) {
     const bellLabel = hasUnread ? "알림 (새 알림 있음)" : "알림";
     return (
@@ -69,13 +69,6 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
             </S.HeaderBell>
           </S.HeaderActions>
         </S.Header>
-
-        <S.FloatingHeaderActions $show={Boolean(hidden)} aria-hidden={!hidden}>
-          <S.FloatingRoundButton type="button" aria-label={bellLabel} tabIndex={hidden ? 0 : -1} onClick={() => router.push("/notifications")}>
-            <S.NotificationIcon/>
-            {hasUnread && <S.FloatingBadgeDot aria-hidden="true"/>}
-          </S.FloatingRoundButton>
-        </S.FloatingHeaderActions>
       </>
     );
   };

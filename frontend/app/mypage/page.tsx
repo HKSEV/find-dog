@@ -14,6 +14,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { loginHref } from "../components/loginLink";
 import * as S from "@/assets/css/Style.styles";
+import { useScrollCollapse } from "@/app/components/useScrollCollapse";
 
 // 💡 아직 화면이 없는 메뉴는 "준비 중"으로 표시 (누를 수 없음)
 const activityMenus = [
@@ -32,6 +33,7 @@ type Menu = {label: string; href?: string; needLogin?: boolean};
 
 export default function MyPage() {
   const dispatch = useDispatch<AppDispatch>();
+  const collapsed = useScrollCollapse(); // 💡 아래로 스크롤하면 헤더 숨김
   const {isLoggedIn, nickname, email} = useSelector((state: RootState) => state.user);
   const {animals} = useSelector((state: RootState) => state.shelter);
   const {isLiked} = useLikedAnimals();
@@ -89,6 +91,7 @@ export default function MyPage() {
       <Header
       title="마이페이지"
       isTab
+      hidden={collapsed}
       action={(
         // 💡 설정: 정보 수정, 로그아웃 (로그아웃은 실수로 누르지 않게 설정 안으로 옮김)
         <S.HeaderIconButton as={Link} href="/mypage/settings" $side="right" aria-label="설정">
