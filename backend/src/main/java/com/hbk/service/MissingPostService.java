@@ -58,6 +58,9 @@ public class MissingPostService {
         Member member = memberRepository.findByEmail(username)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 입니다"));
 
+        // 사진을 저장하기 전에 필수 항목부터 확인 (실패하면 사진이 남지 않게)
+        requireLostDetails(requestDto.getType() != null ? requestDto.getType() : PostType.LOST, requestDto);
+
         // 2. 사진을 서버에 저장하고 주소를 mediaUrls에 추가 (/uploads/... 는 WebMvcConfig가 내려줌)
         //    화면이 보낸 사진 주소는 받지 않음 (아무 주소나 글에 넣지 못하게)
         List<String> mediaUrls = new java.util.ArrayList<>();
@@ -225,6 +228,18 @@ public class MissingPostService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제됐거나 없는 글이에요."));
     }
 
+    // 실종(잃어버렸어요) 글은 이름·품종·털색·특징이 꼭 필요 (찾을 때 부르고 알아볼 수 있게). 목격 글은 선택
+    private static void requireLostDetails(PostType type, MissingPostRequestDto dto){
+        if (type == PostType.FOUND) return;
+        if (blank(dto.getPetName())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이름을 적어 주세요.");
+        if (blank(dto.getBreed())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "품종을 적어 주세요.");
+        if (blank(dto.getColor())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "털색·특징을 적어 주세요.");
+    }
+
+    private static boolean blank(String value){
+        return value == null || value.isBlank();
+    }
+
     // 이름은 앞뒤 공백을 빼고 30자까지 (비어 있으면 저장 안 함)
     private static String petName(String value){
         if (value == null || value.isBlank()) return null;
@@ -257,6 +272,7 @@ public class MissingPostService {
     public MissingPostResponseDto updatePost(Long id, MissingPostRequestDto requestDto, String username){
         MissingPost post = findPost(id);
         requireAuthor(post, username, "수정");
+        requireLostDetails(requestDto.getType() != null ? requestDto.getType() : post.getType(), requestDto);
 
         // 수정 내용 반영 (제목이 비면 기존 제목 유지, 사진은 그대로)
         if (requestDto.getTitle() != null && !requestDto.getTitle().isBlank()) {

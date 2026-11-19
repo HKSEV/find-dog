@@ -9,7 +9,7 @@ import { fetchMissingPost, MissingAnimal } from "../../redux/missingSlice";
 import { setActiveTab } from "../../redux/shelterSlice";
 import { loadUserFromStorage } from "../../redux/userSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
-import { ageText, formatWhen, genderText, missingBadge, missingTitle, petNameOf, placeLabel, timeAgo, weightText, whenLabel } from "../missingFormat";
+import { ageText, formatWhen, genderText, missingBadge, missingTitle, petNameOf, placeLabel, timeAgo, weightText, whenLabel, missingRowHead } from "../missingFormat";
 
 import Header from "@/app/components/Header";
 import DetailTopBar from "@/app/components/DetailTopBar";
@@ -191,7 +191,7 @@ export default function MissingPostDetail({id}: {id: number}) {
                     {photo ? <S.MissingRowThumb src={photo} alt=""/> : <S.MissingRowThumbEmpty>사진 없음</S.MissingRowThumbEmpty>}
                     <S.MissingRowBody>
                       <S.MissingBadge $tone={missingBadge(other).tone}>{missingBadge(other).label}</S.MissingBadge>
-                      <S.MissingRowTitle>{missingTitle(other)}</S.MissingRowTitle>
+                      <S.MissingRowTitle>{missingRowHead(other).main}{missingRowHead(other).sub && <small>{missingRowHead(other).sub}</small>}</S.MissingRowTitle>
                       <S.MissingRowMeta>
                         {[other.distanceKm != null ? `${other.distanceKm}km` : "", formatWhen(other.occurredAt, other.occurredTime), other.rescueLocation].filter(Boolean).join(" · ")}
                       </S.MissingRowMeta>

@@ -7,7 +7,7 @@ import { AppDispatch, RootState } from "../store/store";
 import { fetchMissingAnimals } from "../redux/missingSlice";
 import { setActiveTab } from "../redux/shelterSlice";
 import { toImageUrl } from "../shelter/animalFormat";
-import { missingBadge, missingRowTraits, missingTitle, timeAgo } from "./missingFormat";
+import { missingBadge, missingRowTraits, timeAgo, missingRowHead } from "./missingFormat";
 
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
@@ -173,7 +173,7 @@ export default function MissingReportPage() {
                   )}
                   <S.MissingRowBody>
                     <S.MissingBadge $tone={missingBadge(post).tone}>{missingBadge(post).label}</S.MissingBadge>
-                    <S.MissingRowTitle>{missingTitle(post)}</S.MissingRowTitle>
+                    <S.MissingRowTitle>{missingRowHead(post).main}{missingRowHead(post).sub && <small>{missingRowHead(post).sub}</small>}</S.MissingRowTitle>
                     <S.MissingRowTraits>{missingRowTraits(post)}</S.MissingRowTraits>
                     <S.MissingRowMeta>{meta}</S.MissingRowMeta>
                   </S.MissingRowBody>

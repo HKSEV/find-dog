@@ -75,7 +75,17 @@ export const copulaFor = (name: string) => {
 export const genderText = (gender?: string) => (gender === "미상" ? "성별 모름" : gender ?? "");
 
 // 목록 한 줄 특징: 제목에 이미 품종·털색이 있으면 빼고 보여줌
+// 목록 한 줄 제목: 이름이 있으면 이름(굵게) + 옆에 품종(작고 연하게), 없으면 "품종 · 털색"
+export const missingRowHead = (post: Pick<MissingAnimal, "petName" | "title" | "breed">) => {
+  const name = petNameOf(post);
+  return name ? {main: name, sub: post.breed || ""} : {main: post.title || post.breed || "", sub: ""};
+};
+
+// 목록 둘째 줄: 이름이 있으면 털색·특징 · 성별 · 나이 · 몸무게 (품종은 제목 옆에 있으니 뺌)
 export const missingRowTraits = (post: MissingAnimal) => {
+  if (petNameOf(post)) {
+    return [post.color, genderText(post.gender), ageText(post.age), weightText(post.weight)].filter(Boolean).join(" · ");
+  };
   const title = post.title ?? "";
   return [
     post.breed && !title.includes(post.breed) ? post.breed : "",

@@ -135,6 +135,14 @@ export const MissingRowTitle = styled.span`
   font-weight: ${fontWeight.semibold};
   white-space: nowrap;
   text-overflow: ellipsis;
+
+  /* 이름 옆 품종 (작고 연하게, 이름과 구분) */
+  small {
+    margin-left: 6px;
+    font-size: 13px;
+    font-weight: ${fontWeight.regular};
+    color: ${colors.gray500};
+  }
 `;
 
 export const MissingRowTraits = styled.span`
