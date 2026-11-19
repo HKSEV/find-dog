@@ -3,6 +3,7 @@
 import {
   ChevronRightRounded as ChevronIcon,
   AddRounded as PlusIcon,
+  PlaceOutlined as PlaceIcon,
   SearchRounded as SearchIcon
 } from "@mui/icons-material";
 import styled from "styled-components";
@@ -257,4 +258,14 @@ export const MissingTitleSub = styled.p`
   font-size: 15px;
   font-weight: ${fontWeight.medium};
   color: ${colors.gray500};
+`;
+
+// 목격 글 둘째 줄 앞 핀 아이콘 ("사직동에서 봤어요")
+export const MissingRowPinIcon = styled(PlaceIcon)`
+  && {
+    margin-right: 2px;
+    font-size: 14px;
+    vertical-align: -2px;
+    color: ${colors.gray500};
+  }
 `;

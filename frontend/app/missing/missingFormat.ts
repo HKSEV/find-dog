@@ -75,14 +75,40 @@ export const copulaFor = (name: string) => {
 export const genderText = (gender?: string) => (gender === "미상" ? "성별 모름" : gender ?? "");
 
 // 목록 한 줄 특징: 제목에 이미 품종·털색이 있으면 빼고 보여줌
-// 목록 한 줄 제목: 이름이 있으면 이름(굵게) + 옆에 품종(작고 연하게), 없으면 "품종 · 털색"
-export const missingRowHead = (post: Pick<MissingAnimal, "petName" | "title" | "breed">) => {
+// 주소에서 짧은 동네 이름만 ("서울특별시 종로구 사직동 사직공원" -> "사직동", 동이 없으면 구·군·시)
+//    국가동물보호정보시스템 공고처럼 목록에는 동네 이름만 짧게 보여줌
+export const shortPlace = (address?: string) => {
+  const words = (address ?? "").trim().split(/\s+/).filter(Boolean);
+  const town = [...words].reverse().find((word) => word.length >= 2 && /(동|읍|면|리|가)$/.test(word));
+  if (town) return town;
+  const district = [...words].reverse().find((word) => word.length >= 2 && /(구|군|시)$/.test(word));
+  return district ?? words[0] ?? "";
+};
+
+// 목격 글 둘째 줄 앞부분: "사직동에서 봤어요" (장소가 없으면 "")
+export const foundPlaceLine = (post: Pick<MissingAnimal, "type" | "rescueLocation">) => {
+  if (post.type !== "FOUND") return "";
+  const place = shortPlace(post.rescueLocation);
+  return place ? `${place}에서 봤어요` : "";
+};
+
+// 목록 한 줄 제목
+//    실종: 이름(굵게) + 옆에 품종(작고 연하게)
+//    목격(이름 없음): 품종(굵게) + 옆에 털색·특징(작고 연하게)
+//    이름 없는 예전 실종 글: "품종 · 털색"
+export const missingRowHead = (post: Pick<MissingAnimal, "petName" | "title" | "breed" | "type" | "color">) => {
   const name = petNameOf(post);
-  return name ? {main: name, sub: post.breed || ""} : {main: post.title || post.breed || "", sub: ""};
+  if (name) return {main: name, sub: post.breed || ""};
+  if (post.type === "FOUND") return {main: post.breed || "품종 모름", sub: post.color || ""};
+  return {main: post.title || post.breed || "", sub: ""};
 };
 
 // 목록 둘째 줄: 이름이 있으면 털색·특징 · 성별 · 나이 · 몸무게 (품종은 제목 옆에 있으니 뺌)
 export const missingRowTraits = (post: MissingAnimal) => {
+  if (post.type === "FOUND" && !petNameOf(post)) {
+    // 목격 글: 털색은 제목 옆에 있으니 성별·나이·몸무게만 (앞에 "○○동에서 봤어요"가 붙음)
+    return [genderText(post.gender), ageText(post.age), weightText(post.weight)].filter(Boolean).join(" · ");
+  };
   if (petNameOf(post)) {
     return [post.color, genderText(post.gender), ageText(post.age), weightText(post.weight)].filter(Boolean).join(" · ");
   };

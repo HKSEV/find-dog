@@ -6,13 +6,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { fetchMyMissingPosts } from "../../redux/missingSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
-import { missingBadge, missingRowTraits, timeAgo, missingRowHead } from "../../missing/missingFormat";
+import { missingBadge, timeAgo, formatWhen } from "../../missing/missingFormat";
 import { CommunityPost, fetchMyCommunityPosts, toCommunityError } from "../../story/communityApi";
 import PostList from "../../story/PostList";
 
 import Header from "@/app/components/Header";
 import { loginHref } from "@/app/components/loginLink";
 import * as S from "@/assets/css/Style.styles";
+import MissingRowLines from "../../missing/MissingRowLines";
 
 const kinds = ["실종·제보", "이야기"] as const;
 type Kind = (typeof kinds)[number];
@@ -88,9 +89,11 @@ export default function MyPostsPage() {
               )}
               <S.MissingRowBody>
                 <S.MissingBadge $tone={missingBadge(post).tone}>{missingBadge(post).label}</S.MissingBadge>
-                <S.MissingRowTitle>{missingRowHead(post).main}{missingRowHead(post).sub && <small>{missingRowHead(post).sub}</small>}</S.MissingRowTitle>
-                <S.MissingRowTraits>{missingRowTraits(post)}</S.MissingRowTraits>
-                <S.MissingRowMeta>{[post.rescueLocation, timeAgo(post.createdAt)].filter(Boolean).join(" · ")}</S.MissingRowMeta>
+                <MissingRowLines post={post}/>
+                <S.MissingRowMeta>
+                  {/* 목격 글은 둘째 줄에 동네가 있으니 본 때를, 실종 글은 장소를 */}
+                  {[post.type === "FOUND" ? formatWhen(post.occurredAt, post.occurredTime) : post.rescueLocation, timeAgo(post.createdAt)].filter(Boolean).join(" · ")}
+                </S.MissingRowMeta>
               </S.MissingRowBody>
             </S.MissingRow>
           );

@@ -7,12 +7,13 @@ import { AppDispatch, RootState } from "../store/store";
 import { fetchMissingAnimals } from "../redux/missingSlice";
 import { setActiveTab } from "../redux/shelterSlice";
 import { toImageUrl } from "../shelter/animalFormat";
-import { missingBadge, missingRowTraits, timeAgo, missingRowHead } from "./missingFormat";
+import { missingBadge, timeAgo, formatWhen } from "./missingFormat";
 
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import { useScrollCollapse } from "@/app/components/useScrollCollapse";
 import * as S from "@/assets/css/Style.styles";
+import MissingRowLines from "./MissingRowLines";
 
 // 💡 글 종류 탭 (시안 기준: 전체 / 실종 / 목격)
 const typeTabs = [
@@ -161,7 +162,8 @@ export default function MissingReportPage() {
             posts.map((post) => {
               const done = post.status === "COMPLETED";
               const photo = toImageUrl(post.mediaUrls?.[0]);
-              const meta = [post.rescueLocation, timeAgo(post.createdAt), done ? "가족 품으로 돌아갔어요" : ""]
+              // 목격 글은 둘째 줄에 동네가 있으니 본 때를, 실종 글은 장소를
+              const meta = [post.type === "FOUND" ? formatWhen(post.occurredAt, post.occurredTime) : post.rescueLocation, timeAgo(post.createdAt), done ? "가족 품으로 돌아갔어요" : ""]
                 .filter(Boolean)
                 .join(" · ");
               return (
@@ -173,8 +175,7 @@ export default function MissingReportPage() {
                   )}
                   <S.MissingRowBody>
                     <S.MissingBadge $tone={missingBadge(post).tone}>{missingBadge(post).label}</S.MissingBadge>
-                    <S.MissingRowTitle>{missingRowHead(post).main}{missingRowHead(post).sub && <small>{missingRowHead(post).sub}</small>}</S.MissingRowTitle>
-                    <S.MissingRowTraits>{missingRowTraits(post)}</S.MissingRowTraits>
+                    <MissingRowLines post={post}/>
                     <S.MissingRowMeta>{meta}</S.MissingRowMeta>
                   </S.MissingRowBody>
                 </S.MissingRow>
