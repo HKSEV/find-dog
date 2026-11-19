@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 public class MissingPostResponseDto {
 private Long id;
-private String title, content, breed, gender, age, weight, color, rescueLocation, authorName;
+private String title, content, petName, breed, gender, age, weight, color, rescueLocation, authorName;
 private PostStatus status;
 private PostType type;
 private LocalDateTime occurredAt;
@@ -35,6 +35,7 @@ this.id = post.getId();
 this.title = post.getTitle();
 this.status =post.getStatus();
 this.content = post.getContent();
+this.petName = post.getPetName();
 this.breed = post.getBreed();
 this.gender = post.getGender();
 this.age = post.getAge();

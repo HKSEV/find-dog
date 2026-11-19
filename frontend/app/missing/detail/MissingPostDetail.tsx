@@ -9,7 +9,7 @@ import { fetchMissingPost } from "../../redux/missingSlice";
 import { setActiveTab } from "../../redux/shelterSlice";
 import { loadUserFromStorage } from "../../redux/userSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
-import { ageText, formatWhen, genderText, missingBadge, placeLabel, timeAgo, weightText, whenLabel } from "../missingFormat";
+import { ageText, formatWhen, genderText, missingBadge, missingTitle, petNameOf, placeLabel, timeAgo, weightText, whenLabel } from "../missingFormat";
 
 import Header from "@/app/components/Header";
 import DetailTopBar from "@/app/components/DetailTopBar";
@@ -106,7 +106,7 @@ export default function MissingPostDetail({id}: {id: number}) {
   // 공유 카드: "[실종] 진돗개 믹스 · 흰색" / 장소 · 때
   const shareTag = done ? "[찾았어요]" : post.type === "FOUND" ? "[목격]" : "[실종]";
   const shareContent = {
-    title: `${shareTag} ${post.title || post.breed}`,
+    title: `${shareTag} ${missingTitle(post)}`,
     description: [post.rescueLocation, formatWhen(post.occurredAt, post.occurredTime)].filter(Boolean).join(" · ") || "어서찾아주개 실종·제보",
     imageUrl: photos[0],
     path: `/missing/detail/?id=${post.id}`
@@ -115,7 +115,7 @@ export default function MissingPostDetail({id}: {id: number}) {
   return (
     <S.AppWrapper>
       <S.Container>
-        <DetailTopBar title={post.title || post.breed} onBack={handleBack} onShare={() => setSharing(true)}/>
+        <DetailTopBar title={missingTitle(post)} onBack={handleBack} onShare={() => setSharing(true)}/>
         <S.DetailPage>
           <S.DetailHero>
             {photos.length > 0 ? (
@@ -132,7 +132,10 @@ export default function MissingPostDetail({id}: {id: number}) {
 
           <S.DetailSection>
             <S.MissingBadge $tone={missingBadge(post).tone}>{missingBadge(post).label}</S.MissingBadge>
-            <S.DetailTitle>{post.title || post.breed}</S.DetailTitle>
+            {/* 이름이 있으면 이름을 크게, 품종·특징은 옆에 작게 (찾았을 때 부를 수 있게) */}
+            <S.DetailTitle>
+              {petNameOf(post) ? <>{petNameOf(post)}<span>{post.title || post.breed}</span></> : (post.title || post.breed)}
+            </S.DetailTitle>
             <S.DetailNotice>{[author && `작성자 ${author}`, timeAgo(post.createdAt)].filter(Boolean).join(" · ")}</S.DetailNotice>
 
             {facts.length > 0 && (

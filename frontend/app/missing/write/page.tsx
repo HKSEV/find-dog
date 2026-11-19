@@ -53,7 +53,7 @@ function MissingWriteForm() {
 
   // 홈 "발견했어요" 등에서 ?type=found로 들어오면 발견했어요가 먼저 선택됨
   const [kind, setKind] = useState<Kind>(searchParams.get("type") === "found" ? "FOUND" : "LOST");
-  const [form, setForm] = useState({breed: "", color: "", gender: "미상", age: "", weight: "", rescueLocation: "", content: ""});
+  const [form, setForm] = useState({petName: "", breed: "", color: "", gender: "미상", age: "", weight: "", rescueLocation: "", content: ""});
   const [when, setWhen] = useState<WhenValue>(emptyWhen); // 잃어버린 때 / 발견한 때 (날짜 필수)
   const [point, setPoint] = useState<MapPoint | null>(null); // 지도에서 고른 장소 (선택)
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -76,6 +76,7 @@ function MissingWriteForm() {
         };
         setKind(data.type === "FOUND" ? "FOUND" : "LOST");
         setForm({
+          petName: data.petName ?? "",
           breed: data.breed ?? "",
           color: data.color ?? "",
           gender: data.gender || "미상",
@@ -150,6 +151,7 @@ function MissingWriteForm() {
         await updateMissingPost(editId, {
           type: kind,
           title,
+          petName: kind === "LOST" ? form.petName.trim() : "",
           breed: form.breed.trim(),
           color: form.color.trim(),
           gender: form.gender,
@@ -175,6 +177,7 @@ function MissingWriteForm() {
       const dto = {
         type: kind,
         title,
+        petName: kind === "LOST" ? form.petName.trim() : "",
         breed: form.breed.trim(),
         color: form.color.trim(),
         gender: form.gender,
@@ -296,6 +299,14 @@ function MissingWriteForm() {
         </S.WritePhotos>
         {errors.photos && <S.WriteError>{errors.photos}</S.WriteError>}
       </S.WriteField>
+      )}
+
+      {/* 잃어버린 아이만: 찾았을 때 부를 수 있게 이름을 크게 보여줌 */}
+      {kind === "LOST" && (
+        <S.WriteField>
+          <S.WriteLabel htmlFor="mw-name">이름 <span>(선택)</span></S.WriteLabel>
+          <S.WriteInput id="mw-name" maxLength={30} placeholder="예: 보리 (부르면 반응하는 이름)" value={form.petName} onChange={(e) => setField("petName", e.target.value)}/>
+        </S.WriteField>
       )}
 
       <S.WriteRow>

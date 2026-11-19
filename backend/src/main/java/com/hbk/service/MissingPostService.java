@@ -96,6 +96,7 @@ public class MissingPostService {
         MissingPost post = new MissingPost();
         post.setTitle(title);
         post.setContent(requestDto.getContent() != null ? requestDto.getContent() : "");
+        post.setPetName(petName(requestDto.getPetName()));
         post.setBreed(requestDto.getBreed());
         post.setGender(requestDto.getGender());
         post.setAge(requestDto.getAge());
@@ -154,6 +155,14 @@ public class MissingPostService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제됐거나 없는 글이에요."));
     }
 
+    // 이름은 앞뒤 공백을 빼고 30자까지 (비어 있으면 저장 안 함)
+    private static String petName(String value){
+        if (value == null || value.isBlank()) return null;
+        String name = value.trim();
+        if (name.length() > 30) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이름은 30자 이내로 적어 주세요.");
+        return name;
+    }
+
     // 작성자가 없는 예전 글은 누구의 글도 아님
     // 좌표는 둘 다 있고 한국 근처 범위일 때만 저장 (아니면 지도 없음)
     private static void setLocation(MissingPost post, MissingPostRequestDto dto){
@@ -188,6 +197,7 @@ public class MissingPostService {
         post.setOccurredAt(requestDto.getOccurredAt());
         post.setOccurredTime(requestDto.getOccurredTime());
         setLocation(post, requestDto);
+        post.setPetName(petName(requestDto.getPetName()));
         post.setBreed(requestDto.getBreed());
         post.setGender(requestDto.getGender());
         post.setAge(requestDto.getAge());

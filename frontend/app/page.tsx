@@ -7,7 +7,7 @@ import { AppDispatch, RootState } from "./store/store";
 import { fetchCampaigns, fetchNeedHelps } from "./redux/homeSlice";
 import { fetchMissingAnimals } from "./redux/missingSlice";
 import { fetchShelterAnimals, setActiveTab } from "./redux/shelterSlice";
-import { timeAgo } from "./missing/missingFormat";
+import { petNameOf, timeAgo } from "./missing/missingFormat";
 import { genderLabel, toImageUrl } from "./shelter/animalFormat";
 import { VolunteerPost, dateParts, fetchVolunteers } from "./volunteer/volunteerApi";
 
@@ -156,7 +156,7 @@ export default function HomePage() {
                     <S.HomeStatusBadge $done={post.status === "COMPLETED"}>
                       {post.status === "COMPLETED" ? "찾았어요" : "찾는 중"}
                     </S.HomeStatusBadge>
-                    <S.HomeListTitle>{post.breed}{post.gender ? ` · ${post.gender}` : ""}</S.HomeListTitle>
+                    <S.HomeListTitle>{[petNameOf(post), post.breed, post.gender].filter(Boolean).join(" · ")}</S.HomeListTitle>
                     <S.HomeListMeta>{[post.rescueLocation, timeAgo(post.createdAt)].filter(Boolean).join(" · ")}</S.HomeListMeta>
                   </S.HomeListBody>
                 </S.HomeListRow>

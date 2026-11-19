@@ -6,6 +6,7 @@ export interface MissingAnimal {
   id: number;
   title: string;
   content?: string;
+  petName?: string | null; // 아이 이름 (찾았을 때 부를 수 있게, 선택)
   breed: string;
   status: "MISSING" | "COMPLETED";
   type: "LOST" | "FOUND"; // 잃어버렸어요 / 발견했어요

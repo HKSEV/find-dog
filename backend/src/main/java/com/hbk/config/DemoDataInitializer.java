@@ -218,25 +218,26 @@ public class DemoDataInitializer implements ApplicationRunner {
         if (missingRepository.count() > 0) return;
         Member author = demoMember("demo-missing@finddog.local", "콩이찾는중", "콩이보호자");
         Object[][] rows = {
-                {PostType.LOST, "믹스견", "흰색·갈색", "수컷", "1", "4.5", "서울특별시 종로구 사직로 161", 37.5796, 126.9770, "노란 스카프를 하고 있어요. 이름을 부르면 돌아봐요.", TimeOfDay.EVENING, 1},
-                {PostType.FOUND, "믹스견", "흰색 갈색 얼룩", "수컷", "", "", "서울특별시 마포구 월드컵로 240", 37.5683, 126.8975, "공원 근처에서 혼자 돌아다니던 아이를 보호하고 있어요. 목줄은 없었어요.", TimeOfDay.MORNING, 2},
-                {PostType.LOST, "진돗개 믹스", "흰색", "암컷", "2", "11", "서울특별시 송파구 올림픽로 424", 37.5206, 127.1215, "분홍색 옷을 입고 있어요. 겁이 많아 다가가면 도망갈 수 있어요.", TimeOfDay.AFTERNOON, 3}
+                {PostType.LOST, "콩이", "믹스견", "흰색·갈색", "수컷", "1", "4.5", "서울특별시 종로구 사직로 161", 37.5796, 126.9770, "노란 스카프를 하고 있어요. \"콩이야\" 하고 부르면 돌아봐요.", TimeOfDay.EVENING, 1},
+                {PostType.FOUND, "", "믹스견", "흰색 갈색 얼룩", "수컷", "", "", "서울특별시 마포구 월드컵로 240", 37.5683, 126.8975, "공원 근처에서 혼자 돌아다니던 아이를 보호하고 있어요. 목줄은 없었어요.", TimeOfDay.MORNING, 2},
+                {PostType.LOST, "하루", "진돗개 믹스", "흰색", "암컷", "2", "11", "서울특별시 송파구 올림픽로 424", 37.5206, 127.1215, "분홍색 옷을 입고 있어요. 겁이 많아서 \"하루야\" 하고 부르며 천천히 다가가 주세요.", TimeOfDay.AFTERNOON, 3}
         };
         for (int i = 0; i < rows.length; i++) {
             MissingPost post = new MissingPost();
             post.setType((PostType) rows[i][0]);
-            post.setBreed((String) rows[i][1]);
-            post.setColor((String) rows[i][2]);
-            post.setTitle(rows[i][1] + " · " + rows[i][2]);
-            post.setGender((String) rows[i][3]);
-            post.setAge((String) rows[i][4]);
-            post.setWeight((String) rows[i][5]);
-            post.setRescueLocation((String) rows[i][6]);
-            post.setLat((Double) rows[i][7]);
-            post.setLng((Double) rows[i][8]);
-            post.setContent((String) rows[i][9]);
-            post.setOccurredTime((TimeOfDay) rows[i][10]);
-            post.setOccurredAt(LocalDate.now().minusDays((Integer) rows[i][11]).atStartOfDay());
+            post.setPetName(((String) rows[i][1]).isBlank() ? null : (String) rows[i][1]);
+            post.setBreed((String) rows[i][2]);
+            post.setColor((String) rows[i][3]);
+            post.setTitle(rows[i][2] + " · " + rows[i][3]);
+            post.setGender((String) rows[i][4]);
+            post.setAge((String) rows[i][5]);
+            post.setWeight((String) rows[i][6]);
+            post.setRescueLocation((String) rows[i][7]);
+            post.setLat((Double) rows[i][8]);
+            post.setLng((Double) rows[i][9]);
+            post.setContent((String) rows[i][10]);
+            post.setOccurredTime((TimeOfDay) rows[i][11]);
+            post.setOccurredAt(LocalDate.now().minusDays((Integer) rows[i][12]).atStartOfDay());
             post.setMediaUrls(new ArrayList<>(List.of(dog(i + 1))));
             post.setStatus(PostStatus.MISSING);
             post.setAuthor(author);

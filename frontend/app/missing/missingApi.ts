@@ -5,6 +5,7 @@ import { MissingAnimal, missingAuthHeader } from "../redux/missingSlice";
 export interface MissingUpdateRequest {
   type: "LOST" | "FOUND";
   title: string;
+  petName: string; // 아이 이름 (목격 글은 빈 값)
   breed: string;
   color: string;
   gender: string;

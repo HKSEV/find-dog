@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 public class MissingPostRequestDto {
-private String title, content, breed, gender, age, weight, color,
+private String title, content, petName, breed, gender, age, weight, color,
     rescueLocation;
 private List<String> mediaUrls;
 private PostType type; // LOST / FOUND (비어 있으면 LOST)

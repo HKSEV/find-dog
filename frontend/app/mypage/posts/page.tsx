@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { fetchMyMissingPosts } from "../../redux/missingSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
-import { missingBadge, missingRowTraits, timeAgo } from "../../missing/missingFormat";
+import { missingBadge, missingRowTraits, missingTitle, timeAgo } from "../../missing/missingFormat";
 import { CommunityPost, fetchMyCommunityPosts, toCommunityError } from "../../story/communityApi";
 import PostList from "../../story/PostList";
 
@@ -88,7 +88,7 @@ export default function MyPostsPage() {
               )}
               <S.MissingRowBody>
                 <S.MissingBadge $tone={missingBadge(post).tone}>{missingBadge(post).label}</S.MissingBadge>
-                <S.MissingRowTitle>{post.title || post.breed}</S.MissingRowTitle>
+                <S.MissingRowTitle>{missingTitle(post)}</S.MissingRowTitle>
                 <S.MissingRowTraits>{missingRowTraits(post)}</S.MissingRowTraits>
                 <S.MissingRowMeta>{[post.rescueLocation, timeAgo(post.createdAt)].filter(Boolean).join(" · ")}</S.MissingRowMeta>
               </S.MissingRowBody>

@@ -8,7 +8,7 @@ import { AppDispatch, RootState } from "../../store/store";
 import { fetchMissingPost } from "../../redux/missingSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
 import { fetchMyAccount } from "../../mypage/accountApi";
-import { ageText, formatWhen, genderText, placeLabel, weightText, whenLabel } from "../missingFormat";
+import { ageText, copulaFor, formatWhen, genderText, petNameOf, placeLabel, weightText, whenLabel } from "../missingFormat";
 import { shareUrl } from "@/lib/share";
 
 import Header from "@/app/components/Header";
@@ -110,11 +110,13 @@ export default function MissingFlyer({id}: {id: number}) {
   };
 
   const found = post.type === "FOUND";
+  const name = found ? "" : petNameOf(post); // 이름은 잃어버린 아이만
   const photo = toImageUrl(post.mediaUrls?.[0]);
   // 이미지 저장 때 사진을 다시 받아야 해서, 예전에 받아 둔 사진(다른 사이트 허용 표시 없음)을 쓰지 않게 주소를 살짝 바꿈
   const photoForFlyer = photo ? `${photo}${photo.includes("?") ? "&" : "?"}flyer=1` : undefined;
   const when = formatWhen(post.occurredAt, post.occurredTime);
-  const traits = [genderText(post.gender), ageText(post.age), weightText(post.weight), post.color].filter(Boolean).join(" · ");
+  // 이름이 있으면 품종도 옆 작은 글씨로 내려감
+  const traits = [name && (post.breed || "품종 모름"), genderText(post.gender), ageText(post.age), weightText(post.weight), post.color].filter(Boolean).join(" · ");
   const facts = [
     {label: placeLabel(post.type), value: post.rescueLocation ? `${post.rescueLocation} 근처` : ""},
     {label: whenLabel(post.type), value: when},
@@ -137,7 +139,11 @@ export default function MissingFlyer({id}: {id: number}) {
               <S.FlyerSheet ref={sheetRef} data-flyer $found={found}>
                 <S.FlyerHead>
                   <h1>{found ? "주인을 찾습니다" : "강아지를 찾습니다"}</h1>
-                  <p>{found ? "이 아이를 보호하고 있어요. 보호자분은 연락 주세요." : "보셨다면 꼭 연락 부탁드려요."}</p>
+                  <p>
+                    {found
+                      ? "이 아이를 보호하고 있어요. 보호자분은 연락 주세요."
+                      : name ? `이름은 "${name}"${copulaFor(name)}. 이름을 부르며 천천히 다가가 주세요.` : "보셨다면 꼭 연락 부탁드려요."}
+                  </p>
                 </S.FlyerHead>
 
                 <S.FlyerBody>
@@ -146,8 +152,8 @@ export default function MissingFlyer({id}: {id: number}) {
                   ) : (
                     <S.FlyerPhotoEmpty>사진 없음</S.FlyerPhotoEmpty>
                   )}
-                  <S.FlyerName>
-                    {post.breed || "품종 모름"}
+                  <S.FlyerName $hasName={Boolean(name)}>
+                    {name || post.breed || "품종 모름"}
                     {traits && <span>{traits}</span>}
                   </S.FlyerName>
                   <S.FlyerFacts>

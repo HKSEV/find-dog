@@ -44,6 +44,10 @@ public class MissingPost {
     private Double lat;
     private Double lng;
 
+    // 아이 이름 (찾았을 때 부를 수 있게, 선택). 목격 글은 보통 비어 있음
+    @Column(length = 30)
+    private String petName;
+
     private String breed;
     private String gender;
     private String age;

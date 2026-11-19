@@ -112,6 +112,7 @@ export const FlyerBody = styled.div`
   flex-direction: column;
   gap: 20px;
   min-height: 0;
+  overflow: hidden; /* 내용이 길어도 아래 연락처 칸을 덮지 않게 */
   padding: 28px 44px 0;
 `;
 
@@ -137,9 +138,11 @@ export const FlyerPhotoEmpty = styled.div`
   color: ${colors.gray400};
 `;
 
-export const FlyerName = styled.h2`
+// 이름이 있으면 이름을 가장 크게 (찾았을 때 부를 수 있게)
+export const FlyerName = styled.h2<{$hasName?: boolean}>`
   margin: 0;
-  font-size: 40px;
+  font-size: ${({$hasName}) => ($hasName ? "64px" : "40px")};
+  color: ${({$hasName}) => ($hasName ? "var(--flyer-accent)" : colors.gray900)};
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -1px;
