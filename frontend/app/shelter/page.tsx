@@ -26,7 +26,15 @@ export default function Shelter() {
 
   return (
     <S.AppWrapper>
-      <Header title="함께해요" isTab/>
+      <Header
+      title="함께해요"
+      isTab
+      action={currentTab !== "이야기" ? (
+        // 💡 입양·봉사: 보호 동물(구조 장소)과 봉사 장소를 지도로 (이야기는 위치가 없어서 숨김)
+        <S.HeaderPillButton as={Link} href="/map?view=shelter">
+          <S.MapPillIcon aria-hidden="true"/>지도
+        </S.HeaderPillButton>
+      ) : undefined}/>
 
       <S.Container>
         <S.HeaderOffset/>
@@ -48,12 +56,6 @@ export default function Shelter() {
         {currentTab === "봉사" && <VolunteerTab/>}
         {currentTab === "이야기" && <StoryTab/>}
 
-        {/* 💡 지도로 보기: 보호 동물(구조 장소)과 봉사 장소를 사진 마커로 */}
-        {currentTab !== "이야기" && (
-          <S.MapFloatButton as={Link} href="/map?view=shelter" $align="center">
-            <S.MapEntryIcon aria-hidden="true"/>지도로 보기
-          </S.MapFloatButton>
-        )}
       </S.Container>
       <Footer/>
     </S.AppWrapper>

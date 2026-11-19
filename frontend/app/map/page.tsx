@@ -98,6 +98,7 @@ function MapExplore() {
   const [places, setPlaces] = useState<Place[] | null>(null);
   const [filter, setFilter] = useState<View>(startView === "missing" || startView === "shelter" ? startView : "all");
   const firstViewRef = useRef(filter); // 처음 지도 범위를 맞출 묶음 (칩을 바꿔도 다시 맞추지 않음)
+  const listHref = startView === "missing" ? "/missing" : startView === "shelter" ? "/shelter" : null; // 헤더 "목록" 버튼
   const [selected, setSelected] = useState<Place | null>(null);
   const [message, setMessage] = useState("불러오는 중이에요");
 
@@ -242,7 +243,14 @@ function MapExplore() {
     <S.AppWrapper>
       <S.MapPinStyle/>
       <S.Container>
-        <Header title="지도로 보기"/>
+        <Header
+        title={startView === "missing" ? "실종·제보 지도" : startView === "shelter" ? "입양·봉사 지도" : "지도로 보기"}
+        action={listHref ? (
+          // 💡 들어온 목록으로 돌아가기 (목록의 "지도" 버튼과 같은 자리)
+          <S.HeaderPillButton as={Link} href={listHref}>
+            <S.ListEntryIcon aria-hidden="true"/>목록
+          </S.HeaderPillButton>
+        ) : undefined}/>
         <S.HeaderOffset/>
         <S.MapPage>
           <S.MapCanvas ref={canvasRef}/>
