@@ -48,6 +48,7 @@ export const submitLogin = createAsyncThunk(
 
       const cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
       localStorage.setItem("token", cleanToken);
+      localStorage.removeItem("profileImage"); // 다른 계정 사진이 잠깐 보이지 않게 (마이 화면이 새로 받아 저장)
       localStorage.setItem("email", email); // 마이 화면 프로필에 표시
 
       if (

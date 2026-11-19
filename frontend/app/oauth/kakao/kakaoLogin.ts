@@ -66,4 +66,5 @@ export const saveKakaoLogin = (token: string, nickname: string) => {
   localStorage.setItem("token", token);
   localStorage.setItem("nickname", nickname);
   localStorage.removeItem("email");
+  localStorage.removeItem("profileImage"); // 다른 계정 사진이 잠깐 보이지 않게
 };

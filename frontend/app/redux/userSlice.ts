@@ -34,6 +34,7 @@ export const userSlice = createSlice({
       localStorage.removeItem("token");
       localStorage.removeItem("nickname");
       localStorage.removeItem("email");
+      localStorage.removeItem("profileImage");
       state.isLoggedIn = false;
       state.nickname = "회원";
       state.email = "";

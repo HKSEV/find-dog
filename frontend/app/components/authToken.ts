@@ -18,6 +18,7 @@ export const clearLoginStorage = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("nickname");
   localStorage.removeItem("email");
+  localStorage.removeItem("profileImage"); // 마이 화면에 바로 보여주려고 저장해 둔 프로필 사진 주소
 };
 
 // 끝난 토큰을 누가 먼저 지웠든(화면의 로그인 확인이 먼저일 수 있음) 알림은 한 번 띄우게 표시해 둠

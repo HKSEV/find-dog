@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
@@ -31,13 +31,29 @@ const guideMenus = [
 
 type Menu = {label: string; href?: string; needLogin?: boolean};
 
+// 저장해 둔 프로필 사진 주소 (다른 탭에서 바뀌면 다시 읽음)
+const subscribeStorage = (onChange: () => void) => {
+  window.addEventListener("storage", onChange);
+  return () => window.removeEventListener("storage", onChange);
+};
+const getCachedPhoto = () => {
+  try {
+    return localStorage.getItem("profileImage");
+  } catch {
+    return null;
+  }
+};
+
 export default function MyPage() {
   const dispatch = useDispatch<AppDispatch>();
   const collapsed = useScrollCollapse(); // 💡 아래로 스크롤하면 헤더 숨김
   const {isLoggedIn, nickname, email} = useSelector((state: RootState) => state.user);
   const {animals} = useSelector((state: RootState) => state.shelter);
   const {isLiked} = useLikedAnimals();
-  const [photo, setPhoto] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<string | null | undefined>(undefined); // undefined: 아직 서버에서 못 받음
+  // 💡 지난번에 받은 사진 주소를 기기에 저장해 두고, 서버 응답을 기다리지 않고 바로 보여줌 (Render가 깨어나는 동안 빈 아이콘이 오래 보이지 않게)
+  const cachedPhoto = useSyncExternalStore(subscribeStorage, getCachedPhoto, () => null);
+  const shownPhoto = photo === undefined ? cachedPhoto : photo;
   const [isKakao, setIsKakao] = useState(false); // 카카오 회원은 이메일 대신 "카카오 계정"
 
   useEffect(() => {
@@ -52,10 +68,17 @@ export default function MyPage() {
     fetchMyAccount()
       .then((me) => {
         if (!alive) return;
-        setPhoto(toImageUrl(me.profileImageUrl) ?? null);
+        const url = toImageUrl(me.profileImageUrl) ?? null;
+        setPhoto(url);
+        try {
+          if (url) localStorage.setItem("profileImage", url);
+          else localStorage.removeItem("profileImage");
+        } catch {
+          // 저장 못 해도 화면에는 그대로 보임
+        }
         setIsKakao(me.provider === "KAKAO");
       })
-      .catch(() => alive && setPhoto(null)); // 못 받아도 기본 아이콘으로
+      .catch(() => {}); // 못 받으면 저장해 둔 사진(없으면 기본 아이콘)을 그대로 보여줌
     return () => {
       alive = false;
     };
@@ -105,7 +128,7 @@ export default function MyPage() {
           <S.MyProfile>
             <S.MyAvatar>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              {photo ? <img src={photo} alt=""/> : <S.MyAvatarIcon aria-hidden="true"/>}
+              {shownPhoto ? <img src={shownPhoto} alt="" decoding="async"/> : <S.MyAvatarIcon aria-hidden="true"/>}
             </S.MyAvatar>
             <S.MyProfileText>
               <strong>{nickname}</strong>
