@@ -15,6 +15,7 @@ export interface ChatRoom {
   lastMessage: string | null;
   lastMessageAt: string | null;
   unread: number;
+  blocked: boolean; // 신고하며 차단했거나 운영팀이 종료한 대화 (메시지를 보낼 수 없음)
 }
 
 export interface ChatMessage {
@@ -36,6 +37,16 @@ export const fetchChatMessages = async (id: number, after: number) =>
   (await axios.get<ChatMessage[]>(`/api/chats/${id}/messages`, {...auth(), params: {after}})).data;
 export const sendChatMessage = async (id: number, body: {type: "TEXT" | "LOCATION"; content?: string; lat?: number; lng?: number}) =>
   (await axios.post<ChatMessage>(`/api/chats/${id}/messages`, body, auth())).data;
+export type ChatReportReason = "SPAM" | "ABUSE" | "FAKE" | "PRIVACY" | "ETC";
+export const chatReportReasons: {value: ChatReportReason; label: string}[] = [
+  {value: "SPAM", label: "광고·스팸이에요"},
+  {value: "ABUSE", label: "욕설·비하·위협이 있어요"},
+  {value: "FAKE", label: "사례금 요구나 거짓 정보 같아요"},
+  {value: "PRIVACY", label: "개인정보를 요구하거나 퍼뜨려요"},
+  {value: "ETC", label: "기타"}
+];
+export const reportChat = async (id: number, body: {reason: ChatReportReason; detail?: string; block: boolean}) =>
+  (await axios.post<{message: string}>(`/api/chats/${id}/report`, body, auth())).data.message;
 export const fetchChatUnread = async () => (await axios.get<{count: number}>("/api/chats/unread-count", auth())).data.count;
 
 // 서버가 보낸 한글 메시지 (없으면 fallback)

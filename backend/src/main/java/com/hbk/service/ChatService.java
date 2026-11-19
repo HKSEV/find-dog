@@ -33,6 +33,9 @@ public class ChatService {
     private final ChatMessageRepository messageRepository;
     private final MemberRepository memberRepository;
     private final MissingPostRepository postRepository;
+    private final com.hbk.repository.ChatReportRepository reportRepository;
+
+    private static final java.util.Set<String> REASONS = java.util.Set.of("SPAM", "ABUSE", "FAKE", "PRIVACY", "ETC");
 
     // 글에서 "채팅하기": 이미 있으면 그 대화방, 없으면 새로 만듦
     public ChatDtos.Room open(Long postId, String email){
@@ -80,6 +83,7 @@ public class ChatService {
     public ChatDtos.Message send(Long roomId, ChatDtos.SendRequest request, String email){
         Member me = member(email);
         ChatRoom room = participantRoom(roomId, me);
+        if (room.isBlocked()) throw bad("종료된 대화라 메시지를 보낼 수 없어요.");
         String type = request == null || request.type() == null ? "TEXT" : request.type();
         String content = request == null || request.content() == null ? "" : request.content().trim();
 
@@ -115,6 +119,74 @@ public class ChatService {
         return roomRepository.findMine(me.getId()).stream().mapToLong(room -> unread(room, me)).sum();
     }
 
+    // 💡 신고하기: 같은 사람이 다시 신고하면 사유·내용만 바꾸고 다시 "처리 전"으로
+    public void report(Long roomId, ChatDtos.ReportRequest request, String email){
+        Member me = member(email);
+        ChatRoom room = participantRoom(roomId, me);
+        String reason = request == null || request.reason() == null ? "" : request.reason();
+        if (!REASONS.contains(reason)) throw bad("신고 사유를 골라 주세요.");
+        String detail = request.detail() == null ? "" : request.detail().trim();
+        if (detail.length() > 500) throw bad("자세한 내용은 500자 이내로 적어 주세요.");
+
+        com.hbk.entity.ChatReport report = reportRepository.findByRoomIdAndReporterId(room.getId(), me.getId())
+                .orElseGet(com.hbk.entity.ChatReport::new);
+        report.setRoom(room);
+        report.setReporter(me);
+        report.setReason(reason);
+        report.setDetail(detail.isEmpty() ? null : detail);
+        report.setStatus("PENDING");
+        report.setHandledAt(null);
+        report.setCreatedAt(LocalDateTime.now());
+        reportRepository.save(report);
+        if (Boolean.TRUE.equals(request.block())) room.setBlocked(true);
+    }
+
+    // 관리자: 신고 목록 (처리 전이 먼저)
+    @Transactional(readOnly = true)
+    public List<ChatDtos.AdminReport> adminReports(){
+        return reportRepository.findAllForAdmin().stream().map(this::toAdminReport).toList();
+    }
+
+    // 관리자: 신고된 대화방의 메시지만 볼 수 있음
+    @Transactional(readOnly = true)
+    public List<ChatDtos.AdminMessage> adminReportMessages(Long reportId){
+        com.hbk.entity.ChatReport report = adminReport(reportId);
+        Long reporterId = report.getReporter().getId();
+        return messageRepository.findAfter(report.getRoom().getId(), 0L, PageRequest.of(0, 500)).stream()
+                .map(message -> new ChatDtos.AdminMessage(message.getId(), message.getSender().getNickname(),
+                        message.getSender().getId().equals(reporterId), message.getType(), message.getContent(),
+                        message.getLat(), message.getLng(), message.getCreatedAt()))
+                .toList();
+    }
+
+    // 관리자: 처리 완료 / 문제 없음, 필요하면 대화 종료
+    public ChatDtos.AdminReport adminHandle(Long reportId, ChatDtos.AdminHandleRequest request){
+        com.hbk.entity.ChatReport report = adminReport(reportId);
+        String status = request == null ? null : request.status();
+        if (!"RESOLVED".equals(status) && !"DISMISSED".equals(status)) throw bad("처리 결과를 골라 주세요.");
+        String note = request.note() == null ? "" : request.note().trim();
+        if (note.length() > 255) throw bad("메모는 255자 이내로 적어 주세요.");
+        report.setStatus(status);
+        report.setAdminNote(note.isEmpty() ? null : note);
+        report.setHandledAt(LocalDateTime.now());
+        if (Boolean.TRUE.equals(request.closeRoom())) report.getRoom().setBlocked(true);
+        return toAdminReport(report);
+    }
+
+    private com.hbk.entity.ChatReport adminReport(Long reportId){
+        return reportRepository.findById(reportId == null ? -1 : reportId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "신고를 찾을 수 없어요."));
+    }
+
+    private ChatDtos.AdminReport toAdminReport(com.hbk.entity.ChatReport report){
+        ChatRoom room = report.getRoom();
+        Member reporter = report.getReporter();
+        Member reported = room.getOwner().getId().equals(reporter.getId()) ? room.getGuest() : room.getOwner();
+        return new ChatDtos.AdminReport(report.getId(), room.getId(), report.getReason(), report.getDetail(), report.getStatus(),
+                report.getAdminNote(), reporter.getNickname(), reported.getNickname(), postTitle(room.getPost()), room.isBlocked(),
+                report.getCreatedAt(), report.getHandledAt());
+    }
+
     // 관리자 대시보드: 대화방 수·만든 날짜만 (대화 내용·참여자는 보내지 않음)
     @Transactional(readOnly = true)
     public List<java.util.Map<String, Object>> adminRoomSummaries(){
@@ -137,7 +209,7 @@ public class ChatService {
                 post.getStatus() != null ? post.getStatus().name() : null,
                 image,
                 other.getNickname(), other.getProfileImageUrl(),
-                iAmOwner, room.getLastMessage(), room.getLastMessageAt(), unread(room, me));
+                iAmOwner, room.getLastMessage(), room.getLastMessageAt(), unread(room, me), room.isBlocked());
     }
 
     private static String postTitle(MissingPost post){

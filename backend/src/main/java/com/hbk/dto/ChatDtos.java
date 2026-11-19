@@ -19,7 +19,8 @@ public final class ChatDtos {
             boolean iAmOwner,     // 내가 글쓴이인지
             String lastMessage,
             LocalDateTime lastMessageAt,
-            long unread
+            long unread,
+            boolean blocked       // 차단·종료된 대화 (메시지를 보낼 수 없음)
     ) {}
 
     public record Message(Long id, boolean mine, String type, String content, Double lat, Double lng, LocalDateTime createdAt) {}
@@ -27,4 +28,20 @@ public final class ChatDtos {
     public record SendRequest(String type, String content, Double lat, Double lng) {}
 
     public record OpenRequest(Long postId) {}
+
+    // 신고하기 (block = true 면 이 대화를 바로 차단)
+    public record ReportRequest(String reason, String detail, Boolean block) {}
+
+    // 관리자: 신고 목록
+    public record AdminReport(
+            Long id, Long roomId, String reason, String detail, String status, String adminNote,
+            String reporterNickname, String reportedNickname, String postTitle, boolean roomBlocked,
+            LocalDateTime createdAt, LocalDateTime handledAt
+    ) {}
+
+    // 관리자: 신고된 대화 내용 (보낸 사람 닉네임 포함)
+    public record AdminMessage(Long id, String senderNickname, boolean fromReporter, String type, String content, Double lat, Double lng, LocalDateTime createdAt) {}
+
+    // 관리자: 처리 (status = RESOLVED / DISMISSED, closeRoom = 대화 종료)
+    public record AdminHandleRequest(String status, Boolean closeRoom, String note) {}
 }

@@ -56,6 +56,13 @@ public class ChatController {
         return chatService.send(id, request, email(principal));
     }
 
+    // POST /api/chats/{id}/report {reason, detail, block}
+    @PostMapping("/{id}/report")
+    public Map<String, String> report(@PathVariable Long id, @RequestBody ChatDtos.ReportRequest request, Principal principal){
+        chatService.report(id, request, email(principal));
+        return Map.of("message", "신고했어요. 운영팀이 확인할게요.");
+    }
+
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<?> handle(ResponseStatusException error){
         return ResponseEntity.status(error.getStatusCode()).body(Collections.singletonMap("message", error.getReason()));

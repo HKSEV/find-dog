@@ -72,7 +72,7 @@ export default function ChatListPage() {
                 <S.ChatRowBody>
                   <strong>{room.otherNickname}</strong>
                   <small>{chatTime(room.lastMessageAt)}</small>
-                  <p>{room.lastMessage || "대화를 시작해 보세요"}</p>
+                  <p>{room.blocked ? "종료된 대화예요" : room.lastMessage || "대화를 시작해 보세요"}</p>
                   <em>{room.postType === "FOUND" ? "목격" : "실종"} · {room.postTitle}{room.postStatus === "COMPLETED" ? " · 찾았어요" : ""}</em>
                 </S.ChatRowBody>
                 {room.unread > 0 && <S.ChatUnread aria-label={`안 읽은 메시지 ${room.unread}개`}>{room.unread > 99 ? "99+" : room.unread}</S.ChatUnread>}

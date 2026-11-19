@@ -11,6 +11,7 @@ import { loginHref } from "@/app/components/loginLink";
 import { useImeSafeSubmit } from "@/app/components/imeSafeSubmit";
 import { toImageUrl } from "../../shelter/animalFormat";
 import { ChatMessage, ChatRoom, chatTime, fetchChatMessages, fetchChatRoom, sendChatMessage, toChatError } from "../chatApi";
+import ChatReportSheet from "./ChatReportSheet";
 import * as S from "@/assets/css/Style.styles";
 
 const POLL_MS = 3000; // 새 메시지 확인 간격
@@ -25,6 +26,7 @@ export default function ChatRoomView({id}: {id: number}) {
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const lastIdRef = useRef(0);
   const bottomRef = useRef<HTMLDivElement>(null);
   const imeSafeSubmit = useImeSafeSubmit();
@@ -87,6 +89,8 @@ export default function ChatRoomView({id}: {id: number}) {
       return true;
     } catch (error) {
       showToast(toChatError(error, "보내지 못했어요. 잠시 후 다시 시도해 주세요."));
+      // 상대가 차단했거나 운영팀이 종료했으면 입력창을 안내로 바꿈
+      fetchChatRoom(id).then(setRoom).catch(() => {});
       return false;
     } finally {
       setSending(false);
@@ -100,7 +104,16 @@ export default function ChatRoomView({id}: {id: number}) {
     if (await send({type: "TEXT", content})) setText("");
   };
 
-  const header = <Header title={room?.otherNickname ?? "채팅"} onBackClick={() => (window.history.length > 1 ? router.back() : router.push("/chat"))}/>;
+  const header = (
+    <Header
+    title={room?.otherNickname ?? "채팅"}
+    onBackClick={() => (window.history.length > 1 ? router.back() : router.push("/chat"))}
+    action={room ? (
+      <S.HeaderRoundButton type="button" aria-label="신고하기" title="신고하기" onClick={() => setReportOpen(true)}>
+        <S.ChatReportIcon aria-hidden="true"/>
+      </S.HeaderRoundButton>
+    ) : undefined}/>
+  );
 
   if (status !== "ready" || !room) {
     return (
@@ -155,29 +168,44 @@ export default function ChatRoomView({id}: {id: number}) {
           <div ref={bottomRef}/>
         </S.ChatMessages>
 
-        <S.ChatInputBar onSubmit={handleSubmit}>
-          <S.ChatIconButton type="button" aria-label="위치 보내기" onClick={() => setPickerOpen(true)}>
-            <S.ChatPinIcon/>
-          </S.ChatIconButton>
-          <textarea
-          rows={1}
-          aria-label="메시지"
-          placeholder="메시지 보내기"
-          maxLength={1000}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            // Enter 로 보내기 (Shift+Enter 는 줄바꿈, 한글 조합 중 Enter 는 무시)
-            if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
-              e.preventDefault();
-              e.currentTarget.form?.requestSubmit();
-            };
-          }}/>
-          <S.ChatIconButton type="submit" $primary aria-label="보내기" disabled={sending || !text.trim()} {...imeSafeSubmit}>
-            <S.ChatSendIcon/>
-          </S.ChatIconButton>
-        </S.ChatInputBar>
+        {room.blocked ? (
+          <S.ChatClosedBar role="status">종료된 대화예요. 메시지를 보낼 수 없어요.</S.ChatClosedBar>
+        ) : (
+          <S.ChatInputBar onSubmit={handleSubmit}>
+            <S.ChatIconButton type="button" aria-label="위치 보내기" onClick={() => setPickerOpen(true)}>
+              <S.ChatPinIcon/>
+            </S.ChatIconButton>
+            <textarea
+            rows={1}
+            aria-label="메시지"
+            placeholder="메시지 보내기"
+            maxLength={1000}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => {
+              // Enter 로 보내기 (Shift+Enter 는 줄바꿈, 한글 조합 중 Enter 는 무시)
+              if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+                e.preventDefault();
+                e.currentTarget.form?.requestSubmit();
+              };
+            }}/>
+            <S.ChatIconButton type="submit" $primary aria-label="보내기" disabled={sending || !text.trim()} {...imeSafeSubmit}>
+              <S.ChatSendIcon/>
+            </S.ChatIconButton>
+          </S.ChatInputBar>
+        )}
       </S.Container>
+
+      {reportOpen && (
+        <ChatReportSheet
+        roomId={room.id}
+        otherNickname={room.otherNickname}
+        onClose={() => setReportOpen(false)}
+        onReported={(blocked) => {
+          setReportOpen(false);
+          if (blocked) setRoom({...room, blocked: true});
+        }}/>
+      )}
 
       {pickerOpen && (
         <MapPicker

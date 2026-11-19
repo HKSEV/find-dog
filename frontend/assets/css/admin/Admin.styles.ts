@@ -15,3 +15,4 @@ export * from "./Sidebar.styles";
 export * from "./SidebarContent.styles";
 export * from "./Topbar.styles";
 export * from "./TopbarContent.styles";
+export * from "./ChatReport.styles";

@@ -33,6 +33,7 @@ public class MissingPostService {
     private final MemberRepository memberRepository;
     private final com.hbk.repository.ChatRoomRepository chatRoomRepository;
     private final com.hbk.repository.ChatMessageRepository chatMessageRepository;
+    private final com.hbk.repository.ChatReportRepository chatReportRepository;
 
     public static final int MAX_PHOTOS = 5;
 
@@ -248,6 +249,7 @@ public class MissingPostService {
 
     // 글에 딸린 채팅(메시지 -> 대화방 순서로) 지우기
     private void deleteChats(Long postId){
+        chatReportRepository.deleteByPostId(postId);
         chatMessageRepository.deleteByPostId(postId);
         chatRoomRepository.deleteByPostId(postId);
     }

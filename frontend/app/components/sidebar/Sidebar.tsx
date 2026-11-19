@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import { FaBullhorn } from "react-icons/fa";
-import { FiCalendar, FiChevronLeft, FiChevronRight, FiClipboard, FiGrid, FiHeart, FiHome, FiMapPin, FiMessageSquare, FiVideo } from "react-icons/fi";
+import { FiCalendar, FiChevronLeft, FiChevronRight, FiClipboard, FiGrid, FiHeart, FiFlag, FiHome, FiMapPin, FiMessageSquare, FiVideo } from "react-icons/fi";
 import AdminLogoIcon from "../AdminLogoIcon";
 import { adminOperationHref } from "@/lib/adminOperations";
 import * as S from "@/assets/css/Style.styles";
@@ -19,7 +19,10 @@ const menuGroups = [
     {href: adminOperationHref("adoptions"), label: "입양 신청", icon: FiClipboard},
     {href: adminOperationHref("volunteers"), label: "봉사 모집", icon: FiCalendar}
   ]},
-  {title: "실종·제보", items: [{href: adminOperationHref("missing"), label: "실종·제보 글", icon: FiMapPin}]},
+  {title: "실종·제보", items: [
+    {href: adminOperationHref("missing"), label: "실종·제보 글", icon: FiMapPin},
+    {href: "/admin/chat-reports", label: "채팅 신고", icon: FiFlag}
+  ]},
   {title: "커뮤니티", items: [
     {href: "/admin/intergrate", label: "보호소 소식·영상", icon: FiVideo},
     {href: adminOperationHref("community"), label: "회원 게시물", icon: FiMessageSquare}

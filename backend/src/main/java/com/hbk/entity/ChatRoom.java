@@ -47,4 +47,8 @@ public class ChatRoom {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    // 차단·종료된 대화 (신고하며 차단했거나 관리자가 종료). 이후 메시지를 보낼 수 없음
+    @Column(nullable = false)
+    private boolean blocked = false;
 }

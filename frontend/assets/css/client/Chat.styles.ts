@@ -1,6 +1,6 @@
 "use client";
 
-import { SendRounded as SendIcon, PlaceOutlined as PinIcon, ChatBubbleOutlineRounded as ChatIcon } from "@mui/icons-material";
+import { SendRounded as SendIcon, PlaceOutlined as PinIcon, ChatBubbleOutlineRounded as ChatIcon, OutlinedFlagRounded as FlagIcon } from "@mui/icons-material";
 import styled from "styled-components";
 import { colors, fontWeight } from "./theme";
 
@@ -295,3 +295,122 @@ export const ChatIconButton = styled.button<{$primary?: boolean}>`
 `;
 
 export const ChatSendIcon = styled(SendIcon)``;
+
+// 💡 신고하기 (헤더 오른쪽 깃발 -> 아래에서 올라오는 시트, ShareSheet 재사용)
+export const ChatReportIcon = styled(FlagIcon)`
+  && {
+    font-size: 22px;
+  }
+`;
+
+export const ChatReportReasons = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 14px;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid ${colors.border};
+    font-size: 15px;
+    color: ${colors.gray900};
+    cursor: pointer;
+  }
+
+  input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: ${colors.brand};
+  }
+`;
+
+export const ChatReportDetail = styled.textarea`
+  width: 100%;
+  min-height: 84px;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid ${colors.border};
+  border-radius: 12px;
+  outline: none;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+
+  &:focus {
+    border-color: ${colors.brand};
+  }
+`;
+
+export const ChatReportBlock = styled.label`
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: ${colors.gray800};
+  cursor: pointer;
+
+  input {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin: 1px 0 0;
+    accent-color: ${colors.brand};
+  }
+
+  small {
+    display: block;
+    font-size: 12px;
+    color: ${colors.gray400};
+  }
+`;
+
+export const ChatReportActions = styled.div`
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+
+  button {
+    flex: 1;
+    height: 48px;
+    margin: 0;
+  }
+`;
+
+export const ChatReportSubmit = styled.button`
+  border: 0;
+  border-radius: 12px;
+  background-color: ${colors.brand};
+  font-size: 15px;
+  font-weight: ${fontWeight.semibold};
+  color: ${colors.white};
+  cursor: pointer;
+
+  &:disabled {
+    background-color: ${colors.gray200};
+    cursor: default;
+  }
+`;
+
+// 차단·종료된 대화: 입력창 대신 안내
+export const ChatClosedBar = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  z-index: 100;
+  width: 100%;
+  max-width: 480px;
+  box-sizing: border-box;
+  padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
+  border-top: 1px solid ${colors.border};
+  background-color: ${colors.bgLight};
+  font-size: 14px;
+  text-align: center;
+  color: ${colors.gray500};
+  transform: translateX(-50%);
+`;
