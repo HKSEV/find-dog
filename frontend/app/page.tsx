@@ -131,6 +131,13 @@ export default function HomePage() {
           </S.HomeEntryButton>
         </S.HomeEntryGrid>
 
+        {/* 💡 지도로 보기 (실종·목격, 보호 동물, 봉사를 사진 마커로) */}
+        <S.HomeMapEntry as={Link} href="/map">
+          <S.MapEntryIcon aria-hidden="true"/>
+          <span><strong>우리 동네 지도로 보기</strong> · 실종·목격, 보호 동물, 봉사</span>
+          <S.MapCardChevron aria-hidden="true"/>
+        </S.HomeMapEntry>
+
         <S.HomeBand/>
 
         {/* 최근 실종 신고 */}

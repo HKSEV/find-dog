@@ -41,7 +41,15 @@ export default function MissingReportPage() {
 
   return (
     <S.AppWrapper>
-      <Header title="실종·제보" isTab/>
+      <Header
+      title="실종·제보"
+      isTab
+      action={(
+        // 💡 지도로 보기: 실종·목격 글과 보호 동물·봉사를 사진 마커로
+        <S.HeaderIconButton as={Link} href="/map" $side="right" aria-label="지도로 보기">
+          <S.MapEntryIcon/>
+        </S.HeaderIconButton>
+      )}/>
 
       <S.Container>
         <S.HeaderOffset/>
