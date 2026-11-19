@@ -199,7 +199,7 @@ export default function SignupPage() {
               <S.SignupIntroList>
                 <li><SpeakerIcon aria-hidden="true"/>실종 신고와 목격 제보</li>
                 <li><FormIcon aria-hidden="true"/>입양·봉사 신청과 진행 상황 확인</li>
-                <li><HeartIcon aria-hidden="true"/>커뮤니티에 이야기 나누기</li>
+                <li><HeartIcon aria-hidden="true"/>함께해요에서 이야기 나누기</li>
               </S.SignupIntroList>
             </S.SignupIntro>
 

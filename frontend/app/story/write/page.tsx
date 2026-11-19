@@ -120,7 +120,7 @@ function CommunityWriteForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const next: Errors = {};
-    if (!category) next.category = "분류를 골라 주세요.";
+    if (!category) next.category = "말머리를 골라 주세요.";
     if (!form.title.trim()) next.title = "제목을 적어 주세요.";
     if (!form.content.trim()) next.content = "내용을 적어 주세요.";
     if (Object.keys(next).length > 0) {
@@ -155,7 +155,7 @@ function CommunityWriteForm() {
       const back = editId ? `/story/write?edit=${editId}` : `/story/write${category ? `?category=${category}` : ""}`;
       return (
         <S.WriteLoginNotice>
-          <p>로그인하면 커뮤니티에<br/>글을 쓸 수 있어요</p>
+          <p>로그인하면 이야기에<br/>글을 쓸 수 있어요</p>
           <Link href={loginHref(back)}>로그인</Link>
         </S.WriteLoginNotice>
       );
@@ -166,7 +166,7 @@ function CommunityWriteForm() {
     return (
       <S.WriteForm onSubmit={handleSubmit} noValidate>
         <S.WriteField role="radiogroup" aria-labelledby="cw-category-label">
-          <S.WriteLabel as="span" id="cw-category-label">분류</S.WriteLabel>
+          <S.WriteLabel as="span" id="cw-category-label">말머리</S.WriteLabel>
           <S.ApplyChoiceGroup $columns={2}>
             {communityCategories.map((item) => (
               <S.WriteChoice
@@ -204,7 +204,7 @@ function CommunityWriteForm() {
           id="cw-content"
           rows={8}
           maxLength={5000}
-          placeholder={category ? contentHint[category] : "분류를 고르고 이야기를 들려주세요"}
+          placeholder={category ? contentHint[category] : "말머리를 고르고 이야기를 들려주세요"}
           value={form.content}
           $invalid={Boolean(errors.content)}
           aria-invalid={Boolean(errors.content)}

@@ -14,7 +14,7 @@ import Header from "@/app/components/Header";
 import { loginHref } from "@/app/components/loginLink";
 import * as S from "@/assets/css/Style.styles";
 
-const kinds = ["실종·제보", "커뮤니티"] as const;
+const kinds = ["실종·제보", "이야기"] as const;
 type Kind = (typeof kinds)[number];
 
 const loginNotice = (
@@ -106,7 +106,7 @@ export default function MyPostsPage() {
     if (communityPosts.length === 0) {
       return (
         <S.MissingEmptyText>
-          아직 쓴 커뮤니티 글이 없어요. <Link href="/story">커뮤니티 보러 가기</Link>
+          아직 쓴 이야기 글이 없어요. <Link href="/story">이야기 보러 가기</Link>
         </S.MissingEmptyText>
       );
     };

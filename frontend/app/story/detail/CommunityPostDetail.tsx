@@ -55,7 +55,7 @@ export default function CommunityPostDetail({id}: {id: number}) {
     return (
       <S.AppWrapper>
         <S.Container>
-          <Header title="커뮤니티" onBackClick={handleBack}/>
+          <Header title="이야기" onBackClick={handleBack}/>
           <S.HeaderOffset/>
           <S.AdoptEmpty>{status === "loading" ? "불러오는 중이에요" : "삭제됐거나 없는 글이에요"}</S.AdoptEmpty>
         </S.Container>

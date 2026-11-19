@@ -23,6 +23,7 @@ import SplashScreen from "./components/SplashScreen"; // 💡 스플래시 컴�
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import * as S from "@/assets/css/Style.styles";
+import { setCategory } from "./redux/storySlice";
 
 // 💡 홈 노출 개수
 const MISSING_COUNT = 2;
@@ -103,7 +104,11 @@ export default function HomePage() {
   const helps = needHelps.slice(0, HELP_COUNT);
 
   // 함께 도와주세요 → 입양·봉사 탭의 함께해요 화면으로
-  const openVolunteerTab = () => dispatch(setActiveTab("함께해요"));
+  // 도움 요청·캠페인은 함께해요 > 이야기 > 보호소 말머리에서 보임
+  const openVolunteerTab = () => {
+    dispatch(setActiveTab("이야기"));
+    dispatch(setCategory("보호소"));
+  };
 
   // 💡 showSplash가 true일 때는 스플래시 화면만 렌더링
   if (showSplash) {
