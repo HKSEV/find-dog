@@ -269,22 +269,8 @@ export default function SignupPage() {
             <S.SignupStep><b>2</b> / 3 정보 입력</S.SignupStep>
             <S.SignupProgress $percent={67}/>
 
-            <S.WriteField>
-              <S.WriteLabel as="span" id="signup-type-title">가입 유형</S.WriteLabel>
-              <S.ApplyChoiceGroup $columns={2} role="radiogroup" aria-labelledby="signup-type-title">
-              {[{label: "일반 회원", value: "GENERAL"}, {label: "업체 (보호소·병원 등)", value: "BUSINESS"}].map((option) => (
-                <S.WriteChoice
-                key={option.value}
-                type="button"
-                role="radio"
-                aria-checked={formData.userType === option.value}
-                $checked={formData.userType === option.value}
-                onClick={() => setField("userType", option.value)}>
-                  {option.label}
-                </S.WriteChoice>
-              ))}
-              </S.ApplyChoiceGroup>
-            </S.WriteField>
+            {/* 💡 가입 유형(일반 / 업체·보호소)은 지금 단계에서 빼고 모두 일반 회원(GENERAL)으로 가입
+                   보호소 회원 기능을 만들 때 다시 넣기 (서버는 GENERAL·BUSINESS 둘 다 받음) */}
 
             <S.WriteField>
               <S.WriteLabel htmlFor="signup-email">이메일</S.WriteLabel>

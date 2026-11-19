@@ -16,7 +16,6 @@ import * as S from "@/assets/css/Style.styles";
 type Agree = "agreeTerms" | "agreePrivacy" | "agreeOverseas" | "agreeAge" | "marketingAgreed";
 type Field = "nickname" | "name" | "phone";
 
-const userTypes = [{label: "일반 회원", value: "GENERAL"}, {label: "업체 (보호소·병원 등)", value: "BUSINESS"}];
 
 // ==========================================
 // 💡 카카오로 처음 가입: 약관 동의 + 이름·휴대폰·닉네임
@@ -170,22 +169,7 @@ export default function KakaoSignupPage() {
             </S.SignupAgreeList>
             {errors.agree && <S.WriteError as="p">{errors.agree}</S.WriteError>}
 
-            <S.WriteField>
-              <S.WriteLabel as="span" id="kakao-type-title">가입 유형</S.WriteLabel>
-              <S.ApplyChoiceGroup $columns={2} role="radiogroup" aria-labelledby="kakao-type-title">
-                {userTypes.map((option) => (
-                  <S.WriteChoice
-                  key={option.value}
-                  type="button"
-                  role="radio"
-                  aria-checked={form.userType === option.value}
-                  $checked={form.userType === option.value}
-                  onClick={() => setField("userType", option.value)}>
-                    {option.label}
-                  </S.WriteChoice>
-                ))}
-              </S.ApplyChoiceGroup>
-            </S.WriteField>
+            {/* 💡 가입 유형(일반 / 업체·보호소)은 지금 단계에서 빼고 모두 일반 회원(GENERAL)으로 가입 */}
 
             <S.WriteField>
               <S.WriteLabel htmlFor="kakao-nickname">닉네임</S.WriteLabel>
