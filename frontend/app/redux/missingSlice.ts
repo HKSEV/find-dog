@@ -22,6 +22,8 @@ export interface MissingAnimal {
   color?: string;
   rescueLocation: string;
   authorName?: string;
+  authorId?: number | null; // 글쓴이 프로필 (/profile/?id=)
+  authorImage?: string | null;
   createdAt: string;
   mediaUrls?: string[];
   distanceKm?: number | null; // 근처 글 목록에서만: 기준 글과의 거리 (km)

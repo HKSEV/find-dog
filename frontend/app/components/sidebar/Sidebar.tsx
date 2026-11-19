@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import { FaBullhorn } from "react-icons/fa";
-import { FiCalendar, FiChevronLeft, FiChevronRight, FiClipboard, FiGrid, FiHeart, FiFlag, FiHome, FiMapPin, FiMessageSquare, FiVideo } from "react-icons/fi";
+import { FiAlertTriangle, FiCalendar, FiChevronLeft, FiChevronRight, FiClipboard, FiFlag, FiGrid, FiHeart, FiHome, FiMapPin, FiMessageSquare, FiVideo } from "react-icons/fi";
 import AdminLogoIcon from "../AdminLogoIcon";
 import { adminOperationHref } from "@/lib/adminOperations";
 import * as S from "@/assets/css/Style.styles";
@@ -21,6 +21,7 @@ const menuGroups = [
   ]},
   {title: "실종·제보", items: [
     {href: adminOperationHref("missing"), label: "실종·제보 글", icon: FiMapPin},
+    {href: "/admin/post-reports", label: "글 신고", icon: FiAlertTriangle},
     {href: "/admin/chat-reports", label: "채팅 신고", icon: FiFlag}
   ]},
   {title: "커뮤니티", items: [

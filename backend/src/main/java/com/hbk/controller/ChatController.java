@@ -56,10 +56,11 @@ public class ChatController {
         return chatService.send(id, request, email(principal));
     }
 
-    // GET /api/chats/{id}/profile : 대화 상대 프로필
-    @GetMapping("/{id}/profile")
-    public ChatDtos.Profile profile(@PathVariable Long id, Principal principal){
-        return chatService.otherProfile(id, email(principal));
+    // DELETE /api/chats/{id} : 대화방 나가기
+    @DeleteMapping("/{id}")
+    public Map<String, String> leave(@PathVariable Long id, Principal principal){
+        chatService.leave(id, email(principal));
+        return Map.of("message", "대화방을 나갔어요.");
     }
 
     // POST /api/chats/{id}/report {reason, detail, block}

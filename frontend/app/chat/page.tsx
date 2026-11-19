@@ -8,7 +8,7 @@ import { loginHref } from "@/app/components/loginLink";
 import { useScrollCollapse } from "@/app/components/useScrollCollapse";
 import { toImageUrl } from "../shelter/animalFormat";
 import { ChatRoom, chatTime, fetchChatRooms } from "./chatApi";
-import ChatAvatar from "./ChatAvatar";
+import ProfileAvatar from "@/app/components/ProfileAvatar";
 import * as S from "@/assets/css/Style.styles";
 
 const subscribeStorage = (onChange: () => void) => {
@@ -69,11 +69,11 @@ export default function ChatListPage() {
           return (
             <li key={room.id}>
               <S.ChatRow as={Link} href={`/chat/room/?id=${room.id}`}>
-                <ChatAvatar image={room.otherImage} size={48}/>
+                <ProfileAvatar image={room.otherImage} size={48}/>
                 <S.ChatRowBody>
                   <strong>{room.otherNickname}</strong>
                   <small>{chatTime(room.lastMessageAt)}</small>
-                  <p>{room.blocked ? "종료된 대화예요" : room.lastMessage || "대화를 시작해 보세요"}</p>
+                  <p>{room.blocked ? "종료된 대화예요" : room.otherLeft ? "상대가 대화방을 나갔어요" : room.lastMessage || "대화를 시작해 보세요"}</p>
                   <em>{room.postType === "FOUND" ? "목격" : "실종"} · {room.postTitle}{room.postStatus === "COMPLETED" ? " · 찾았어요" : ""}</em>
                 </S.ChatRowBody>
                 {room.unread > 0 && <S.ChatUnread aria-label={`안 읽은 메시지 ${room.unread}개`}>{room.unread > 99 ? "99+" : room.unread}</S.ChatUnread>}

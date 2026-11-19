@@ -9,16 +9,19 @@ import { fetchMissingPost, MissingAnimal } from "../../redux/missingSlice";
 import { setActiveTab } from "../../redux/shelterSlice";
 import { loadUserFromStorage } from "../../redux/userSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
-import { ageText, formatWhen, genderText, missingBadge, missingTitle, petNameOf, placeLabel, timeAgo, weightText, whenLabel } from "../missingFormat";
+import { ageText, formatWhen, genderText, missingBadge, missingTitle, petNameOf, placeLabel, shortPlace, timeAgo, weightText, whenLabel } from "../missingFormat";
 
 import Header from "@/app/components/Header";
 import DetailTopBar from "@/app/components/DetailTopBar";
 import MiniMap from "@/app/components/map/MiniMap";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
 import ShareSheet from "@/app/components/ShareSheet";
+import ActionSheet, { ActionSheetItem } from "@/app/components/ActionSheet";
+import ReportSheet from "@/app/components/ReportSheet";
+import ProfileAvatar from "@/app/components/ProfileAvatar";
 import { queueToast, showToast } from "@/app/components/Toast";
 import { loginHref } from "@/app/components/loginLink";
-import { completeMissingPost, deleteMissingPost, fetchNearbyPosts, toMissingError } from "../missingApi";
+import { completeMissingPost, deleteMissingPost, fetchNearbyPosts, missingReportReasons, reportMissingPost, toMissingError } from "../missingApi";
 import * as S from "@/assets/css/Style.styles";
 import MissingRowLines from "../MissingRowLines";
 import { openChat, toChatError } from "../../chat/chatApi";
@@ -34,6 +37,7 @@ export default function MissingPostDetail({id}: {id: number}) {
   const [confirm, setConfirm] = useState<"complete" | "delete" | null>(null); // 한 번 더 묻는 중인 일
   const [busy, setBusy] = useState(false);
   const [sharing, setSharing] = useState(false); // 공유 시트 열림
+  const [sheet, setSheet] = useState<"menu" | "report" | null>(null); // 더보기 메뉴 / 신고 시트
   const [openingChat, setOpeningChat] = useState(false);
 
   // 채팅하기: 이 글의 대화방을 열고(있으면 그 방) 채팅방으로
@@ -118,7 +122,17 @@ export default function MissingPostDetail({id}: {id: number}) {
   };
 
   const done = post.status === "COMPLETED";
-  const author = post.authorName?.trim(); // 백엔드가 닉네임을 줌 (없으면 "익명")
+  const author = post.authorName?.trim() || "익명"; // 백엔드가 닉네임을 줌
+  const authorPlace = shortPlace(post.rescueLocation);
+
+  // 💡 더보기(⋮) 메뉴: 내 글이면 전단지 만들기, 남의 글이면 신고하기
+  const menuItems: ActionSheetItem[] = post.mine
+    ? (done ? [] : [{label: "전단지 만들기", onSelect: () => router.push(`/missing/flyer/?id=${post.id}`)}])
+    : [{
+      label: "신고하기",
+      danger: true,
+      onSelect: () => (isLoggedIn ? setSheet("report") : router.push(loginHref(`/missing/detail/?id=${post.id}`)))
+    }];
   const photos = (post.mediaUrls ?? []).map((url) => toImageUrl(url)).filter((url): url is string => Boolean(url));
   const facts = [
     {label: "품종", value: post.breed},
@@ -144,7 +158,11 @@ export default function MissingPostDetail({id}: {id: number}) {
   return (
     <S.AppWrapper>
       <S.Container>
-        <DetailTopBar title={missingTitle(post)} onBack={handleBack} onShare={() => setSharing(true)}/>
+        <DetailTopBar
+        title={missingTitle(post)}
+        onBack={handleBack}
+        onShare={() => setSharing(true)}
+        onMenu={menuItems.length > 0 ? () => setSheet("menu") : undefined}/>
         <S.DetailPage>
           <S.DetailHero>
             {photos.length > 0 ? (
@@ -159,12 +177,29 @@ export default function MissingPostDetail({id}: {id: number}) {
             {photos.length > 1 && <S.DetailPhotoCount>사진 {photos.length}장 · 옆으로 넘겨 보세요</S.DetailPhotoCount>}
           </S.DetailHero>
 
+          {/* 💡 글쓴이: 누르면 프로필 (쓴 글 보기) */}
+          {post.authorId != null ? (
+            <S.DetailAuthor as={Link} href={`/profile/?id=${post.authorId}`} aria-label={`${author}님 프로필 보기`}>
+              <ProfileAvatar image={post.authorImage} size={44}/>
+              <div>
+                <strong>{author}</strong>
+                {authorPlace && <small>{authorPlace}</small>}
+              </div>
+              <S.DetailAuthorChevron aria-hidden="true"/>
+            </S.DetailAuthor>
+          ) : (
+            <S.DetailAuthor as="div">
+              <ProfileAvatar image={null} size={44}/>
+              <div><strong>{author}</strong></div>
+            </S.DetailAuthor>
+          )}
+
           <S.DetailSection>
             <S.MissingBadge $tone={missingBadge(post).tone}>{missingBadge(post).label}</S.MissingBadge>
             {/* 이름이 있으면 이름을 크게, 품종·특징은 아래 줄에 (찾았을 때 부를 수 있게) */}
             <S.DetailTitle>{petNameOf(post) || post.title || post.breed}</S.DetailTitle>
             {petNameOf(post) && <S.MissingTitleSub>{post.title || post.breed}</S.MissingTitleSub>}
-            <S.DetailNotice>{[author && `작성자 ${author}`, timeAgo(post.createdAt)].filter(Boolean).join(" · ")}</S.DetailNotice>
+            <S.DetailNotice>{timeAgo(post.createdAt)}</S.DetailNotice>
 
             {facts.length > 0 && (
               <S.DetailFacts>
@@ -233,16 +268,6 @@ export default function MissingPostDetail({id}: {id: number}) {
               </S.MissingShelterHint>
             </S.DetailSection>
           )}
-          {/* 💡 내 글이고 찾는 중이면 전단지 만들기 안내 */}
-          {post.mine && !done && (
-            <S.DetailSection>
-              <S.FlyerEntry as={Link} href={`/missing/flyer/?id=${post.id}`}>
-                <S.FlyerEntryIcon aria-hidden="true"/>
-                <span><strong>전단지 만들기</strong>사진과 연락처, QR이 들어간 A4 전단지를 바로 만들어요.</span>
-                <S.FlyerEntryChevron aria-hidden="true"/>
-              </S.FlyerEntry>
-            </S.DetailSection>
-          )}
         </S.DetailPage>
 
         {/* 내 글이면 아래에 관리 버튼 */}
@@ -272,6 +297,16 @@ export default function MissingPostDetail({id}: {id: number}) {
           </S.DetailActionBar>
         )}
       {sharing && <ShareSheet content={shareContent} onClose={() => setSharing(false)}/>}
+      {sheet === "menu" && <ActionSheet items={menuItems} onClose={() => setSheet((current) => (current === "menu" ? null : current))}/>}
+      {sheet === "report" && (
+        <ReportSheet
+        title="이 글을 신고할까요?"
+        note="운영팀이 확인 후 처리해요. 신고한 사실은 글쓴이에게 알리지 않아요."
+        reasons={missingReportReasons}
+        onSubmit={({reason, detail}) => reportMissingPost(post.id, {reason, detail})}
+        toError={(error) => toMissingError(error, "신고하지 못했어요. 잠시 후 다시 시도해 주세요.")}
+        onClose={() => setSheet(null)}/>
+      )}
       </S.Container>
 
       <ConfirmDialog

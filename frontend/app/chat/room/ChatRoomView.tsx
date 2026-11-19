@@ -6,13 +6,15 @@ import { useRouter } from "next/navigation";
 import Header from "@/app/components/Header";
 import MapPicker from "@/app/components/map/MapPicker";
 import { kakaoMapLink } from "@/app/components/map/kakaoMap";
-import { showToast } from "@/app/components/Toast";
+import { queueToast, showToast } from "@/app/components/Toast";
+import ConfirmDialog from "@/app/components/ConfirmDialog";
+import ActionSheet from "@/app/components/ActionSheet";
+import ReportSheet from "@/app/components/ReportSheet";
+import ProfileAvatar from "@/app/components/ProfileAvatar";
 import { loginHref } from "@/app/components/loginLink";
 import { useImeSafeSubmit } from "@/app/components/imeSafeSubmit";
 import { toImageUrl } from "../../shelter/animalFormat";
-import { ChatMessage, ChatRoom, chatTime, fetchChatMessages, fetchChatRoom, sendChatMessage, toChatError } from "../chatApi";
-import ChatReportSheet from "./ChatReportSheet";
-import ChatAvatar from "../ChatAvatar";
+import { ChatMessage, ChatRoom, chatReportReasons, chatTime, fetchChatMessages, fetchChatRoom, leaveChat, reportChat, sendChatMessage, toChatError } from "../chatApi";
 import * as S from "@/assets/css/Style.styles";
 
 const POLL_MS = 3000; // 새 메시지 확인 간격
@@ -27,7 +29,8 @@ export default function ChatRoomView({id}: {id: number}) {
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [reportOpen, setReportOpen] = useState(false);
+  const [sheet, setSheet] = useState<"menu" | "report" | "leave" | null>(null); // 더보기 메뉴 / 신고 / 나가기 확인
+  const [leaving, setLeaving] = useState(false);
   const lastIdRef = useRef(0);
   const bottomRef = useRef<HTMLDivElement>(null);
   const imeSafeSubmit = useImeSafeSubmit();
@@ -110,8 +113,8 @@ export default function ChatRoomView({id}: {id: number}) {
     title={room?.otherNickname ?? "채팅"}
     onBackClick={() => (window.history.length > 1 ? router.back() : router.push("/chat"))}
     action={room ? (
-      <S.HeaderRoundButton type="button" aria-label="신고하기" title="신고하기" onClick={() => setReportOpen(true)}>
-        <S.ChatReportIcon aria-hidden="true"/>
+      <S.HeaderRoundButton type="button" aria-label="더보기" title="더보기" onClick={() => setSheet("menu")}>
+        <S.MoreMenuIcon aria-hidden="true"/>
       </S.HeaderRoundButton>
     ) : undefined}/>
   );
@@ -130,7 +133,21 @@ export default function ChatRoomView({id}: {id: number}) {
 
   const thumb = toImageUrl(room.postImage ?? undefined);
   const postKind = room.postType === "FOUND" ? "목격 제보" : "실종 신고";
-  const profileHref = `/chat/profile/?id=${room.id}`;
+  const profileHref = `/profile/?id=${room.otherId}`;
+  // 메시지를 보낼 수 없는 대화: 차단·종료 / 상대가 나감
+  const closedNotice = room.blocked ? "종료된 대화예요. 메시지를 보낼 수 없어요." : room.otherLeft ? "상대가 대화방을 나갔어요. 메시지를 보낼 수 없어요." : null;
+
+  const handleLeave = async () => {
+    setLeaving(true);
+    try {
+      queueToast(await leaveChat(room.id));
+      router.replace("/chat");
+    } catch (error) {
+      setLeaving(false);
+      setSheet(null);
+      showToast(toChatError(error, "나가지 못했어요. 잠시 후 다시 시도해 주세요."));
+    };
+  };
 
   return (
     <S.AppWrapper>
@@ -154,7 +171,7 @@ export default function ChatRoomView({id}: {id: number}) {
           {/* 대화 맨 위: 상대 프로필 + 어떤 글로 시작했는지 */}
           <S.ChatStartCard>
             <Link href={profileHref} aria-label={`${room.otherNickname}님 프로필 보기`}>
-              <ChatAvatar image={room.otherImage} size={56}/>
+              <ProfileAvatar image={room.otherImage} size={56}/>
             </Link>
             <strong>{room.otherNickname}</strong>
             <p>
@@ -171,7 +188,7 @@ export default function ChatRoomView({id}: {id: number}) {
               <S.ChatBubbleRow key={message.id} $mine={message.mine}>
                 {!message.mine && (firstOfGroup ? (
                   <S.ChatBubbleAvatar as={Link} href={profileHref} aria-label={`${room.otherNickname}님 프로필 보기`}>
-                    <ChatAvatar image={room.otherImage} size={32}/>
+                    <ProfileAvatar image={room.otherImage} size={32}/>
                   </S.ChatBubbleAvatar>
                 ) : <S.ChatBubbleAvatar as="span" aria-hidden="true"/>)}
                 {message.type === "LOCATION" && message.lat != null && message.lng != null ? (
@@ -193,8 +210,8 @@ export default function ChatRoomView({id}: {id: number}) {
           <div ref={bottomRef}/>
         </S.ChatMessages>
 
-        {room.blocked ? (
-          <S.ChatClosedBar role="status">종료된 대화예요. 메시지를 보낼 수 없어요.</S.ChatClosedBar>
+        {closedNotice ? (
+          <S.ChatClosedBar role="status">{closedNotice}</S.ChatClosedBar>
         ) : (
           <S.ChatInputBar onSubmit={handleSubmit}>
             <S.ChatIconButton type="button" aria-label="위치 보내기" onClick={() => setPickerOpen(true)}>
@@ -221,16 +238,34 @@ export default function ChatRoomView({id}: {id: number}) {
         )}
       </S.Container>
 
-      {reportOpen && (
-        <ChatReportSheet
-        roomId={room.id}
-        otherNickname={room.otherNickname}
-        onClose={() => setReportOpen(false)}
-        onReported={(blocked) => {
-          setReportOpen(false);
-          if (blocked) setRoom({...room, blocked: true});
-        }}/>
+      {sheet === "menu" && (
+        <ActionSheet
+        onClose={() => setSheet((current) => (current === "menu" ? null : current))}
+        items={[
+          {label: "신고하기", onSelect: () => setSheet("report")},
+          {label: "대화방 나가기", danger: true, onSelect: () => setSheet("leave")}
+        ]}/>
       )}
+      {sheet === "report" && (
+        <ReportSheet
+        title={`${room.otherNickname}님을 신고할까요?`}
+        note="운영팀이 이 대화 내용만 확인해요. 신고한 사실은 상대에게 알리지 않아요."
+        reasons={chatReportReasons}
+        withBlock
+        onSubmit={(body) => reportChat(room.id, body)}
+        toError={(error) => toChatError(error, "신고하지 못했어요. 잠시 후 다시 시도해 주세요.")}
+        onClose={() => setSheet(null)}
+        onReported={(blocked) => blocked && setRoom({...room, blocked: true})}/>
+      )}
+      <ConfirmDialog
+      isOpen={sheet === "leave"}
+      title="대화방을 나갈까요?"
+      message="대화 내용이 내 채팅 목록에서 사라지고, 상대는 더 이상 메시지를 보낼 수 없어요."
+      confirmText="나가기"
+      danger
+      busy={leaving}
+      onConfirm={handleLeave}
+      onCancel={() => setSheet(null)}/>
 
       {pickerOpen && (
         <MapPicker

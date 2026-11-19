@@ -15,6 +15,16 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
     @Query("SELECT m FROM ChatMessage m WHERE m.room.id = :roomId AND m.id > :afterId ORDER BY m.id ASC")
     List<ChatMessage> findAfter(@Param("roomId") Long roomId, @Param("afterId") Long afterId, Pageable pageable);
 
+    // since(대화방을 나간 때) 이후 메시지만 (since 가 없으면 전부)
+    @Query("SELECT m FROM ChatMessage m WHERE m.room.id = :roomId AND m.id > :afterId"
+            + " AND (:since IS NULL OR m.createdAt > :since) ORDER BY m.id ASC")
+    List<ChatMessage> findAfterSince(@Param("roomId") Long roomId, @Param("afterId") Long afterId, @Param("since") LocalDateTime since, Pageable pageable);
+
+    // 두 사람 모두 나간 대화방의 메시지 지우기
+    @Modifying
+    @Query("DELETE FROM ChatMessage m WHERE m.room.id = :roomId")
+    void deleteByRoomId(@Param("roomId") Long roomId);
+
     // 글을 지울 때 그 글 대화방들의 메시지도 지움
     @Modifying
     @Query("DELETE FROM ChatMessage m WHERE m.room.id IN (SELECT r.id FROM ChatRoom r WHERE r.post.id = :postId)")

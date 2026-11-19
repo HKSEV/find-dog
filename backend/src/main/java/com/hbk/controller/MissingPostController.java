@@ -21,6 +21,7 @@ import java.util.List;
 public class MissingPostController {
 
     private final MissingPostService service;
+    private final com.hbk.service.MissingPostReportService reportService;
 
     // 1. 실종 신고 글 작성 API (DTO와 파일, 로그인 유저 정보를 서비스로 전달)
     @PostMapping
@@ -92,6 +93,14 @@ public class MissingPostController {
         if (principal == null) return unauthorized();
         MissingPostResponseDto response = service.updatePost(id, requestDto, principal.getName());
         return ResponseEntity.ok(response);
+    }
+
+    // 💡 글 신고 (POST /api/missing-posts/{id}/report {reason, detail})
+    @PostMapping("/{id}/report")
+    public ResponseEntity<?> reportPost(@PathVariable Long id, @RequestBody com.hbk.dto.MissingPostReportDtos.ReportRequest request, Principal principal){
+        if (principal == null) return unauthorized();
+        reportService.report(id, request, principal.getName());
+        return ResponseEntity.ok(java.util.Map.of("message", "신고했어요. 운영팀이 확인할게요."));
     }
 
     // 4. 글 삭제 API (DELETE /api/missing-posts/{id})

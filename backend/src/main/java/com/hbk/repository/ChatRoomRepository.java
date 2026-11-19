@@ -13,7 +13,8 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     Optional<ChatRoom> findByPostIdAndGuestId(Long postId, Long guestId);
 
     // 내가 글쓴이거나 연락한 사람인 대화방 (최근 대화 순)
-    @Query("SELECT r FROM ChatRoom r WHERE r.owner.id = :memberId OR r.guest.id = :memberId"
+    //    내가 나간 대화방은 빼고
+    @Query("SELECT r FROM ChatRoom r WHERE (r.owner.id = :memberId AND r.ownerLeft = false) OR (r.guest.id = :memberId AND r.guestLeft = false)"
             + " ORDER BY COALESCE(r.lastMessageAt, r.createdAt) DESC")
     List<ChatRoom> findMine(@Param("memberId") Long memberId);
 

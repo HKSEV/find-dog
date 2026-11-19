@@ -51,4 +51,18 @@ public class ChatRoom {
     // 차단·종료된 대화 (신고하며 차단했거나 관리자가 종료). 이후 메시지를 보낼 수 없음
     @Column(nullable = false)
     private boolean blocked = false;
+
+    // 💡 대화방 나가기: 나간 사람 목록에서 빠지고, 상대는 더 이상 메시지를 보낼 수 없음
+    //    clearedAt 이전 메시지는 그 사람에게 안 보임 (같은 글로 다시 채팅하면 새 대화처럼)
+    @Column(name = "owner_left", nullable = false)
+    private boolean ownerLeft = false;
+
+    @Column(name = "guest_left", nullable = false)
+    private boolean guestLeft = false;
+
+    @Column(name = "owner_cleared_at")
+    private LocalDateTime ownerClearedAt;
+
+    @Column(name = "guest_cleared_at")
+    private LocalDateTime guestClearedAt;
 }

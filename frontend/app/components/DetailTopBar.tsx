@@ -6,10 +6,10 @@ import * as S from "@/assets/css/Style.styles";
 // 💡 상세 화면(실종 글, 보호 동물) 상단 바
 //    사진(400px) 위에서는 투명하고 뒤로 버튼만 흰 동그라미로 보임
 //    사진을 거의 지나면 흰 헤더 + 제목으로 바뀌고, 스크롤해도 위에 고정
-//    onShare 를 넘기면 오른쪽에 공유 버튼 (뒤로 버튼과 같은 모양)
+//    onShare 를 넘기면 오른쪽에 공유 버튼, onMenu 를 넘기면 더보기(⋮) 버튼 (뒤로 버튼과 같은 모양)
 const SOLID_AFTER = 400 - 56 - 24; // 사진 높이 - 헤더 높이 - 여유
 
-export default function DetailTopBar({title, onBack, onShare}: {title: string; onBack: () => void; onShare?: () => void}) {
+export default function DetailTopBar({title, onBack, onShare, onMenu}: {title: string; onBack: () => void; onShare?: () => void; onMenu?: () => void}) {
   const [solid, setSolid] = useState(false);
 
   useEffect(() => {
@@ -27,10 +27,21 @@ export default function DetailTopBar({title, onBack, onShare}: {title: string; o
       <S.DetailBackButton type="button" aria-label="뒤로" $solid={solid} onClick={onBack}>
         <S.DetailBackIcon/>
       </S.DetailBackButton>
-      <S.DetailTopTitle $show={solid} $hasAction={Boolean(onShare)} aria-hidden={!solid}>{title}</S.DetailTopTitle>
+      <S.DetailTopTitle
+      $show={solid}
+      $hasAction={Boolean(onShare || onMenu)}
+      style={onShare && onMenu ? {marginLeft: 44} : undefined} // 오른쪽 버튼이 둘이면 왼쪽도 한 칸 비워 제목을 가운데로
+      aria-hidden={!solid}>
+        {title}
+      </S.DetailTopTitle>
       {onShare && (
         <S.DetailBackButton type="button" aria-label="공유하기" $solid={solid} onClick={onShare}>
           <S.DetailShareIcon/>
+        </S.DetailBackButton>
+      )}
+      {onMenu && (
+        <S.DetailBackButton type="button" aria-label="더보기" $solid={solid} onClick={onMenu}>
+          <S.MoreMenuIcon/>
         </S.DetailBackButton>
       )}
     </S.DetailTopBar>

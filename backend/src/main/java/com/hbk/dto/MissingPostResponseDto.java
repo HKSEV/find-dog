@@ -15,6 +15,8 @@ import java.util.List;
 public class MissingPostResponseDto {
 private Long id;
 private String title, content, petName, breed, gender, age, weight, color, rescueLocation, authorName;
+private Long authorId;        // 글쓴이 프로필 보기용 (/profile/?id=)
+private String authorImage;   // 글쓴이 프로필 사진
 private PostStatus status;
 private PostType type;
 private LocalDateTime occurredAt;
@@ -47,6 +49,8 @@ this.rescueLocation = post.getRescueLocation();
 this.authorName = post.getAuthor() != null && post.getAuthor().getNickname() != null && !post.getAuthor().getNickname().isBlank()
         ? post.getAuthor().getNickname()
         : "익명";
+this.authorId = post.getAuthor() != null ? post.getAuthor().getId() : null;
+this.authorImage = post.getAuthor() != null ? post.getAuthor().getProfileImageUrl() : null;
 this.mediaUrls = post.getMediaUrls();
 this.createdAt = post.getCreatedAt();
 this.type = post.getType() != null ? post.getType() : PostType.LOST;

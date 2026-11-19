@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface ChatReportRepository extends JpaRepository<ChatReport, Long> {
     Optional<ChatReport> findByRoomIdAndReporterId(Long roomId, Long reporterId);
 
+    boolean existsByRoomId(Long roomId);
+
     // 처리 안 된 신고가 먼저, 그다음 최신순
     @Query("SELECT r FROM ChatReport r ORDER BY CASE WHEN r.status = 'PENDING' THEN 0 ELSE 1 END, r.id DESC")
     List<ChatReport> findAllForAdmin();

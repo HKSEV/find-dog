@@ -22,3 +22,5 @@ export * from "./MapExplore.styles";
 export * from "./ScrollHeader.styles";
 export * from "./Area.styles";
 export * from "./Chat.styles";
+export * from "./Profile.styles";
+export * from "./ActionSheet.styles";

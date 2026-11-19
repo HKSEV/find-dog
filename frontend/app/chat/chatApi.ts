@@ -1,6 +1,7 @@
 // 💡 실종·목격 글 1:1 채팅 API (로그인 필요)
 import axios from "axios";
 import { missingAuthHeader } from "../redux/missingSlice";
+import type { ReportReason } from "../components/ReportSheet";
 
 export interface ChatRoom {
   id: number;
@@ -16,6 +17,8 @@ export interface ChatRoom {
   lastMessageAt: string | null;
   unread: number;
   blocked: boolean; // 신고하며 차단했거나 운영팀이 종료한 대화 (메시지를 보낼 수 없음)
+  otherId: number; // 상대 프로필 (/profile/?id=)
+  otherLeft: boolean; // 상대가 대화방을 나감 (메시지를 보낼 수 없음)
 }
 
 export interface ChatMessage {
@@ -37,34 +40,17 @@ export const fetchChatMessages = async (id: number, after: number) =>
   (await axios.get<ChatMessage[]>(`/api/chats/${id}/messages`, {...auth(), params: {after}})).data;
 export const sendChatMessage = async (id: number, body: {type: "TEXT" | "LOCATION"; content?: string; lat?: number; lng?: number}) =>
   (await axios.post<ChatMessage>(`/api/chats/${id}/messages`, body, auth())).data;
-// 💡 채팅 상대 프로필 (대화 참여자만): 닉네임·사진·쓴 글
-export interface ChatProfilePost {
-  id: number;
-  title: string;
-  kind: string; // 실종·제보: LOST / FOUND, 커뮤니티: 카테고리
-  status: "MISSING" | "COMPLETED" | null;
-  image: string | null;
-  createdAt: string | null;
-}
-export interface ChatProfile {
-  nickname: string;
-  image: string | null;
-  blocked: boolean;
-  missingPosts: ChatProfilePost[];
-  communityPosts: ChatProfilePost[];
-}
-export const fetchChatProfile = async (id: number) => (await axios.get<ChatProfile>(`/api/chats/${id}/profile`, auth())).data;
-
-export type ChatReportReason = "SPAM" | "ABUSE" | "FAKE" | "PRIVACY" | "ETC";
-export const chatReportReasons: {value: ChatReportReason; label: string}[] = [
+export const chatReportReasons: {value: ReportReason; label: string}[] = [
   {value: "SPAM", label: "광고·스팸이에요"},
   {value: "ABUSE", label: "욕설·비하·위협이 있어요"},
   {value: "FAKE", label: "사례금 요구나 거짓 정보 같아요"},
   {value: "PRIVACY", label: "개인정보를 요구하거나 퍼뜨려요"},
   {value: "ETC", label: "기타"}
 ];
-export const reportChat = async (id: number, body: {reason: ChatReportReason; detail?: string; block: boolean}) =>
+export const reportChat = async (id: number, body: {reason: ReportReason; detail?: string; block: boolean}) =>
   (await axios.post<{message: string}>(`/api/chats/${id}/report`, body, auth())).data.message;
+// 대화방 나가기 (내 목록에서 빠지고 상대는 더 이상 보낼 수 없음)
+export const leaveChat = async (id: number) => (await axios.delete<{message: string}>(`/api/chats/${id}`, auth())).data.message;
 export const fetchChatUnread = async () => (await axios.get<{count: number}>("/api/chats/unread-count", auth())).data.count;
 
 // 서버가 보낸 한글 메시지 (없으면 fallback)

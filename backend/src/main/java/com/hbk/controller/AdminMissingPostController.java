@@ -15,10 +15,23 @@ import java.util.List;
 public class AdminMissingPostController {
 
     private final MissingPostService service;
+    private final com.hbk.service.MissingPostReportService reportService;
 
     @GetMapping
     public List<AdminMemberPostResponse> getAll() {
         return service.getAllForAdmin();
+    }
+
+    // GET /api/admin/missing-posts/reports : 글 신고 목록 (처리 전이 먼저)
+    @GetMapping("/reports")
+    public List<com.hbk.dto.MissingPostReportDtos.AdminReport> reports() {
+        return reportService.adminReports();
+    }
+
+    // PATCH /api/admin/missing-posts/reports/{id} {status, note}
+    @PatchMapping("/reports/{id}")
+    public com.hbk.dto.MissingPostReportDtos.AdminReport handleReport(@PathVariable Long id, @RequestBody com.hbk.dto.MissingPostReportDtos.AdminHandleRequest request) {
+        return reportService.adminHandle(id, request);
     }
 
     @DeleteMapping("/{id}")

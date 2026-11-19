@@ -34,7 +34,6 @@ public class ChatService {
     private final MemberRepository memberRepository;
     private final MissingPostRepository postRepository;
     private final com.hbk.repository.ChatReportRepository reportRepository;
-    private final com.hbk.repository.CommunityPostRepository communityPostRepository;
 
     private static final java.util.Set<String> REASONS = java.util.Set.of("SPAM", "ABUSE", "FAKE", "PRIVACY", "ETC");
 
@@ -56,6 +55,8 @@ public class ChatService {
             created.setGuestReadAt(LocalDateTime.now());
             return roomRepository.save(created);
         });
+        // 나갔던 대화방이면 다시 목록에 (나가기 전 메시지는 계속 안 보임)
+        if (room.isGuestLeft()) room.setGuestLeft(false);
         return toRoom(room, me);
     }
 
@@ -75,7 +76,7 @@ public class ChatService {
     public List<ChatDtos.Message> messages(Long roomId, Long afterId, String email){
         Member me = member(email);
         ChatRoom room = participantRoom(roomId, me);
-        List<ChatDtos.Message> list = messageRepository.findAfter(room.getId(), afterId == null ? 0L : afterId, PageRequest.of(0, 200))
+        List<ChatDtos.Message> list = messageRepository.findAfterSince(room.getId(), afterId == null ? 0L : afterId, clearedAt(room, me), PageRequest.of(0, 200))
                 .stream().map(message -> toMessage(message, me)).toList();
         markRead(room, me);
         return list;
@@ -85,6 +86,9 @@ public class ChatService {
         Member me = member(email);
         ChatRoom room = participantRoom(roomId, me);
         if (room.isBlocked()) throw bad("종료된 대화라 메시지를 보낼 수 없어요.");
+        boolean iAmOwner = room.getOwner().getId().equals(me.getId());
+        if (iAmOwner ? room.isOwnerLeft() : room.isGuestLeft()) throw bad("나간 대화방이에요.");
+        if (iAmOwner ? room.isGuestLeft() : room.isOwnerLeft()) throw bad("상대가 대화방을 나가서 메시지를 보낼 수 없어요.");
         String type = request == null || request.type() == null ? "TEXT" : request.type();
         String content = request == null || request.content() == null ? "" : request.content().trim();
 
@@ -120,27 +124,25 @@ public class ChatService {
         return roomRepository.findMine(me.getId()).stream().mapToLong(room -> unread(room, me)).sum();
     }
 
-    // 💡 채팅 상대 프로필: 대화 참여자만, 상대가 쓴 실종·제보 글과 커뮤니티 글 (최근 20개씩)
-    @Transactional(readOnly = true)
-    public ChatDtos.Profile otherProfile(Long roomId, String email){
+    // 💡 대화방 나가기: 내 목록에서 빠지고 이전 메시지는 내게 안 보임. 상대는 더 이상 보낼 수 없음
+    //    두 사람 모두 나갔고 신고가 없으면 대화를 완전히 지움 (신고된 대화는 운영팀 확인용으로 남김)
+    public void leave(Long roomId, String email){
         Member me = member(email);
         ChatRoom room = participantRoom(roomId, me);
-        Member other = room.getOwner().getId().equals(me.getId()) ? room.getGuest() : room.getOwner();
-        List<ChatDtos.ProfilePost> missing = other.getEmail() == null ? List.of() : postRepository.findByAuthorEmailOrderByIdDesc(other.getEmail()).stream()
-                .limit(20)
-                .map(post -> new ChatDtos.ProfilePost(post.getId(), postTitle(post),
-                        post.getType() != null ? post.getType().name() : PostType.LOST.name(),
-                        post.getStatus() != null ? post.getStatus().name() : null,
-                        post.getMediaUrls() == null || post.getMediaUrls().isEmpty() ? null : post.getMediaUrls().get(0),
-                        post.getCreatedAt()))
-                .toList();
-        List<ChatDtos.ProfilePost> community = other.getEmail() == null ? List.of() : communityPostRepository.findByAuthorEmailOrderByIdDesc(other.getEmail()).stream()
-                .limit(20)
-                .map(post -> new ChatDtos.ProfilePost(post.getId(), post.getTitle(), post.getCategory().name(), null,
-                        post.getMediaUrls() == null || post.getMediaUrls().isEmpty() ? null : post.getMediaUrls().get(0),
-                        post.getCreatedAt()))
-                .toList();
-        return new ChatDtos.Profile(other.getNickname(), other.getProfileImageUrl(), room.isBlocked(), missing, community);
+        LocalDateTime now = LocalDateTime.now();
+        if (room.getOwner().getId().equals(me.getId())) {
+            room.setOwnerLeft(true);
+            room.setOwnerClearedAt(now);
+            room.setOwnerReadAt(now);
+        } else {
+            room.setGuestLeft(true);
+            room.setGuestClearedAt(now);
+            room.setGuestReadAt(now);
+        }
+        if (room.isOwnerLeft() && room.isGuestLeft() && !reportRepository.existsByRoomId(room.getId())) {
+            messageRepository.deleteByRoomId(room.getId());
+            roomRepository.delete(room);
+        }
     }
 
     // 💡 신고하기: 같은 사람이 다시 신고하면 사유·내용만 바꾸고 다시 "처리 전"으로
@@ -222,10 +224,17 @@ public class ChatService {
         }).toList();
     }
 
+    private static LocalDateTime clearedAt(ChatRoom room, Member me){
+        return room.getOwner().getId().equals(me.getId()) ? room.getOwnerClearedAt() : room.getGuestClearedAt();
+    }
+
     private ChatDtos.Room toRoom(ChatRoom room, Member me){
         MissingPost post = room.getPost();
         boolean iAmOwner = room.getOwner().getId().equals(me.getId());
         Member other = iAmOwner ? room.getGuest() : room.getOwner();
+        // 나가기 전 마지막 메시지는 보여 주지 않음
+        LocalDateTime cleared = clearedAt(room, me);
+        boolean hideLast = cleared != null && room.getLastMessageAt() != null && !room.getLastMessageAt().isAfter(cleared);
         String image = post.getMediaUrls() == null || post.getMediaUrls().isEmpty() ? null : post.getMediaUrls().get(0);
         return new ChatDtos.Room(
                 room.getId(), post.getId(), postTitle(post),
@@ -233,7 +242,8 @@ public class ChatService {
                 post.getStatus() != null ? post.getStatus().name() : null,
                 image,
                 other.getNickname(), other.getProfileImageUrl(),
-                iAmOwner, room.getLastMessage(), room.getLastMessageAt(), unread(room, me), room.isBlocked());
+                iAmOwner, hideLast ? null : room.getLastMessage(), room.getLastMessageAt(), unread(room, me), room.isBlocked(),
+                other.getId(), iAmOwner ? room.isGuestLeft() : room.isOwnerLeft());
     }
 
     private static String postTitle(MissingPost post){

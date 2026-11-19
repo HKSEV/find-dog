@@ -3,20 +3,25 @@
 import React, { useState } from "react";
 import { showToast } from "@/app/components/Toast";
 import { useImeSafeSubmit } from "@/app/components/imeSafeSubmit";
-import { ChatReportReason, chatReportReasons, reportChat, toChatError } from "../chatApi";
 import * as S from "@/assets/css/Style.styles";
 
-// 💡 채팅 신고 시트: 사유(필수) + 자세한 내용(선택) + 이 대화 차단하기(기본 켜짐)
-//    신고하면 운영팀이 신고된 대화 내용만 확인함 (다른 대화는 볼 수 없음)
-export default function ChatReportSheet({roomId, otherNickname, onClose, onReported}: {
-  roomId: number;
-  otherNickname: string;
+export type ReportReason = "SPAM" | "ABUSE" | "FAKE" | "PRIVACY" | "ETC";
+
+// 💡 신고 시트 (채팅, 실종·제보 글 공용): 사유(필수) + 자세한 내용(선택) + (채팅만) 이 대화 차단하기
+//    onSubmit 은 서버 안내 문구를 돌려주고, 실패하면 throw (안내 문구는 toError 로)
+export default function ReportSheet({title, note, reasons, withBlock, onSubmit, toError, onClose, onReported}: {
+  title: string;
+  note: string;
+  reasons: {value: ReportReason; label: string}[];
+  withBlock?: boolean;
+  onSubmit: (body: {reason: ReportReason; detail?: string; block: boolean}) => Promise<string>;
+  toError: (error: unknown) => string;
   onClose: () => void;
-  onReported: (blocked: boolean) => void;
+  onReported?: (blocked: boolean) => void;
 }) {
-  const [reason, setReason] = useState<ChatReportReason | null>(null);
+  const [reason, setReason] = useState<ReportReason | null>(null);
   const [detail, setDetail] = useState("");
-  const [block, setBlock] = useState(true);
+  const [block, setBlock] = useState(Boolean(withBlock));
   const [sending, setSending] = useState(false);
   const imeSafeSubmit = useImeSafeSubmit();
 
@@ -25,10 +30,11 @@ export default function ChatReportSheet({roomId, otherNickname, onClose, onRepor
     if (!reason || sending) return;
     setSending(true);
     try {
-      showToast(await reportChat(roomId, {reason, detail: detail.trim() || undefined, block}));
-      onReported(block);
+      showToast(await onSubmit({reason, detail: detail.trim() || undefined, block: Boolean(withBlock) && block}));
+      onClose();
+      onReported?.(Boolean(withBlock) && block);
     } catch (error) {
-      showToast(toChatError(error, "신고하지 못했어요. 잠시 후 다시 시도해 주세요."));
+      showToast(toError(error));
       setSending(false);
     };
   };
@@ -39,15 +45,15 @@ export default function ChatReportSheet({roomId, otherNickname, onClose, onRepor
       as="form"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="chat-report-title"
+      aria-labelledby="report-title"
       onClick={(e: React.MouseEvent) => e.stopPropagation()}
       onSubmit={handleSubmit}>
         <S.ShareSheetHandle aria-hidden="true"/>
-        <S.ShareSheetTitle id="chat-report-title">{otherNickname}님을 신고할까요?</S.ShareSheetTitle>
-        <S.ShareSheetNote>운영팀이 이 대화 내용만 확인해요. 신고한 사실은 상대에게 알리지 않아요.</S.ShareSheetNote>
+        <S.ShareSheetTitle id="report-title">{title}</S.ShareSheetTitle>
+        <S.ShareSheetNote>{note}</S.ShareSheetNote>
 
         <S.ChatReportReasons role="radiogroup" aria-label="신고 사유">
-          {chatReportReasons.map((item) => (
+          {reasons.map((item) => (
             <label key={item.value}>
               <input type="radio" name="reason" value={item.value} checked={reason === item.value} onChange={() => setReason(item.value)}/>
               {item.label}
@@ -62,10 +68,12 @@ export default function ChatReportSheet({roomId, otherNickname, onClose, onRepor
         value={detail}
         onChange={(e) => setDetail(e.target.value)}/>
 
-        <S.ChatReportBlock>
-          <input type="checkbox" checked={block} onChange={(e) => setBlock(e.target.checked)}/>
-          <span>이 대화 차단하기<small>서로 더 이상 메시지를 보낼 수 없어요.</small></span>
-        </S.ChatReportBlock>
+        {withBlock && (
+          <S.ChatReportBlock>
+            <input type="checkbox" checked={block} onChange={(e) => setBlock(e.target.checked)}/>
+            <span>이 대화 차단하기<small>서로 더 이상 메시지를 보낼 수 없어요.</small></span>
+          </S.ChatReportBlock>
+        )}
 
         <S.ChatReportActions>
           <S.ShareCancelButton type="button" onClick={onClose}>취소</S.ShareCancelButton>
