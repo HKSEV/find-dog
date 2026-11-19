@@ -18,6 +18,7 @@ import Header from "@/app/components/Header";
 import { loginHref } from "@/app/components/loginLink";
 import { queueToast } from "@/app/components/Toast";
 import * as S from "@/assets/css/Style.styles";
+import { useImeSafeSubmit } from "@/app/components/imeSafeSubmit";
 
 const MAX_PHOTOS = 5;
 
@@ -48,6 +49,7 @@ function CommunityWriteForm() {
   const [photos, setPhotos] = useState<Photo[]>([]); // 새로 고른 사진
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
+  const imeSafeSubmit = useImeSafeSubmit(); // 한글 입력 중 바로 눌러도 한 번에 제출
 
   useEffect(() => {
     let alive = true;
@@ -247,7 +249,7 @@ function CommunityWriteForm() {
 
         <S.WriteBar>
           {errors.submit ? <S.WriteError as="p">{errors.submit}</S.WriteError> : <p>닉네임으로 올라가요. 직접 찍었거나 써도 되는 사진만 올려 주세요.</p>}
-          <S.WriteSubmit type="submit" disabled={submitting}>
+          <S.WriteSubmit type="submit" disabled={submitting} {...imeSafeSubmit}>
             {submitting ? (editId ? "고치는 중..." : "올리는 중...") : (editId ? "고치기" : "올리기")}
           </S.WriteSubmit>
         </S.WriteBar>

@@ -9,6 +9,7 @@ import { fetchApplyPrefill } from "../../shelter/adoptionApi";
 import Header from "@/app/components/Header";
 import { loginHref } from "@/app/components/loginLink";
 import * as S from "@/assets/css/Style.styles";
+import { useImeSafeSubmit } from "@/app/components/imeSafeSubmit";
 
 type Errors = Partial<Record<"name" | "phone" | "agree" | "submit", string>>;
 
@@ -22,6 +23,7 @@ export default function VolunteerApplyForm({id}: {id: number}) {
   const [errors, setErrors] = useState<Errors>({});
   const [agree, setAgree] = useState(false); // 이름·연락처를 보호소에 전달하는 데 동의
   const [submitting, setSubmitting] = useState(false);
+  const imeSafeSubmit = useImeSafeSubmit(); // 한글 입력 중 바로 눌러도 한 번에 제출
   const [done, setDone] = useState(false);
 
   useEffect(() => {
@@ -181,7 +183,7 @@ export default function VolunteerApplyForm({id}: {id: number}) {
 
         <S.WriteBar>
           {errors.submit ? <S.WriteError as="p">{errors.submit}</S.WriteError> : <p>선착순이라 신청하면 바로 확정돼요.</p>}
-          <S.WriteSubmit type="submit" disabled={submitting}>{submitting ? "신청하는 중..." : "신청하기"}</S.WriteSubmit>
+          <S.WriteSubmit type="submit" disabled={submitting} {...imeSafeSubmit}>{submitting ? "신청하는 중..." : "신청하기"}</S.WriteSubmit>
         </S.WriteBar>
       </S.WriteForm>
     );

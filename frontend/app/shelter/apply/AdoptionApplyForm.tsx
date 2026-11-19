@@ -12,6 +12,7 @@ import { HousingType, fetchApplyPrefill, submitApplication, toApplicationError }
 import Header from "@/app/components/Header";
 import { loginHref } from "@/app/components/loginLink";
 import * as S from "@/assets/css/Style.styles";
+import { useImeSafeSubmit } from "@/app/components/imeSafeSubmit";
 
 const housingOptions: {label: string; value: HousingType}[] = [
   {label: "아파트", value: "APARTMENT"},
@@ -45,6 +46,7 @@ export default function AdoptionApplyForm({id: animalId}: {id: number}) {
   const [agree, setAgree] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
+  const imeSafeSubmit = useImeSafeSubmit(); // 한글 입력 중 바로 눌러도 한 번에 제출
   const [done, setDone] = useState(false);
 
   useEffect(() => {
@@ -267,7 +269,7 @@ export default function AdoptionApplyForm({id: animalId}: {id: number}) {
 
         <S.WriteBar>
           {errors.submit ? <S.WriteError as="p">{errors.submit}</S.WriteError> : <p>보호소에서 적어 주신 연락처로 직접 연락드려요.</p>}
-          <S.WriteSubmit type="submit" disabled={submitting}>{submitting ? "보내는 중..." : "신청하기"}</S.WriteSubmit>
+          <S.WriteSubmit type="submit" disabled={submitting} {...imeSafeSubmit}>{submitting ? "보내는 중..." : "신청하기"}</S.WriteSubmit>
         </S.WriteBar>
       </S.WriteForm>
     );
