@@ -59,7 +59,7 @@ function MissingWriteForm() {
   const [point, setPoint] = useState<MapPoint | null>(null); // 지도에서 고른 장소 (선택)
   const [pickerOpen, setPickerOpen] = useState(false);
   const [photos, setPhotos] = useState<Photo[]>([]);
-  const [errors, setErrors] = useState<{rescueLocation?: string; when?: string; content?: string; photos?: string; submit?: string}>({});
+  const [errors, setErrors] = useState<{petName?: string; breed?: string; color?: string; rescueLocation?: string; when?: string; content?: string; photos?: string; submit?: string}>({});
   const [submitting, setSubmitting] = useState(false);
   const imeSafeSubmit = useImeSafeSubmit(); // 한글 입력 중 바로 눌러도 한 번에 제출
 
@@ -104,7 +104,7 @@ function MissingWriteForm() {
 
   const setField = (name: keyof typeof form, value: string) => {
     setForm((prev) => ({...prev, [name]: value}));
-    if (name === "rescueLocation" || name === "content") {
+    if (name === "rescueLocation" || name === "content" || name === "petName" || name === "breed" || name === "color") {
       setErrors((prev) => ({...prev, [name]: undefined}));
     };
   };
@@ -130,6 +130,12 @@ function MissingWriteForm() {
     e.preventDefault();
 
     const nextErrors: typeof errors = {};
+    // 💡 실종 신고는 이름·품종·털색·특징이 꼭 필요 (찾을 때 부르고 알아볼 수 있게)
+    if (kind === "LOST") {
+      if (!form.petName.trim()) nextErrors.petName = "이름을 적어 주세요.";
+      if (!form.breed.trim()) nextErrors.breed = "품종을 적어 주세요. 모르면 \"믹스견\"이라고 적어 주세요.";
+      if (!form.color.trim()) nextErrors.color = "털색·특징을 적어 주세요.";
+    };
     if (!form.rescueLocation.trim()) nextErrors.rescueLocation = `${placeLabel(kind)}를 적어 주세요.`;
     if (!when.date) nextErrors.when = "날짜를 골라 주세요.";
     if (!form.content.trim()) nextErrors.content = "자세한 내용을 적어 주세요.";
@@ -249,7 +255,6 @@ function MissingWriteForm() {
     <>
     {header}
     <S.HeaderOffset/>
-    {!editId && <DemoNotice/>}
     <S.WriteForm id="missing-write-form" onSubmit={handleSubmit} noValidate>
       <S.WriteKindGroup role="radiogroup" aria-label="글 종류">
         <S.WriteKindButton type="button" role="radio" aria-checked={kind === "LOST"} $checked={kind === "LOST"} onClick={() => setKind("LOST")}>
@@ -306,8 +311,9 @@ function MissingWriteForm() {
       {/* 잃어버린 아이만: 찾았을 때 부를 수 있게 이름을 크게 보여줌 */}
       {kind === "LOST" && (
         <S.WriteField>
-          <S.WriteLabel htmlFor="mw-name">이름 <span>(선택)</span></S.WriteLabel>
+          <S.WriteLabel htmlFor="mw-name">이름</S.WriteLabel>
           <S.WriteInput id="mw-name" maxLength={30} placeholder="예: 보리 (부르면 반응하는 이름)" value={form.petName} onChange={(e) => setField("petName", e.target.value)}/>
+          {errors.petName && <S.WriteError>{errors.petName}</S.WriteError>}
         </S.WriteField>
       )}
 
@@ -315,10 +321,12 @@ function MissingWriteForm() {
         <S.WriteField>
           <S.WriteLabel htmlFor="mw-breed">품종</S.WriteLabel>
           <S.WriteInput id="mw-breed" placeholder="예: 비글 믹스" value={form.breed} onChange={(e) => setField("breed", e.target.value)}/>
+          {errors.breed && <S.WriteError>{errors.breed}</S.WriteError>}
         </S.WriteField>
         <S.WriteField>
           <S.WriteLabel htmlFor="mw-color">털색·특징</S.WriteLabel>
           <S.WriteInput id="mw-color" placeholder="예: 흰색, 노란 스카프" value={form.color} onChange={(e) => setField("color", e.target.value)}/>
+          {errors.color && <S.WriteError>{errors.color}</S.WriteError>}
         </S.WriteField>
       </S.WriteRow>
 
@@ -394,6 +402,8 @@ function MissingWriteForm() {
         onChange={(e) => setField("content", e.target.value)}/>
         {errors.content && <S.WriteError>{errors.content}</S.WriteError>}
       </S.WriteField>
+
+      {!editId && <DemoNotice/>}
 
       <S.WriteBar>
         {errors.submit ? <S.WriteError as="p">{errors.submit}</S.WriteError> : <p>로그인한 회원에게 내 휴대폰으로 연락하는 버튼이 보여요. 직접 찍었거나 써도 되는 사진만 올려 주세요.</p>}

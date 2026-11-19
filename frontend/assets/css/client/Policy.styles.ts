@@ -47,11 +47,10 @@ export const PolicyBody = styled.p`
 // 실종 글쓰기 위에 보이는 공식 신고처 안내
 export const DemoNotice = styled.p`
   margin: 0;
-  padding: 10px 20px;
-  background-color: ${colors.warningBg};
+  padding: 0 0 8px;
   font-size: 12px;
   line-height: 1.5;
-  color: ${colors.warning};
+  color: ${colors.gray500};
   word-break: keep-all;
 
   a {
