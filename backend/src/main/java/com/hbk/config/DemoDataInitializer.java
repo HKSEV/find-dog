@@ -3,6 +3,7 @@ package com.hbk.config;
 import com.hbk.domain.*;
 import com.hbk.entity.*;
 import com.hbk.repository.*;
+import com.hbk.service.PasswordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +35,7 @@ public class DemoDataInitializer implements ApplicationRunner {
     private final AdoptionCampaignRepository campaignRepository;
     private final CommunityPostRepository communityRepository;
     private final MissingPostRepository missingRepository;
+    private final PasswordService passwordService;
 
     @Value("${app.demo-data:false}")
     private boolean enabled;
@@ -67,7 +69,7 @@ public class DemoDataInitializer implements ApplicationRunner {
             Member member = new Member();
             member.setEmail(email);
             member.setNickname(memberRepository.existsByNickname(nickname) ? nickname + UUID.randomUUID().toString().substring(0, 4) : nickname);
-            member.setPassword(UUID.randomUUID().toString());
+            member.setPassword(passwordService.encode(UUID.randomUUID().toString()));
             member.setName(name);
             member.setPhone("010-0000-0000");
             member.setUserType("GENERAL");
@@ -90,7 +92,7 @@ public class DemoDataInitializer implements ApplicationRunner {
                     .status(ShelterStatus.ACTIVE)
                     .gender((Gender) rows[i][0])
                     .breed((String) rows[i][1])
-                    .noticeNo("데모-2026-" + String.format("%05d", i + 1))
+                    .noticeNo("FD-2026-" + String.format("%05d", i + 1))
                     .regDate(LocalDate.now().minusDays(i * 2L))
                     .rescueLocation((String) rows[i][2])
                     .content((String) rows[i][3])
@@ -112,7 +114,7 @@ public class DemoDataInitializer implements ApplicationRunner {
             animal.setSourceType("DIRECT");
             animal.setSourceUrl("");
             animal.setRegion(rows[i][0]);
-            animal.setNoticeNo("데모-추천-" + (i + 1));
+            animal.setNoticeNo("FD-R-" + String.format("%04d", i + 1));
             animal.setBirthYear(rows[i][1]);
             animal.setGender(rows[i][2]);
             animal.setWeight(Double.parseDouble(rows[i][3]));

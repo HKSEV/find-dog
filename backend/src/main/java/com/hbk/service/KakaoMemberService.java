@@ -19,6 +19,7 @@ public class KakaoMemberService {
     private static final int NICKNAME_MAX = 20;
 
     private final MemberRepository memberRepository;
+    private final PasswordService passwordService;
 
     @Transactional
     public Member findOrCreate(Map<String, Object> attributes) {
@@ -37,7 +38,7 @@ public class KakaoMemberService {
         // 로그인 토큰이 이메일을 쓰므로, 이메일이 없는 카카오 회원은 겹치지 않는 값을 넣어 둠
         member.setEmail("kakao_" + kakaoId + "@kakao.finddog");
         // 카카오 회원은 비밀번호로 로그인하지 않음 (아무도 모르는 값)
-        member.setPassword(UUID.randomUUID().toString());
+        member.setPassword(passwordService.encode(UUID.randomUUID().toString()));
         member.setNickname(uniqueNickname(text(profile.get("nickname"))));
         member.setName("");
         member.setPhone("");

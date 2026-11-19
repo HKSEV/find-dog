@@ -19,13 +19,14 @@ public class AdminService {
 //주방장(Service)이 DB에서 데이터를 꺼낼 때 사용할 전용 냉장고(Repository)입니다.
 // (final이라 중간에 다른 냉장고로 바꿀 수 없습니다.)
     private final AdminRepository adminRepository;
+    private final PasswordService passwordService; // 비밀번호 확인 (BCrypt, 예전 평문은 로그인 때 암호화)
 
     public AdminResponse authenticate(String email, String password){
 
         Admin admin = adminRepository.findByMemberEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("관리자 권한이 없거나 존재 하지 않습니다"));
         //첫번쩨 관문을 통과 하면 넥스트
-        if (!admin.getMember().getPassword().equals(password)){
+        if (!passwordService.matches(admin.getMember(), password)){
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         //모든 검증을 통과하면..로그인 하는것

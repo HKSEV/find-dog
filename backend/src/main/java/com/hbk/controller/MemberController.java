@@ -3,6 +3,7 @@ package com.hbk.controller;
 import com.hbk.dto.MemberResponseDto;
 import com.hbk.entity.Member;
 import com.hbk.repository.MemberRepository;
+import com.hbk.service.PasswordService;
 import com.hbk.security.JwtTokenProvider; // 👈 1. JWT 토큰 Provider 임포트 추가
 import com.hbk.service.MyAccountService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class MemberController {
 
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider; // 👈 3. 토큰 생성 주입
+    private final PasswordService passwordService; // 비밀번호 암호화·확인 (BCrypt)
 
     // 1. 중복 체크 API (이메일)
     @GetMapping("/check-email")
@@ -66,7 +68,7 @@ public class MemberController {
         Member member = new Member();
         member.setEmail(email);
         member.setNickname(nickname);
-        member.setPassword(password);
+        member.setPassword(passwordService.encode(password)); // 평문 대신 BCrypt 로 저장
         member.setName(name);
         member.setPhone(phone);
         String address = trim(request.getAddress());
@@ -101,7 +103,7 @@ public class MemberController {
         if(memberOpt.isPresent()){
             Member member = memberOpt.get();
 
-            if(member.getPassword().equals(loginData.getPassword())){
+            if(passwordService.matches(member, loginData.getPassword())){
                 String token = jwtTokenProvider.createToken(member.getEmail());
 
                 // 💡 객체 직렬화 에러를 완벽하게 피하기 위해 단순한 키-값 구조로 전달합니다.

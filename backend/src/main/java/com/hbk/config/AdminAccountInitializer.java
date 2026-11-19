@@ -4,6 +4,7 @@ import com.hbk.entity.Admin;
 import com.hbk.entity.Member;
 import com.hbk.repository.AdminRepository;
 import com.hbk.repository.MemberRepository;
+import com.hbk.service.PasswordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminAccountInitializer implements ApplicationRunner {
     private final MemberRepository memberRepository;
     private final AdminRepository adminRepository;
+    private final PasswordService passwordService;
 
     @Value("${app.admin.email:}")
     private String email;
@@ -40,7 +42,7 @@ public class AdminAccountInitializer implements ApplicationRunner {
             Member created = new Member();
             created.setEmail(adminEmail);
             created.setNickname(memberRepository.existsByNickname("관리자") ? "관리자" + System.currentTimeMillis() % 10000 : "관리자");
-            created.setPassword(password);
+            created.setPassword(passwordService.encode(password));
             created.setName("관리자");
             created.setPhone("010-0000-0000");
             created.setUserType("GENERAL");
