@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import Header from "@/app/components/Header";
 import { DEFAULT_CENTER, KakaoNS, loadKakaoMaps } from "@/app/components/map/kakaoMap";
@@ -26,13 +27,15 @@ interface Place {
 }
 
 const kindLabel: Record<Kind, string> = {lost: "실종", found: "목격", animal: "보호 동물", volunteer: "봉사"};
-const filters: {key: Kind | "all"; label: string}[] = [
-  {key: "all", label: "전체"},
-  {key: "lost", label: "실종"},
-  {key: "found", label: "목격"},
-  {key: "animal", label: "보호 동물"},
-  {key: "volunteer", label: "봉사"}
+
+// 위쪽 칩: 실종·제보(실종+목격), 입양·봉사(보호 동물+봉사) 묶음으로 고름 (마커 꼬리표로 세부 종류 구분)
+type View = "all" | "missing" | "shelter";
+const views: {key: View; label: string; kinds: Kind[]; color?: string}[] = [
+  {key: "all", label: "전체", kinds: ["lost", "found", "animal", "volunteer"]},
+  {key: "missing", label: "실종·제보", kinds: ["lost", "found"], color: S.MAP_PIN_COLORS.lost},
+  {key: "shelter", label: "입양·봉사", kinds: ["animal", "volunteer"], color: S.MAP_PIN_COLORS.animal}
 ];
+const kindsOf = (view: View) => views.find((item) => item.key === view)!.kinds;
 
 // 주소 글자 -> 좌표 (카카오 주소 검색, 안 되면 장소 검색). 같은 주소는 이 탭에서 다시 찾지 않음
 const geocode = (kakao: KakaoNS, query: string): Promise<{lat: number; lng: number} | null> => {
@@ -77,12 +80,24 @@ const spread = (places: Place[]) => {
 
 // 💡 지도로 보기: 실종·목격 글(지도에서 고른 장소), 보호 동물(구조 장소), 봉사 모집(장소)을 사진 마커로
 //    실종 글 위치는 서버가 약 100m 단위로 줄여서 줌 (정확한 집 위치가 드러나지 않게)
+//    /map?view=missing (실종·제보에서) , /map?view=shelter (입양·봉사에서) 로 들어오면 그 묶음만 먼저 보여줌
 export default function MapExplorePage() {
+  return (
+    <Suspense fallback={null}>
+      <MapExplore/>
+    </Suspense>
+  );
+};
+
+function MapExplore() {
+  const searchParams = useSearchParams();
+  const startView = searchParams.get("view");
   const canvasRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<KakaoNS>(null);
   const overlaysRef = useRef<{place: Place; overlay: KakaoNS; element: HTMLButtonElement}[]>([]);
   const [places, setPlaces] = useState<Place[] | null>(null);
-  const [filter, setFilter] = useState<Kind | "all">("all");
+  const [filter, setFilter] = useState<View>(startView === "missing" || startView === "shelter" ? startView : "all");
+  const firstViewRef = useRef(filter); // 처음 지도 범위를 맞출 묶음 (칩을 바꿔도 다시 맞추지 않음)
   const [selected, setSelected] = useState<Place | null>(null);
   const [message, setMessage] = useState("불러오는 중이에요");
 
@@ -189,7 +204,12 @@ export default function MapExplorePage() {
       overlay.setMap(map);
       return {place, overlay, element};
     });
-    if (places.length > 0) map.setBounds(bounds, 60, 40, 120, 40);
+    // 처음 보여줄 묶음의 마커가 모두 보이게 (없으면 전체 기준)
+    const firstKinds = kindsOf(firstViewRef.current);
+    const firstBounds = new kakao.maps.LatLngBounds();
+    places.filter((place) => firstKinds.includes(place.kind)).forEach((place) => firstBounds.extend(new kakao.maps.LatLng(place.lat, place.lng)));
+    if (!firstBounds.isEmpty()) map.setBounds(firstBounds, 60, 40, 120, 40);
+    else if (places.length > 0) map.setBounds(bounds, 60, 40, 120, 40);
 
     const close = () => setSelected(null);
     kakao.maps.event.addListener(map, "click", close);
@@ -204,19 +224,19 @@ export default function MapExplorePage() {
   useEffect(() => {
     const map = mapRef.current;
     overlaysRef.current.forEach(({place, overlay, element}) => {
-      overlay.setMap(filter === "all" || place.kind === filter ? map : null);
+      overlay.setMap(kindsOf(filter).includes(place.kind) ? map : null);
       element.classList.toggle("is-selected", selected?.key === place.key);
     });
   }, [filter, selected, places]);
 
   const counts = useMemo(() => {
-    const result: Record<string, number> = {all: places?.length ?? 0};
-    places?.forEach((place) => (result[place.kind] = (result[place.kind] ?? 0) + 1));
+    const result = {} as Record<View, number>;
+    views.forEach((view) => (result[view.key] = places?.filter((place) => view.kinds.includes(place.kind)).length ?? 0));
     return result;
   }, [places]);
 
   const status = places === null ? message : places.length === 0 ? "지도에 표시할 글이 아직 없어요" : "";
-  const visibleSelected = selected && (filter === "all" || selected.kind === filter) ? selected : null;
+  const visibleSelected = selected && kindsOf(filter).includes(selected.kind) ? selected : null;
 
   return (
     <S.AppWrapper>
@@ -228,19 +248,19 @@ export default function MapExplorePage() {
           <S.MapCanvas ref={canvasRef}/>
 
           <S.MapFilters role="radiogroup" aria-label="보여줄 종류">
-            {filters.map((item) => (
+            {views.map((item) => (
               <S.MapFilterChip
               key={item.key}
               type="button"
               role="radio"
               aria-checked={filter === item.key}
               $active={filter === item.key}
-              $color={item.key === "all" ? undefined : S.MAP_PIN_COLORS[item.key]}
+              $color={item.color}
               onClick={() => {
                 setFilter(item.key);
                 setSelected(null);
               }}>
-                {item.key !== "all" && <i aria-hidden="true"/>}
+                {item.color && <i aria-hidden="true"/>}
                 {item.label} {counts[item.key] ?? 0}
               </S.MapFilterChip>
             ))}

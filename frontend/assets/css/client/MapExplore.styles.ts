@@ -249,3 +249,26 @@ export const HomeMapEntry = styled.a`
     color: ${colors.gray900};
   }
 `;
+
+// 목록 아래 떠 있는 "지도" 버튼 (실종·제보: 왼쪽, 오른쪽엔 글쓰기 버튼 / 입양·봉사: 가운데)
+export const MapFloatButton = styled.a<{$align: "left" | "center"}>`
+  position: fixed;
+  bottom: 76px;
+  ${({$align}) => ($align === "left"
+    ? "left: max(20px, calc(50% - 240px + 20px));"
+    : "left: 50%; transform: translateX(-50%);")}
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 50px;
+  padding: 0 18px;
+  border: 1px solid ${colors.border};
+  border-radius: 999px;
+  background-color: ${colors.white};
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  color: ${colors.gray900};
+  font-size: 15px;
+  font-weight: ${fontWeight.semibold};
+  text-decoration: none;
+`;

@@ -41,15 +41,7 @@ export default function MissingReportPage() {
 
   return (
     <S.AppWrapper>
-      <Header
-      title="실종·제보"
-      isTab
-      action={(
-        // 💡 지도로 보기: 실종·목격 글과 보호 동물·봉사를 사진 마커로
-        <S.HeaderIconButton as={Link} href="/map" $side="right" aria-label="지도로 보기">
-          <S.MapEntryIcon/>
-        </S.HeaderIconButton>
-      )}/>
+      <Header title="실종·제보" isTab/>
 
       <S.Container>
         <S.HeaderOffset/>
@@ -128,6 +120,10 @@ export default function MissingReportPage() {
           )}
         </S.MissingRows>
 
+        {/* 💡 지도로 보기: 실종·목격 글을 사진 마커로 (오른쪽 글쓰기 버튼과 나란히) */}
+        <S.MapFloatButton as={Link} href="/map?view=missing" $align="left">
+          <S.MapEntryIcon aria-hidden="true"/>지도
+        </S.MapFloatButton>
         <S.MissingWriteFab as={Link} href={pickedType === "FOUND" ? "/missing/write?type=found" : "/missing/write"}>
           <S.MissingWritePlus aria-hidden="true"/>
           신고·제보하기

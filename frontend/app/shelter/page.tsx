@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { setActiveTab } from "../redux/shelterSlice";
@@ -45,6 +46,13 @@ export default function Shelter() {
         {currentTab === "입양" && <AdoptTab/>}
         {currentTab === "봉사" && <VolunteerTab/>}
         {currentTab === "함께해요" && <TogetherTab/>}
+
+        {/* 💡 지도로 보기: 보호 동물(구조 장소)과 봉사 장소를 사진 마커로 */}
+        {currentTab !== "함께해요" && (
+          <S.MapFloatButton as={Link} href="/map?view=shelter" $align="center">
+            <S.MapEntryIcon aria-hidden="true"/>지도로 보기
+          </S.MapFloatButton>
+        )}
       </S.Container>
       <Footer/>
     </S.AppWrapper>
