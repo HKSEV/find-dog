@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { fetchShelterAnimals } from "../../redux/shelterSlice";
-import { genderLabel, statusLabel, toImageUrl, toMonthDay } from "../animalFormat";
+import { animalTitle, genderLabel, statusLabel, toImageUrl, toMonthDay } from "../animalFormat";
 import { useLikedAnimals } from "../useLikedAnimals";
 import { fetchMyApplications, isActiveApplication } from "../adoptionApi";
 
@@ -72,10 +72,11 @@ export default function ShelterAnimalDetail({id}: {id: number}) {
   const imageUrl = toImageUrl(animal.imageUrl);
   const isDone = animal.status === "COMPLETED";
   const gender = genderLabel[animal.gender] ?? animal.gender;
+  const name = animal.name?.trim();
   const status = statusLabel[animal.status] ?? animal.status;
   const regDate = toMonthDay(animal.regDate);
   const shareContent = {
-    title: `[입양] ${animal.breed} · ${gender}`,
+    title: `[입양] ${animalTitle(animal)}`,
     description: `${animal.rescueLocation}에서 구조 · 공고 ${regDate}`,
     imageUrl,
     path: `/shelter/detail/?id=${animal.id}`
@@ -84,7 +85,7 @@ export default function ShelterAnimalDetail({id}: {id: number}) {
   return (
     <S.AppWrapper>
       <S.Container>
-        <DetailTopBar title={`${animal.breed} · ${gender}`} onBack={handleBack} onShare={() => setSharing(true)}/>
+        <DetailTopBar title={animalTitle(animal)} onBack={handleBack} onShare={() => setSharing(true)}/>
         <S.DetailPage>
           <S.DetailHero>
             {imageUrl ? (
@@ -96,7 +97,15 @@ export default function ShelterAnimalDetail({id}: {id: number}) {
 
           <S.DetailSection>
             <S.DetailKicker $done={isDone}>{status} · 공고 {regDate}</S.DetailKicker>
-            <S.DetailTitle>{animal.breed}<span>{gender}</span></S.DetailTitle>
+            {/* 이름이 있으면 이름을 크게, 품종·성별은 아래 줄에 */}
+            {name ? (
+              <>
+                <S.DetailTitle>{name}</S.DetailTitle>
+                <S.MissingTitleSub>{animal.breed} · {gender}</S.MissingTitleSub>
+              </>
+            ) : (
+              <S.DetailTitle>{animal.breed}<span>{gender}</span></S.DetailTitle>
+            )}
             <S.DetailNotice>공고번호 {animal.noticeNo}</S.DetailNotice>
 
             <S.DetailFacts>

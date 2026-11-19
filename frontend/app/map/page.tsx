@@ -138,7 +138,7 @@ function MapExplore() {
               key: `a${animal.id}`,
               kind: "animal",
               ...point,
-              title: animal.breed,
+              title: animal.name?.trim() ? `${animal.name.trim()} · ${animal.breed}` : animal.breed,
               meta: `${animal.rescueLocation}에서 구조`,
               image: toImageUrl(animal.imageUrl),
               href: `/shelter/detail/?id=${animal.id}`

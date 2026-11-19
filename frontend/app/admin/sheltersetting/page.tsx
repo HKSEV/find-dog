@@ -85,6 +85,17 @@ export default function ShelterAdmin() {
                 </S.AdminSettingFieldGrid>
               </S.AdminSettingInset>
 
+              <S.AdminSettingField>
+                <S.AdminSettingLabel htmlFor="shelter-name">이름 (선택)</S.AdminSettingLabel>
+                <S.AdminSettingInput
+                id="shelter-name"
+                name="name"
+                placeholder="보호소에서 부르는 임시 이름, 예: 백설"
+                maxLength={30}
+                value={formData.name}
+                onChange={handleChange}/>
+              </S.AdminSettingField>
+
               <S.AdminSettingFieldGrid>
                 <S.AdminSettingField>
                   <S.AdminSettingLabel htmlFor="shelter-breed">품종</S.AdminSettingLabel>

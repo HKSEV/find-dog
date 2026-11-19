@@ -7,6 +7,7 @@ import { adminSessionCleared } from "./adminSessionActions";
 interface ShelterFormState {
   status: "ACTIVE" | "COMPLETED";
   gender: "UNKNOWN" | "MALE" | "FEMALE";
+  name: string; // 임시 이름 (선택)
   breed: string;
   noticeNo: string;
   regDate: string;
@@ -27,6 +28,7 @@ const initialState: ShelterAdminState = {
   formData: {
     status: "ACTIVE",
     gender: "UNKNOWN",
+    name: "",
     breed: "",
     noticeNo: "",
     regDate: "",
@@ -90,6 +92,7 @@ export const shelterAdminSlice = createSlice({
       state.formData = {
         status: "ACTIVE",
         gender: "UNKNOWN",
+        name: "",
         breed: "",
         noticeNo: "",
         regDate: "",
@@ -111,6 +114,7 @@ export const shelterAdminSlice = createSlice({
         state.formData = {
           status: "ACTIVE",
           gender: "UNKNOWN",
+          name: "",
           breed: "",
           noticeNo: "",
           regDate: "",

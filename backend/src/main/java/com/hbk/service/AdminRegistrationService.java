@@ -93,6 +93,9 @@ public class AdminRegistrationService {
                 ShelterAnimal animal = (ShelterAnimal) record;
                 animal.setStatus(ShelterStatus.valueOf(option(data.getStatus(), "공고 상태", Set.of("ACTIVE", "COMPLETED"))));
                 animal.setGender(Gender.valueOf(option(data.getGender(), "성별", Set.of("UNKNOWN", "MALE", "FEMALE"))));
+                String name = data.getName() == null ? "" : data.getName().trim();
+                if (name.length() > 30) throw invalid("이름은 30자 이내로 입력해 주세요.");
+                animal.setName(name.isEmpty() ? null : name);
                 animal.setBreed(required(data.getBreed(), "품종", 255));
                 animal.setNoticeNo(required(data.getNoticeNo(), "공고번호", 255));
                 if (data.getRegDate() == null) throw invalid("등록 날짜를 입력해 주세요.");

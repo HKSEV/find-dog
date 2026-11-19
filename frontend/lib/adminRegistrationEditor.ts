@@ -65,6 +65,7 @@ export const registrationEditFields: Record<AdminRegistrationSource, Registratio
   shelterAnimals: [
     {name: "status", label: "공고상태", type: "select", options: [option("ACTIVE", "공고중 (보호중)"), option("COMPLETED", "입양 완료 / 종료")]},
     {name: "gender", label: "성별", type: "select", options: [option("UNKNOWN", "성별 미상"), option("MALE", "수컷"), option("FEMALE", "암컷")]},
+    {name: "name", label: "이름 (선택)", optional: true, maxLength: 30},
     {name: "breed", label: "품종", maxLength: 255},
     {name: "noticeNo", label: "공고번호", maxLength: 255},
     {name: "regDate", label: "등록날짜", type: "date"},

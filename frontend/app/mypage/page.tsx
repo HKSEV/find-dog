@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { loadUserFromStorage } from "../redux/userSlice";
 import { fetchShelterAnimals } from "../redux/shelterSlice";
-import { genderLabel, toImageUrl } from "../shelter/animalFormat";
+import { animalTitle, toImageUrl } from "../shelter/animalFormat";
 import { useLikedAnimals } from "../shelter/useLikedAnimals";
 import { fetchMyAccount } from "./accountApi";
 
@@ -141,7 +141,7 @@ export default function MyPage() {
                     ) : (
                       <S.MyLikedEmptyImage>사진 준비 중</S.MyLikedEmptyImage>
                     )}
-                    <S.MyLikedName>{animal.breed} · {genderLabel[animal.gender] ?? animal.gender}</S.MyLikedName>
+                    <S.MyLikedName>{animalTitle(animal)}</S.MyLikedName>
                   </S.MyLikedCard>
                 );
               })}

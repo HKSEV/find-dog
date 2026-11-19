@@ -7,6 +7,10 @@ export const genderLabel: Record<string, string> = {MALE: "수컷", FEMALE: "암
 
 export const statusLabel: Record<string, string> = {ACTIVE: "보호 중", COMPLETED: "입양 완료"};
 
+// 보호 동물 제목: 이름이 있으면 맨 앞에 ("백설 · 진돗개 믹스 · 암컷")
+export const animalTitle = (animal: {name?: string | null; breed: string; gender: string}) =>
+  [animal.name?.trim(), animal.breed, genderLabel[animal.gender] ?? animal.gender].filter(Boolean).join(" · ");
+
 // 백엔드에 올린 사진(/uploads/...)은 백엔드 주소를 붙여서 사용
 export const toImageUrl = (url?: string | null) =>
   url?.startsWith("/uploads/") ? apiUrl(url) : url || undefined;

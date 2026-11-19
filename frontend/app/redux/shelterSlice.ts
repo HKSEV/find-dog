@@ -6,6 +6,7 @@ export interface Animal {
   id: number;
   status: "ACTIVE" | "COMPLETED";
   gender: "MALE" | "FEMALE" | "UNKNOWN";
+  name?: string | null; // 보호소가 붙인 임시 이름 (선택)
   breed: string;
   noticeNo: string;
   regDate: string;

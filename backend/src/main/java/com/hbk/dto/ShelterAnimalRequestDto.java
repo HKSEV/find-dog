@@ -15,6 +15,7 @@ public class ShelterAnimalRequestDto {
 
     private ShelterStatus status;
     private Gender gender;
+    private String name; // 임시 이름 (선택)
     private String breed;
     private String noticeNo;
 

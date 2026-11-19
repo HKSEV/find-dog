@@ -28,6 +28,7 @@ public class AdminRegistrationRequest {
     private String videoUrl;
     private String attachmentUrl;
     private String status;
+    private String name; // 보호 동물 임시 이름 (선택)
     private String breed;
     private String rescueLocation;
 

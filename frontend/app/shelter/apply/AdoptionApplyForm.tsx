@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { fetchShelterAnimals } from "../../redux/shelterSlice";
-import { genderLabel, toImageUrl, toMonthDay } from "../animalFormat";
+import { animalTitle, toImageUrl, toMonthDay } from "../animalFormat";
 import { HousingType, fetchApplyPrefill, submitApplication, toApplicationError } from "../adoptionApi";
 
 import Header from "@/app/components/Header";
@@ -141,7 +141,7 @@ export default function AdoptionApplyForm({id: animalId}: {id: number}) {
         <S.ApplyAnimal>
           {imageUrl ? <S.ApplyThumb src={imageUrl} alt=""/> : <S.ApplyThumbEmpty/>}
           <span>
-            <strong>{animal.breed} · {genderLabel[animal.gender] ?? animal.gender} 아이에게 신청해요</strong>
+            <strong>{animalTitle(animal)} 아이에게 신청해요</strong>
             <small>{animal.rescueLocation} · 공고 {toMonthDay(animal.regDate)}</small>
           </span>
         </S.ApplyAnimal>

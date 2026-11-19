@@ -73,6 +73,7 @@ throw new RuntimeException("파일 업로드중 오류가 발생했습니다", e
     ShelterAnimal animal = ShelterAnimal.builder()
             .status(dto.getStatus())
             .gender(dto.getGender())
+            .name(dto.getName() == null || dto.getName().isBlank() ? null : dto.getName().trim())
             .breed(dto.getBreed())
             .noticeNo(dto.getNoticeNo())
             .regDate(dto.getRegDate())

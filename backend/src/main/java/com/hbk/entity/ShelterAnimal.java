@@ -31,6 +31,10 @@ public class ShelterAnimal {
     @Column(nullable = false)
     private Gender gender;
 
+    // 보호소가 붙인 임시 이름 (선택, 없으면 품종으로 보여줌)
+    @Column(length = 30)
+    private String name;
+
     @Column(nullable = false)
     private String breed;
 

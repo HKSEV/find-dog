@@ -8,7 +8,7 @@ import { fetchCampaigns, fetchNeedHelps } from "./redux/homeSlice";
 import { fetchMissingAnimals } from "./redux/missingSlice";
 import { fetchShelterAnimals, setActiveTab } from "./redux/shelterSlice";
 import { petNameOf, timeAgo } from "./missing/missingFormat";
-import { genderLabel, toImageUrl } from "./shelter/animalFormat";
+import { animalTitle, toImageUrl } from "./shelter/animalFormat";
 import { VolunteerPost, dateParts, fetchVolunteers } from "./volunteer/volunteerApi";
 
 import {
@@ -186,7 +186,7 @@ export default function HomePage() {
                 ) : (
                   <S.HomeAnimalPlaceholder>사진 준비 중</S.HomeAnimalPlaceholder>
                 )}
-                <S.HomeAnimalName>{animal.breed} · {genderLabel[animal.gender] ?? animal.gender}</S.HomeAnimalName>
+                <S.HomeAnimalName>{animalTitle(animal)}</S.HomeAnimalName>
                 <S.HomeAnimalMeta>{animal.rescueLocation} · 공고 {toMonthDay(animal.regDate)}</S.HomeAnimalMeta>
               </S.HomeAnimalCard>
             ))}

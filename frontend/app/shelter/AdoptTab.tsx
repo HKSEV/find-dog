@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { fetchShelterAnimals } from "../redux/shelterSlice";
-import { genderLabel, toImageUrl, toMonthDay } from "./animalFormat";
+import { animalTitle, toImageUrl, toMonthDay } from "./animalFormat";
 import { useLikedAnimals } from "./useLikedAnimals";
 
 import * as S from "@/assets/css/Style.styles";
@@ -34,7 +34,7 @@ export default function AdoptTab() {
     const word = keyword.trim().toLowerCase();
     return animals
       .filter((animal) =>
-        !word || [animal.breed, animal.rescueLocation, animal.noticeNo].some((text) => text?.toLowerCase().includes(word))
+        !word || [animal.name ?? "", animal.breed, animal.rescueLocation, animal.noticeNo].some((text) => text?.toLowerCase().includes(word))
       )
       .slice()
       .sort((a, b) => (b.regDate ?? "").localeCompare(a.regDate ?? "") || b.id - a.id);
@@ -79,7 +79,7 @@ export default function AdoptTab() {
                     )}
                     {animal.status === "COMPLETED" && <S.AdoptDoneBadge>입양 완료</S.AdoptDoneBadge>}
                   </S.AdoptPhotoWrap>
-                  <S.AdoptCardTitle>{animal.breed} · {genderLabel[animal.gender] ?? animal.gender}</S.AdoptCardTitle>
+                  <S.AdoptCardTitle>{animalTitle(animal)}</S.AdoptCardTitle>
                   <S.AdoptCardMeta>{animal.rescueLocation}에서 구조</S.AdoptCardMeta>
                   <S.AdoptCardMeta $muted>공고 {toMonthDay(animal.regDate)}</S.AdoptCardMeta>
                 </S.AdoptCardLink>

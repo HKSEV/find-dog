@@ -80,22 +80,23 @@ public class DemoDataInitializer implements ApplicationRunner {
     private void seedShelterAnimals() {
         if (shelterRepository.count() > 0) return;
         Object[][] rows = {
-                {Gender.FEMALE, "진돗개 믹스", "서울특별시 종로구 사직동", "2살 정도 된 순한 아이예요. 사람을 좋아하고 산책할 때 줄을 잘 따라와요."},
-                {Gender.MALE, "믹스견", "경기도 고양시 덕양구", "생후 6개월 정도 된 강아지예요. 호기심이 많고 장난감을 좋아해요."},
-                {Gender.MALE, "포인터 믹스", "서울특별시 마포구 망원동", "활발하고 공놀이를 좋아해요. 넓은 공간에서 뛰어놀 수 있는 가족을 기다려요."},
-                {Gender.FEMALE, "백구 믹스", "인천광역시 남동구", "겁이 조금 많지만 간식을 주면 금방 다가와요. 다른 강아지와도 잘 지내요."},
-                {Gender.UNKNOWN, "믹스견", "서울특별시 강서구 화곡동", "작고 조용한 아이예요. 안기는 걸 좋아해요."},
-                {Gender.MALE, "믹스견", "경기도 성남시 분당구", "호기심이 많고 냄새 맡기를 좋아해요. 함께 산책을 즐길 가족을 찾아요."}
+                {"백설", Gender.FEMALE, "진돗개 믹스", "서울특별시 종로구 사직동", "2살 정도 된 순한 아이예요. 사람을 좋아하고 산책할 때 줄을 잘 따라와요."},
+                {"두부", Gender.MALE, "믹스견", "경기도 고양시 덕양구", "생후 6개월 정도 된 강아지예요. 호기심이 많고 장난감을 좋아해요."},
+                {"구름", Gender.MALE, "포인터 믹스", "서울특별시 마포구 망원동", "활발하고 공놀이를 좋아해요. 넓은 공간에서 뛰어놀 수 있는 가족을 기다려요."},
+                {"누리", Gender.FEMALE, "백구 믹스", "인천광역시 남동구", "겁이 조금 많지만 간식을 주면 금방 다가와요. 다른 강아지와도 잘 지내요."},
+                {"솜이", Gender.UNKNOWN, "믹스견", "서울특별시 강서구 화곡동", "작고 조용한 아이예요. 안기는 걸 좋아해요."},
+                {"호두", Gender.MALE, "믹스견", "경기도 성남시 분당구", "호기심이 많고 냄새 맡기를 좋아해요. 함께 산책을 즐길 가족을 찾아요."}
         };
         for (int i = 0; i < rows.length; i++) {
             shelterRepository.save(ShelterAnimal.builder()
                     .status(ShelterStatus.ACTIVE)
-                    .gender((Gender) rows[i][0])
-                    .breed((String) rows[i][1])
+                    .name((String) rows[i][0])
+                    .gender((Gender) rows[i][1])
+                    .breed((String) rows[i][2])
                     .noticeNo("FD-2026-" + String.format("%05d", i + 1))
                     .regDate(LocalDate.now().minusDays(i * 2L))
-                    .rescueLocation((String) rows[i][2])
-                    .content((String) rows[i][3])
+                    .rescueLocation((String) rows[i][3])
+                    .content((String) rows[i][4])
                     .imageUrl(dog(i))
                     .build());
         }
