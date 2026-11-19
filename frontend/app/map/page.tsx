@@ -247,9 +247,9 @@ function MapExplore() {
         title={startView === "missing" ? "실종·제보 지도" : startView === "shelter" ? "입양·봉사 지도" : "지도로 보기"}
         action={listHref ? (
           // 💡 들어온 목록으로 돌아가기 (목록의 "지도" 버튼과 같은 자리)
-          <S.HeaderPillButton as={Link} href={listHref}>
-            <S.ListEntryIcon aria-hidden="true"/>목록
-          </S.HeaderPillButton>
+          <S.HeaderRoundButton as={Link} href={listHref} aria-label="목록으로 보기">
+            <S.ListEntryIcon aria-hidden="true"/>
+          </S.HeaderRoundButton>
         ) : undefined}/>
         <S.HeaderOffset/>
         <S.MapPage>

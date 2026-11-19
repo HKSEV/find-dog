@@ -96,9 +96,9 @@ export default function MissingReportPage() {
               <S.HeaderSearchIcon/>
             </S.HeaderRoundButton>
             {/* 💡 지도로 보기 (지도 화면 같은 자리에 "목록"이 있어서 목록 <-> 지도를 오감) */}
-            <S.HeaderPillButton as={Link} href="/map?view=missing">
-              <S.MapPillIcon aria-hidden="true"/>지도
-            </S.HeaderPillButton>
+            <S.HeaderRoundButton as={Link} href="/map?view=missing" aria-label="지도로 보기">
+              <S.MapPillIcon aria-hidden="true"/>
+            </S.HeaderRoundButton>
           </S.HeaderActionRow>
         )}/>
       )}

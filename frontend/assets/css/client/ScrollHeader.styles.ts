@@ -25,7 +25,13 @@ export const HeaderRoundButton = styled.button`
   border-radius: 999px;
   background: transparent;
   color: ${colors.gray900};
+  text-decoration: none;
   cursor: pointer;
+
+  /* 마지막 버튼은 아이콘이 오른쪽 여백(20px) 선에 맞도록 바깥으로 당김 */
+  &:last-child {
+    margin-right: -8px;
+  }
 
   svg {
     font-size: 26px;

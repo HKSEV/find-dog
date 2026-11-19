@@ -31,9 +31,9 @@ export default function Shelter() {
       isTab
       action={currentTab !== "이야기" ? (
         // 💡 입양·봉사: 보호 동물(구조 장소)과 봉사 장소를 지도로 (이야기는 위치가 없어서 숨김)
-        <S.HeaderPillButton as={Link} href="/map?view=shelter">
-          <S.MapPillIcon aria-hidden="true"/>지도
-        </S.HeaderPillButton>
+        <S.HeaderRoundButton as={Link} href="/map?view=shelter" aria-label="지도로 보기">
+          <S.MapPillIcon aria-hidden="true"/>
+        </S.HeaderRoundButton>
       ) : undefined}/>
 
       <S.Container>

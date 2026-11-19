@@ -218,7 +218,7 @@ export const MapCardChevron = styled(ChevronIcon)`
   }
 `;
 
-// 헤더 알약 버튼 안 아이콘 (크기는 HeaderPillButton 이 정함)
+// 헤더 둥근 버튼 안 아이콘 (크기는 HeaderRoundButton 이 정함)
 export const ListEntryIcon = styled(ListIcon)``;
 export const MapPillIcon = styled(MapIcon)``;
 
@@ -254,24 +254,3 @@ export const HomeMapEntry = styled.a`
   }
 `;
 
-// 헤더 오른쪽 "지도" / "목록" 알약 버튼 (목록 <-> 지도 오가기)
-export const HeaderPillButton = styled.a`
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  gap: 5px;
-  height: 36px;
-  padding: 0 14px 0 12px;
-  border: 1px solid ${colors.gray200};
-  border-radius: 999px;
-  background-color: ${colors.white};
-  color: ${colors.gray900};
-  font-size: 14px;
-  font-weight: ${fontWeight.semibold};
-  text-decoration: none;
-  white-space: nowrap;
-
-  svg {
-    font-size: 21px;
-  }
-`;
