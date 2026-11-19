@@ -24,6 +24,7 @@ private boolean mine; // 지금 로그인한 사람이 쓴 글인지 (상세 화
 private String contactPhone; // 작성자 휴대폰 (상세에서 로그인한 다른 회원에게만, 찾는 중인 글만. 아니면 null)
 private List<String> mediaUrls;
 private LocalDateTime createdAt;
+private Double distanceKm; // 근처 글 목록에서만: 기준 글과의 거리 (km, 소수 첫째 자리)
 
 /*
 데이터베이스에서 조회한 엔티티 객체(MissingPost)를 전달받아,
@@ -62,6 +63,11 @@ public MissingPostResponseDto markMine(boolean mine){
 }
 
 // 상세 조회에서 연락 버튼용 작성자 휴대폰
+public MissingPostResponseDto withDistanceKm(double km){
+    this.distanceKm = Math.round(km * 10) / 10.0;
+    return this;
+}
+
 public MissingPostResponseDto withContactPhone(String contactPhone){
     this.contactPhone = contactPhone;
     return this;

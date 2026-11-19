@@ -19,6 +19,10 @@ export interface MissingUpdateRequest {
   content: string;
 }
 
+// 근처 글: 실종 글이면 근처 목격 제보, 목격 글이면 근처 실종 신고 (3km 안, 가까운 순)
+export const fetchNearbyPosts = async (id: number) =>
+  (await axios.get<MissingAnimal[]>(`/api/missing-posts/${id}/nearby`)).data;
+
 export const completeMissingPost = (id: number) =>
   axios.patch(`/api/missing-posts/${id}/complete`, null, {headers: missingAuthHeader()});
 

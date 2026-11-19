@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
-import { fetchMissingPost } from "../../redux/missingSlice";
+import { fetchMissingPost, MissingAnimal } from "../../redux/missingSlice";
 import { setActiveTab } from "../../redux/shelterSlice";
 import { loadUserFromStorage } from "../../redux/userSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
@@ -18,7 +18,7 @@ import ConfirmDialog from "@/app/components/ConfirmDialog";
 import ShareSheet from "@/app/components/ShareSheet";
 import { queueToast, showToast } from "@/app/components/Toast";
 import { loginHref } from "@/app/components/loginLink";
-import { completeMissingPost, deleteMissingPost, toMissingError } from "../missingApi";
+import { completeMissingPost, deleteMissingPost, fetchNearbyPosts, toMissingError } from "../missingApi";
 import * as S from "@/assets/css/Style.styles";
 
 export default function MissingPostDetail({id}: {id: number}) {
@@ -32,11 +32,25 @@ export default function MissingPostDetail({id}: {id: number}) {
   const [confirm, setConfirm] = useState<"complete" | "delete" | null>(null); // 한 번 더 묻는 중인 일
   const [busy, setBusy] = useState(false);
   const [sharing, setSharing] = useState(false); // 공유 시트 열림
+  const [nearby, setNearby] = useState<{id: number; posts: MissingAnimal[]} | null>(null); // 근처 목격·실종 글
 
   useEffect(() => {
     dispatch(loadUserFromStorage()); // 연락 버튼: 로그인 전이면 "로그인하고 연락하기"
     if (Number.isFinite(id)) dispatch(fetchMissingPost(id));
   }, [dispatch, id]);
+
+  // 💡 근처 글 (지도 장소가 있는 글만): 실종이면 근처 목격 제보, 목격이면 근처 실종 신고
+  const hasPoint = post?.lat != null && post?.lng != null;
+  useEffect(() => {
+    if (!hasPoint || !Number.isFinite(id)) return;
+    let alive = true;
+    fetchNearbyPosts(id)
+      .then((posts) => alive && setNearby({id, posts}))
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [id, hasPoint]);
 
   // 💡 작성자만: 찾았어요로 바꾸기 / 삭제
   const handleConfirm = async () => {
@@ -158,6 +172,33 @@ export default function MissingPostDetail({id}: {id: number}) {
               <S.DetailMapWrap>
                 <MiniMap point={{lat: post.lat, lng: post.lng}} label={post.rescueLocation || placeLabel(post.type)}/>
               </S.DetailMapWrap>
+            </S.DetailSection>
+          )}
+
+          {/* 💡 근처 목격 제보 / 실종 신고 (3km 안, 가까운 순) */}
+          {!done && nearby?.id === post.id && nearby.posts.length > 0 && (
+            <S.DetailSection>
+              <S.DetailHeading>{post.type === "FOUND" ? "근처 실종 신고" : "근처 목격 제보"} <span>{nearby.posts.length}</span></S.DetailHeading>
+              <S.DetailText>
+                {post.type === "FOUND"
+                  ? "본 곳 3km 안에서 비슷한 때 잃어버린 아이들이에요."
+                  : "잃어버린 곳 3km 안에서 그 뒤에 목격된 아이들이에요."}
+              </S.DetailText>
+              {nearby.posts.map((other) => {
+                const photo = toImageUrl(other.mediaUrls?.[0]);
+                return (
+                  <S.MissingRow key={other.id} as={Link} href={`/missing/detail/?id=${other.id}`}>
+                    {photo ? <S.MissingRowThumb src={photo} alt=""/> : <S.MissingRowThumbEmpty>사진 없음</S.MissingRowThumbEmpty>}
+                    <S.MissingRowBody>
+                      <S.MissingBadge $tone={missingBadge(other).tone}>{missingBadge(other).label}</S.MissingBadge>
+                      <S.MissingRowTitle>{missingTitle(other)}</S.MissingRowTitle>
+                      <S.MissingRowMeta>
+                        {[other.distanceKm != null ? `${other.distanceKm}km` : "", formatWhen(other.occurredAt, other.occurredTime), other.rescueLocation].filter(Boolean).join(" · ")}
+                      </S.MissingRowMeta>
+                    </S.MissingRowBody>
+                  </S.MissingRow>
+                );
+              })}
             </S.DetailSection>
           )}
 

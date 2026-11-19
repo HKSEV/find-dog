@@ -31,6 +31,11 @@ WHERE (:cursorId IS NULL OR p.id < :cursorId)
 */
 
 
+// 근처 글 찾기 후보: 찾는 중이고 지도 좌표가 있는 글 (거리는 서비스에서 계산)
+@Query("SELECT p FROM MissingPost p WHERE p.status = com.hbk.domain.PostStatus.MISSING"
+        + " AND p.lat IS NOT NULL AND p.lng IS NOT NULL AND p.id <> :excludeId")
+List<MissingPost> findNearbyCandidates(@Param("excludeId") Long excludeId);
+
 // 내가 쓴 글 (마이 > 작성한 글), 최신순
 List<MissingPost> findByAuthorEmailOrderByIdDesc(String email);
 

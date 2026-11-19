@@ -24,6 +24,7 @@ export interface MissingAnimal {
   authorName?: string;
   createdAt: string;
   mediaUrls?: string[];
+  distanceKm?: number | null; // 근처 글 목록에서만: 기준 글과의 거리 (km)
 }
 
 interface MissingState {

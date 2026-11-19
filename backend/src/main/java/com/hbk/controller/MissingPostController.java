@@ -75,6 +75,13 @@ public class MissingPostController {
         return ResponseEntity.ok(service.getPost(id, principal != null ? principal.getName() : null));
     }
 
+    // 근처 글 API (GET /api/missing-posts/{id}/nearby)
+    //    실종 글이면 근처 목격 제보, 목격 글이면 근처 실종 신고 (3km 안, 가까운 순 5개)
+    @GetMapping("/{id}/nearby")
+    public ResponseEntity<List<MissingPostResponseDto>> getNearby(@PathVariable Long id){
+        return ResponseEntity.ok(service.getNearbyPosts(id));
+    }
+
     // 3. 글 수정 API (PUT /api/missing-posts/{id})
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePost(

@@ -143,6 +143,50 @@ public class MissingPostService {
                 .withContactPhone(contactPhoneFor(post, viewerEmail, mine));
     }
 
+    // 💡 근처 글: 실종 글이면 근처 목격 제보, 목격 글이면 근처 실종 신고
+    //    지도 좌표가 있는 찾는 중인 글 중 NEARBY_KM 안, 날짜가 앞뒤로 맞는 것만 가까운 순으로 (최대 NEARBY_LIMIT개)
+    //    - 실종 글: 잃어버린 날 하루 전부터 본 목격 제보
+    //    - 목격 글: 본 날 하루 뒤까지 잃어버린 실종 신고
+    private static final double NEARBY_KM = 3.0;
+    private static final int NEARBY_LIMIT = 5;
+    private static final int NEARBY_DAYS = 30;
+
+    public List<MissingPostResponseDto> getNearbyPosts(Long id){
+        MissingPost post = findPost(id);
+        if (post.getLat() == null || post.getLng() == null) return List.of();
+        PostType mineType = post.getType() != null ? post.getType() : PostType.LOST;
+        PostType wanted = mineType == PostType.LOST ? PostType.FOUND : PostType.LOST;
+        LocalDateTime base = post.getOccurredAt() != null ? post.getOccurredAt() : post.getCreatedAt();
+
+        return missingPostRepository.findNearbyCandidates(id).stream()
+                .filter(other -> (other.getType() != null ? other.getType() : PostType.LOST) == wanted)
+                .filter(other -> withinDays(base, other, wanted))
+                .map(other -> new Object[]{other, distanceKm(post.getLat(), post.getLng(), other.getLat(), other.getLng())})
+                .filter(pair -> (double) pair[1] <= NEARBY_KM)
+                .sorted(java.util.Comparator.comparingDouble(pair -> (double) pair[1]))
+                .limit(NEARBY_LIMIT)
+                .map(pair -> new MissingPostResponseDto((MissingPost) pair[0]).withDistanceKm((double) pair[1]))
+                .toList();
+    }
+
+    // 날짜가 맞는지: 목격은 잃어버린 날 하루 전 이후, 실종은 본 날 하루 뒤 이전 (둘 다 30일 안)
+    private static boolean withinDays(LocalDateTime base, MissingPost other, PostType wanted){
+        LocalDateTime when = other.getOccurredAt() != null ? other.getOccurredAt() : other.getCreatedAt();
+        if (base == null || when == null) return true;
+        long days = java.time.Duration.between(base, when).toDays();
+        return wanted == PostType.FOUND
+                ? !when.isBefore(base.minusDays(1)) && days <= NEARBY_DAYS
+                : !when.isAfter(base.plusDays(1)) && days >= -NEARBY_DAYS;
+    }
+
+    // 두 좌표 사이 거리 (km, 지구를 공으로 본 하버사인 공식)
+    private static double distanceKm(double lat1, double lng1, double lat2, double lng2){
+        double dLat = Math.toRadians(lat2 - lat1), dLng = Math.toRadians(lng2 - lng1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
     // 작성자 휴대폰은 로그인한 다른 회원에게만, 아직 찾는 중인 글에만 알려줌 (아무나 번호를 모으지 못하게)
     private static String contactPhoneFor(MissingPost post, String viewerEmail, boolean mine){
         if (viewerEmail == null || mine || post.getStatus() == PostStatus.COMPLETED || post.getAuthor() == null) return null;
