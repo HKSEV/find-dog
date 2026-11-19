@@ -259,19 +259,19 @@ export const HeaderPillButton = styled.a`
   display: inline-flex;
   flex: none;
   align-items: center;
-  gap: 4px;
-  height: 32px;
-  padding: 0 12px;
-  border: 1px solid ${colors.border};
+  gap: 5px;
+  height: 36px;
+  padding: 0 14px 0 12px;
+  border: 1px solid ${colors.gray200};
   border-radius: 999px;
   background-color: ${colors.white};
   color: ${colors.gray900};
-  font-size: 13px;
+  font-size: 14px;
   font-weight: ${fontWeight.semibold};
   text-decoration: none;
   white-space: nowrap;
 
   svg {
-    font-size: 17px;
+    font-size: 21px;
   }
 `;
