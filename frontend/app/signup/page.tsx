@@ -6,6 +6,8 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { setStep, updateFormField, setAllAgreed, submitSignup } from "../redux/signupSlice";
+import { submitLogin } from "../redux/loginSlice";
+import { loadUserFromStorage } from "../redux/userSlice";
 
 import DaumPostcodeEmbed, { Address } from "react-daum-postcode";
 import {
@@ -165,7 +167,16 @@ export default function SignupPage() {
       profileFile
     }));
     if (submitSignup.fulfilled.match(resultAction)) {
-      // 모달 없이 로그인 화면으로. 로그인 화면에서 "가입이 끝났어요" 토스트 + 이메일 채움
+      // 💡 가입하면 바로 로그인 (같은 이메일·비밀번호를 다시 적지 않게)
+      const login = await dispatch(submitLogin({email: formData.email.trim(), password: formData.password}));
+      if (submitLogin.fulfilled.match(login)) {
+        dispatch(loadUserFromStorage());
+        dispatch(setStep(0));
+        queueToast(`${nickname}님, 가입을 환영해요`);
+        router.replace("/");
+        return;
+      };
+      // 자동 로그인이 안 되면 로그인 화면으로 ("가입이 끝났어요" 토스트 + 이메일 채움)
       queueToast("가입이 끝났어요. 로그인해 주세요");
       try {
         sessionStorage.setItem(SIGNUP_EMAIL_KEY, formData.email.trim());

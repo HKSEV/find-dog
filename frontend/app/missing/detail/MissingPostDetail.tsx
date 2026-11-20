@@ -136,7 +136,7 @@ export default function MissingPostDetail({id}: {id: number}) {
   const photos = (post.mediaUrls ?? []).map((url) => toImageUrl(url)).filter((url): url is string => Boolean(url));
   const facts = [
     {label: "품종", value: post.breed},
-    {label: "성별", value: genderText(post.gender)},
+    {label: "성별", value: genderText(post.gender).replace("성별 ", "")}, // 칸 이름이 성별이라 "모름"만
     {label: "나이", value: ageText(post.age)},
     {label: "체중", value: weightText(post.weight)},
     {label: "털색", value: post.color},

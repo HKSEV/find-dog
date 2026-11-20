@@ -7,7 +7,7 @@ import { AppDispatch, RootState } from "./store/store";
 import { fetchCampaigns, fetchNeedHelps } from "./redux/homeSlice";
 import { fetchMissingAnimals } from "./redux/missingSlice";
 import { fetchShelterAnimals, setActiveTab } from "./redux/shelterSlice";
-import { petNameOf, timeAgo } from "./missing/missingFormat";
+import { missingBadge, missingRowHead, timeAgo } from "./missing/missingFormat";
 import { animalTitle, toImageUrl } from "./shelter/animalFormat";
 import { VolunteerPost, dateParts, fetchVolunteers } from "./volunteer/volunteerApi";
 
@@ -141,11 +141,11 @@ export default function HomePage() {
         {/* 최근 실종 신고 */}
         <S.HomeSection>
           <S.HomeSectionHead>
-            <S.HomeSectionTitle><EarMark/>최근 실종 신고</S.HomeSectionTitle>
+            <S.HomeSectionTitle><EarMark/>최근 실종·목격</S.HomeSectionTitle>
             <S.HomeMoreLink as={Link} href="/missing">더보기</S.HomeMoreLink>
           </S.HomeSectionHead>
           {recentMissing.length === 0 ? (
-            <S.HomeEmpty>등록된 실종 신고가 없어요.</S.HomeEmpty>
+            <S.HomeEmpty>찾는 중인 실종·목격 글이 없어요.</S.HomeEmpty>
           ) : (
             <S.HomeList>
               {recentMissing.map((post) => (
@@ -156,10 +156,9 @@ export default function HomePage() {
                     <S.HomePhotoPlaceholder $size="68px">사진 없음</S.HomePhotoPlaceholder>
                   )}
                   <S.HomeListBody>
-                    <S.HomeStatusBadge $done={post.status === "COMPLETED"}>
-                      {post.status === "COMPLETED" ? "찾았어요" : "찾는 중"}
-                    </S.HomeStatusBadge>
-                    <S.HomeListTitle>{[petNameOf(post), post.breed, post.gender].filter(Boolean).join(" · ")}</S.HomeListTitle>
+                    {/* 실종·목격 목록과 같은 라벨 (실종 · 찾는 중 / 목격 · 주인 찾는 중) */}
+                    <S.MissingBadge $tone={missingBadge(post).tone} style={{alignSelf: "flex-start"}}>{missingBadge(post).label}</S.MissingBadge>
+                    <S.HomeListTitle>{[missingRowHead(post).main, missingRowHead(post).sub].filter(Boolean).join(" · ")}</S.HomeListTitle>
                     <S.HomeListMeta>{[post.rescueLocation, timeAgo(post.createdAt)].filter(Boolean).join(" · ")}</S.HomeListMeta>
                   </S.HomeListBody>
                 </S.HomeListRow>

@@ -219,7 +219,12 @@ public class DemoDataInitializer implements ApplicationRunner {
 
     private void seedMissingPosts() {
         if (missingRepository.count() > 0) return;
-        Member author = demoMember("demo-missing@finddog.local", "콩이찾는중", "콩이보호자");
+        // 글마다 다른 회원이 쓴 것처럼 (같은 사람이 실종·목격을 다 올린 것처럼 보이지 않게)
+        Member[] authors = {
+                demoMember("demo-missing@finddog.local", "콩이찾는중", "콩이보호자"),
+                demoMember("demo-found@finddog.local", "사직동주민", "목격자"),
+                demoMember("demo-haru@finddog.local", "하루언니", "하루보호자")
+        };
         Object[][] rows = {
                 {PostType.LOST, "콩이", "믹스견", "흰색·갈색", "수컷", "1", "4.5", "서울특별시 종로구 사직로 161", 37.5796, 126.9770, "노란 스카프를 하고 있어요. \"콩이야\" 하고 부르면 돌아봐요.", TimeOfDay.EVENING, 1},
                 {PostType.FOUND, "", "믹스견", "흰색 갈색 얼룩", "수컷", "", "", "서울특별시 종로구 사직동 사직공원", 37.5757, 126.9688, "공원 근처에서 혼자 돌아다니던 아이를 보호하고 있어요. 목줄은 없었어요.", TimeOfDay.MORNING, 0},
@@ -243,7 +248,7 @@ public class DemoDataInitializer implements ApplicationRunner {
             post.setOccurredAt(LocalDate.now().minusDays((Integer) rows[i][12]).atStartOfDay());
             post.setMediaUrls(new ArrayList<>(List.of(dog(i + 1))));
             post.setStatus(PostStatus.MISSING);
-            post.setAuthor(author);
+            post.setAuthor(authors[i]);
             post.setCreatedAt(LocalDateTime.now().minusHours(i * 5L));
             missingRepository.save(post);
         }

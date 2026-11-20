@@ -28,6 +28,7 @@ public class AdoptionApplicationResponseDto {
 
     // 신청한 동물 요약 (화면에서 사진·이름을 바로 보여주려고)
     private final Long animalId;
+    private final String animalName;   // 보호 동물 이름 (없으면 null)
     private final String animalBreed;
     private final String animalGender;
     private final String animalImageUrl;
@@ -50,6 +51,7 @@ public class AdoptionApplicationResponseDto {
 
         ShelterAnimal animal = application.getShelterAnimal();
         this.animalId = animal.getId();
+        this.animalName = animal.getName() != null && !animal.getName().isBlank() ? animal.getName().trim() : null;
         this.animalBreed = animal.getBreed();
         this.animalGender = animal.getGender() != null ? animal.getGender().name() : null;
         this.animalImageUrl = animal.getImageUrl();

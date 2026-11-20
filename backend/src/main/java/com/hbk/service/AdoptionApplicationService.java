@@ -152,8 +152,10 @@ public class AdoptionApplicationService {
     // 관리자가 상태를 바꾸면 신청한 회원에게 알림 (누르면 마이 > 입양 신청 내역)
     private void notifyApplicant(AdoptionApplication application) {
         ShelterAnimal shelterAnimal = application.getShelterAnimal();
-        String breed = shelterAnimal.getBreed();
-        String animal = breed == null || breed.isBlank() ? "보호 동물" : breed;
+        // "백설(진돗개 믹스)" — 이름이 없으면 품종만
+        String breed = shelterAnimal.getBreed() == null || shelterAnimal.getBreed().isBlank() ? "보호 동물" : shelterAnimal.getBreed();
+        String name = shelterAnimal.getName() == null ? "" : shelterAnimal.getName().trim();
+        String animal = name.isEmpty() ? breed : name + "(" + breed + ")";
         String message = switch (application.getStatus()) {
             case FORWARDED -> animal + " 입양 신청서가 보호소에 전달됐어요. 보호소에서 곧 연락드려요.";
             case ADOPTED -> animal + " 입양이 확정됐어요. 새 가족이 된 걸 축하해요!";

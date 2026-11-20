@@ -84,7 +84,7 @@ export default function MyApplicationsPage() {
                 {imageUrl ? <S.ApplyThumb src={imageUrl} alt=""/> : <S.ApplyThumbEmpty/>}
                 <S.ApplicationTitle>
                   <small>입양 신청</small>
-                  <strong>{item.animalBreed}{item.animalGender ? ` · ${genderLabel[item.animalGender] ?? item.animalGender}` : ""}</strong>
+                  <strong>{item.animalName ? `${item.animalName} · ` : ""}{item.animalBreed}{item.animalGender ? ` · ${genderLabel[item.animalGender] ?? item.animalGender}` : ""}</strong>
                   <span>{[item.animalRescueLocation, `${timeAgo(item.createdAt)} 신청`].filter(Boolean).join(" · ")}</span>
                 </S.ApplicationTitle>
               </S.ApplicationHead>

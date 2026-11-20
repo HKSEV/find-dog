@@ -72,7 +72,7 @@ export const copulaFor = (name: string) => {
 };
 
 // 저장값 "미상"은 화면에서 "성별 모름"으로
-export const genderText = (gender?: string) => (gender === "미상" ? "성별 모름" : gender ?? "");
+export const genderText = (gender?: string) => (gender === "미상" || gender === "모름" ? "성별 모름" : gender ?? "");
 
 // 목록 한 줄 특징: 제목에 이미 품종·털색이 있으면 빼고 보여줌
 // 주소에서 짧은 동네 이름만 ("서울특별시 종로구 사직동 사직공원" -> "사직동", 동이 없으면 구·군·시)

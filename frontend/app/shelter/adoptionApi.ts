@@ -18,6 +18,7 @@ export interface AdoptionApplication {
   familyAgreed: boolean;
   message?: string;
   animalId: number;
+  animalName?: string | null; // 보호 동물 이름 (없으면 null)
   animalBreed: string;
   animalGender?: string;
   animalImageUrl?: string;
