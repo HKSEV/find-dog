@@ -24,9 +24,10 @@ public class Notification {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    // varchar로 둠: 알림 종류를 늘려도 DB 제약(check)에 막히지 않게
+    // 주의: Hibernate가 허용 값 check 제약(type in (...))을 만들어서, 종류를 늘리면 새로 만든 DB에서만 저장됨
+    //    (Render는 재배포 때 DB를 새로 만들어서 괜찮음. 로컬 DB는 지우고 다시 실행)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20, columnDefinition = "varchar(20)")
+    @Column(nullable = false, length = 20)
     private NotificationType type;
 
     @Column(nullable = false, length = 255)
