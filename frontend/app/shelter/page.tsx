@@ -58,8 +58,10 @@ function Shelter() {
   const changeTab = (tab: string) => router.replace(`/shelter?tab=${tabKeys[tab]}`, {scroll: false});
 
   // 💡 검색 (실종·제보와 같은 방식): 헤더 돋보기 -> 헤더가 검색창으로. 보고 있는 탭 안에서 찾음
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchText, setSearchText] = useState("");
+  // 홈 검색의 "전체 보기"로 들어오면 (/shelter?tab=adopt&q=백설) 검색창을 열고 그 검색어로
+  const initialQuery = searchParams.get("q")?.trim() ?? "";
+  const [searchOpen, setSearchOpen] = useState(Boolean(initialQuery));
+  const [searchText, setSearchText] = useState(initialQuery);
   const [keyword, setKeyword] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {

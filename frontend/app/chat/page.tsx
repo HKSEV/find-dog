@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useSyncExternalStore } from "react";
+import React, { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
@@ -21,7 +21,18 @@ const getHasToken = () => Boolean(localStorage.getItem("token"));
 //    목록은 30초마다 다시 받아서 새 메시지를 반영
 export default function ChatListPage() {
   const hasToken = useSyncExternalStore(subscribeStorage, getHasToken, () => null);
-  const collapsed = useScrollCollapse();
+  // 💡 검색 (다른 탭과 같은 방식): 상대 닉네임, 글 제목, 마지막 메시지로 대화방 찾기
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (searchOpen) searchInputRef.current?.focus();
+  }, [searchOpen]);
+  const closeSearch = () => {
+    setSearchOpen(false);
+    setSearchText("");
+  };
+  const collapsed = useScrollCollapse() && !searchOpen;
   const [rooms, setRooms] = useState<ChatRoom[] | null>(null);
   const [failed, setFailed] = useState(false);
 
@@ -62,9 +73,15 @@ export default function ChatListPage() {
         </S.ChatEmpty>
       );
     };
+    const words = searchText.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const shown = words.length === 0 ? rooms : rooms.filter((room) => {
+      const text = `${room.otherNickname} ${room.postTitle} ${room.lastMessage ?? ""}`.toLowerCase();
+      return words.every((word) => text.includes(word));
+    });
+    if (shown.length === 0) return <S.ChatEmpty>&quot;{searchText.trim()}&quot;에 맞는 대화가 없어요</S.ChatEmpty>;
     return (
       <S.ChatList>
-        {rooms.map((room) => {
+        {shown.map((room) => {
           const thumb = toImageUrl(room.postImage ?? undefined);
           return (
             <li key={room.id}>
@@ -89,7 +106,39 @@ export default function ChatListPage() {
 
   return (
     <S.AppWrapper>
-      <Header title="채팅" isTab hidden={collapsed}/>
+      {searchOpen ? (
+        <S.SearchBar role="search">
+          <S.SearchBackButton type="button" aria-label="검색 닫기" onClick={closeSearch}>
+            <S.SearchBackIcon/>
+          </S.SearchBackButton>
+          <S.SearchField>
+            <S.HeaderSearchIcon aria-hidden="true"/>
+            <input
+            ref={searchInputRef}
+            type="search"
+            enterKeyHint="search"
+            aria-label="채팅 검색"
+            placeholder="닉네임, 글 이름, 메시지"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}/>
+            {searchText && (
+              <S.SearchClearButton type="button" aria-label="검색어 지우기" onClick={() => setSearchText("")}>
+                <S.SearchClearIcon/>
+              </S.SearchClearButton>
+            )}
+          </S.SearchField>
+        </S.SearchBar>
+      ) : (
+        <Header
+        title="채팅"
+        isTab
+        hidden={collapsed}
+        action={hasToken ? (
+          <S.HeaderRoundButton type="button" aria-label="채팅 검색" onClick={() => setSearchOpen(true)}>
+            <S.HeaderSearchIcon/>
+          </S.HeaderRoundButton>
+        ) : undefined}/>
+      )}
       <S.Container>
         <S.HeaderOffset/>
         {renderBody()}

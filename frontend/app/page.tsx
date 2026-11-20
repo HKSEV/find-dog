@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useSyncExternalStore } from "react";
+import React, { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "./store/store";
@@ -21,6 +21,7 @@ import {
 import SplashScreen from "./components/SplashScreen"; // 💡 스플래시 컴포넌트 임포트
 
 import Header from "./components/Header";
+import HomeSearchResults from "./HomeSearchResults";
 import Footer from "./components/Footer";
 import * as S from "@/assets/css/Style.styles";
 import { setCategory } from "./redux/storySlice";
@@ -61,7 +62,24 @@ const getSplashSnapshot = () => !sessionStorage.getItem("hasSeenSplash");
 
 export default function HomePage() {
   const dispatch = useDispatch<AppDispatch>();
-  const collapsed = useScrollCollapse(); // 💡 아래로 스크롤하면 헤더 숨김·지도보기 버튼 줄임
+  // 💡 검색 (실종·제보·함께해요와 같은 방식): 헤더 돋보기 -> 헤더가 검색창, 본문은 종류별 검색 결과
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [keyword, setKeyword] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    const timer = setTimeout(() => setKeyword(searchText.trim()), 300);
+    return () => clearTimeout(timer);
+  }, [searchText]);
+  useEffect(() => {
+    if (searchOpen) searchInputRef.current?.focus();
+  }, [searchOpen]);
+  const closeSearch = () => {
+    setSearchOpen(false);
+    setSearchText("");
+    setKeyword("");
+  };
+  const collapsed = useScrollCollapse() && !searchOpen; // 💡 아래로 스크롤하면 헤더 숨김 (오른쪽 위에 둥근 검색·지도 버튼만)
 
   // 서버와 첫 렌더에서는 본문을 표시하고, 접속한 세션에 따라 스플래시를 표시합니다.
   const showSplash = useSyncExternalStore(subscribeSplash, getSplashSnapshot, () => false);
@@ -120,9 +138,59 @@ export default function HomePage() {
 
   return (
     <S.AppWrapper>
-      <Header isMain={true} hidden={collapsed}/>
+      {searchOpen ? (
+        <S.SearchBar role="search">
+          <S.SearchBackButton type="button" aria-label="검색 닫기" onClick={closeSearch}>
+            <S.SearchBackIcon/>
+          </S.SearchBackButton>
+          <S.SearchField>
+            <S.HeaderSearchIcon aria-hidden="true"/>
+            <input
+            ref={searchInputRef}
+            type="search"
+            enterKeyHint="search"
+            aria-label="전체 검색"
+            placeholder="이름, 품종, 동네, 봉사, 이야기"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}/>
+            {searchText && (
+              <S.SearchClearButton type="button" aria-label="검색어 지우기" onClick={() => setSearchText("")}>
+                <S.SearchClearIcon/>
+              </S.SearchClearButton>
+            )}
+          </S.SearchField>
+        </S.SearchBar>
+      ) : (
+        <Header
+        isMain={true}
+        hidden={collapsed}
+        action={(
+          <>
+            <S.HeaderRoundButton type="button" aria-label="검색" onClick={() => setSearchOpen(true)}>
+              <S.HeaderSearchIcon/>
+            </S.HeaderRoundButton>
+            {/* 💡 지도로 보기 (실종·제보, 함께해요와 같은 헤더 자리. 예전 오른쪽 아래 떠 있던 버튼 대신) */}
+            <S.HeaderRoundButton as={Link} href="/map" aria-label="지도로 보기">
+              <S.MapPillIcon aria-hidden="true"/>
+            </S.HeaderRoundButton>
+          </>
+        )}/>
+      )}
+
+      {/* 헤더가 숨었을 때 오른쪽 위 둥근 버튼 (검색, 지도) */}
+      <S.FloatingHeaderActions $show={collapsed} aria-hidden={!collapsed}>
+        <S.FloatingRoundButton type="button" aria-label="검색" tabIndex={collapsed ? 0 : -1} onClick={() => setSearchOpen(true)}>
+          <S.HeaderSearchIcon/>
+        </S.FloatingRoundButton>
+        <S.FloatingRoundButton as={Link} href="/map" aria-label="지도로 보기" tabIndex={collapsed ? 0 : -1}>
+          <S.MapPillIcon/>
+        </S.FloatingRoundButton>
+      </S.FloatingHeaderActions>
+
       <S.Container>
         <S.HeaderOffset/>
+        {keyword ? <HomeSearchResults keyword={keyword} animals={shelterAnimals}/> : (
+        <>
 
         {/* 잃어버렸어요 / 발견했어요 */}
         <S.HomeEntryGrid>
@@ -256,11 +324,8 @@ export default function HomePage() {
           </S.HomeSection>
         )}
 
-        {/* 💡 지도보기 (실종·목격, 보호 동물, 봉사를 사진 마커로). 아래로 스크롤하면 아이콘만 */}
-        <S.HomeMapFab as={Link} href="/map" $compact={collapsed} aria-label="지도보기">
-          <S.MapPillIcon aria-hidden="true"/>
-          <span>지도보기</span>
-        </S.HomeMapFab>
+        </>
+        )}
 
         <Footer/>
       </S.Container>

@@ -67,6 +67,7 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
 
           {/* 우측 아이콘 그룹 (로그인·내 정보는 하단 "마이" 탭에서) */}
           <S.HeaderActions>
+            {action}
             <S.HeaderBell type="button" aria-label={bellLabel} onClick={() => router.push("/notifications")}>
               <S.NotificationIcon/>
               {hasUnread && <S.HeaderBellDot aria-hidden="true"/>}

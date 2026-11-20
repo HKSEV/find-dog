@@ -43,6 +43,17 @@ export default function MissingReportPage() {
   useEffect(() => {
     if (searchOpen) searchInputRef.current?.focus();
   }, [searchOpen]);
+  // 💡 홈 검색의 "전체 보기"로 들어오면 (/missing?q=푸들) 검색창을 열고 그 검색어로 (찾았어요 글까지 모두)
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("q")?.trim();
+    if (!q) return;
+    const timer = setTimeout(() => {
+      setSearchOpen(true);
+      setSearchText(q);
+      setOnlySearching(false);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
   const closeSearch = () => {
     setSearchOpen(false);
     setSearchText("");
