@@ -90,8 +90,9 @@ export default function StoryTab({compact}: {compact?: boolean}) {
     };
   }, [category, memberCategory]);
 
+  // 더 보기: 말머리를 골랐으면 그 말머리 글, "전체"면 모든 회원 글을 이어서
   const loadMore = async () => {
-    if (!memberCategory || posts.length === 0) return;
+    if (posts.length === 0) return;
     setLoadingMore(true);
     try {
       const next = await fetchCommunityPosts(memberCategory, posts[posts.length - 1].id);
@@ -130,7 +131,7 @@ export default function StoryTab({compact}: {compact?: boolean}) {
       );
     };
 
-    if (loading) return <S.StoryEmpty>이야기를 불러오는 중입니다...</S.StoryEmpty>;
+    if (loading) return <S.StoryEmpty>이야기를 불러오는 중이에요</S.StoryEmpty>;
     if (error) return <S.StoryEmpty>{error}</S.StoryEmpty>;
 
     if (category === "보호소") {
@@ -160,6 +161,12 @@ export default function StoryTab({compact}: {compact?: boolean}) {
             <S.StorySectionTitle>최근 이야기</S.StorySectionTitle>
           </S.StorySectionHead>
           {renderPosts()}
+          {/* 최근 5개 뒤의 글도 말머리를 따로 누르지 않고 이어서 볼 수 있게 */}
+          {hasMore && (
+            <S.CommunityMoreButton type="button" disabled={loadingMore} onClick={loadMore}>
+              {loadingMore ? "불러오는 중..." : "이야기 더 보기"}
+            </S.CommunityMoreButton>
+          )}
         </S.StorySection>
 
         <S.StorySection>

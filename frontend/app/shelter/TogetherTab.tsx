@@ -7,6 +7,7 @@ import { fetchCampaigns, fetchNeedHelps } from "../redux/homeSlice";
 import { toImageUrl } from "./animalFormat";
 
 import { PlayArrow as PlayIcon } from "@mui/icons-material";
+import Link from "next/link";
 import * as S from "@/assets/css/Style.styles";
 
 const HELP_COUNT = 3;
@@ -19,7 +20,6 @@ export default function TogetherTab() {
   const dispatch = useDispatch<AppDispatch>();
   const {campaigns, needHelps} = useSelector((state: RootState) => state.home);
 
-  const [openHelpId, setOpenHelpId] = useState<number | null>(null);
   const [showAllHelps, setShowAllHelps] = useState(false);
   const [pickedTag, setPickedTag] = useState<string | null>(null);
 
@@ -59,22 +59,18 @@ export default function TogetherTab() {
         ) : (
           <S.VolunteerList>
             {visibleHelps.map((help) => {
-              const isOpen = openHelpId === help.id;
               const imageUrl = toImageUrl(help.imageUrl);
               return (
                 <S.VolunteerHelpItem key={help.id}>
-                  <S.VolunteerHelpRow
-                  type="button"
-                  aria-expanded={isOpen}
-                  onClick={() => setOpenHelpId(isOpen ? null : help.id)}>
+                  {/* 💡 누르면 도움 요청 상세 (내용 전체 + 도울 방법) */}
+                  <S.VolunteerHelpRow as={Link} href={`/shelter/help/?id=${help.id}`}>
                     {imageUrl ? <S.VolunteerHelpThumb src={imageUrl} alt=""/> : <S.VolunteerThumbEmpty/>}
                     <S.VolunteerHelpBody>
                       <S.VolunteerHelpTitle>{help.title}</S.VolunteerHelpTitle>
-                      {!isOpen && <S.VolunteerHelpSummary>{help.content}</S.VolunteerHelpSummary>}
+                      <S.VolunteerHelpSummary>{help.content}</S.VolunteerHelpSummary>
                     </S.VolunteerHelpBody>
-                    <S.VolunteerHelpToggle>{isOpen ? "접기" : "자세히"}</S.VolunteerHelpToggle>
+                    <S.VolunteerHelpToggle>자세히</S.VolunteerHelpToggle>
                   </S.VolunteerHelpRow>
-                  {isOpen && <S.VolunteerHelpContent>{help.content}</S.VolunteerHelpContent>}
                 </S.VolunteerHelpItem>
               );
             })}

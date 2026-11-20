@@ -64,6 +64,7 @@ export const VolunteerHelpRow = styled.button`
   background: transparent;
   color: ${colors.gray900};
   text-align: left;
+  text-decoration: none; /* 상세로 가는 링크로 써도 밑줄 없이 */
   cursor: pointer;
 `;
 
@@ -213,4 +214,62 @@ export const VolunteerCampaignText = styled.span`
   color: ${colors.gray500};
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+`;
+
+// 💡 도움 요청 상세: "이렇게 도울 수 있어요" 버튼 목록
+export const HelpWays = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+`;
+
+export const HelpWay = styled.a`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid ${colors.border};
+  border-radius: 12px;
+  background-color: ${colors.white};
+  color: ${colors.gray900};
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+
+  div {
+    flex: 1;
+    min-width: 0;
+  }
+
+  strong {
+    display: block;
+    font-size: 15px;
+    font-weight: ${fontWeight.semibold};
+  }
+
+  small {
+    display: block;
+    margin-top: 2px;
+    font-size: 13px;
+    color: ${colors.gray500};
+  }
+`;
+
+export const HelpLinks = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+
+  a {
+    padding: 8px 14px;
+    border-radius: 999px;
+    background-color: ${colors.bgSubtle};
+    font-size: 13px;
+    font-weight: ${fontWeight.medium};
+    color: ${colors.gray800};
+    text-decoration: none;
+  }
 `;

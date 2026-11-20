@@ -17,6 +17,9 @@ export interface NeedHelp {
   title: string;
   content: string;
   imageUrl: string;
+  videoUrl?: string | null;      // 영상 (유튜브 또는 직접 올린 영상)
+  attachmentUrl?: string | null; // 첨부 자료 (필요한 물품 목록 등)
+  insertDt?: string | null;      // 올린 날
 }
 
 interface HomeState {

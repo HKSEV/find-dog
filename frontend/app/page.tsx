@@ -105,6 +105,9 @@ export default function HomePage() {
 
   // 함께 도와주세요 → 입양·봉사 탭의 함께해요 화면으로
   // 도움 요청·캠페인은 함께해요 > 이야기 > 보호소 말머리에서 보임
+  // 새 가족을 기다려요 → 함께해요의 입양 탭 (전에 봉사·이야기를 보고 있었어도 입양으로)
+  const openAdoptTab = () => dispatch(setActiveTab("입양"));
+
   const openVolunteerTab = () => {
     dispatch(setActiveTab("이야기"));
     dispatch(setCategory("보호소"));
@@ -173,7 +176,7 @@ export default function HomePage() {
         <S.HomeSection>
           <S.HomeSectionHead>
             <S.HomeSectionTitle><EarMark/>새 가족을 기다려요</S.HomeSectionTitle>
-            <S.HomeMoreLink as={Link} href="/shelter">더보기</S.HomeMoreLink>
+            <S.HomeMoreLink as={Link} href="/shelter" onClick={openAdoptTab}>더보기</S.HomeMoreLink>
           </S.HomeSectionHead>
           <S.HomeStrip>
             {waitingAnimals.map((animal) => (
@@ -187,7 +190,7 @@ export default function HomePage() {
                 <S.HomeAnimalMeta>{animal.rescueLocation} · 공고 {toMonthDay(animal.regDate)}</S.HomeAnimalMeta>
               </S.HomeAnimalCard>
             ))}
-            <S.HomeSeeAllTile as={Link} href="/shelter">
+            <S.HomeSeeAllTile as={Link} href="/shelter" onClick={openAdoptTab}>
               <svg width="40" height="28" viewBox="0 0 20 14" aria-hidden="true">
                 <ellipse cx="5" cy="7" rx="3.4" ry="6" transform="rotate(-25 5 7)" fill="#c17f4a"/>
                 <ellipse cx="15" cy="7" rx="3.4" ry="6" transform="rotate(25 15 7)" fill="#c17f4a"/>
@@ -240,7 +243,7 @@ export default function HomePage() {
                 </S.HomeListRow>
               )}
               {helps.map((help) => (
-                <S.HomeListRow key={help.id} as={Link} href="/shelter" onClick={openVolunteerTab}>
+                <S.HomeListRow key={help.id} as={Link} href={`/shelter/help/?id=${help.id}`}>
                   <S.HomeListThumb src={toImageUrl(help.imageUrl)} alt=""/>
                   <S.HomeListBody>
                     <S.HomeKicker $tone="danger">도움이 필요해요</S.HomeKicker>

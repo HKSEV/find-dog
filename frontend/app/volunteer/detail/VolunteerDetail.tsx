@@ -7,6 +7,7 @@ import { VolunteerPost, fetchVolunteer, formatVolunteerWhen, volunteerBadge } fr
 import { toImageUrl } from "../../shelter/animalFormat";
 
 import Header from "@/app/components/Header";
+import ShareSheet from "@/app/components/ShareSheet";
 import { loginHref } from "@/app/components/loginLink";
 import * as S from "@/assets/css/Style.styles";
 
@@ -17,6 +18,7 @@ export default function VolunteerDetail({id}: {id: number}) {
   const [post, setPost] = useState<VolunteerPost | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "missing">("loading");
   const [loggedIn, setLoggedIn] = useState(false);
+  const [sharing, setSharing] = useState(false); // 공유 시트 (같이 갈 사람에게 알리기)
 
   useEffect(() => {
     let alive = true;
@@ -60,11 +62,24 @@ export default function VolunteerDetail({id}: {id: number}) {
   const badge = volunteerBadge(post);
   const imageUrl = toImageUrl(post.imageUrl);
   const left = Math.max(post.capacity - post.appliedCount, 0);
+  const shareContent = {
+    title: `[봉사] ${post.title}`,
+    description: [formatVolunteerWhen(post), post.place].filter(Boolean).join(" · "),
+    imageUrl: imageUrl,
+    path: `/volunteer/detail/?id=${post.id}`
+  };
 
   return (
     <S.AppWrapper>
       <S.Container>
-        <Header title="봉사" onBackClick={handleBack}/>
+        <Header
+        title="봉사"
+        onBackClick={handleBack}
+        action={(
+          <S.HeaderRoundButton type="button" aria-label="공유하기" title="공유하기" onClick={() => setSharing(true)}>
+            <S.DetailShareIcon aria-hidden="true"/>
+          </S.HeaderRoundButton>
+        )}/>
         <S.HeaderOffset/>
         <S.DetailPage>
           {imageUrl && <S.VolunteerHeroImage src={imageUrl} alt=""/>}
@@ -97,6 +112,7 @@ export default function VolunteerDetail({id}: {id: number}) {
 
         <S.DetailActionBar>{renderAction(post)}</S.DetailActionBar>
       </S.Container>
+      {sharing && <ShareSheet content={shareContent} note="같이 갈 사람에게 알려 주세요." onClose={() => setSharing(false)}/>}
     </S.AppWrapper>
   );
 };
