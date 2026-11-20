@@ -10,7 +10,6 @@ import PostList from "./PostList";
 import { toImageUrl } from "../shelter/animalFormat";
 
 import { PlayArrow as PlayIcon } from "@mui/icons-material";
-import TogetherTab from "../shelter/TogetherTab";
 import * as S from "@/assets/css/Style.styles";
 
 // 전체 보기에서 미리 보여줄 개수
@@ -152,10 +151,9 @@ export default function StoryTab({compact, keyword = ""}: {compact?: boolean; ke
     if (loading) return <S.StoryEmpty>이야기를 불러오는 중이에요</S.StoryEmpty>;
     if (error) return <S.StoryEmpty>{error}</S.StoryEmpty>;
 
-    if (category === "보호소") {
+    if (category === "보호소 소식") {
       return (
         <>
-          <TogetherTab/>
           <S.StorySection>
             <S.StorySectionHead>
               <S.StorySectionTitle>보호소 소식</S.StorySectionTitle>
@@ -191,7 +189,7 @@ export default function StoryTab({compact, keyword = ""}: {compact?: boolean; ke
           <S.StorySectionHead>
             <S.StorySectionTitle>보호소 소식</S.StorySectionTitle>
             {news.length > PREVIEW_NEWS_COUNT && (
-              <S.StoryMoreButton onClick={() => dispatch(setCategory("보호소"))}>더보기</S.StoryMoreButton>
+              <S.StoryMoreButton onClick={() => dispatch(setCategory("보호소 소식"))}>더보기</S.StoryMoreButton>
             )}
           </S.StorySectionHead>
           {news.length ? (
@@ -205,7 +203,7 @@ export default function StoryTab({compact, keyword = ""}: {compact?: boolean; ke
           <S.StorySectionHead>
             <S.StorySectionTitle>보호소 영상</S.StorySectionTitle>
             {videos.length > PREVIEW_VIDEO_COUNT && (
-              <S.StoryMoreButton onClick={() => dispatch(setCategory("보호소"))}>더보기</S.StoryMoreButton>
+              <S.StoryMoreButton onClick={() => dispatch(setCategory("보호소 소식"))}>더보기</S.StoryMoreButton>
             )}
           </S.StorySectionHead>
           {videos.length ? (

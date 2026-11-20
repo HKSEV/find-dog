@@ -24,8 +24,9 @@ export interface ShelterNews {
 }
 
 // 질문·정보, 나눔 상단 탭과 임시보호 일기는 뺌 (질문은 칩으로, 나머지는 필요하면 다시)
-// 이야기 말머리: 회원 글 4개 + 보호소(관리자 글: 도움 요청·캠페인·소식·영상)
-export const storyCategories = ["전체", "자유 이야기", "입양 후기", "구조 이야기", "질문", "보호소"] as const;
+// 이야기 말머리: 회원 글 4개 + 보호소 소식(관리자 글: 소식·영상)
+//    도움 요청은 함께해요 > 봉사, 입양 캠페인은 함께해요 > 입양 맨 위로 옮김
+export const storyCategories = ["전체", "자유 이야기", "입양 후기", "구조 이야기", "질문", "보호소 소식"] as const;
 
 export type StoryCategory = (typeof storyCategories)[number];
 

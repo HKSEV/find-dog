@@ -7,6 +7,7 @@ import { AppDispatch, RootState } from "../store/store";
 import { fetchShelterAnimals } from "../redux/shelterSlice";
 import { animalTitle, toImageUrl, toMonthDay } from "./animalFormat";
 import { useLikedAnimals } from "./useLikedAnimals";
+import CampaignSection from "./CampaignSection";
 
 import * as S from "@/assets/css/Style.styles";
 
@@ -43,6 +44,9 @@ export default function AdoptTab({keyword}: {keyword: string}) {
 
   return (
     <>
+      {/* 💡 입양 캠페인 (검색 중에는 숨김) */}
+      {!keyword && <CampaignSection/>}
+
       {/* 검색은 헤더 돋보기 (실종·제보와 같은 자리) */}
       <S.AdoptListHead>
         <span>{keyword ? "검색 결과" : onlyAvailable ? "입양 가능" : "전체"} <strong>{visibleAnimals.length}마리</strong></span>

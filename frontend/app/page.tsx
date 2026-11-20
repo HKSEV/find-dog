@@ -24,7 +24,6 @@ import Header from "./components/Header";
 import HomeSearchResults from "./HomeSearchResults";
 import Footer from "./components/Footer";
 import * as S from "@/assets/css/Style.styles";
-import { setCategory } from "./redux/storySlice";
 import { useScrollCollapse } from "@/app/components/useScrollCollapse";
 
 // 💡 홈 노출 개수
@@ -121,15 +120,9 @@ export default function HomePage() {
   const campaign = campaigns[0];
   const helps = needHelps.slice(0, HELP_COUNT);
 
-  // 함께 도와주세요 → 입양·봉사 탭의 함께해요 화면으로
-  // 도움 요청·캠페인은 함께해요 > 이야기 > 보호소 말머리에서 보임
   // 새 가족을 기다려요 → 함께해요의 입양 탭 (전에 봉사·이야기를 보고 있었어도 입양으로)
+  // 함께 도와주세요 더보기 → 함께해요 > 봉사 (도움 요청 + 봉사 모집), 입양 캠페인 → 함께해요 > 입양 맨 위
   const openAdoptTab = () => dispatch(setActiveTab("입양"));
-
-  const openVolunteerTab = () => {
-    dispatch(setActiveTab("이야기"));
-    dispatch(setCategory("보호소"));
-  };
 
   // 💡 showSplash가 true일 때는 스플래시 화면만 렌더링
   if (showSplash) {
@@ -276,7 +269,7 @@ export default function HomePage() {
           <S.HomeSection>
             <S.HomeSectionHead>
               <S.HomeSectionTitle><EarMark/>함께 도와주세요</S.HomeSectionTitle>
-              <S.HomeMoreLink as={Link} href="/shelter" onClick={openVolunteerTab}>더보기</S.HomeMoreLink>
+              <S.HomeMoreLink as={Link} href="/shelter?tab=volunteer">더보기</S.HomeMoreLink>
             </S.HomeSectionHead>
             <S.HomeList>
               {volunteers.map((post) => {
@@ -297,7 +290,7 @@ export default function HomePage() {
                 );
               })}
               {campaign && (
-                <S.HomeListRow as={Link} href="/shelter" onClick={openVolunteerTab}>
+                <S.HomeListRow as={Link} href="/shelter?tab=adopt">
                   <S.HomeThumbWrap>
                     <S.HomeListThumb src={toImageUrl(campaign.thumbnailUrl)} alt=""/>
                     {campaign.mediaType !== "IMAGE" && (

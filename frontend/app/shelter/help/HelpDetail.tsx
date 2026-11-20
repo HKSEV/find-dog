@@ -34,7 +34,7 @@ export default function HelpDetail({id}: {id: number}) {
   }, [dispatch]);
 
   const help = needHelps.find((item) => item.id === id) ?? null;
-  const handleBack = () => (window.history.length > 1 ? router.back() : router.push("/shelter"));
+  const handleBack = () => (window.history.length > 1 ? router.back() : router.push("/shelter?tab=volunteer"));
 
   if (!help) {
     return (
