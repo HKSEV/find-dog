@@ -36,6 +36,16 @@ public class DemoDataInitializer implements ApplicationRunner {
     private final CommunityPostRepository communityRepository;
     private final MissingPostRepository missingRepository;
     private final PasswordService passwordService;
+    private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final NotificationRepository notificationRepository;
+    private final AdoptionApplicationRepository adoptionRepository;
+    private final VolunteerApplicationRepository volunteerApplicationRepository;
+
+    // 💡 시연 계정 비밀번호 (Render 환경 변수 DEMO_PASSWORD). 비어 있으면 시연 계정도 로그인 못 하게 무작위
+    //    저장소가 공개라 비밀번호를 코드에 적지 않음
+    @Value("${app.demo-password:}")
+    private String demoPassword;
 
     @Value("${app.demo-data:false}")
     private boolean enabled;
@@ -55,6 +65,7 @@ public class DemoDataInitializer implements ApplicationRunner {
         seedCampaigns();
         seedCommunityPosts();
         seedMissingPosts();
+        seedDemoScenario();
         log.info("더미 데이터를 확인했습니다.");
     }
 
@@ -63,13 +74,19 @@ public class DemoDataInitializer implements ApplicationRunner {
         return frontendUrl.replaceAll("/+$", "") + "/img/dog" + ((index % 3) + 1) + ".jpg";
     }
 
-    // 더미 글 작성자 (로그인은 못 하게 비밀번호는 무작위)
+    // 더미 글 작성자 (시연 계정만 DEMO_PASSWORD 로 로그인, 나머지는 무작위 비밀번호라 로그인 못 함)
     private Member demoMember(String email, String nickname, String name) {
+        return demoMember(email, nickname, name, false);
+    }
+
+    private Member demoMember(String email, String nickname, String name, boolean canLogin) {
         return memberRepository.findByEmail(email).orElseGet(() -> {
             Member member = new Member();
             member.setEmail(email);
             member.setNickname(memberRepository.existsByNickname(nickname) ? nickname + UUID.randomUUID().toString().substring(0, 4) : nickname);
-            member.setPassword(passwordService.encode(UUID.randomUUID().toString()));
+            boolean usePassword = canLogin && demoPassword != null && !demoPassword.isBlank();
+            member.setPassword(passwordService.encode(usePassword ? demoPassword : UUID.randomUUID().toString()));
+            member.setProvider("LOCAL");
             member.setName(name);
             member.setPhone("010-0000-0000");
             member.setUserType("GENERAL");
@@ -217,12 +234,18 @@ public class DemoDataInitializer implements ApplicationRunner {
         }
     }
 
+    // 💡 시연 계정 (DEMO_PASSWORD 로 로그인)
+    //    demo1: 콩이를 잃어버린 보호자 (실종 글 -> 전단지, 목격자와의 채팅, 근처 목격 알림)
+    //    demo2: 사직공원에서 콩이를 본 목격자 (목격 글, 채팅, 입양·봉사 신청 내역)
+    private static final String DEMO_OWNER = "demo1@finddog.local";
+    private static final String DEMO_FINDER = "demo2@finddog.local";
+
     private void seedMissingPosts() {
         if (missingRepository.count() > 0) return;
         // 글마다 다른 회원이 쓴 것처럼 (같은 사람이 실종·목격을 다 올린 것처럼 보이지 않게)
         Member[] authors = {
-                demoMember("demo-missing@finddog.local", "콩이찾는중", "콩이보호자"),
-                demoMember("demo-found@finddog.local", "사직동주민", "목격자"),
+                demoMember(DEMO_OWNER, "콩이찾는중", "콩이보호자", true),
+                demoMember(DEMO_FINDER, "사직동주민", "목격자", true),
                 demoMember("demo-haru@finddog.local", "하루언니", "하루보호자")
         };
         Object[][] rows = {
@@ -252,5 +275,107 @@ public class DemoDataInitializer implements ApplicationRunner {
             post.setCreatedAt(LocalDateTime.now().minusHours(i * 5L));
             missingRepository.save(post);
         }
+    }
+
+    // 💡 시연 장면: 콩이 보호자(demo1)와 목격자(demo2)가 채팅 중, 알림·신청 내역도 있는 상태
+    private void seedDemoScenario() {
+        if (chatRoomRepository.count() > 0) return;
+        Member owner = memberRepository.findByEmail(DEMO_OWNER).orElse(null);
+        Member finder = memberRepository.findByEmail(DEMO_FINDER).orElse(null);
+        if (owner == null || finder == null) return;
+        MissingPost lost = missingRepository.findByAuthorEmailOrderByIdDesc(DEMO_OWNER).stream().findFirst().orElse(null);
+        MissingPost found = missingRepository.findByAuthorEmailOrderByIdDesc(DEMO_FINDER).stream().findFirst().orElse(null);
+        if (lost == null) return;
+
+        LocalDateTime now = LocalDateTime.now();
+        ChatRoom room = new ChatRoom();
+        room.setPost(lost);
+        room.setOwner(owner);
+        room.setGuest(finder);
+        room.setCreatedAt(now.minusMinutes(50));
+        room = chatRoomRepository.save(room);
+
+        // 보낸 사람, 내용, 몇 분 전 (위치 메시지는 좌표 포함)
+        Object[][] talk = {
+                {finder, "안녕하세요! 오늘 아침 사직공원에서 노란 스카프 한 강아지를 봤어요.", 45, null},
+                {finder, "사직공원 정문 근처", 44, new double[]{37.5757, 126.9688}},
+                {owner, "정말요?! 콩이가 맞는 것 같아요. 혹시 지금도 거기 있나요?", 40, null},
+                {finder, "네, 공원 관리사무소 앞에서 물을 주고 데리고 있어요. \"콩이야\" 하고 부르니까 돌아봤어요.", 35, null},
+                {owner, "너무 감사해요! 지금 바로 갈게요. 20분 정도 걸릴 것 같아요.", 30, null},
+                {finder, "천천히 오세요. 관리사무소 앞 벤치에 있을게요.", 5, null}
+        };
+        ChatMessage last = null;
+        for (Object[] row : talk) {
+            ChatMessage message = new ChatMessage();
+            message.setRoom(room);
+            message.setSender((Member) row[0]);
+            message.setCreatedAt(now.minusMinutes((Integer) row[2]));
+            if (row[3] != null) {
+                double[] point = (double[]) row[3];
+                message.setType("LOCATION");
+                message.setLat(point[0]);
+                message.setLng(point[1]);
+            } else {
+                message.setType("TEXT");
+            }
+            message.setContent((String) row[1]);
+            last = chatMessageRepository.save(message);
+        }
+        room.setLastMessage(last.getContent());
+        room.setLastMessageAt(last.getCreatedAt());
+        room.setOwnerReadAt(now.minusMinutes(30)); // 보호자는 마지막 메시지를 아직 안 읽음 (빨간 숫자 1)
+        room.setGuestReadAt(now);
+        chatRoomRepository.save(room);
+
+        // 보호자 알림: 근처 목격 제보 + 새 채팅 (안 읽음)
+        if (found != null) {
+            notice(owner, NotificationType.NEARBY, "NEARBY",
+                    "'콩이' 실종 장소에서 0.8km 떨어진 곳에 목격 제보가 올라왔어요. 확인해 보세요.",
+                    found.getMediaUrls() == null || found.getMediaUrls().isEmpty() ? null : found.getMediaUrls().get(0),
+                    "/missing/detail/?id=" + found.getId());
+        }
+        notice(owner, NotificationType.CHAT, "CHAT", finder.getNickname() + ": " + last.getContent(),
+                lost.getMediaUrls() == null || lost.getMediaUrls().isEmpty() ? null : lost.getMediaUrls().get(0),
+                "/chat/room/?id=" + room.getId());
+
+        // 목격자: 입양 신청(보호소 전달됨) + 봉사 신청(확정)
+        ShelterAnimal animal = shelterRepository.findAll().stream().skip(1).findFirst().orElse(null);
+        if (animal != null) {
+            AdoptionApplication application = new AdoptionApplication();
+            application.setMember(finder);
+            application.setShelterAnimal(animal);
+            application.setApplicantName(finder.getName());
+            application.setApplicantPhone("01000000000");
+            application.setHousingType(HousingType.APARTMENT);
+            application.setHasPetExperience(true);
+            application.setFamilyAgreed(true);
+            application.setMessage("주말마다 산책을 함께할 수 있어요.");
+            application.setStatus(ApplicationStatus.FORWARDED);
+            adoptionRepository.save(application);
+            String name = animal.getName() == null ? animal.getBreed() : animal.getName() + "(" + animal.getBreed() + ")";
+            notice(finder, NotificationType.ADOPTION, "FORWARDED",
+                    name + " 입양 신청서가 보호소에 전달됐어요. 보호소에서 곧 연락드려요.", animal.getImageUrl(), "/mypage/applications");
+        }
+        VolunteerPost volunteer = volunteerRepository.findAll().stream().findFirst().orElse(null);
+        if (volunteer != null) {
+            VolunteerApplication application = new VolunteerApplication();
+            application.setMember(finder);
+            application.setPost(volunteer);
+            application.setApplicantName(finder.getName());
+            application.setApplicantPhone("01000000000");
+            application.setMessage("처음이지만 열심히 할게요.");
+            volunteerApplicationRepository.save(application);
+        }
+    }
+
+    private void notice(Member member, NotificationType type, String badge, String message, String imageUrl, String link) {
+        Notification notification = new Notification();
+        notification.setMember(member);
+        notification.setType(type);
+        notification.setBadge(badge);
+        notification.setMessage(message);
+        notification.setImageUrl(imageUrl);
+        notification.setLink(link);
+        notificationRepository.save(notification);
     }
 }
