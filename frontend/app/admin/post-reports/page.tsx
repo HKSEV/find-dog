@@ -14,7 +14,7 @@ interface AdminPostReport {
   id: number;
   postId: number;
   postTitle: string;
-  postType: "LOST" | "FOUND";
+  postType: "LOST" | "FOUND" | "COMMUNITY"; // COMMUNITY = 이야기(커뮤니티) 글
   authorNickname: string;
   reporterNickname: string;
   reason: "SPAM" | "ABUSE" | "FAKE" | "PRIVACY" | "ETC";
@@ -32,6 +32,14 @@ const reasonLabels: Record<AdminPostReport["reason"], string> = {
   ABUSE: "욕설·혐오·부적절한 사진",
   ETC: "기타"
 };
+// 글 종류별 주소 (신고 처리·글 보기·글 삭제)
+const isCommunity = (report: AdminPostReport) => report.postType === "COMMUNITY";
+const kindLabel = (report: AdminPostReport) => (isCommunity(report) ? "이야기" : report.postType === "FOUND" ? "목격" : "실종");
+const reportApi = (report: AdminPostReport) => `/api/admin/${isCommunity(report) ? "community-posts" : "missing-posts"}/reports/${report.id}`;
+const postApi = (report: AdminPostReport) => `/api/admin/${isCommunity(report) ? "community-posts" : "missing-posts"}/${report.postId}`;
+const postHref = (report: AdminPostReport) => (isCommunity(report) ? `/story/detail/?id=${report.postId}` : `/missing/detail/?id=${report.postId}`);
+const rowKey = (report: AdminPostReport) => `${isCommunity(report) ? "c" : "m"}${report.id}`;
+
 const statusLabels: Record<ReportStatus, string> = {PENDING: "처리 전", RESOLVED: "처리 완료", DISMISSED: "문제 없음"};
 
 const dateTime = (iso?: string | null) => {
@@ -46,20 +54,26 @@ const errorMessage = (error: unknown, fallback: string) => {
   return (typeof data === "string" ? data : data?.message) || fallback;
 };
 
-// 💡 관리자 > 글 신고 (실종·제보 글)
+// 💡 관리자 > 글 신고 (실종·제보 글 + 이야기 글)
 //    신고 내용을 확인하고 처리 완료 / 문제 없음으로 기록, 문제가 있는 글은 삭제
 export default function AdminPostReportsPage() {
   const {openAlertModal, openConfirmModal} = useAdminModal();
   const [reports, setReports] = useState<AdminPostReport[] | null>(null);
   const [failed, setFailed] = useState(false);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null); // rowKey (실종 m1 / 이야기 c1)
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
 
   const load = useCallback(() => {
-    adminApi.get<AdminPostReport[]>("/api/admin/missing-posts/reports")
-      .then(({data}) => {
-        setReports(Array.isArray(data) ? data : []);
+    Promise.all([
+      adminApi.get<AdminPostReport[]>("/api/admin/missing-posts/reports"),
+      adminApi.get<AdminPostReport[]>("/api/admin/community-posts/reports")
+    ])
+      .then(([missing, community]) => {
+        const list = [...(Array.isArray(missing.data) ? missing.data : []), ...(Array.isArray(community.data) ? community.data : [])];
+        // 처리 전이 먼저, 그다음 최신순
+        list.sort((a, b) => Number(a.status !== "PENDING") - Number(b.status !== "PENDING") || b.createdAt.localeCompare(a.createdAt));
+        setReports(list);
         setFailed(false);
       })
       .catch(() => setFailed(true));
@@ -69,14 +83,14 @@ export default function AdminPostReportsPage() {
     load();
   }, [load]);
 
-  const selected = reports?.find((report) => report.id === selectedId) ?? null;
+  const selected = reports?.find((report) => rowKey(report) === selectedId) ?? null;
 
   const handle = async (status: Exclude<ReportStatus, "PENDING">) => {
     if (!selected || busy) return;
     setBusy(true);
     try {
-      const {data} = await adminApi.patch<AdminPostReport>(`/api/admin/missing-posts/reports/${selected.id}`, {status, note});
-      setReports((prev) => prev?.map((report) => (report.id === data.id ? data : report)) ?? prev);
+      const {data} = await adminApi.patch<AdminPostReport>(reportApi(selected), {status, note});
+      setReports((prev) => prev?.map((report) => (rowKey(report) === rowKey(data) ? data : report)) ?? prev);
       openAlertModal(`${statusLabels[status]}(으)로 기록했습니다.`, undefined, {variant: "success"});
     } catch (error) {
       openAlertModal(errorMessage(error, "처리하지 못했습니다. 다시 시도해 주세요."), undefined, {variant: "error"});
@@ -97,8 +111,8 @@ export default function AdminPostReportsPage() {
   const removePost = async (selected: AdminPostReport) => {
     setBusy(true);
     try {
-      await adminApi.delete(`/api/admin/missing-posts/${selected.postId}`);
-      setReports((prev) => prev?.filter((report) => report.postId !== selected.postId) ?? prev);
+      await adminApi.delete(postApi(selected));
+      setReports((prev) => prev?.filter((report) => !(isCommunity(report) === isCommunity(selected) && report.postId === selected.postId)) ?? prev);
       setSelectedId(null);
       openAlertModal("글을 삭제했습니다.", undefined, {variant: "success"});
     } catch (error) {
@@ -115,7 +129,7 @@ export default function AdminPostReportsPage() {
       <S.AdminSettingHeader>
         <S.AdminSettingCaption>관리자 / 실종·제보</S.AdminSettingCaption>
         <S.AdminSettingTitle>글 신고</S.AdminSettingTitle>
-        <S.AdminSettingDescription>회원이 신고한 실종·제보 글을 확인하세요. 문제가 있는 글은 삭제하고 처리 결과를 기록하세요.</S.AdminSettingDescription>
+        <S.AdminSettingDescription>회원이 신고한 실종·제보 글과 이야기 글을 확인하세요. 문제가 있는 글은 삭제하고 처리 결과를 기록하세요.</S.AdminSettingDescription>
       </S.AdminSettingHeader>
 
       <S.AdminListPanel aria-labelledby="post-report-title" aria-busy={!reports && !failed}>
@@ -152,19 +166,19 @@ export default function AdminPostReportsPage() {
                 {!reports?.length ? (
                   <tr><S.AdminListEmpty colSpan={7}>{reports ? "아직 신고가 없습니다." : "불러오는 중입니다."}</S.AdminListEmpty></tr>
                 ) : reports.map((report) => (
-                  <S.AdminReportRow key={report.id} $selected={report.id === selectedId}>
+                  <S.AdminReportRow key={rowKey(report)} $selected={rowKey(report) === selectedId}>
                     <td><S.AdminReportStatus $status={report.status}>{statusLabels[report.status]}</S.AdminReportStatus></td>
                     <td>{reasonLabels[report.reason]}</td>
-                    <td>[{report.postType === "FOUND" ? "목격" : "실종"}] {report.postTitle}</td>
+                    <td>[{kindLabel(report)}] {report.postTitle}</td>
                     <td>{report.authorNickname}</td>
                     <td>{report.reporterNickname}</td>
                     <td>{dateTime(report.createdAt)}</td>
                     <td>
                       <S.AdminListActionButton
                       type="button"
-                      aria-pressed={report.id === selectedId}
+                      aria-pressed={rowKey(report) === selectedId}
                       onClick={() => {
-                        setSelectedId(report.id);
+                        setSelectedId(rowKey(report));
                         setNote(report.adminNote ?? "");
                       }}>
                         처리하기
@@ -182,13 +196,13 @@ export default function AdminPostReportsPage() {
             <section aria-label="신고 내용">
               <S.AdminSettingCardTitle as="h3">신고 내용</S.AdminSettingCardTitle>
               <S.AdminReportInfo style={{marginTop: 10}}>
-                <dt>글</dt><dd>[{selected.postType === "FOUND" ? "목격" : "실종"}] {selected.postTitle} ({selected.authorNickname})</dd>
+                <dt>글</dt><dd>[{kindLabel(selected)}] {selected.postTitle} ({selected.authorNickname})</dd>
                 <dt>사유</dt><dd>{reasonLabels[selected.reason]}</dd>
                 <dt>자세한 내용</dt><dd>{selected.detail || "—"}</dd>
                 <dt>신고한 회원</dt><dd>{selected.reporterNickname} · {dateTime(selected.createdAt)}</dd>
                 <dt>상태</dt><dd>{statusLabels[selected.status]}{selected.handledAt ? ` (${dateTime(selected.handledAt)})` : ""}</dd>
               </S.AdminReportInfo>
-              <S.AdminListActionButton as="a" href={withBasePath(`/missing/detail/?id=${selected.postId}`)} target="_blank" rel="noopener noreferrer">
+              <S.AdminListActionButton as="a" href={withBasePath(postHref(selected))} target="_blank" rel="noopener noreferrer">
                 <FiExternalLink aria-hidden="true"/>
                 글 보기 (새 창)
               </S.AdminListActionButton>

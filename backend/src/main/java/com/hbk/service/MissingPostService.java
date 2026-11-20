@@ -75,19 +75,12 @@ public class MissingPostService {
         List<String> mediaUrls = new java.util.ArrayList<>();
         for (int i = 0; i < files.size(); i++) {
             MultipartFile file = files.get(i);
-            if (file.getContentType() == null || !file.getContentType().startsWith("image/")) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "사진 파일만 올릴 수 있어요.");
+            // 진짜 사진(PNG·JPG·GIF·WEBP)만, 파일 이름은 서버가 새로 지음 (ImageUploads)
+            if (ImageUploads.extensionOf(file) == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "사진 파일(PNG, JPG, GIF, WEBP)만 올릴 수 있어요.");
             }
             try {
-                // 여러 장을 같은 순간에 저장해도 겹치지 않게 순번을 붙이고, 파일 이름의 특수문자는 _로 바꿈
-                String original = file.getOriginalFilename() != null ? file.getOriginalFilename() : "photo.jpg";
-                String filename = System.currentTimeMillis() + "_" + i + "_" + original.replaceAll("[^A-Za-z0-9._-]", "_");
-                java.nio.file.Path path = java.nio.file.Paths.get(System.getProperty("user.dir"), "uploads", filename);
-
-                java.nio.file.Files.createDirectories(path.getParent());
-                java.nio.file.Files.write(path, file.getBytes());
-
-                mediaUrls.add("/uploads/" + filename);
+                mediaUrls.add(ImageUploads.save(file, "m" + i));
             } catch (Exception e) {
                 // 사진 없이 글만 올라가지 않게 멈춤
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "사진을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.");

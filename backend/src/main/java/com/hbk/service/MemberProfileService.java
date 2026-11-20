@@ -30,6 +30,7 @@ public class MemberProfileService {
     public MemberProfileDto profile(Long memberId){
         Member member = memberRepository.findById(memberId == null ? -1 : memberId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "탈퇴했거나 없는 회원이에요."));
+        if (member.getWithdrawnAt() != null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "탈퇴했거나 없는 회원이에요.");
         String email = member.getEmail();
         List<MemberProfileDto.Post> missing = email == null ? List.of() : missingPostRepository.findByAuthorEmailOrderByIdDesc(email).stream()
                 .limit(LIMIT)

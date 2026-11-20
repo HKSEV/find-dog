@@ -7,15 +7,21 @@ import com.hbk.service.KakaoMemberService;
 public class MyAccountDto {
 
     // 내 정보 (비밀번호는 내려주지 않음)
-    public record Response(String email, String nickname, String name, String phone,
+    public record Response(Long id, String email, String nickname, String name, String phone,
                            String address, String profileImageUrl, String userType, String provider,
                            boolean signupCompleted) {
         public static Response of(Member m) {
-            return new Response(m.getEmail(), m.getNickname(), m.getName(), m.getPhone(),
+            return new Response(m.getId(), m.getEmail(), m.getNickname(), m.getName(), m.getPhone(),
                     m.getAddress(), m.getProfileImageUrl(), m.getUserType(), m.getProvider(),
                     !KakaoMemberService.needsSignup(m));
         }
     }
+
+    // 비밀번호 바꾸기 (이메일로 가입한 회원만)
+    public record PasswordRequest(String currentPassword, String newPassword) {}
+
+    // 회원 탈퇴 (이메일 가입은 비밀번호 확인, 카카오 가입은 비밀번호 없이)
+    public record WithdrawRequest(String password) {}
 
     // 고칠 수 있는 값 (이메일·비밀번호·가입 유형은 여기서 못 바꿈)
     public record UpdateRequest(String nickname, String name, String phone, String address, String profileImageUrl) {

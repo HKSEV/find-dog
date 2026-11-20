@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { FiRefreshCw } from "react-icons/fi";
 import adminApi from "@/lib/adminApi";
@@ -64,6 +64,7 @@ export default function AdminChatReportsPage() {
   const [messages, setMessages] = useState<AdminChatMessage[] | null>(null);
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
+  const selectedRef = useRef<number | null>(null); // 마지막으로 고른 신고 (늦게 온 이전 응답이 덮어쓰지 않게)
 
   const load = useCallback(() => {
     adminApi.get<AdminChatReport[]>("/api/admin/chats/reports")
@@ -82,11 +83,12 @@ export default function AdminChatReportsPage() {
 
   const select = (report: AdminChatReport) => {
     setSelectedId(report.id);
+    selectedRef.current = report.id;
     setNote(report.adminNote ?? "");
     setMessages(null);
     adminApi.get<AdminChatMessage[]>(`/api/admin/chats/reports/${report.id}/messages`)
-      .then(({data}) => setMessages(Array.isArray(data) ? data : []))
-      .catch(() => setMessages([]));
+      .then(({data}) => selectedRef.current === report.id && setMessages(Array.isArray(data) ? data : []))
+      .catch(() => selectedRef.current === report.id && setMessages([]));
   };
 
   const handle = async (status: Exclude<ReportStatus, "PENDING">, closeRoom: boolean) => {

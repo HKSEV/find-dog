@@ -25,6 +25,7 @@ public class AdminMemberService {
     private final CommunityPostRepository communityPostRepository;
     private final MissingPostReportRepository postReportRepository;
     private final ChatReportRepository chatReportRepository;
+    private final CommunityPostReportRepository communityReportRepository;
 
     @Transactional(readOnly = true)
     public List<AdminMemberDtos.Row> members(){
@@ -37,6 +38,7 @@ public class AdminMemberService {
     public AdminMemberDtos.Row suspend(Long memberId, AdminMemberDtos.SuspendRequest request){
         Member member = memberRepository.findById(memberId == null ? -1 : memberId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "회원을 찾을 수 없어요."));
+        if (member.getWithdrawnAt() != null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "탈퇴한 회원이에요.");
         boolean suspend = request != null && Boolean.TRUE.equals(request.suspended());
         if (suspend && isAdmin(member)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "관리자 계정은 정지할 수 없어요.");
         String reason = request == null || request.reason() == null ? "" : request.reason().trim();
@@ -53,11 +55,12 @@ public class AdminMemberService {
     }
 
     private AdminMemberDtos.Row toRow(Member member){
-        long reports = postReportRepository.countByPostAuthorId(member.getId()) + chatReportRepository.countReceived(member.getId());
-        return new AdminMemberDtos.Row(member.getId(), member.getEmail(), member.getNickname(), member.getName(),
+        long reports = postReportRepository.countByPostAuthorId(member.getId()) + chatReportRepository.countReceived(member.getId())
+                + communityReportRepository.countByPostAuthorId(member.getId());
+        return new AdminMemberDtos.Row(member.getId(), member.getWithdrawnAt() != null ? null : member.getEmail(), member.getNickname(), member.getName(),
                 maskPhone(member.getPhone()), member.getUserType(), member.getProvider(), isAdmin(member),
                 missingPostRepository.countByAuthorId(member.getId()), communityPostRepository.countByAuthorId(member.getId()),
-                reports, member.isSuspended(), member.getSuspendedReason(), member.getSuspendedAt());
+                reports, member.isSuspended(), member.getSuspendedReason(), member.getSuspendedAt(), member.getWithdrawnAt() != null);
     }
 
     // 010-1234-5678 -> 010-****-5678

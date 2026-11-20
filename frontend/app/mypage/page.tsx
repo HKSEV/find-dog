@@ -55,6 +55,7 @@ export default function MyPage() {
   const cachedPhoto = useSyncExternalStore(subscribeStorage, getCachedPhoto, () => null);
   const shownPhoto = photo === undefined ? cachedPhoto : photo;
   const [isKakao, setIsKakao] = useState(false); // 카카오 회원은 이메일 대신 "카카오 계정"
+  const [myId, setMyId] = useState<number | null>(null); // 내 프로필 보기 (다른 회원에게 보이는 화면)
 
   useEffect(() => {
     dispatch(loadUserFromStorage()); // 로컬스토리지에서 로그인 정보 로드
@@ -77,6 +78,7 @@ export default function MyPage() {
           // 저장 못 해도 화면에는 그대로 보임
         }
         setIsKakao(me.provider === "KAKAO");
+        setMyId(me.id ?? null);
       })
       .catch(() => {}); // 못 받으면 저장해 둔 사진(없으면 기본 아이콘)을 그대로 보여줌
     return () => {
@@ -134,6 +136,8 @@ export default function MyPage() {
               <strong>{nickname}</strong>
               {isKakao ? <span>카카오 계정</span> : email && <span>{email}</span>}
             </S.MyProfileText>
+            {/* 💡 다른 회원에게 보이는 내 프로필 (닉네임·사진·쓴 글) */}
+            {myId != null && <S.MyProfileLink as={Link} href={`/profile/?id=${myId}`}>프로필 보기</S.MyProfileLink>}
           </S.MyProfile>
         ) : (
           <S.MyLoginCard>

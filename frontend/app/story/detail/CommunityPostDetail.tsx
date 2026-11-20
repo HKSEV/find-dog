@@ -3,13 +3,16 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CommunityPost, categoryLabel, deleteCommunityPost, fetchCommunityPost, toCommunityError } from "../communityApi";
+import { CommunityPost, categoryLabel, communityReportReasons, deleteCommunityPost, fetchCommunityPost, reportCommunityPost, toCommunityError } from "../communityApi";
 import { toImageUrl } from "../../shelter/animalFormat";
 import { timeAgo } from "../../missing/missingFormat";
 
 import Header from "@/app/components/Header";
 import ProfileAvatar from "@/app/components/ProfileAvatar";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
+import ActionSheet from "@/app/components/ActionSheet";
+import ReportSheet from "@/app/components/ReportSheet";
+import { loginHref } from "@/app/components/loginLink";
 import { queueToast, showToast } from "@/app/components/Toast";
 import * as S from "@/assets/css/Style.styles";
 
@@ -21,6 +24,7 @@ export default function CommunityPostDetail({id}: {id: number}) {
   const [status, setStatus] = useState<"loading" | "ready" | "missing">("loading");
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [sheet, setSheet] = useState<"menu" | "report" | null>(null); // 더보기(⋮) / 신고 시트
 
   useEffect(() => {
     let alive = true;
@@ -70,7 +74,15 @@ export default function CommunityPostDetail({id}: {id: number}) {
   return (
     <S.AppWrapper>
       <S.Container>
-        <Header title={categoryLabel(post.category)} onBackClick={handleBack}/>
+        {/* 남의 글이면 오른쪽 위 더보기(⋮) > 신고하기 (내 글은 아래 고치기·지우기) */}
+        <Header
+        title={categoryLabel(post.category)}
+        onBackClick={handleBack}
+        action={!post.mine ? (
+          <S.HeaderRoundButton type="button" aria-label="더보기" title="더보기" onClick={() => setSheet("menu")}>
+            <S.MoreMenuIcon aria-hidden="true"/>
+          </S.HeaderRoundButton>
+        ) : undefined}/>
         <S.HeaderOffset/>
         <S.DetailPage>
           <S.DetailSection>
@@ -115,6 +127,28 @@ export default function CommunityPostDetail({id}: {id: number}) {
           </S.DetailActionBar>
         )}
       </S.Container>
+
+      {sheet === "menu" && (
+        <ActionSheet
+        onClose={() => setSheet((current) => (current === "menu" ? null : current))}
+        items={[{
+          label: "신고하기",
+          danger: true,
+          onSelect: () => (localStorage.getItem("token") ? setSheet("report") : router.push(loginHref(`/story/detail/?id=${post.id}`)))
+        }]}/>
+      )}
+      {sheet === "report" && (
+        <ReportSheet
+        title="이 글을 신고할까요?"
+        note="운영팀이 확인 후 처리해요. 신고한 사실은 글쓴이에게 알리지 않아요."
+        reasons={communityReportReasons}
+        onSubmit={({reason, detail}) => reportCommunityPost(post.id, {reason, detail})}
+        toError={(error) => {
+          const message = toCommunityError(error, "신고하지 못했어요. 잠시 후 다시 시도해 주세요.");
+          return message === "UNAUTHORIZED" ? "로그인이 끝났어요. 다시 로그인해 주세요." : message;
+        }}
+        onClose={() => setSheet(null)}/>
+      )}
 
       <ConfirmDialog
       isOpen={confirmDelete}

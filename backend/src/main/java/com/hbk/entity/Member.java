@@ -52,6 +52,9 @@ public class Member {
 
 	private java.time.LocalDateTime suspendedAt;
 
+	// 💡 회원 탈퇴한 때 (탈퇴하면 개인정보를 지우고 이 값만 남김)
+	private java.time.LocalDateTime withdrawnAt;
+
 	public String getUsername(){
 		return this.name;
 	}

@@ -1,6 +1,7 @@
 // 💡 커뮤니티 회원 글 API (자유 이야기, 입양 후기, 구조 이야기, 질문)
 //    공용 store.ts를 건드리지 않으려고 Redux slice 대신 화면에서 바로 부름
 import axios from "axios";
+import type { ReportReason } from "../components/ReportSheet";
 
 export type CommunityCategory = "FREE" | "ADOPTION_REVIEW" | "RESCUE_STORY" | "QUESTION";
 
@@ -67,6 +68,17 @@ export const updateCommunityPost = async (
 export const deleteCommunityPost = async (id: number) => {
   await axios.delete(`/api/community-posts/${id}`, {headers: authHeader()});
 };
+
+// 💡 글 신고 (로그인 필요, 내 글은 불가)
+export const communityReportReasons: {value: ReportReason; label: string}[] = [
+  {value: "SPAM", label: "광고·홍보 글이에요"},
+  {value: "ABUSE", label: "욕설·혐오·부적절한 사진이 있어요"},
+  {value: "PRIVACY", label: "개인정보가 드러나 있어요"},
+  {value: "FAKE", label: "거짓 정보예요"},
+  {value: "ETC", label: "기타"}
+];
+export const reportCommunityPost = async (id: number, body: {reason: ReportReason; detail?: string}) =>
+  (await axios.post<{message: string}>(`/api/community-posts/${id}/report`, body, {headers: authHeader()})).data.message;
 
 export const toCommunityError = (error: unknown, fallback: string) => {
   if (axios.isAxiosError(error)) {

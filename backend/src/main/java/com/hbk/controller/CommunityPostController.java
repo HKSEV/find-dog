@@ -20,6 +20,7 @@ import java.util.List;
 public class CommunityPostController {
 
     private final CommunityPostService service;
+    private final com.hbk.service.CommunityPostReportService reportService;
 
     // 목록 (GET /api/community-posts?category=QUESTION&cursorId=20&size=10) - 최신순
     @GetMapping("/api/community-posts")
@@ -71,6 +72,25 @@ public class CommunityPostController {
     @GetMapping("/api/admin/community-posts")
     public List<AdminMemberPostResponse> getAllForAdmin() {
         return service.getAllForAdmin();
+    }
+
+    // 💡 글 신고 (POST /api/community-posts/{id}/report {reason, detail}) - 로그인 필요, 내 글은 불가
+    @PostMapping("/api/community-posts/{id}/report")
+    public ResponseEntity<?> report(@PathVariable Long id, @RequestBody com.hbk.dto.MissingPostReportDtos.ReportRequest request, Principal principal) {
+        if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요해요.");
+        reportService.report(id, request, principal.getName());
+        return ResponseEntity.ok(java.util.Map.of("message", "신고했어요. 운영팀이 확인할게요."));
+    }
+
+    // [관리자] 글 신고 목록 / 처리
+    @GetMapping("/api/admin/community-posts/reports")
+    public List<com.hbk.dto.MissingPostReportDtos.AdminReport> reports() {
+        return reportService.adminReports();
+    }
+
+    @PatchMapping("/api/admin/community-posts/reports/{id}")
+    public com.hbk.dto.MissingPostReportDtos.AdminReport handleReport(@PathVariable Long id, @RequestBody com.hbk.dto.MissingPostReportDtos.AdminHandleRequest request) {
+        return reportService.adminHandle(id, request);
     }
 
     // [관리자] 글 지우기 (DELETE /api/admin/community-posts/{id}) - 관리자 토큰 필요

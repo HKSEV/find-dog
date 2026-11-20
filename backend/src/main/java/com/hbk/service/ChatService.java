@@ -173,6 +173,7 @@ public class ChatService {
         report.setReason(reason);
         report.setDetail(detail.isEmpty() ? null : detail);
         report.setStatus("PENDING");
+        report.setAdminNote(null); // 다시 신고하면 예전 처리 메모는 지움
         report.setHandledAt(null);
         report.setCreatedAt(LocalDateTime.now());
         reportRepository.save(report);

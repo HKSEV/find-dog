@@ -15,7 +15,7 @@ interface AdminMember {
   name: string;
   phone: string | null; // 가운데를 가린 번호
   userType: string;
-  provider: string | null; // kakao 면 카카오 가입
+  provider: string | null; // KAKAO 면 카카오 가입, LOCAL 이면 이메일 가입
   admin: boolean;
   missingPosts: number;
   communityPosts: number;
@@ -23,6 +23,7 @@ interface AdminMember {
   suspended: boolean;
   suspendedReason: string | null;
   suspendedAt: string | null;
+  withdrawn: boolean; // 탈퇴한 회원 (개인정보는 지워져 있음)
 }
 
 type Filter = "" | "reported" | "suspended";
@@ -88,7 +89,7 @@ export default function AdminMembersPage() {
     };
   };
 
-  const suspendedCount = members?.filter((member) => member.suspended).length ?? 0;
+  const suspendedCount = members?.filter((member) => member.suspended && !member.withdrawn).length ?? 0;
 
   return (
     <S.AdminSettingPage>
@@ -154,13 +155,13 @@ export default function AdminMembersPage() {
                   <S.AdminReportRow key={member.id} $selected={member.id === selectedId}>
                     <td>{member.nickname}{member.admin ? " · 관리자 계정" : ""}</td>
                     <td>{member.email || "—"}</td>
-                    <td>{member.provider === "kakao" ? "카카오" : "이메일"}</td>
+                    <td>{member.withdrawn ? "—" : member.provider?.toUpperCase() === "KAKAO" ? "카카오" : "이메일"}</td>
                     <td>{member.missingPosts}</td>
                     <td>{member.communityPosts}</td>
                     <td>{member.reportsReceived > 0 ? <strong>{member.reportsReceived}</strong> : 0}</td>
                     <td>
-                      <S.AdminReportStatus $status={member.suspended ? "PENDING" : "DISMISSED"}>
-                        {member.suspended ? "이용 정지" : "정상"}
+                      <S.AdminReportStatus $status={member.suspended && !member.withdrawn ? "PENDING" : "DISMISSED"}>
+                        {member.withdrawn ? "탈퇴" : member.suspended ? "이용 정지" : "정상"}
                       </S.AdminReportStatus>
                     </td>
                     <td>
@@ -202,8 +203,8 @@ export default function AdminMembersPage() {
 
             <section aria-label="이용 정지">
               <S.AdminSettingCardTitle as="h3">이용 정지</S.AdminSettingCardTitle>
-              {selected.admin ? (
-                <S.AdminListCount>관리자 계정은 정지할 수 없습니다.</S.AdminListCount>
+              {selected.admin || selected.withdrawn ? (
+                <S.AdminListCount>{selected.withdrawn ? "탈퇴한 회원입니다." : "관리자 계정은 정지할 수 없습니다."}</S.AdminListCount>
               ) : (
                 <>
                   <S.AdminSettingField style={{marginTop: 10}}>

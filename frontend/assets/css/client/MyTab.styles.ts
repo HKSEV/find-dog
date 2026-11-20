@@ -258,3 +258,46 @@ export const MyMenuChevron = styled(ChevronIcon)`
     color: ${colors.gray400};
   }
 `;
+
+// 설정 맨 아래 작은 "회원 탈퇴" 링크
+export const SettingsWithdrawLink = styled.a`
+  display: block;
+  width: fit-content;
+  margin: 20px auto 0;
+  padding: 8px;
+  font-size: 13px;
+  color: ${colors.gray400};
+  text-decoration: underline;
+`;
+
+// 탈퇴 안내 (지워지는 것)
+export const WithdrawNotice = styled.ul`
+  margin: 0;
+  padding: 16px 16px 16px 32px;
+  border-radius: 12px;
+  background-color: ${colors.bgLight};
+  font-size: 14px;
+  line-height: 1.6;
+  color: ${colors.gray800};
+  list-style: disc;
+
+  li {
+    list-style: disc; /* 전역 초기화로 점이 사라져서 다시 */
+  }
+
+  li + li {
+    margin-top: 6px;
+  }
+`;
+
+// 마이 위 "프로필 보기" (다른 회원에게 보이는 내 프로필)
+export const MyProfileLink = styled.a`
+  flex: none;
+  padding: 7px 12px;
+  border: 1px solid ${colors.border};
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: ${fontWeight.medium};
+  color: ${colors.gray800};
+  text-decoration: none;
+`;

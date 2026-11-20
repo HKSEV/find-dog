@@ -2,6 +2,7 @@
 import axios from "axios";
 
 export interface MyAccount {
+  id: number; // 내 프로필 보기 (/profile/?id=)
   email: string;
   nickname: string;
   name: string;
@@ -27,6 +28,14 @@ const authHeader = () => {
 };
 
 export const fetchMyAccount = async () => (await axios.get<MyAccount>("/api/members/me", {headers: authHeader()})).data;
+
+// 비밀번호 바꾸기 (이메일로 가입한 회원만)
+export const changeMyPassword = async (currentPassword: string, newPassword: string) =>
+  (await axios.put<{message: string}>("/api/members/me/password", {currentPassword, newPassword}, {headers: authHeader()})).data.message;
+
+// 회원 탈퇴 (카카오 가입은 password 없이)
+export const withdrawMyAccount = async (password?: string) =>
+  (await axios.post<{message: string}>("/api/members/me/withdraw", {password: password ?? null}, {headers: authHeader()})).data.message;
 
 export const updateMyAccount = async (body: MyAccountUpdate) =>
   (await axios.put<MyAccount>("/api/members/me", body, {headers: authHeader()})).data;

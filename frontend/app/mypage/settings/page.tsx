@@ -7,22 +7,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
 import { loadUserFromStorage, logoutUser } from "../../redux/userSlice";
 import { showToast } from "../../components/Toast";
+import { MyAccount, fetchMyAccount } from "../accountApi";
 import { loginHref } from "../../components/loginLink";
 
 import Header from "@/app/components/Header";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
 import * as S from "@/assets/css/Style.styles";
 
-// 💡 마이 > 설정 (헤더 톱니바퀴): 정보 수정, 로그아웃
+// 💡 마이 > 설정 (헤더 톱니바퀴): 정보 수정, 비밀번호 변경, 로그아웃, 회원 탈퇴
 export default function SettingsPage() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const {isLoggedIn} = useSelector((state: RootState) => state.user);
   const [confirmLogout, setConfirmLogout] = useState(false);
+  const [account, setAccount] = useState<MyAccount | null>(null); // 카카오 가입이면 비밀번호 변경 메뉴를 숨김
 
   useEffect(() => {
     dispatch(loadUserFromStorage());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    fetchMyAccount().then(setAccount).catch(() => {});
+  }, [isLoggedIn]);
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -46,8 +53,15 @@ export default function SettingsPage() {
                 <span>정보 수정</span>
                 <S.MyMenuChevron aria-hidden="true"/>
               </S.MyMenuItem>
+              {account && account.provider !== "KAKAO" && (
+                <S.MyMenuItem as={Link} href="/mypage/settings/password">
+                  <span>비밀번호 변경</span>
+                  <S.MyMenuChevron aria-hidden="true"/>
+                </S.MyMenuItem>
+              )}
             </S.MyMenu>
             <S.SettingsLogout type="button" onClick={() => setConfirmLogout(true)}>로그아웃</S.SettingsLogout>
+            <S.SettingsWithdrawLink as={Link} href="/mypage/settings/withdraw">회원 탈퇴</S.SettingsWithdrawLink>
           </>
         ) : (
           <S.WriteLoginNotice>

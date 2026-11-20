@@ -61,6 +61,7 @@ public class MissingPostController {
             @RequestParam(required = false) Double lng,
             @RequestParam(defaultValue = "0") int offset
     ){
+        size = Math.max(1, Math.min(size, 200)); // 0·음수는 500, 너무 크면 메모리 낭비라 1~200 으로
         if (lat != null && lng != null) {
             return ResponseEntity.ok(service.getPostsByDistance(lat, lng, offset, size, type, status, keyword));
         }

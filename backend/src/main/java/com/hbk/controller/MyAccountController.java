@@ -17,6 +17,7 @@ import java.security.Principal;
 public class MyAccountController {
 
     private final MyAccountService service;
+    private final com.hbk.service.AccountService accountService;
 
     @GetMapping
     public ResponseEntity<?> getMe(Principal principal) {
@@ -28,6 +29,22 @@ public class MyAccountController {
     public ResponseEntity<?> updateMe(@RequestBody MyAccountDto.UpdateRequest request, Principal principal) {
         if (principal == null) return unauthorized();
         return ResponseEntity.ok(service.updateMe(principal.getName(), request));
+    }
+
+    // 비밀번호 바꾸기 (PUT /api/members/me/password {currentPassword, newPassword})
+    @PutMapping("/password")
+    public ResponseEntity<?> changePassword(@RequestBody MyAccountDto.PasswordRequest request, Principal principal) {
+        if (principal == null) return unauthorized();
+        accountService.changePassword(principal.getName(), request);
+        return ResponseEntity.ok(java.util.Map.of("message", "비밀번호를 바꿨어요."));
+    }
+
+    // 회원 탈퇴 (POST /api/members/me/withdraw {password}) - 카카오 가입은 password 없이
+    @PostMapping("/withdraw")
+    public ResponseEntity<?> withdraw(@RequestBody(required = false) MyAccountDto.WithdrawRequest request, Principal principal) {
+        if (principal == null) return unauthorized();
+        accountService.withdraw(principal.getName(), request);
+        return ResponseEntity.ok(java.util.Map.of("message", "탈퇴했어요. 그동안 함께해 주셔서 고마워요."));
     }
 
     // 카카오 첫 가입 추가 정보

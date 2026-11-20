@@ -32,6 +32,7 @@ public class CommunityPostService {
     private static final int MAX_PAGE = 30;
 
     private final CommunityPostRepository postRepository;
+    private final com.hbk.repository.CommunityPostReportRepository reportRepository;
     private final MemberRepository memberRepository;
 
     public List<CommunityDto.Post> getPage(CommunityCategory category, Long cursorId, int size) {
@@ -81,6 +82,7 @@ public class CommunityPostService {
     public void delete(Long id, String email) {
         CommunityPost post = findPost(id);
         requireAuthor(post, email, "지울");
+        reportRepository.deleteByPostId(post.getId()); // 신고도 함께 (SQLite 는 외래키 연쇄 삭제가 없어서 직접)
         postRepository.delete(post);
     }
 
@@ -94,7 +96,9 @@ public class CommunityPostService {
     // [관리자] 운영 정책에 맞지 않는 글 지우기
     @Transactional
     public void deleteByAdmin(Long id) {
-        postRepository.delete(findPost(id));
+        CommunityPost post = findPost(id);
+        reportRepository.deleteByPostId(post.getId());
+        postRepository.delete(post);
     }
 
     private void fill(CommunityPost post, CommunityDto.Request r) {
@@ -118,16 +122,12 @@ public class CommunityPostService {
         List<String> urls = new ArrayList<>();
         for (int i = 0; i < photos.size(); i++) {
             MultipartFile file = photos.get(i);
-            if (file.getContentType() == null || !file.getContentType().startsWith("image/")) {
-                throw badRequest("사진 파일만 올릴 수 있어요.");
+            // 진짜 사진(PNG·JPG·GIF·WEBP)만, 파일 이름은 서버가 새로 지음 (ImageUploads)
+            if (ImageUploads.extensionOf(file) == null) {
+                throw badRequest("사진 파일(PNG, JPG, GIF, WEBP)만 올릴 수 있어요.");
             }
             try {
-                String original = file.getOriginalFilename() != null ? file.getOriginalFilename() : "photo.jpg";
-                String filename = System.currentTimeMillis() + "_c" + i + "_" + original.replaceAll("[^A-Za-z0-9._-]", "_");
-                Path path = Paths.get(System.getProperty("user.dir"), "uploads", filename);
-                Files.createDirectories(path.getParent());
-                Files.write(path, file.getBytes());
-                urls.add("/uploads/" + filename);
+                urls.add(ImageUploads.save(file, "c" + i));
             } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "사진을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.");
             }

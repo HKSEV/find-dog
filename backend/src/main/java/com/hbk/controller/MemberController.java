@@ -133,12 +133,11 @@ public class MemberController {
 
     // 5. 프로필 이미지 업로드 API (가입 전에도 쓰므로 로그인 없이 받음)
     //    사진 파일만, 이름은 서버가 새로 지음 (원래 파일 이름을 쓰지 않음)
-    private static final Map<String, String> IMAGE_TYPES = Map.of(
-            "image/png", "png", "image/jpeg", "jpg", "image/gif", "gif", "image/webp", "webp");
 
     @PostMapping("/upload-profile")
     public ResponseEntity<String> uploadProfile(@RequestParam("file") MultipartFile file){
-        String extension = file.getContentType() == null ? null : IMAGE_TYPES.get(file.getContentType().toLowerCase());
+        // 파일 앞부분으로 진짜 사진인지 확인 (Content-Type 은 바꿔 보낼 수 있어서)
+        String extension = com.hbk.service.ImageUploads.extensionOf(file);
         if (file.isEmpty() || extension == null) {
             return ResponseEntity.badRequest().body("사진 파일(PNG, JPG, GIF, WEBP)만 올릴 수 있어요.");
         }
