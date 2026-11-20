@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  NotificationsOutlined as NotificationsNoneIcon,
   ArrowBackIosNewRounded as BackIcon,
   CloseRounded as CloseIcon,
   SettingsOutlined as SettingsIcon
@@ -10,46 +9,7 @@ import styled from "styled-components";
 import { None } from "@/assets/css/common/Placeholder.styles";
 import { fluid, fontWeight } from "@/assets/css/client/theme";
 
-export const HeaderActions = styled.div`
-  && {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-`;
-
-// 💡 메인 헤더 종 아이콘 (누르면 알림 화면). 안 읽은 알림이 있으면 오른쪽 위에 빨간 점
-export const HeaderBell = styled.button`
-  && {
-    position: relative;
-    display: flex;
-    padding: 0;
-    border: 0;
-    background: none;
-    cursor: pointer;
-  }
-`;
-
-export const HeaderBellDot = styled.span`
-  && {
-    position: absolute;
-    top: 2px;
-    right: 3px;
-    width: 8px;
-    height: 8px;
-    border: 2px solid #FFF;
-    border-radius: 999px;
-    background-color: #E5484D;
-  }
-`;
-
-export const NotificationIcon = styled(NotificationsNoneIcon)`
-  && {
-    cursor: pointer;
-    color: #8A4E4B;
-    font-size: 28px;
-  }
-`;
+// 💡 메인(홈) 헤더의 오른쪽 아이콘·알림 종은 하단 탭 헤더와 같은 것을 씀 (ScrollHeader.styles: HeaderActionRow·TabBellButton)
 
 // 💡 하단 탭 첫 화면용 헤더 제목 (뒤로 버튼 없이 왼쪽에 큰 제목, 높이는 메인 헤더 로고와 같게)
 //    글자 크기는 메인 로고 글자·서브 헤더 제목과 같은 20px

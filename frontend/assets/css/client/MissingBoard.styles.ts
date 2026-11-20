@@ -55,6 +55,20 @@ export const MissingShelterHint = styled.a<{$flush?: boolean}>`
   }
 `;
 
+// 보호소 안내를 접는 틀: 높이(1fr → 0fr)와 투명도를 같이 줄여 아래 목록이 부드럽게 올라오게
+//    움직임 줄이기 설정이면 애니메이션 없이 바로 사라짐 (ShelterHint.tsx에서 처리)
+export const MissingHintCollapse = styled.div<{$hiding: boolean}>`
+  display: grid;
+  grid-template-rows: ${({$hiding}) => ($hiding ? "0fr" : "1fr")};
+  opacity: ${({$hiding}) => ($hiding ? 0 : 1)};
+  transition: grid-template-rows 0.4s ease, opacity 0.3s ease;
+
+  & > div {
+    min-height: 0;
+    overflow: hidden;
+  }
+`;
+
 export const MissingHintSearchIcon = styled(SearchIcon)`
   && {
     flex: none;

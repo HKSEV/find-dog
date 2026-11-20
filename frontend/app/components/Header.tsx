@@ -65,14 +65,15 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
             <Logo onClick={() => router.push("/")}/>
           </S.LogoHold>
 
-          {/* 우측 아이콘 그룹 (로그인·내 정보는 하단 "마이" 탭에서) */}
-          <S.HeaderActions>
+          {/* 우측 아이콘 그룹 (로그인·내 정보는 하단 "마이" 탭에서)
+              다른 탭 헤더와 같은 버튼 크기·간격·색(검정). 테마색은 로고에만 */}
+          <S.HeaderActionRow>
             {action}
-            <S.HeaderBell type="button" aria-label={bellLabel} onClick={() => router.push("/notifications")}>
-              <S.NotificationIcon/>
-              {hasUnread && <S.HeaderBellDot aria-hidden="true"/>}
-            </S.HeaderBell>
-          </S.HeaderActions>
+            <S.TabBellButton type="button" aria-label={bellLabel} onClick={() => router.push("/notifications")}>
+              <S.TabBellIcon aria-hidden="true"/>
+              {hasUnread && <S.TabBellDot aria-hidden="true"/>}
+            </S.TabBellButton>
+          </S.HeaderActionRow>
         </S.Header>
         {demo.sheet}
       </>

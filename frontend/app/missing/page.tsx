@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { fetchMissingAnimals, type MissingAnimal } from "../redux/missingSlice";
-import { setActiveTab } from "../redux/shelterSlice";
 import { toImageUrl } from "../shelter/animalFormat";
 import { missingBadge, timeAgo, formatWhen } from "./missingFormat";
 
@@ -14,6 +13,7 @@ import Footer from "@/app/components/Footer";
 import { useScrollCollapse } from "@/app/components/useScrollCollapse";
 import * as S from "@/assets/css/Style.styles";
 import MissingRowLines from "./MissingRowLines";
+import ShelterHint from "./ShelterHint";
 import AreaSheet from "@/app/components/AreaSheet";
 import { distanceKm, formatDistance, useMyArea } from "@/lib/myArea";
 
@@ -181,13 +181,8 @@ export default function MissingReportPage() {
           {area ? "기준으로 거리를 보여줘요" : "동네를 고르면 거리와 가까운 순을 볼 수 있어요"}
         </S.AreaBasis>
 
-        {pickedType !== "FOUND" && (
-        <S.MissingShelterHint as={Link} href="/shelter" onClick={() => dispatch(setActiveTab("입양"))}>
-          <S.MissingHintSearchIcon aria-hidden="true"/>
-          <span><strong>잃어버린 아이가 보호소에 들어왔을 수도 있어요.</strong> 보호소 공고도 확인해 보세요.</span>
-          <S.MissingHintChevron aria-hidden="true"/>
-        </S.MissingShelterHint>
-        )}
+        {/* 💡 보호소 공고 안내: 잠깐 보였다가 접힘 (ShelterHint.tsx) */}
+        {pickedType !== "FOUND" && <ShelterHint/>}
 
         <S.MissingRows>
           {loading && animalList.length === 0 ? (
