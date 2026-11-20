@@ -187,3 +187,12 @@ export const TabBellDot = styled.span`
   border-radius: 999px;
   background-color: #E5484D;
 `;
+
+// 홈 로고 감싸기: 길게 누르면 시연 계정 고르기 (글자 선택·휴대폰 길게 누르기 메뉴가 뜨지 않게)
+export const LogoHold = styled.span`
+  display: inline-flex;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+`;

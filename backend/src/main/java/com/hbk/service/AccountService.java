@@ -34,6 +34,7 @@ public class AccountService {
 
     // 이메일로 가입한 회원만 (카카오 가입은 비밀번호가 없음)
     public void changePassword(String email, MyAccountDto.PasswordRequest request) {
+        com.hbk.config.DemoAccounts.blockFor(email, "비밀번호를 바꿀");
         Member member = member(email);
         if (KakaoMemberService.PROVIDER.equals(member.getProvider())) throw bad("카카오로 가입한 계정은 비밀번호가 없어요.");
         String current = request == null ? null : request.currentPassword();
@@ -47,6 +48,7 @@ public class AccountService {
     // 💡 회원 탈퇴: 내가 쓴 글·대화·신청·알림을 지우고, 회원 정보는 알아볼 수 없게 바꿔 둠
     //    (신고 기록 등 운영에 필요한 연결만 "탈퇴한 회원"으로 남김. 같은 이메일·카카오로 다시 가입할 수 있음)
     public void withdraw(String email, MyAccountDto.WithdrawRequest request) {
+        com.hbk.config.DemoAccounts.blockFor(email, "탈퇴할");
         Member member = member(email);
         if (adminRepository.findByMemberEmail(email).isPresent()) throw bad("관리자 계정은 탈퇴할 수 없어요.");
         boolean kakao = KakaoMemberService.PROVIDER.equals(member.getProvider());

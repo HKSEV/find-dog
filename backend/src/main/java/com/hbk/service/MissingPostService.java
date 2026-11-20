@@ -347,6 +347,7 @@ public class MissingPostService {
     // 글 삭제 (본인 확인)
     @Transactional
     public void deletePost(Long id, String username){
+        com.hbk.config.DemoAccounts.blockFor(username, "글을 지울");
         MissingPost post = findPost(id);
         requireAuthor(post, username, "삭제");
 
@@ -357,6 +358,7 @@ public class MissingPostService {
     // 완료 처리 (찾았을 경우 상태 변경)
     @Transactional
     public void completPost(Long id, String username){
+        com.hbk.config.DemoAccounts.blockFor(username, "찾았어요로 바꿀");
         MissingPost post = findPost(id);
         requireAuthor(post, username, "변경");
         post.setStatus(PostStatus.COMPLETED);

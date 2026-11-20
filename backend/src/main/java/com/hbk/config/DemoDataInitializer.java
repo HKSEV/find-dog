@@ -237,8 +237,8 @@ public class DemoDataInitializer implements ApplicationRunner {
     // 💡 시연 계정 (DEMO_PASSWORD 로 로그인)
     //    demo1: 콩이를 잃어버린 보호자 (실종 글 -> 전단지, 목격자와의 채팅, 근처 목격 알림)
     //    demo2: 사직공원에서 콩이를 본 목격자 (목격 글, 채팅, 입양·봉사 신청 내역)
-    private static final String DEMO_OWNER = "demo1@finddog.local";
-    private static final String DEMO_FINDER = "demo2@finddog.local";
+    private static final String DEMO_OWNER = DemoAccounts.OWNER;
+    private static final String DEMO_FINDER = DemoAccounts.FINDER;
 
     private void seedMissingPosts() {
         if (missingRepository.count() > 0) return;

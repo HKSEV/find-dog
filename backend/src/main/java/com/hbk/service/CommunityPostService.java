@@ -94,6 +94,7 @@ public class CommunityPostService {
 
     @Transactional
     public void delete(Long id, String email) {
+        com.hbk.config.DemoAccounts.blockFor(email, "글을 지울");
         CommunityPost post = findPost(id);
         requireAuthor(post, email, "지울");
         reportRepository.deleteByPostId(post.getId()); // 신고도 함께 (SQLite 는 외래키 연쇄 삭제가 없어서 직접)

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; // 💡 useRouter 임포트
 
 import Logo from "./Logo";
+import { useDemoLogin } from "./DemoLogin";
 import { fetchHasUnread } from "../notifications/notificationApi";
 import * as S from "@/assets/css/Style.styles";
 
@@ -21,6 +22,7 @@ interface HeaderProps {
 export default function Header({title, onBackClick, isMain, isTab, isModal, onClose, action, hidden}: HeaderProps) {
   const router = useRouter(); // 💡 라우터 초기화
   const [hasUnread, setHasUnread] = useState(false); // 종 아이콘 빨간 점 (홈 + 하단 탭 첫 화면)
+  const demo = useDemoLogin(); // 💡 홈 로고를 길게 누르면 시연 계정 고르기
 
   useEffect(() => {
     if (!isMain && !isTab) return;
@@ -59,7 +61,9 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
         <S.Header
         aria-hidden={hidden || undefined}
         style={{transform: hidden ? "translate(-50%, -100%)" : undefined, transition: "transform 0.2s"}}>
-          <Logo onClick={() => router.push("/")}/>
+          <S.LogoHold {...demo.handlers}>
+            <Logo onClick={() => router.push("/")}/>
+          </S.LogoHold>
 
           {/* 우측 아이콘 그룹 (로그인·내 정보는 하단 "마이" 탭에서) */}
           <S.HeaderActions>
@@ -69,6 +73,7 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
             </S.HeaderBell>
           </S.HeaderActions>
         </S.Header>
+        {demo.sheet}
       </>
     );
   };
