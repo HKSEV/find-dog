@@ -115,6 +115,11 @@ export default function ProfileEditPage() {
         profileImageUrl
       });
       localStorage.setItem("nickname", saved.nickname); // 마이·인사 토스트에 바로 반영
+      // 마이 화면이 먼저 보여 주는 사진도 바로 바꿈 (예전 사진이 잠깐 보였다가 바뀌지 않게)
+      const savedPhoto = toImageUrl(saved.profileImageUrl);
+      if (savedPhoto) localStorage.setItem("profileImage", savedPhoto);
+      else localStorage.removeItem("profileImage");
+      window.dispatchEvent(new Event("storage")); // 같은 탭에서 사진을 읽는 화면에 알림
       showToast("저장했어요");
       // replace로 설정 화면을 하나 더 쌓으면 뒤로가기를 두 번 눌러야 해서, 왔던 설정 화면으로 돌아감
       if (window.history.length > 1) router.back();

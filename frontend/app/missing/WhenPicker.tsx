@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import {
   CalendarMonthOutlined as CalendarIcon,
   ChevronLeftRounded as PrevIcon,
@@ -69,6 +69,13 @@ const exactLabel = (hhmm: string) => {
   return `${h < 12 ? "오전" : "오후"} ${h % 12 || 12}:${pad(m)}`;
 };
 
+// "14:30" -> 오후 2시 30분 (비어 있으면 오후, 빈 칸)
+const parseExact = (exact: string) => {
+  if (!/^\d{2}:\d{2}$/.test(exact)) return {ampm: "PM", hour: "", minute: ""};
+  const [h, m] = exact.split(":").map(Number);
+  return {ampm: h < 12 ? "AM" : "PM", hour: String(h % 12 || 12), minute: pad(m)};
+};
+
 interface Props {
   label: string; // "잃어버린 때" / "발견한 때"
   value: WhenValue;
@@ -89,22 +96,28 @@ export default function WhenPicker({label, value, error, onChange}: Props) {
     ? `${dateLabel(value.date)} ${value.exactMode && value.exact ? exactLabel(value.exact) : bandOptions.find((b) => b.value === value.band)?.label.replace("모르겠어요", "(시간 모름)") ?? ""}`.trim()
     : "";
 
-  // 정확한 시각 입력 (오전/오후 + 시 + 분)
-  const [ampm, hour, minute] = useMemo(() => {
-    if (!value.exact) return ["PM", "", ""];
-    const [h, m] = value.exact.split(":").map(Number);
-    return [h < 12 ? "AM" : "PM", String(h % 12 || 12), pad(m)];
-  }, [value.exact]);
+  // 💡 정확한 시각 입력 (오전/오후 + 시 + 분)
+  //    입력 중인 값(draft)을 화면이 직접 들고 있어서, 시를 비워 둔 채 오전을 눌러도 선택되고
+  //    분을 먼저 적어도 지워지지 않음. 시·분이 맞으면 그때 "HH:mm"으로 저장
+  const [draft, setDraft] = useState(() => parseExact(value.exact));
+  const [syncedExact, setSyncedExact] = useState(value.exact);
+  if (value.exact !== syncedExact) {
+    // 밖에서 값이 바뀐 경우 (수정 화면에서 글을 불러옴, "시간대로 고르기"로 지움)
+    setSyncedExact(value.exact);
+    setDraft(parseExact(value.exact));
+  };
+  const {ampm, hour, minute} = draft;
 
   const setExact = (nextAmPm: string, nextHour: string, nextMinute: string) => {
-    const h = Number(nextHour);
-    const m = Number(nextMinute || "0");
-    if (!nextHour || Number.isNaN(h) || h < 1 || h > 12 || Number.isNaN(m) || m < 0 || m > 59) {
-      patch({exact: ""});
-      return;
-    };
-    const h24 = nextAmPm === "AM" ? h % 12 : (h % 12) + 12;
-    patch({exact: `${pad(h24)}:${pad(m)}`});
+    const next = {ampm: nextAmPm, hour: nextHour.replace(/\D/g, ""), minute: nextMinute.replace(/\D/g, "")};
+    setDraft(next);
+    const h = Number(next.hour);
+    const m = Number(next.minute || "0");
+    const exact = !next.hour || h < 1 || h > 12 || m < 0 || m > 59
+      ? ""
+      : `${pad(next.ampm === "AM" ? h % 12 : (h % 12) + 12)}:${pad(m)}`;
+    setSyncedExact(exact); // 내가 바꾼 값이라 위에서 다시 덮어쓰지 않게
+    patch({exact});
   };
 
   return (
@@ -149,9 +162,9 @@ export default function WhenPicker({label, value, error, onChange}: Props) {
               <button type="button" aria-pressed={ampm === "AM"} onClick={() => setExact("AM", hour, minute)}>오전</button>
               <button type="button" aria-pressed={ampm === "PM"} onClick={() => setExact("PM", hour, minute)}>오후</button>
             </S.WhenAmPm>
-            <input inputMode="numeric" aria-label="시" placeholder="시" maxLength={2} defaultValue={hour} onChange={(e) => setExact(ampm, e.target.value, minute)}/>
+            <input inputMode="numeric" aria-label="시" placeholder="시" maxLength={2} value={hour} onChange={(e) => setExact(ampm, e.target.value, minute)}/>
             <span>:</span>
-            <input inputMode="numeric" aria-label="분" placeholder="분" maxLength={2} defaultValue={minute} onChange={(e) => setExact(ampm, hour || "", e.target.value)}/>
+            <input inputMode="numeric" aria-label="분" placeholder="분" maxLength={2} value={minute} onChange={(e) => setExact(ampm, hour, e.target.value)}/>
           </S.WhenExact>
           <S.WhenLink type="button" onClick={() => patch({exactMode: false, exact: ""})}>시간대로 고르기 ›</S.WhenLink>
         </>

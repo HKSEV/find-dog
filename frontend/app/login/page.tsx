@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { setEmail, setPassword, submitLogin } from "../redux/loginSlice";
+import { loadUserFromStorage } from "../redux/userSlice";
 import { SIGNUP_EMAIL_KEY, safeNext } from "../components/loginLink";
 import { queueToast, showToast } from "../components/Toast";
 import { startKakaoLogin } from "../oauth/kakao/kakaoLogin";
@@ -106,6 +107,7 @@ function LoginForm() {
     const resultAction = await dispatch(submitLogin({email: email.trim(), password}));
 
     if (submitLogin.fulfilled.match(resultAction)) {
+      dispatch(loadUserFromStorage()); // 로그인 상태를 바로 반영 (회원가입·카카오 로그인과 같게)
       const nickname = localStorage.getItem("nickname");
       queueToast(nickname ? `${nickname}님, 반가워요` : "반가워요");
       dispatch(setPassword(""));

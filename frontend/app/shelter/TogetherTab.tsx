@@ -114,7 +114,7 @@ export default function TogetherTab() {
               <S.VolunteerCampaign
               key={campaign.id}
               as={campaign.mediaUrl ? "a" : "div"}
-              href={campaign.mediaUrl || undefined}
+              href={toImageUrl(campaign.mediaUrl)} // 직접 올린 영상(/uploads/...)은 백엔드 주소를 붙임, 유튜브는 그대로
               target={campaign.mediaUrl ? "_blank" : undefined}
               rel={campaign.mediaUrl ? "noopener noreferrer" : undefined}>
                 <S.VolunteerCampaignThumbWrap>

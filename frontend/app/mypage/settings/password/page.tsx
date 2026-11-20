@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { changeMyPassword, toAccountError } from "../../accountApi";
+import { changeMyPassword, fetchMyAccount, toAccountError } from "../../accountApi";
 import { queueToast } from "../../../components/Toast";
 import { loginHref } from "../../../components/loginLink";
 import { useImeSafeSubmit } from "../../../components/imeSafeSubmit";
@@ -18,6 +18,23 @@ export default function PasswordChangePage() {
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const imeSafeSubmit = useImeSafeSubmit();
+
+  // 들어오자마자 확인: 로그인 안 했으면 로그인 화면으로, 카카오 가입이면 비밀번호가 없어서 설정으로
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      router.replace(loginHref("/mypage/settings/password"));
+      return;
+    };
+    fetchMyAccount()
+      .then((me) => {
+        if (me.provider !== "KAKAO") return;
+        queueToast("카카오로 가입한 계정은 비밀번호가 없어요");
+        router.replace("/mypage/settings");
+      })
+      .catch((error) => {
+        if (toAccountError(error, "") === "UNAUTHORIZED") router.replace(loginHref("/mypage/settings/password"));
+      });
+  }, [router]);
 
   const setField = (field: keyof typeof form, value: string) => {
     setForm((prev) => ({...prev, [field]: value}));

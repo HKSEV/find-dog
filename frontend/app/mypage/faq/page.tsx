@@ -3,6 +3,7 @@
 import React from "react";
 import Header from "@/app/components/Header";
 import * as S from "@/assets/css/Style.styles";
+import { POLICY_CONTACT } from "../policyTexts";
 
 // 💡 마이 > 자주 묻는 질문. 서버 없이 화면에 적어 둔 내용 (눌러서 펼침)
 const faqs: {title: string; items: {q: string; a: string}[]}[] = [
@@ -34,6 +35,9 @@ const faqs: {title: string; items: {q: string; a: string}[]}[] = [
     title: "계정",
     items: [
       {q: "닉네임이나 연락처를 바꾸고 싶어요.", a: "마이 > 오른쪽 위 설정 > 정보 수정에서 바꿀 수 있어요. 이메일은 바꿀 수 없어요."},
+      {q: "비밀번호를 바꾸고 싶어요.", a: "마이 > 설정 > 비밀번호 변경에서 바꿀 수 있어요. 카카오로 가입한 계정은 비밀번호가 없어서 이 메뉴가 보이지 않아요."},
+      {q: "비밀번호를 잊어버렸어요.", a: `지금은 비밀번호 찾기 기능이 없어요. 가입한 이메일과 함께 ${POLICY_CONTACT}로 문의해 주세요.`},
+      {q: "탈퇴하고 싶어요.", a: "마이 > 설정 맨 아래 회원 탈퇴에서 할 수 있어요. 내가 쓴 글과 채팅, 입양·봉사 신청 내역이 지워지고 되돌릴 수 없어요. 같은 이메일이나 카카오 계정으로 다시 가입할 수 있어요."},
       {q: "관심 동물이 다른 기기에서 안 보여요.", a: "관심 동물(하트)은 지금 쓰는 기기에만 저장돼요. 다른 기기에서는 다시 눌러 주세요."}
     ]
   }
