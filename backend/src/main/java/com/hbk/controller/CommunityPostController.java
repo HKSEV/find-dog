@@ -26,7 +26,9 @@ public class CommunityPostController {
     @GetMapping("/api/community-posts")
     public List<CommunityDto.Post> getPage(@RequestParam(required = false) CommunityCategory category,
                                            @RequestParam(required = false) Long cursorId,
-                                           @RequestParam(defaultValue = "10") int size) {
+                                           @RequestParam(defaultValue = "10") int size,
+                                           @RequestParam(required = false) String keyword) { // 검색어 (제목·내용, 띄어쓰기로 여러 개)
+        if (keyword != null && !keyword.isBlank()) return service.search(category, cursorId, size, keyword);
         return service.getPage(category, cursorId, size);
     }
 

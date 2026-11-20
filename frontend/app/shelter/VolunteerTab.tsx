@@ -7,7 +7,7 @@ import { VolunteerPost, dateParts, fetchVolunteers, volunteerBadge } from "../vo
 import * as S from "@/assets/css/Style.styles";
 
 // 💡 입양·봉사 탭 > 봉사: 오늘 이후 봉사 모집 (가까운 날짜 순, 선착순 신청)
-export default function VolunteerTab() {
+export default function VolunteerTab({keyword = ""}: {keyword?: string}) {
   const [posts, setPosts] = useState<VolunteerPost[]>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
 
@@ -25,17 +25,22 @@ export default function VolunteerTab() {
     };
   }, []);
 
+  // 검색 (헤더 돋보기): 봉사 이름·장소·내용에 검색어가 모두 들어간 것
+  const words = keyword.toLowerCase().split(/\s+/).filter(Boolean);
+  const visiblePosts = words.length === 0 ? posts
+    : posts.filter((post) => words.every((word) => `${post.title} ${post.place} ${post.content ?? ""}`.toLowerCase().includes(word)));
+
   if (status === "loading") return <S.VolunteerEmpty>봉사 모집을 불러오는 중이에요</S.VolunteerEmpty>;
   if (status === "error") return <S.VolunteerEmpty>봉사 모집을 불러오지 못했어요. 잠시 후 다시 시도해 주세요</S.VolunteerEmpty>;
 
   return (
     <S.VolunteerSection $first>
-      <S.VolunteerIntro>보호소 봉사는 선착순이에요. 신청하면 바로 확정돼요.</S.VolunteerIntro>
-      {posts.length === 0 ? (
-        <S.VolunteerEmpty>지금 모집 중인 봉사가 없어요</S.VolunteerEmpty>
+      <S.VolunteerIntro>어서찾아주개와 함께하는 협력 보호소의 봉사예요. 선착순이라 신청하면 바로 확정돼요.</S.VolunteerIntro>
+      {visiblePosts.length === 0 ? (
+        <S.VolunteerEmpty>{keyword ? "찾는 봉사가 없어요" : "지금 모집 중인 봉사가 없어요"}</S.VolunteerEmpty>
       ) : (
         <S.VolunteerPostList>
-          {posts.map((post) => {
+          {visiblePosts.map((post) => {
             const {month, day, weekday} = dateParts(post.activityDate);
             const badge = volunteerBadge(post);
             return (

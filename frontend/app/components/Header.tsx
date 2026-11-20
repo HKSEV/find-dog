@@ -20,16 +20,16 @@ interface HeaderProps {
 
 export default function Header({title, onBackClick, isMain, isTab, isModal, onClose, action, hidden}: HeaderProps) {
   const router = useRouter(); // 💡 라우터 초기화
-  const [hasUnread, setHasUnread] = useState(false); // 메인 헤더 종 아이콘 빨간 점
+  const [hasUnread, setHasUnread] = useState(false); // 종 아이콘 빨간 점 (홈 + 하단 탭 첫 화면)
 
   useEffect(() => {
-    if (!isMain) return;
+    if (!isMain && !isTab) return;
     let alive = true;
     fetchHasUnread().then((value) => alive && setHasUnread(value));
     return () => {
       alive = false;
     };
-  }, [isMain]);
+  }, [isMain, isTab]);
 
   const handleBack = () => {
     if (onBackClick) {
@@ -74,14 +74,22 @@ export default function Header({title, onBackClick, isMain, isTab, isModal, onCl
   };
 
   // 💡 2. 하단 탭 첫 화면용 헤더 (뒤로 버튼 없이 큰 제목)
+  //    오른쪽: 화면별 버튼(action) + 알림 종 (홈이 아닌 탭에서도 바로 알림으로)
   if (isTab) {
+    const bellLabel = hasUnread ? "알림 (새 알림 있음)" : "알림";
     return (
       <>
         <S.Header
         aria-hidden={hidden || undefined}
         style={{transform: hidden ? "translate(-50%, -100%)" : undefined, transition: "transform 0.2s"}}>
           <S.HeaderTabTitle>{title}</S.HeaderTabTitle>
-          {action}
+          <S.HeaderActionRow>
+            {action}
+            <S.TabBellButton type="button" aria-label={bellLabel} onClick={() => router.push("/notifications")}>
+              <S.TabBellIcon aria-hidden="true"/>
+              {hasUnread && <S.TabBellDot aria-hidden="true"/>}
+            </S.TabBellButton>
+          </S.HeaderActionRow>
         </S.Header>
       </>
     );

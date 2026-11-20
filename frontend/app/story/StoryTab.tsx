@@ -54,7 +54,7 @@ const VideoGrid = ({items}: {items: StoryVideo[]}) => (
 //    전체 = 회원 글 최신 + 보호소 소식 + 보호소 영상
 //    자유 이야기·입양 후기·구조 이야기·질문 = 그 말머리의 회원 글
 //    보호소 = 관리자 글 (도움이 필요해요, 입양 캠페인, 보호소 소식, 보호소 영상)
-export default function StoryTab({compact}: {compact?: boolean}) {
+export default function StoryTab({compact, keyword = ""}: {compact?: boolean; keyword?: string}) {
   const dispatch = useDispatch<AppDispatch>();
   const {category, videos, news, loading, error} = useSelector((state: RootState) => state.story);
   const memberCategory = categoryValue(category); // 회원 글 분류면 값, 아니면 undefined
@@ -69,13 +69,14 @@ export default function StoryTab({compact}: {compact?: boolean}) {
   }, [dispatch]);
 
   // 전체나 회원 글 분류를 고르면 회원 글을 새로 받음
+  // 💡 검색어가 있으면(헤더 돋보기) 말머리 안에서, 보호소·전체면 모든 회원 글에서 찾음
   useEffect(() => {
-    if (category !== "전체" && !memberCategory) return;
+    if (!keyword && category !== "전체" && !memberCategory) return;
     let alive = true;
-    const size = category === "전체" ? PREVIEW_POST_COUNT : PAGE_SIZE;
+    const size = !keyword && category === "전체" ? PREVIEW_POST_COUNT : PAGE_SIZE;
     const timer = setTimeout(() => {
       setPostStatus("loading");
-      fetchCommunityPosts(memberCategory, undefined, size)
+      fetchCommunityPosts(memberCategory, undefined, size, keyword)
         .then((list) => {
           if (!alive) return;
           setPosts(list);
@@ -88,14 +89,14 @@ export default function StoryTab({compact}: {compact?: boolean}) {
       alive = false;
       clearTimeout(timer);
     };
-  }, [category, memberCategory]);
+  }, [category, memberCategory, keyword]);
 
   // 더 보기: 말머리를 골랐으면 그 말머리 글, "전체"면 모든 회원 글을 이어서
   const loadMore = async () => {
     if (posts.length === 0) return;
     setLoadingMore(true);
     try {
-      const next = await fetchCommunityPosts(memberCategory, posts[posts.length - 1].id);
+      const next = await fetchCommunityPosts(memberCategory, posts[posts.length - 1].id, PAGE_SIZE, keyword);
       setPosts((prev) => [...prev, ...next]);
       setHasMore(next.length === PAGE_SIZE);
     } catch {
@@ -118,6 +119,23 @@ export default function StoryTab({compact}: {compact?: boolean}) {
   };
 
   const renderBody = () => {
+    // 검색 중이면 회원 이야기 검색 결과만
+    if (keyword) {
+      return (
+        <S.StorySection>
+          <S.StorySectionHead>
+            <S.StorySectionTitle>&quot;{keyword}&quot; 검색 결과</S.StorySectionTitle>
+          </S.StorySectionHead>
+          {postStatus === "ready" && posts.length === 0 ? <S.StoryEmpty>찾는 이야기가 없어요</S.StoryEmpty> : renderPosts()}
+          {hasMore && (
+            <S.CommunityMoreButton type="button" disabled={loadingMore} onClick={loadMore}>
+              {loadingMore ? "불러오는 중..." : "더 보기"}
+            </S.CommunityMoreButton>
+          )}
+        </S.StorySection>
+      );
+    };
+
     if (memberCategory) {
       return (
         <S.StorySection>

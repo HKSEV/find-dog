@@ -127,7 +127,7 @@ export default function VolunteerApplyForm({id}: {id: number}) {
           </span>
         </S.ApplyAnimal>
 
-        <S.ApplyNotice>로그인한 계정 정보로 미리 채웠어요. 보호소에 이 이름과 연락처로 전달해요.</S.ApplyNotice>
+        <S.ApplyNotice>로그인한 계정 정보로 미리 채웠어요. 운영팀이 이 이름과 연락처를 봉사를 여는 협력 보호소에 전달해요.</S.ApplyNotice>
 
         <S.WriteField>
           <S.WriteLabel htmlFor="vol-name">이름</S.WriteLabel>

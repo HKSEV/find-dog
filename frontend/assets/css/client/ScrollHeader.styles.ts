@@ -1,6 +1,6 @@
 "use client";
 
-import { SearchRounded as SearchIcon, ArrowBackIosNewRounded as BackIcon, CancelRounded as ClearIcon } from "@mui/icons-material";
+import { SearchRounded as SearchIcon, ArrowBackIosNewRounded as BackIcon, CancelRounded as ClearIcon, NotificationsNoneRounded as BellIcon } from "@mui/icons-material";
 import styled from "styled-components";
 import { colors, fontWeight } from "./theme";
 
@@ -11,6 +11,11 @@ export const HeaderActionRow = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
+
+  /* 화면별 버튼 줄이 알림 종 앞에 들어가면, 그 줄의 마지막 버튼은 오른쪽으로 당기지 않음 */
+  & & > :last-child {
+    margin-right: 0;
+  }
 `;
 
 // 헤더 안 아이콘 버튼 (검색 등)
@@ -163,4 +168,22 @@ export const SearchHint = styled.p`
     font-weight: ${fontWeight.semibold};
     color: ${colors.gray900};
   }
+`;
+
+// 💡 하단 탭 첫 화면 헤더 오른쪽 알림 종 (홈 말고 다른 탭에서도 바로 알림으로)
+export const TabBellButton = styled(HeaderRoundButton)`
+  position: relative;
+`;
+
+export const TabBellIcon = styled(BellIcon)``;
+
+export const TabBellDot = styled.span`
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid ${colors.white};
+  border-radius: 999px;
+  background-color: #E5484D;
 `;

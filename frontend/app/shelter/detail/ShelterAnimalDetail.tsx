@@ -16,7 +16,7 @@ import ShareSheet from "@/app/components/ShareSheet";
 import * as S from "@/assets/css/Style.styles";
 
 // 💡 운영팀(관리자)은 보호소가 아니라서, 실제 진행은 보호소가 맡음 (안내용 단계)
-const adoptSteps = ["신청서 보내기", "운영팀이 보호소에 전달", "보호소에서 연락"];
+const adoptSteps = ["신청서 보내기", "운영팀이 협력 보호소에 전달", "보호소에서 연락"];
 
 export default function ShelterAnimalDetail({id}: {id: number}) {
   const router = useRouter();
@@ -106,7 +106,7 @@ export default function ShelterAnimalDetail({id}: {id: number}) {
             ) : (
               <S.DetailTitle>{animal.breed}<span>{gender}</span></S.DetailTitle>
             )}
-            <S.DetailNotice>공고번호 {animal.noticeNo}</S.DetailNotice>
+            <S.DetailNotice>등록번호 {animal.noticeNo}</S.DetailNotice>
 
             <S.DetailFacts>
               <S.DetailFact><dt>품종</dt><dd>{animal.breed}</dd></S.DetailFact>
@@ -126,7 +126,7 @@ export default function ShelterAnimalDetail({id}: {id: number}) {
 
           <S.DetailSection>
             <S.DetailHeading>입양 절차</S.DetailHeading>
-            <S.DetailText>신청서를 보내면 운영팀이 확인해 보호소에 전달하고, 보호소에서 적어 주신 연락처로 직접 연락드려요.</S.DetailText>
+            <S.DetailText>이 친구는 어서찾아주개와 함께하는 협력 보호소에서 지내고 있어요. 신청서를 보내면 운영팀이 확인해 그 보호소에 전달하고, 보호소에서 적어 주신 연락처로 직접 연락드려요. 보호소 위치와 방문 일정도 그때 안내받을 수 있어요.</S.DetailText>
             <S.DetailSteps>
               {adoptSteps.map((step, index) => (
                 <S.DetailStep key={step} $first={index === 0}>

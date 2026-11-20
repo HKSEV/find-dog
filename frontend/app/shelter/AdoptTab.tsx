@@ -19,11 +19,11 @@ const EarMark = () => (
 );
 
 // 💡 입양·봉사 탭 > 입양: 보호 동물 사진 격자 (최신순)
-export default function AdoptTab() {
+export default function AdoptTab({keyword}: {keyword: string}) {
   const dispatch = useDispatch<AppDispatch>();
   const {animals, loading, error} = useSelector((state: RootState) => state.shelter);
   const {isLiked, toggle} = useLikedAnimals();
-  const [keyword, setKeyword] = useState("");
+  const [onlyAvailable, setOnlyAvailable] = useState(true); // 💡 입양 가능한 친구만 (입양 완료는 빼고)
 
   useEffect(() => {
     dispatch(fetchShelterAnimals());
@@ -33,28 +33,23 @@ export default function AdoptTab() {
   const visibleAnimals = useMemo(() => {
     const word = keyword.trim().toLowerCase();
     return animals
+      .filter((animal) => !onlyAvailable || animal.status !== "COMPLETED")
       .filter((animal) =>
         !word || [animal.name ?? "", animal.breed, animal.rescueLocation, animal.noticeNo].some((text) => text?.toLowerCase().includes(word))
       )
       .slice()
       .sort((a, b) => (b.regDate ?? "").localeCompare(a.regDate ?? "") || b.id - a.id);
-  }, [animals, keyword]);
+  }, [animals, keyword, onlyAvailable]);
 
   return (
     <>
-      <S.AdoptSearch>
-        <S.AdoptSearchIcon aria-hidden="true"/>
-        <S.AdoptSearchInput
-        type="search"
-        aria-label="보호 동물 검색"
-        placeholder="품종, 구조 지역, 공고번호"
-        value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}/>
-      </S.AdoptSearch>
-
+      {/* 검색은 헤더 돋보기 (실종·제보와 같은 자리) */}
       <S.AdoptListHead>
-        <span>전체 <strong>{visibleAnimals.length}마리</strong></span>
-        <span>최신순</span>
+        <span>{keyword ? "검색 결과" : onlyAvailable ? "입양 가능" : "전체"} <strong>{visibleAnimals.length}마리</strong></span>
+        <S.MissingOnlyToggle>
+          <input type="checkbox" checked={onlyAvailable} onChange={(e) => setOnlyAvailable(e.target.checked)}/>
+          입양 가능한 친구만
+        </S.MissingOnlyToggle>
       </S.AdoptListHead>
 
       {loading && animals.length === 0 ? (

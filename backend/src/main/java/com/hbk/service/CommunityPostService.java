@@ -42,6 +42,20 @@ public class CommunityPostService {
                 .toList();
     }
 
+    // 💡 검색: 제목·내용에 검색어가 모두 들어간 글 (최신순, 커서로 이어 받기). 글 수가 많지 않아 서버에서 거름
+    public List<CommunityDto.Post> search(CommunityCategory category, Long cursorId, int size, String keyword) {
+        int pageSize = Math.min(Math.max(size, 1), MAX_PAGE);
+        List<String> words = java.util.Arrays.stream(keyword.trim().toLowerCase().split("\\s+")).filter(w -> !w.isEmpty()).toList();
+        return postRepository.findPage(cursorId, category, PageRequest.of(0, 1000)).stream()
+                .filter(p -> {
+                    String text = (p.getTitle() + " " + p.getContent()).toLowerCase();
+                    return words.stream().allMatch(text::contains);
+                })
+                .limit(pageSize)
+                .map(p -> CommunityDto.Post.of(p, false))
+                .toList();
+    }
+
     public CommunityDto.Post getPost(Long id, String viewerEmail) {
         CommunityPost post = findPost(id);
         return CommunityDto.Post.of(post, isAuthor(post, viewerEmail));

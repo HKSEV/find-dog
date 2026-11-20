@@ -90,7 +90,7 @@ export default function HelpDetail({id}: {id: number}) {
             <S.DetailHeading>이렇게 도울 수 있어요</S.DetailHeading>
             <S.HelpWays>
               <S.HelpWay as={Link} href="/shelter" onClick={() => dispatch(setActiveTab("봉사"))}>
-                <div><strong>봉사 신청하기</strong><small>보호소 산책·청소 봉사에 함께해요</small></div>
+                <div><strong>봉사 신청하기</strong><small>협력 보호소의 산책·청소 봉사에 함께해요</small></div>
                 <S.MyMenuChevron aria-hidden="true"/>
               </S.HelpWay>
               <S.HelpWay as={Link} href="/shelter" onClick={() => dispatch(setActiveTab("입양"))}>
@@ -98,7 +98,7 @@ export default function HelpDetail({id}: {id: number}) {
                 <S.MyMenuChevron aria-hidden="true"/>
               </S.HelpWay>
               <S.HelpWay href={mail}>
-                <div><strong>물품 후원·임시 보호 문의</strong><small>운영팀이 보호소와 연결해 드려요 ({POLICY_CONTACT})</small></div>
+                <div><strong>물품 후원·임시 보호 문의</strong><small>운영팀이 협력 보호소와 연결해 드려요 ({POLICY_CONTACT})</small></div>
                 <S.MyMenuChevron aria-hidden="true"/>
               </S.HelpWay>
             </S.HelpWays>

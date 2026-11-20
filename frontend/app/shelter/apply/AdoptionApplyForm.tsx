@@ -146,7 +146,7 @@ export default function AdoptionApplyForm({id: animalId}: {id: number}) {
           </span>
         </S.ApplyAnimal>
 
-        <S.ApplyNotice>로그인한 계정 정보로 미리 채웠어요. 신청서는 운영팀이 보호소에 그대로 전달해요.</S.ApplyNotice>
+        <S.ApplyNotice>로그인한 계정 정보로 미리 채웠어요. 신청서는 운영팀이 확인한 뒤 이 친구를 돌보는 협력 보호소에 전달해요.</S.ApplyNotice>
 
         <S.WriteField>
           <S.WriteLabel htmlFor="apply-name">이름</S.WriteLabel>

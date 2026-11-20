@@ -39,8 +39,9 @@ const authHeader = () => {
 
 export const PAGE_SIZE = 10;
 
-export const fetchCommunityPosts = async (category?: CommunityCategory, cursorId?: number, size = PAGE_SIZE) =>
-  (await axios.get<CommunityPost[]>("/api/community-posts", {params: {category, cursorId, size}})).data;
+// keyword: 검색어 (제목·내용, 함께해요 헤더 돋보기)
+export const fetchCommunityPosts = async (category?: CommunityCategory, cursorId?: number, size = PAGE_SIZE, keyword?: string) =>
+  (await axios.get<CommunityPost[]>("/api/community-posts", {params: {category, cursorId, size, keyword: keyword || undefined}})).data;
 
 export const fetchMyCommunityPosts = async () =>
   (await axios.get<CommunityPost[]>("/api/community-posts/mine", {headers: authHeader()})).data;
