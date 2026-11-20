@@ -49,14 +49,21 @@ public class MissingPostController {
 
     // 2. 무한 스크롤 조회 API (GET /api/missing-posts?cursorId=10&size=10)
     //    거르기: type=LOST|FOUND (실종/목격), status=MISSING|COMPLETED (찾는 중/찾았어요)
+    //    가까운 순: lat·lng 를 주면 그 위치에서 가까운 순 (전체 글 기준으로 정렬, offset 으로 이어 받기)
     @GetMapping
     public ResponseEntity<List<MissingPostResponseDto>> getPosts(
             @RequestParam(required = false) Long cursorId,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) PostType type,
             @RequestParam(required = false) PostStatus status,
-            @RequestParam(required = false) String keyword // 검색어 (띄어쓰기로 여러 개: 모두 들어간 글만)
+            @RequestParam(required = false) String keyword, // 검색어 (띄어쓰기로 여러 개: 모두 들어간 글만)
+            @RequestParam(required = false) Double lat,
+            @RequestParam(required = false) Double lng,
+            @RequestParam(defaultValue = "0") int offset
     ){
+        if (lat != null && lng != null) {
+            return ResponseEntity.ok(service.getPostsByDistance(lat, lng, offset, size, type, status, keyword));
+        }
         List<MissingPostResponseDto> posts = service.getPostByScroll(cursorId, size, type, status, keyword);
         return ResponseEntity.ok(posts);
     }

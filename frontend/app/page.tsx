@@ -85,16 +85,14 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    dispatch(fetchMissingAnimals(undefined));
+    dispatch(fetchMissingAnimals({status: "MISSING"})); // 찾는 중인 글만 서버에서 걸러 받음
     dispatch(fetchShelterAnimals());
     dispatch(fetchCampaigns(""));
     dispatch(fetchNeedHelps());
   }, [dispatch]);
 
-  // 찾는 중인 실종 신고를 먼저 보여줌
-  const recentMissing = [...missingList]
-    .sort((a, b) => Number(a.status === "COMPLETED") - Number(b.status === "COMPLETED"))
-    .slice(0, MISSING_COUNT);
+  // 찾는 중인 실종·목격 글 최신순 (예전엔 최신 10개 안에서만 찾는 중을 앞으로 보내서, 최근 글이 대부분 "찾았어요"면 찾는 중인 글이 빠졌음)
+  const recentMissing = missingList.filter((post) => post.status !== "COMPLETED").slice(0, MISSING_COUNT);
 
   // 보호 중인 동물을 공고 최신순으로
   const waitingAnimals = shelterAnimals

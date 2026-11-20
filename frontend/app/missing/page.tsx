@@ -52,23 +52,26 @@ export default function MissingReportPage() {
   // 💡 아래로 스크롤하면 헤더를 숨기고 둥근 버튼만, 글쓰기는 + 동그라미로 (검색 중에는 그대로)
   const collapsed = useScrollCollapse() && !searchOpen;
 
-  // 탭·체크·검색어를 바꾸면 서버에서 다시 걸러서 받음 (글이 많아도 거른 결과로 10개씩)
-  const pickedType = typeTabs.find((tab) => tab.label === typeTab)?.type ?? undefined;
-  const query = {type: pickedType, status: onlySearching ? "MISSING" as const : undefined, keyword: keyword || undefined};
-
-  useEffect(() => {
-    dispatch(fetchMissingAnimals({type: pickedType, status: onlySearching ? "MISSING" : undefined, keyword: keyword || undefined}));
-  }, [dispatch, pickedType, onlySearching, keyword]);
-
-  // 💡 정렬: 최신순(서버 순서) / 가까운 순(내 동네 기준, 지도 장소가 없는 글은 뒤로)
+  // 💡 정렬: 최신순 / 가까운 순(내 동네 기준, 지도 장소가 없는 글은 뒤로)
+  //    가까운 순도 서버가 전체 글을 거리순으로 정렬해서 10개씩 줌 (받아 둔 글 안에서만 정렬하면 더 가까운 글이 뒤로 밀림)
   const area = useMyArea();
   const [sortNear, setSortNear] = useState(false);
   const [areaOpen, setAreaOpen] = useState(false);
+  const nearBasis = sortNear && area ? {lat: area.lat, lng: area.lng} : null;
+  const nearLat = nearBasis?.lat;
+  const nearLng = nearBasis?.lng;
+
+  // 탭·체크·검색어·정렬을 바꾸면 서버에서 다시 걸러서 받음 (글이 많아도 거른 결과로 10개씩)
+  const pickedType = typeTabs.find((tab) => tab.label === typeTab)?.type ?? undefined;
+  const query = {type: pickedType, status: onlySearching ? "MISSING" as const : undefined, keyword: keyword || undefined, lat: nearLat, lng: nearLng};
+
+  useEffect(() => {
+    dispatch(fetchMissingAnimals({type: pickedType, status: onlySearching ? "MISSING" : undefined, keyword: keyword || undefined, lat: nearLat, lng: nearLng}));
+  }, [dispatch, pickedType, onlySearching, keyword, nearLat, nearLng]);
+
   const nearOf = (post: MissingAnimal) =>
     area && post.lat != null && post.lng != null ? distanceKm(area, {lat: post.lat, lng: post.lng}) : null;
-  const posts = sortNear && area
-    ? [...animalList].sort((a, b) => (nearOf(a) ?? Infinity) - (nearOf(b) ?? Infinity))
-    : animalList;
+  const posts = animalList;
   const lastId = animalList.length > 0 ? animalList[animalList.length - 1].id : undefined;
 
   return (
@@ -216,7 +219,7 @@ export default function MissingReportPage() {
             <S.MissingMoreButton
             type="button"
             disabled={loadingMore}
-            onClick={() => dispatch(fetchMissingAnimals({...query, cursorId: lastId}))}>
+            onClick={() => dispatch(fetchMissingAnimals(nearLat != null ? {...query, offset: animalList.length} : {...query, cursorId: lastId}))}>
               {loadingMore ? "불러오는 중..." : "이전 글 더 보기"}
             </S.MissingMoreButton>
           )}

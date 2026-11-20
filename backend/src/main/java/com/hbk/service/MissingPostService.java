@@ -152,6 +152,30 @@ public class MissingPostService {
 
     private static final int SEARCH_SCAN_LIMIT = 1000;
 
+    // 💡 가까운 순: 거른 글 전체를 기준 위치에서 가까운 순으로 정렬한 뒤 offset 부터 size 개
+    //    (예전엔 화면이 받아 둔 10개 안에서만 정렬해서, 아직 안 받은 더 가까운 글이 뒤에 나오는 문제가 있었음)
+    //    지도 장소가 없는 글은 맨 뒤 (그 안에서는 최신순)
+    @Transactional(readOnly = true)
+    public List<MissingPostResponseDto> getPostsByDistance(double lat, double lng, int offset, int size,
+                                                           PostType type, PostStatus status, String keyword){
+        List<String> words = keyword == null ? List.of()
+                : java.util.Arrays.stream(keyword.trim().toLowerCase().split("\\s+")).filter(word -> !word.isEmpty()).toList();
+        java.util.Comparator<Object[]> byDistance = java.util.Comparator.comparingDouble(pair -> (double) pair[1]);
+        return missingPostRepository.findByFilter(null, type, status, PageRequest.of(0, SEARCH_SCAN_LIMIT)).stream()
+                .filter(post -> words.isEmpty() || matchesAll(post, words))
+                .map(post -> new Object[]{post, post.getLat() == null || post.getLng() == null
+                        ? Double.MAX_VALUE : distanceKm(lat, lng, post.getLat(), post.getLng())})
+                .sorted(byDistance.thenComparing(pair -> -((MissingPost) pair[0]).getId()))
+                .skip(Math.max(0, offset))
+                .limit(Math.max(1, Math.min(size, 50)))
+                .map(pair -> {
+                    MissingPostResponseDto dto = new MissingPostResponseDto((MissingPost) pair[0]);
+                    double km = (double) pair[1];
+                    return km == Double.MAX_VALUE ? dto : dto.withDistanceKm(km);
+                })
+                .toList();
+    }
+
     private static boolean matchesAll(MissingPost post, List<String> words){
         String text = String.join(" ",
                 java.util.Objects.toString(post.getPetName(), ""),

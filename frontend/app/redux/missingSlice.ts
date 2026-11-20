@@ -69,7 +69,13 @@ export interface MissingListQuery {
   type?: "LOST" | "FOUND"; // 실종 / 목격 (없으면 전체)
   status?: "MISSING" | "COMPLETED"; // 찾는 중 / 찾았어요 (없으면 전체)
   keyword?: string; // 검색어 (이름·품종·털색·장소 등, 띄어쓰기로 여러 개)
+  lat?: number; // 가까운 순: 기준 위치 (서버가 전체 글을 거리순으로 정렬)
+  lng?: number;
+  offset?: number; // 가까운 순에서 이어 받기 (이미 받은 개수)
 }
+
+// 다음 페이지 요청인지 (최신순은 cursorId, 가까운 순은 offset)
+const isNextPageQuery = (query?: MissingListQuery) => Boolean(query?.cursorId || query?.offset);
 
 // 실종/제보 목록 조회 (거르기는 서버에서)
 export const fetchMissingAnimals = createAsyncThunk(
@@ -130,7 +136,7 @@ export const missingSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchMissingAnimals.pending, (state, action) => {
-        if (action.meta.arg?.cursorId) {
+        if (isNextPageQuery(action.meta.arg)) {
           state.loadingMore = true;
         } else {
           state.loading = true;
@@ -138,7 +144,7 @@ export const missingSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchMissingAnimals.fulfilled, (state, action) => {
-        const isNextPage = Boolean(action.meta.arg?.cursorId);
+        const isNextPage = isNextPageQuery(action.meta.arg);
         state.loading = false;
         state.loadingMore = false;
         state.animalList = isNextPage ? [...state.animalList, ...action.payload] : action.payload;
