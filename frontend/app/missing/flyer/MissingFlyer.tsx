@@ -8,7 +8,9 @@ import { AppDispatch, RootState } from "../../store/store";
 import { fetchMissingPost } from "../../redux/missingSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
 import { fetchMyAccount } from "../../mypage/accountApi";
-import { ageText, copulaFor, formatWhen, genderText, petNameOf, placeLabel, weightText, whenLabel } from "../missingFormat";
+import { ageText, formatWhen, genderText, petNameOf, placeLabel, weightText, whenLabel } from "../missingFormat";
+import { DEFAULT_CROP, FlyerCrop, NaturalSize, cropStyle } from "./flyerCrop";
+import FlyerPhotoCrop from "./FlyerPhotoCrop";
 import { shareUrl } from "@/lib/share";
 
 import Header from "@/app/components/Header";
@@ -53,6 +55,8 @@ export default function MissingFlyer({id}: {id: number}) {
   const [photoData, setPhotoData] = useState<{src: string; data: string} | null>(null); // 미리 받아 둔 사진
   const [scale, setScale] = useState(0.4);
   const [saving, setSaving] = useState(false);
+  const [crop, setCrop] = useState<FlyerCrop>(DEFAULT_CROP); // 사진 고르기·맞추기 (전단지에만)
+  const [natural, setNatural] = useState<{src: string; size: NaturalSize} | null>(null); // 고른 사진의 원래 크기
   const frameRef = useRef<HTMLDivElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
 
@@ -72,13 +76,25 @@ export default function MissingFlyer({id}: {id: number}) {
   }, [post]);
 
   // 사진을 미리 data URL로 받아 둠 (못 받으면 주소 그대로 씀)
-  const photoSrc = post ? flyerPhotoUrl(post.mediaUrls?.[0]) : undefined;
+  const photoSrc = post ? flyerPhotoUrl(post.mediaUrls?.[crop.index] ?? post.mediaUrls?.[0]) : undefined;
   useEffect(() => {
     if (!photoSrc) return;
     let alive = true;
     toDataUrl(photoSrc)
       .then((data) => alive && setPhotoData({src: photoSrc, data}))
       .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [photoSrc]);
+
+  // 고른 사진의 원래 크기 (정사각 칸 안 위치·확대 계산에 씀)
+  useEffect(() => {
+    if (!photoSrc) return;
+    let alive = true;
+    const image = new Image();
+    image.onload = () => alive && setNatural({src: photoSrc, size: {width: image.naturalWidth, height: image.naturalHeight}});
+    image.src = photoSrc;
     return () => {
       alive = false;
     };
@@ -148,12 +164,18 @@ export default function MissingFlyer({id}: {id: number}) {
   const found = post.type === "FOUND";
   const name = found ? "" : petNameOf(post); // 이름은 잃어버린 아이만
   const photoForFlyer = photoData?.src === photoSrc ? photoData?.data : photoSrc;
-  const when = formatWhen(post.occurredAt, post.occurredTime);
-  // 이름이 있으면 품종도 옆 작은 글씨로 내려감
-  const traits = [name && (post.breed || "품종 모름"), genderText(post.gender), ageText(post.age), weightText(post.weight), post.color].filter(Boolean).join(" · ");
+  const photoSize = natural && natural.src === photoSrc ? natural.size : null;
+  // 💡 생김새·때는 이름표 붙은 칸으로 (이름이 없으면 품종이 제목이라 칸에서 뺌)
+  const traits = [
+    {label: "품종", value: name ? (post.breed || "모름") : ""},
+    {label: "성별", value: genderText(post.gender).replace("성별 ", "")},
+    {label: "나이", value: ageText(post.age)},
+    {label: "몸무게", value: weightText(post.weight)},
+    {label: "털색", value: post.color?.trim() ?? ""},
+    {label: whenLabel(post.type).replace(/^(잃어버린|발견한) /, ""), value: formatWhen(post.occurredAt, post.occurredTime)}
+  ].filter((trait) => trait.value);
   const facts = [
-    {label: placeLabel(post.type), value: post.rescueLocation ? `${post.rescueLocation} 근처` : ""},
-    {label: whenLabel(post.type), value: when},
+    {label: placeLabel(post.type).replace(/^(잃어버린|발견한) /, ""), value: post.rescueLocation ? `${post.rescueLocation} 근처` : ""},
     {label: "특징", value: post.content?.trim() ?? ""}
   ].filter((fact) => fact.value);
 
@@ -173,23 +195,27 @@ export default function MissingFlyer({id}: {id: number}) {
               <S.FlyerSheet ref={sheetRef} data-flyer $found={found}>
                 <S.FlyerHead>
                   <h1>{found ? "주인을 찾습니다" : "강아지를 찾습니다"}</h1>
-                  <p>
-                    {found
-                      ? "이 아이를 보호하고 있어요. 보호자분은 연락 주세요."
-                      : name ? `이름은 "${name}"${copulaFor(name)}. 이름을 부르며 천천히 다가가 주세요.` : "보셨다면 꼭 연락 부탁드려요."}
-                  </p>
                 </S.FlyerHead>
 
                 <S.FlyerBody>
                   {photoForFlyer ? (
-                    <S.FlyerPhoto src={photoForFlyer} alt="" crossOrigin="anonymous"/>
+                    <S.FlyerPhotoBox>
+                      {photoSize && <S.FlyerCropImg src={photoForFlyer} alt="" crossOrigin="anonymous" style={cropStyle(crop, photoSize)}/>}
+                    </S.FlyerPhotoBox>
                   ) : (
                     <S.FlyerPhotoEmpty>사진 없음</S.FlyerPhotoEmpty>
                   )}
-                  <S.FlyerName $hasName={Boolean(name)}>
-                    {name || post.breed || "품종 모름"}
-                    {traits && <span>{traits}</span>}
-                  </S.FlyerName>
+                  <S.FlyerName $hasName={Boolean(name)}>{name || post.breed || "품종 모름"}</S.FlyerName>
+                  {traits.length > 0 && (
+                    <S.FlyerTraits>
+                      {traits.map((trait) => (
+                        <div key={trait.label}>
+                          <dt>{trait.label}</dt>
+                          <dd>{trait.value}</dd>
+                        </div>
+                      ))}
+                    </S.FlyerTraits>
+                  )}
                   <S.FlyerFacts>
                     {facts.map((fact) => (
                       <React.Fragment key={fact.label}>
@@ -217,6 +243,13 @@ export default function MissingFlyer({id}: {id: number}) {
               </S.FlyerSheet>
             </S.FlyerScale>
           </S.FlyerFrame>
+
+          <FlyerPhotoCrop
+          photos={post.mediaUrls ?? []}
+          src={photoForFlyer}
+          size={photoSize}
+          crop={crop}
+          onChange={setCrop}/>
         </S.FlyerPage>
 
         <S.DetailActionBar>

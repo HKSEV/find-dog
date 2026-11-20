@@ -64,13 +64,6 @@ export const missingTitle = (post: Pick<MissingAnimal, "petName" | "title" | "br
   return name ? `${name} · ${base}` : base;
 };
 
-// 이름 뒤에 붙는 말: "보리" -> "예요", "하늘" -> "이에요" (마지막 글자에 받침이 있으면 "이에요")
-export const copulaFor = (name: string) => {
-  const code = name.charCodeAt(name.length - 1);
-  if (code < 0xac00 || code > 0xd7a3) return "(이)에요";
-  return (code - 0xac00) % 28 === 0 ? "예요" : "이에요";
-};
-
 // 저장값 "미상"은 화면에서 "성별 모름"으로
 export const genderText = (gender?: string) => (gender === "미상" || gender === "모름" ? "성별 모름" : gender ?? "");
 
