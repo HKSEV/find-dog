@@ -41,6 +41,8 @@ public class DemoDataInitializer implements ApplicationRunner {
     private final NotificationRepository notificationRepository;
     private final AdoptionApplicationRepository adoptionRepository;
     private final VolunteerApplicationRepository volunteerApplicationRepository;
+    private final com.hbk.repository.CommunityCommentRepository communityCommentRepository;
+    private final com.hbk.repository.CommunityPostLikeRepository communityLikeRepository;
 
     // 💡 시연 계정 비밀번호 (Render 환경 변수 DEMO_PASSWORD). 비어 있으면 시연 계정도 로그인 못 하게 무작위
     //    저장소가 공개라 비밀번호를 코드에 적지 않음
@@ -223,6 +225,7 @@ public class DemoDataInitializer implements ApplicationRunner {
                 {CommunityCategory.QUESTION, "첫 산책은 언제부터 하면 좋을까요?", "입양한 지 일주일 됐어요. 아직 낯선 소리에 많이 놀라는데 산책은 언제부터 시작하면 좋을까요?", false},
                 {CommunityCategory.FREE, "오늘 공원에서 만난 친구들", "날씨가 좋아서 공원에 강아지 친구들이 많았어요. 다들 즐거운 주말 보내세요.", false}
         };
+        List<CommunityPost> saved = new ArrayList<>();
         for (int i = 0; i < rows.length; i++) {
             CommunityPost post = new CommunityPost();
             post.setCategory((CommunityCategory) rows[i][0]);
@@ -230,7 +233,31 @@ public class DemoDataInitializer implements ApplicationRunner {
             post.setContent((String) rows[i][2]);
             post.setMediaUrls((Boolean) rows[i][3] ? new ArrayList<>(List.of(dog(i))) : new ArrayList<>());
             post.setAuthor(author);
-            communityRepository.save(post);
+            saved.add(communityRepository.save(post));
+        }
+
+        // 공감·댓글 (시연 계정 두 명이 남긴 것처럼)
+        Member owner = demoMember(DEMO_OWNER, "콩이찾는중", "콩이보호자", true);
+        Member finder = demoMember(DEMO_FINDER, "사직동주민", "목격자", true);
+        for (Member member : List.of(owner, finder)) {
+            com.hbk.entity.CommunityPostLike like = new com.hbk.entity.CommunityPostLike();
+            like.setPost(saved.get(0));
+            like.setMember(member);
+            like.setCreatedAt(LocalDateTime.now().minusHours(2));
+            communityLikeRepository.save(like);
+        }
+        Object[][] comments = {
+                {saved.get(0), owner, "보리 표정이 정말 편안해 보여요. 좋은 가족을 만났네요!", 3},
+                {saved.get(2), finder, "저는 집에서 며칠 적응한 뒤에 사람 적은 시간에 짧게 시작했어요.", 2},
+                {saved.get(2), owner, "하네스부터 익숙해지게 하면 덜 놀라더라고요.", 1}
+        };
+        for (Object[] row : comments) {
+            com.hbk.entity.CommunityComment comment = new com.hbk.entity.CommunityComment();
+            comment.setPost((CommunityPost) row[0]);
+            comment.setAuthor((Member) row[1]);
+            comment.setContent((String) row[2]);
+            comment.setCreatedAt(LocalDateTime.now().minusHours((Integer) row[3]));
+            communityCommentRepository.save(comment);
         }
     }
 
@@ -249,13 +276,16 @@ public class DemoDataInitializer implements ApplicationRunner {
                 demoMember("demo-haru@finddog.local", "하루언니", "하루보호자")
         };
         Object[][] rows = {
-                {PostType.LOST, "콩이", "믹스견", "흰색·갈색", "수컷", "1", "4.5", "서울특별시 종로구 사직로 161", 37.5796, 126.9770, "노란 스카프를 하고 있어요. \"콩이야\" 하고 부르면 돌아봐요.", TimeOfDay.EVENING, 1},
-                {PostType.FOUND, "", "믹스견", "흰색 갈색 얼룩", "수컷", "", "", "서울특별시 종로구 사직동 사직공원", 37.5757, 126.9688, "공원 근처에서 혼자 돌아다니던 아이를 보호하고 있어요. 목줄은 없었어요.", TimeOfDay.MORNING, 0},
-                {PostType.LOST, "하루", "진돗개 믹스", "흰색", "암컷", "2", "11", "서울특별시 송파구 올림픽로 424", 37.5206, 127.1215, "분홍색 옷을 입고 있어요. 겁이 많아서 \"하루야\" 하고 부르며 천천히 다가가 주세요.", TimeOfDay.AFTERNOON, 3}
+                {PostType.LOST, "콩이", "믹스견", "흰색·갈색", "수컷", "1", "4.5", "사직단 근처", 37.5796, 126.9770, "노란 스카프를 하고 있어요. \"콩이야\" 하고 부르면 돌아봐요.", TimeOfDay.EVENING, 1},
+                {PostType.FOUND, "", "믹스견", "흰색 갈색 얼룩", "수컷", "", "", "사직공원 정문", 37.5757, 126.9688, "공원 근처에서 혼자 돌아다니던 아이를 보호하고 있어요. 목줄은 없었어요.", TimeOfDay.MORNING, 0},
+                {PostType.LOST, "하루", "진돗개 믹스", "흰색", "암컷", "2", "11", "올림픽공원 평화의 문 근처", 37.5206, 127.1215, "분홍색 옷을 입고 있어요. 겁이 많아서 \"하루야\" 하고 부르며 천천히 다가가 주세요.", TimeOfDay.AFTERNOON, 3}
         };
+        // 지도 위치의 동네 (장소 이름 아래 작게 보임)
+        String[] areas = {"서울 종로구 사직동", "서울 종로구 사직동", "서울 송파구 방이동"};
         for (int i = 0; i < rows.length; i++) {
             MissingPost post = new MissingPost();
             post.setType((PostType) rows[i][0]);
+            post.setPlaceArea(areas[i]);
             post.setPetName(((String) rows[i][1]).isBlank() ? null : (String) rows[i][1]);
             post.setBreed((String) rows[i][2]);
             post.setColor((String) rows[i][3]);

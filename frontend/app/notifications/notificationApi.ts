@@ -3,7 +3,7 @@ import axios from "axios";
 
 export interface AppNotification {
   id: number;
-  type: "ADOPTION" | "CHAT" | "NEARBY" | "REPORT";
+  type: "ADOPTION" | "CHAT" | "NEARBY" | "REPORT" | "COMMENT";
   badge?: string | null; // 입양: 신청 상태 (FORWARDED, ADOPTED, REJECTED), 신고: 처리 결과 (RESOLVED, DISMISSED)
   message: string;
   imageUrl?: string | null;
@@ -40,6 +40,7 @@ export type NoticeTone = "brand" | "success" | "muted";
 export const noticeBadge = (item: AppNotification): {label: string; tone: NoticeTone} => {
   if (item.type === "CHAT") return {label: "채팅", tone: "brand"};
   if (item.type === "NEARBY") return {label: "근처 목격 제보", tone: "success"};
+  if (item.type === "COMMENT") return {label: "댓글", tone: "brand"};
   if (item.type === "REPORT") return {label: item.badge === "RESOLVED" ? "신고 처리 완료" : "신고 확인", tone: "muted"};
   switch (item.badge) {
     case "FORWARDED": return {label: "보호소 전달", tone: "brand"};

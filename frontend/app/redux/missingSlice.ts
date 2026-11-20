@@ -20,7 +20,8 @@ export interface MissingAnimal {
   age?: string;
   weight?: string;
   color?: string;
-  rescueLocation: string;
+  rescueLocation: string; // 장소: 쓴 사람이 적은 말 (예: "도산공원 근처")
+  placeArea?: string | null; // 지도 위치의 동네 (예: "서울 강남구 신사동", 지도에서 골랐을 때만)
   authorName?: string;
   authorId?: number | null; // 글쓴이 프로필 (/profile/?id=)
   authorImage?: string | null;

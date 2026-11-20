@@ -370,6 +370,15 @@ export const DetailFact = styled.div<{$span?: number}>`
     font-weight: ${fontWeight.semibold};
     color: ${colors.gray900};
   }
+
+  /* 장소 아래 동네 (예: 서울 강남구 신사동) */
+  small {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    font-weight: ${fontWeight.regular};
+    color: ${colors.gray500};
+  }
 `;
 
 export const DetailHeading = styled.h2`

@@ -31,8 +31,10 @@ export const CategoryChip = styled.button<{$active: boolean}>`
 `;
 
 // 섹션 (전체 보기에서 보호소 소식 / 영상을 나눠 보여줄 때)
-export const StorySection = styled.section`
-  padding: 20px 0 0;
+// $flush: 소제목 없이 글 목록만 있을 때 (말머리 하나를 고른 경우)
+//    분류 줄과 첫 글 사이가 "최근 이야기" 제목이 있을 때와 같은 20px이 되게 위 여백을 뺌
+export const StorySection = styled.section<{$flush?: boolean}>`
+  padding: ${({$flush}) => ($flush ? "0" : "20px 0 0")};
 `;
 
 export const StorySectionHead = styled.div`

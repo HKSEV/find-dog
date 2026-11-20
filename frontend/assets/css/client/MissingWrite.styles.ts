@@ -484,3 +484,51 @@ export const WhenSheetNote = styled.p`
   font-size: 11px;
   color: ${colors.gray400};
 `;
+
+// 💡 장소를 글로만 적었을 때 "지도에 표시할 곳" 제안 (카카오 장소 검색 결과 최대 3개)
+export const PlaceSuggest = styled.div`
+  margin-top: 8px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background-color: ${colors.bgLight};
+
+  p {
+    margin: 0 0 8px;
+    font-size: 12px;
+    color: ${colors.gray500};
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  button {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid ${colors.border};
+    border-radius: 8px;
+    background-color: ${colors.white};
+    text-align: left;
+    cursor: pointer;
+  }
+
+  strong {
+    font-size: 14px;
+    font-weight: ${fontWeight.semibold};
+    color: ${colors.gray900};
+  }
+
+  small {
+    font-size: 12px;
+    color: ${colors.gray500};
+  }
+`;

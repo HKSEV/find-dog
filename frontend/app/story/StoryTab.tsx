@@ -138,7 +138,7 @@ export default function StoryTab({compact, keyword = ""}: {compact?: boolean; ke
 
     if (memberCategory) {
       return (
-        <S.StorySection>
+        <S.StorySection $flush>
           {renderPosts()}
           {hasMore && (
             <S.CommunityMoreButton type="button" disabled={loadingMore} onClick={loadMore}>

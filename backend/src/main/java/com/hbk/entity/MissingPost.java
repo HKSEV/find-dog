@@ -53,7 +53,12 @@ public class MissingPost {
     private String age;
     private String weight;
     private String color;
+    // 장소: 쓴 사람이 적은 말 그대로 (예: "도산공원 근처", 지도에서 골랐으면 장소 이름이나 주소)
     private String rescueLocation;
+
+    // 지도 위치의 동네 (예: "서울 강남구 신사동"). 지도에서 골랐을 때만, 장소 이름 아래 작게 보여 줌
+    @Column(length = 100)
+    private String placeArea;
 
     @ElementCollection
     private List<String> mediaUrls;

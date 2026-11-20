@@ -8,7 +8,7 @@ import { AppDispatch, RootState } from "../../store/store";
 import { fetchMissingPost } from "../../redux/missingSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
 import { fetchMyAccount } from "../../mypage/accountApi";
-import { ageText, formatWhen, genderText, petNameOf, placeLabel, weightText, whenLabel } from "../missingFormat";
+import { ageText, formatWhen, genderText, nearText, petNameOf, placeLabel, weightText, whenLabel } from "../missingFormat";
 import { DEFAULT_CROP, FlyerCrop, NaturalSize, cropStyle } from "./flyerCrop";
 import FlyerPhotoCrop from "./FlyerPhotoCrop";
 import { shareUrl } from "@/lib/share";
@@ -175,7 +175,7 @@ export default function MissingFlyer({id}: {id: number}) {
     {label: whenLabel(post.type).replace(/^(잃어버린|발견한) /, ""), value: formatWhen(post.occurredAt, post.occurredTime)}
   ].filter((trait) => trait.value);
   const facts = [
-    {label: placeLabel(post.type).replace(/^(잃어버린|발견한) /, ""), value: post.rescueLocation ? `${post.rescueLocation} 근처` : ""},
+    {label: placeLabel(post.type).replace(/^(잃어버린|발견한) /, ""), value: [nearText(post.rescueLocation), post.placeArea ? `(${post.placeArea})` : ""].filter(Boolean).join(" ")},
     {label: "특징", value: post.content?.trim() ?? ""}
   ].filter((fact) => fact.value);
 

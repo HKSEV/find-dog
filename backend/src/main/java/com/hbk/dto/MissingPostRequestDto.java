@@ -18,6 +18,7 @@ private PostType type; // LOST / FOUND (비어 있으면 LOST)
 private LocalDateTime occurredAt; // 잃어버린 때 / 발견한 때 (예: 2026-11-11T14:30)
 private TimeOfDay occurredTime; // 시간대 (EXACT면 occurredAt의 시:분이 정확한 시각)
 private Double lat, lng; // 지도에서 고른 장소 좌표
+private String placeArea; // 지도 위치의 동네 (예: "서울 강남구 신사동", 좌표가 있을 때만 저장)
 
 
 }

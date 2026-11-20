@@ -26,6 +26,8 @@ public class AccountService {
     private final MissingPostService missingPostService;
     private final CommunityPostRepository communityPostRepository;
     private final CommunityPostService communityPostService;
+    private final com.hbk.repository.CommunityCommentRepository communityCommentRepository;
+    private final com.hbk.repository.CommunityPostLikeRepository communityPostLikeRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatService chatService;
     private final AdoptionApplicationRepository adoptionRepository;
@@ -61,6 +63,9 @@ public class AccountService {
         communityPostRepository.findByAuthorEmailOrderByIdDesc(email).forEach(post -> communityPostService.delete(post.getId(), email));
         // 2) 남의 글로 시작한 대화는 나가기 (상대는 더 이상 보낼 수 없음, 둘 다 나가면 지워짐)
         chatRoomRepository.findMine(member.getId()).forEach(room -> chatService.leave(room.getId(), email));
+        // 2-1) 남의 이야기 글에 단 댓글, 누른 공감
+        communityCommentRepository.deleteByAuthorId(member.getId());
+        communityPostLikeRepository.deleteByMemberId(member.getId());
         // 3) 입양·봉사 신청(이름·연락처가 들어 있음), 알림
         adoptionRepository.deleteAll(adoptionRepository.findByMemberEmailOrderByIdDesc(email));
         volunteerRepository.deleteAll(volunteerRepository.findByMemberEmailOrderByIdDesc(email));

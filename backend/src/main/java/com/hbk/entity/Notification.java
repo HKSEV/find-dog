@@ -24,8 +24,9 @@ public class Notification {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    // varchar로 둠: 알림 종류를 늘려도 DB 제약(check)에 막히지 않게
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, columnDefinition = "varchar(20)")
     private NotificationType type;
 
     @Column(nullable = false, length = 255)

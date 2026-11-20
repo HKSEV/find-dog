@@ -175,6 +175,7 @@ public class MissingPostService {
                 java.util.Objects.toString(post.getBreed(), ""),
                 java.util.Objects.toString(post.getColor(), ""),
                 java.util.Objects.toString(post.getRescueLocation(), ""),
+                java.util.Objects.toString(post.getPlaceArea(), ""),
                 java.util.Objects.toString(post.getTitle(), ""),
                 java.util.Objects.toString(post.getContent(), ""),
                 java.util.Objects.toString(post.getGender(), "")).toLowerCase();
@@ -300,11 +301,15 @@ public class MissingPostService {
 
     // 작성자가 없는 예전 글은 누구의 글도 아님
     // 좌표는 둘 다 있고 한국 근처 범위일 때만 저장 (아니면 지도 없음)
+    //    동네 이름은 좌표가 있을 때만 (100자 이내)
     private static void setLocation(MissingPost post, MissingPostRequestDto dto){
         Double lat = dto.getLat(), lng = dto.getLng();
         boolean valid = lat != null && lng != null && lat >= 32 && lat <= 39.5 && lng >= 124 && lng <= 132;
         post.setLat(valid ? lat : null);
         post.setLng(valid ? lng : null);
+        String area = dto.getPlaceArea() == null ? "" : dto.getPlaceArea().trim();
+        if (area.length() > 100) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "동네 이름이 너무 길어요.");
+        post.setPlaceArea(valid && !area.isEmpty() ? area : null);
     }
 
     private static boolean isAuthor(MissingPost post, String email){

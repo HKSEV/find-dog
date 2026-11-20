@@ -33,36 +33,135 @@ public class CommunityPostService {
 
     private final CommunityPostRepository postRepository;
     private final com.hbk.repository.CommunityPostReportRepository reportRepository;
+    private final com.hbk.repository.CommunityPostLikeRepository likeRepository;
+    private final com.hbk.repository.CommunityCommentRepository commentRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
+
+    private static final int MAX_COMMENT = 500;
+    private static final int MAX_COMMENTS = 300;
 
     public List<CommunityDto.Post> getPage(CommunityCategory category, Long cursorId, int size) {
         int pageSize = Math.min(Math.max(size, 1), MAX_PAGE);
-        return postRepository.findPage(cursorId, category, PageRequest.of(0, pageSize)).stream()
-                .map(p -> CommunityDto.Post.of(p, false))
+        return withCounts(postRepository.findPage(cursorId, category, PageRequest.of(0, pageSize)), false);
+    }
+
+    // 목록에 공감·댓글 수 붙이기 (글마다 따로 세지 않고 한 번에)
+    private List<CommunityDto.Post> withCounts(List<CommunityPost> posts, boolean mine) {
+        List<Long> ids = posts.stream().map(CommunityPost::getId).toList();
+        java.util.Map<Long, Long> likes = ids.isEmpty() ? java.util.Map.of() : toMap(likeRepository.countByPostIds(ids));
+        java.util.Map<Long, Long> comments = ids.isEmpty() ? java.util.Map.of() : toMap(commentRepository.countByPostIds(ids));
+        return posts.stream()
+                .map(p -> CommunityDto.Post.of(p, mine, likes.getOrDefault(p.getId(), 0L), comments.getOrDefault(p.getId(), 0L), false))
                 .toList();
+    }
+
+    private static java.util.Map<Long, Long> toMap(List<Object[]> rows) {
+        java.util.Map<Long, Long> map = new java.util.HashMap<>();
+        rows.forEach(row -> map.put((Long) row[0], (Long) row[1]));
+        return map;
     }
 
     // 💡 검색: 제목·내용에 검색어가 모두 들어간 글 (최신순, 커서로 이어 받기). 글 수가 많지 않아 서버에서 거름
     public List<CommunityDto.Post> search(CommunityCategory category, Long cursorId, int size, String keyword) {
         int pageSize = Math.min(Math.max(size, 1), MAX_PAGE);
         List<String> words = java.util.Arrays.stream(keyword.trim().toLowerCase().split("\\s+")).filter(w -> !w.isEmpty()).toList();
-        return postRepository.findPage(cursorId, category, PageRequest.of(0, 1000)).stream()
+        return withCounts(postRepository.findPage(cursorId, category, PageRequest.of(0, 1000)).stream()
                 .filter(p -> {
                     String text = (p.getTitle() + " " + p.getContent()).toLowerCase();
                     return words.stream().allMatch(text::contains);
                 })
                 .limit(pageSize)
-                .map(p -> CommunityDto.Post.of(p, false))
-                .toList();
+                .toList(), false);
     }
 
     public CommunityDto.Post getPost(Long id, String viewerEmail) {
         CommunityPost post = findPost(id);
-        return CommunityDto.Post.of(post, isAuthor(post, viewerEmail));
+        Long viewerId = viewerId(viewerEmail);
+        boolean liked = viewerId != null && likeRepository.findByPostIdAndMemberId(id, viewerId).isPresent();
+        return CommunityDto.Post.of(post, isAuthor(post, viewerEmail),
+                likeRepository.countByPostId(id), commentRepository.countByPostId(id), liked);
     }
 
     public List<CommunityDto.Post> getMine(String email) {
-        return postRepository.findByAuthorEmailOrderByIdDesc(email).stream().map(p -> CommunityDto.Post.of(p, true)).toList();
+        return withCounts(postRepository.findByAuthorEmailOrderByIdDesc(email), true);
+    }
+
+    // 💡 공감(하트): 누르면 켜고, 다시 누르면 끔 (로그인 회원, 내 글에도 가능)
+    @Transactional
+    public CommunityDto.LikeResult setLike(Long id, boolean on, String email) {
+        CommunityPost post = findPost(id);
+        Member member = requireMember(email);
+        var existing = likeRepository.findByPostIdAndMemberId(id, member.getId());
+        if (on && existing.isEmpty()) {
+            com.hbk.entity.CommunityPostLike like = new com.hbk.entity.CommunityPostLike();
+            like.setPost(post);
+            like.setMember(member);
+            like.setCreatedAt(java.time.LocalDateTime.now());
+            likeRepository.save(like);
+        } else if (!on) {
+            existing.ifPresent(likeRepository::delete);
+        }
+        likeRepository.flush();
+        return new CommunityDto.LikeResult(on, likeRepository.countByPostId(id));
+    }
+
+    // 💡 댓글: 누구나 읽고, 로그인 회원이 씀. 오래된 순
+    public List<CommunityDto.Comment> getComments(Long id, String viewerEmail) {
+        findPost(id);
+        Long viewerId = viewerId(viewerEmail);
+        return commentRepository.findByPost(id, PageRequest.of(0, MAX_COMMENTS)).stream()
+                .map(c -> CommunityDto.Comment.of(c, viewerId))
+                .toList();
+    }
+
+    @Transactional
+    public CommunityDto.Comment addComment(Long id, CommunityDto.CommentRequest request, String email) {
+        CommunityPost post = findPost(id);
+        Member member = requireMember(email);
+        String content = request == null || request.content() == null ? "" : request.content().trim();
+        if (content.isEmpty()) throw badRequest("댓글을 적어 주세요.");
+        if (content.length() > MAX_COMMENT) throw badRequest("댓글은 " + MAX_COMMENT + "자까지 적을 수 있어요.");
+
+        com.hbk.entity.CommunityComment comment = new com.hbk.entity.CommunityComment();
+        comment.setPost(post);
+        comment.setAuthor(member);
+        comment.setContent(content);
+        comment.setCreatedAt(java.time.LocalDateTime.now());
+        commentRepository.save(comment);
+
+        // 글쓴이에게 알림 (내 글에 단 댓글은 빼고). 읽기 전 알림은 글마다 하나만 남김
+        if (!post.getAuthor().getId().equals(member.getId())) {
+            String preview = content.length() > 40 ? content.substring(0, 40) + "…" : content;
+            notificationService.notifyLatest(post.getAuthor(), com.hbk.domain.NotificationType.COMMENT, "COMMENT",
+                    CommunityDto.Comment.of(comment, null).authorName() + "님이 댓글을 남겼어요: " + preview,
+                    post.getMediaUrls().isEmpty() ? null : post.getMediaUrls().get(0),
+                    "/story/detail/?id=" + post.getId());
+        }
+        return CommunityDto.Comment.of(comment, member.getId());
+    }
+
+    // 댓글 지우기: 쓴 사람만
+    @Transactional
+    public void deleteComment(Long id, Long commentId, String email) {
+        com.hbk.entity.CommunityComment comment = commentRepository.findById(commentId)
+                .filter(c -> c.getPost().getId().equals(id))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제됐거나 없는 댓글이에요."));
+        Member member = requireMember(email);
+        if (!comment.getAuthor().getId().equals(member.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "내가 쓴 댓글만 지울 수 있어요.");
+        }
+        commentRepository.delete(comment);
+    }
+
+    private Long viewerId(String email) {
+        return email == null ? null : memberRepository.findByEmail(email).map(Member::getId).orElse(null);
+    }
+
+    private Member requireMember(String email) {
+        if (email == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인 정보가 없습니다. 다시 로그인해주세요.");
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인 정보가 없습니다. 다시 로그인해주세요."));
     }
 
     @Transactional
@@ -97,7 +196,7 @@ public class CommunityPostService {
         com.hbk.config.DemoAccounts.blockFor(email, "글을 지울");
         CommunityPost post = findPost(id);
         requireAuthor(post, email, "지울");
-        reportRepository.deleteByPostId(post.getId()); // 신고도 함께 (SQLite 는 외래키 연쇄 삭제가 없어서 직접)
+        deleteChildren(post.getId());
         postRepository.delete(post);
     }
 
@@ -112,8 +211,15 @@ public class CommunityPostService {
     @Transactional
     public void deleteByAdmin(Long id) {
         CommunityPost post = findPost(id);
-        reportRepository.deleteByPostId(post.getId());
+        deleteChildren(post.getId());
         postRepository.delete(post);
+    }
+
+    // 글에 딸린 신고·공감·댓글도 함께 지움 (SQLite 는 외래키 연쇄 삭제가 없어서 직접)
+    private void deleteChildren(Long postId) {
+        reportRepository.deleteByPostId(postId);
+        likeRepository.deleteByPostId(postId);
+        commentRepository.deleteByPostId(postId);
     }
 
     private void fill(CommunityPost post, CommunityDto.Request r) {

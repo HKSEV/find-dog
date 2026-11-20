@@ -5,8 +5,9 @@ import { colors, fontWeight, fluid } from "./theme";
 
 // 💡 입양·봉사 탭 > 함께해요 (디자인 개편 시안 기준)
 
-export const VolunteerSection = styled.section<{$first?: boolean}>`
-  padding: ${({$first}) => ($first ? "8px 20px 0" : "24px 20px 0")};
+// $first: 하위 탭 바로 아래 첫 묶음 / $afterChips: 이야기 > 보호소처럼 분류 줄 바로 아래 (다른 분류와 같은 20px)
+export const VolunteerSection = styled.section<{$first?: boolean; $afterChips?: boolean}>`
+  padding: ${({$first, $afterChips}) => ($afterChips ? "20px 20px 0" : $first ? "8px 20px 0" : "24px 20px 0")};
 `;
 
 export const VolunteerSectionHead = styled.div`

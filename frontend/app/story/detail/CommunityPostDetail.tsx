@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CommunityPost, categoryLabel, communityReportReasons, deleteCommunityPost, fetchCommunityPost, reportCommunityPost, toCommunityError } from "../communityApi";
+import { CommunityPost, categoryLabel, communityReportReasons, deleteCommunityPost, fetchCommunityPost, reportCommunityPost, setCommunityLike, toCommunityError } from "../communityApi";
+import CommunityComments from "./CommunityComments";
 import { toImageUrl } from "../../shelter/animalFormat";
 import { timeAgo } from "../../missing/missingFormat";
 
@@ -12,6 +13,7 @@ import ProfileAvatar from "@/app/components/ProfileAvatar";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
 import ActionSheet from "@/app/components/ActionSheet";
 import ReportSheet from "@/app/components/ReportSheet";
+import ShareSheet from "@/app/components/ShareSheet";
 import { loginHref } from "@/app/components/loginLink";
 import { queueToast, showToast } from "@/app/components/Toast";
 import * as S from "@/assets/css/Style.styles";
@@ -25,6 +27,8 @@ export default function CommunityPostDetail({id}: {id: number}) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [busy, setBusy] = useState(false);
   const [sheet, setSheet] = useState<"menu" | "report" | null>(null); // 더보기(⋮) / 신고 시트
+  const [sharing, setSharing] = useState(false);
+  const [liking, setLiking] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -41,6 +45,28 @@ export default function CommunityPostDetail({id}: {id: number}) {
   }, [id]);
 
   const handleBack = () => (window.history.length > 1 ? router.back() : router.push("/story"));
+
+  // 💡 공감(하트): 로그인 전이면 로그인 화면으로. 누르는 즉시 바꾸고 서버 값으로 맞춤
+  const handleLike = async () => {
+    if (!post || liking) return;
+    if (!localStorage.getItem("token")) {
+      router.push(loginHref(`/story/detail/?id=${post.id}`));
+      return;
+    };
+    const on = !post.liked;
+    setPost({...post, liked: on, likeCount: Math.max(0, post.likeCount + (on ? 1 : -1))});
+    setLiking(true);
+    try {
+      const result = await setCommunityLike(post.id, on);
+      setPost((current) => (current ? {...current, liked: result.liked, likeCount: result.likeCount} : current));
+    } catch (error) {
+      setPost((current) => (current ? {...current, liked: !on, likeCount: post.likeCount} : current));
+      const message = toCommunityError(error, "공감하지 못했어요. 잠시 후 다시 시도해 주세요.");
+      showToast(message === "UNAUTHORIZED" ? "로그인이 끝났어요. 다시 로그인해 주세요" : message);
+    } finally {
+      setLiking(false);
+    };
+  };
 
   const handleDelete = async () => {
     setBusy(true);
@@ -68,21 +94,29 @@ export default function CommunityPostDetail({id}: {id: number}) {
     );
   };
 
+  const loggedIn = typeof window !== "undefined" && Boolean(localStorage.getItem("token"));
   const photos = post.mediaUrls.map((url) => toImageUrl(url)).filter((url): url is string => Boolean(url));
   const edited = post.updatedAt && post.createdAt && post.updatedAt.substring(0, 16) !== post.createdAt.substring(0, 16);
 
   return (
     <S.AppWrapper>
       <S.Container>
-        {/* 남의 글이면 오른쪽 위 더보기(⋮) > 신고하기 (내 글은 아래 고치기·지우기) */}
+        {/* 오른쪽 위: 공유 + 남의 글이면 더보기(⋮) > 신고하기 (내 글은 아래 고치기·지우기) */}
         <Header
         title={categoryLabel(post.category)}
         onBackClick={handleBack}
-        action={!post.mine ? (
-          <S.HeaderRoundButton type="button" aria-label="더보기" title="더보기" onClick={() => setSheet("menu")}>
-            <S.MoreMenuIcon aria-hidden="true"/>
-          </S.HeaderRoundButton>
-        ) : undefined}/>
+        action={(
+          <S.HeaderActionRow>
+            <S.HeaderRoundButton type="button" aria-label="공유하기" title="공유하기" onClick={() => setSharing(true)}>
+              <S.DetailShareIcon aria-hidden="true"/>
+            </S.HeaderRoundButton>
+            {!post.mine && (
+              <S.HeaderRoundButton type="button" aria-label="더보기" title="더보기" onClick={() => setSheet("menu")}>
+                <S.MoreMenuIcon aria-hidden="true"/>
+              </S.HeaderRoundButton>
+            )}
+          </S.HeaderActionRow>
+        )}/>
         <S.HeaderOffset/>
         <S.DetailPage>
           <S.DetailSection>
@@ -117,7 +151,28 @@ export default function CommunityPostDetail({id}: {id: number}) {
             )}
 
             <S.DetailText>{post.content}</S.DetailText>
+
+            <S.CommunityReactBar>
+              <S.CommunityLikeButton
+              type="button"
+              $on={post.liked}
+              aria-pressed={post.liked}
+              aria-label={`공감 ${post.likeCount}개${post.liked ? ", 공감함" : ""}`}
+              disabled={liking}
+              onClick={handleLike}>
+                {post.liked ? <S.CommunityHeartFilledIcon aria-hidden="true"/> : <S.CommunityHeartIcon aria-hidden="true"/>}
+                공감 {post.likeCount}
+              </S.CommunityLikeButton>
+              <S.CommunityCommentCount>
+                <S.CommunityCommentIcon aria-hidden="true"/>댓글 {post.commentCount}
+              </S.CommunityCommentCount>
+            </S.CommunityReactBar>
           </S.DetailSection>
+
+          <CommunityComments
+          postId={post.id}
+          loggedIn={loggedIn}
+          onCountChange={(count) => setPost((current) => (current ? {...current, commentCount: count} : current))}/>
         </S.DetailPage>
 
         {post.mine && (
@@ -128,6 +183,16 @@ export default function CommunityPostDetail({id}: {id: number}) {
         )}
       </S.Container>
 
+      {sharing && (
+        <ShareSheet
+        content={{
+          title: `[${categoryLabel(post.category)}] ${post.title}`,
+          description: post.content.slice(0, 60),
+          imageUrl: photos[0],
+          path: `/story/detail/?id=${post.id}`
+        }}
+        onClose={() => setSharing(false)}/>
+      )}
       {sheet === "menu" && (
         <ActionSheet
         onClose={() => setSheet((current) => (current === "menu" ? null : current))}

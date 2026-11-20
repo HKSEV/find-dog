@@ -10,7 +10,9 @@ import { DEFAULT_CENTER, KakaoNS, MapPoint, loadKakaoMaps } from "./kakaoMap";
 import * as S from "@/assets/css/Style.styles";
 
 export interface PickedPlace extends MapPoint {
-  address: string; // 핀 위치의 주소 (장소 칸에 채움)
+  address: string; // 핀 위치의 주소
+  area: string;    // 핀 위치의 동네 (예: "서울 강남구 신사동", 번지 없이)
+  name?: string;   // 검색해서 고른 장소 이름 (예: "도산공원"). 지도를 끌어 옮기면 없어짐
 }
 
 interface Props {
@@ -28,6 +30,8 @@ export default function MapPicker({initial, onSelect, onClose}: Props) {
   const mapRef = useRef<KakaoNS>(null);
   const kakaoRef = useRef<KakaoNS>(null);
   const [address, setAddress] = useState("");
+  const [area, setArea] = useState("");
+  const [placeName, setPlaceName] = useState(""); // 검색 결과에서 고른 장소 이름
   const [center, setCenter] = useState<MapPoint>(initial ?? DEFAULT_CENTER);
   const [keyword, setKeyword] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -53,13 +57,18 @@ export default function MapPicker({initial, onSelect, onClose}: Props) {
           geocoder.coord2Address(point.lng, point.lat, (result: KakaoNS[], status: string) => {
             if (status !== kakao.maps.services.Status.OK || !result[0]) {
               setAddress("");
+              setArea("");
               return;
             };
             const road = result[0].road_address?.address_name;
-            setAddress(road || result[0].address?.address_name || "");
+            const lot = result[0].address; // 지번 주소: 시·구·동 이름이 따로 있음
+            setAddress(road || lot?.address_name || "");
+            setArea(lot ? [lot.region_1depth_name, lot.region_2depth_name, lot.region_3depth_name].filter(Boolean).join(" ") : "");
           });
         };
         kakao.maps.event.addListener(map, "idle", updateAddress);
+        // 손으로 지도를 옮기면 검색해서 고른 장소가 아니게 됨
+        kakao.maps.event.addListener(map, "dragstart", () => setPlaceName(""));
         updateAddress();
 
         // 처음 고르는 거면 현재 위치에서 시작 (허락한 경우만)
@@ -151,6 +160,7 @@ export default function MapPicker({initial, onSelect, onClose}: Props) {
                   type="button"
                   onClick={() => {
                     moveTo(place);
+                    setPlaceName(place.name);
                     setResults([]);
                   }}>
                     <strong>{place.name}</strong>
@@ -167,9 +177,10 @@ export default function MapPicker({initial, onSelect, onClose}: Props) {
       <S.PickerLocate type="button" aria-label="현재 위치로" onClick={handleLocate}><LocateIcon/></S.PickerLocate>
 
       <S.PickerSheet>
-        <strong>{address || "주소를 찾는 중이에요"}</strong>
+        <strong>{placeName || address || "주소를 찾는 중이에요"}</strong>
+        {placeName && address && <small>{address}</small>}
         <small>{message || "지도를 움직여 핀을 맞춰 주세요. 다른 사람에게는 이 근처(약 300m)로만 보여요."}</small>
-        <S.WriteSubmit type="button" disabled={!address} onClick={() => onSelect({...center, address})}>
+        <S.WriteSubmit type="button" disabled={!address} onClick={() => onSelect({...center, address, area, name: placeName || undefined})}>
           이 위치로 할게요
         </S.WriteSubmit>
       </S.PickerSheet>

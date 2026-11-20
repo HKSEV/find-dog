@@ -17,6 +17,19 @@ export interface CommunityPost {
   mine: boolean;
   createdAt: string;
   updatedAt?: string;
+  likeCount: number;    // 공감(하트) 수
+  commentCount: number; // 댓글 수
+  liked: boolean;       // 내가 공감했는지 (상세에서 로그인했을 때만)
+}
+
+export interface CommunityComment {
+  id: number;
+  content: string;
+  authorName: string;
+  authorImageUrl?: string | null;
+  authorId?: number | null;
+  mine: boolean; // 내가 쓴 댓글 (지우기 버튼)
+  createdAt: string;
 }
 
 // 화면에 보이는 분류 이름 <-> 서버 값
@@ -69,6 +82,26 @@ export const updateCommunityPost = async (
 export const deleteCommunityPost = async (id: number) => {
   await axios.delete(`/api/community-posts/${id}`, {headers: authHeader()});
 };
+
+// 💡 공감(하트): 켜기·끄기 → 지금 상태와 수
+export const setCommunityLike = async (id: number, on: boolean) => {
+  const url = `/api/community-posts/${id}/like`;
+  const config = {headers: authHeader()};
+  return (on ? await axios.put<{liked: boolean; likeCount: number}>(url, null, config) : await axios.delete<{liked: boolean; likeCount: number}>(url, config)).data;
+};
+
+// 💡 댓글: 목록(오래된 순), 쓰기·지우기(로그인)
+export const fetchComments = async (id: number) =>
+  (await axios.get<CommunityComment[]>(`/api/community-posts/${id}/comments`, {headers: authHeader()})).data;
+
+export const addComment = async (id: number, content: string) =>
+  (await axios.post<CommunityComment>(`/api/community-posts/${id}/comments`, {content}, {headers: authHeader()})).data;
+
+export const deleteComment = async (id: number, commentId: number) => {
+  await axios.delete(`/api/community-posts/${id}/comments/${commentId}`, {headers: authHeader()});
+};
+
+export const COMMENT_MAX = 500;
 
 // 💡 글 신고 (로그인 필요, 내 글은 불가)
 export const communityReportReasons: {value: ReportReason; label: string}[] = [

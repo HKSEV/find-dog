@@ -44,7 +44,7 @@ export default function TogetherTab() {
   return (
     <>
       {/* 도움이 필요해요 */}
-      <S.VolunteerSection $first>
+      <S.VolunteerSection $afterChips>
         <S.VolunteerSectionHead>
           <S.VolunteerSectionTitle>도움이 필요해요</S.VolunteerSectionTitle>
           {needHelps.length > HELP_COUNT && (

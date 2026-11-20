@@ -123,7 +123,7 @@ export default function MissingPostDetail({id}: {id: number}) {
 
   const done = post.status === "COMPLETED";
   const author = post.authorName?.trim() || "익명"; // 백엔드가 닉네임을 줌
-  const authorPlace = shortPlace(post.rescueLocation);
+  const authorPlace = shortPlace(post.placeArea || post.rescueLocation); // 동네를 알면 동네 이름으로
 
   // 💡 더보기(⋮) 메뉴: 내 글이면 전단지 만들기, 남의 글이면 신고하기
   const menuItems: ActionSheetItem[] = post.mine
@@ -209,7 +209,10 @@ export default function MissingPostDetail({id}: {id: number}) {
                   </S.DetailFact>
                 ))}
                 {post.rescueLocation && (
-                  <S.DetailFact $span={3}><dt>{placeLabel(post.type)}</dt><dd>{post.rescueLocation}</dd></S.DetailFact>
+                  <S.DetailFact $span={3}>
+                    <dt>{placeLabel(post.type)}</dt>
+                    <dd>{post.rescueLocation}{post.placeArea && <small>{post.placeArea}</small>}</dd>
+                  </S.DetailFact>
                 )}
               </S.DetailFacts>
             )}

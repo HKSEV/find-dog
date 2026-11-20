@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 public class MissingPostResponseDto {
 private Long id;
-private String title, content, petName, breed, gender, age, weight, color, rescueLocation, authorName;
+private String title, content, petName, breed, gender, age, weight, color, rescueLocation, placeArea, authorName;
 private Long authorId;        // 글쓴이 프로필 보기용 (/profile/?id=)
 private String authorImage;   // 글쓴이 프로필 사진
 private PostStatus status;
@@ -45,6 +45,7 @@ this.age = post.getAge();
 this.weight = post.getWeight();
 this.color = post.getColor();
 this.rescueLocation = post.getRescueLocation();
+this.placeArea = post.getPlaceArea();
 // 목록은 누구나 볼 수 있어서 실명(getUsername) 대신 닉네임을 보여줌
 this.authorName = post.getAuthor() != null && post.getAuthor().getNickname() != null && !post.getAuthor().getNickname().isBlank()
         ? post.getAuthor().getNickname()

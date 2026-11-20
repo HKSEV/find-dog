@@ -64,6 +64,38 @@ public class CommunityPostController {
         return ResponseEntity.ok(service.update(id, request, files, principal.getName()));
     }
 
+    // 💡 공감(하트): PUT 켜기 / DELETE 끄기 → {liked, likeCount}
+    @PutMapping("/api/community-posts/{id}/like")
+    public ResponseEntity<?> like(@PathVariable Long id, Principal principal) {
+        if (principal == null) return unauthorized();
+        return ResponseEntity.ok(service.setLike(id, true, principal.getName()));
+    }
+
+    @DeleteMapping("/api/community-posts/{id}/like")
+    public ResponseEntity<?> unlike(@PathVariable Long id, Principal principal) {
+        if (principal == null) return unauthorized();
+        return ResponseEntity.ok(service.setLike(id, false, principal.getName()));
+    }
+
+    // 💡 댓글: 목록(누구나), 쓰기·지우기(로그인)
+    @GetMapping("/api/community-posts/{id}/comments")
+    public List<CommunityDto.Comment> comments(@PathVariable Long id, Principal principal) {
+        return service.getComments(id, principal != null ? principal.getName() : null);
+    }
+
+    @PostMapping("/api/community-posts/{id}/comments")
+    public ResponseEntity<?> addComment(@PathVariable Long id, @RequestBody CommunityDto.CommentRequest request, Principal principal) {
+        if (principal == null) return unauthorized();
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.addComment(id, request, principal.getName()));
+    }
+
+    @DeleteMapping("/api/community-posts/{id}/comments/{commentId}")
+    public ResponseEntity<?> deleteComment(@PathVariable Long id, @PathVariable Long commentId, Principal principal) {
+        if (principal == null) return unauthorized();
+        service.deleteComment(id, commentId, principal.getName());
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/api/community-posts/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id, Principal principal) {
         if (principal == null) return unauthorized();

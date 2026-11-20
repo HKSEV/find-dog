@@ -5,6 +5,7 @@ package com.hbk.domain;
 //   CHAT: 새 채팅 메시지 (대화방마다 안 읽은 알림 하나만 남기고 최신 메시지로 바꿈)
 //   NEARBY: 내 실종 글 근처에 목격 제보가 올라옴
 //   REPORT: 내가 한 신고를 운영팀이 처리함
+//   COMMENT: 내 이야기 글에 댓글이 달림 (글마다 안 읽은 알림 하나만)
 public enum NotificationType {
-    ADOPTION, CHAT, NEARBY, REPORT
+    ADOPTION, CHAT, NEARBY, REPORT, COMMENT
 }

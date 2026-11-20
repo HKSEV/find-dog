@@ -5,9 +5,10 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { compressImage } from "../compressImage";
-import { placeLabel, whenLabel } from "../missingFormat";
+import { nearText, placeLabel, whenLabel } from "../missingFormat";
 import WhenPicker, { WhenValue, emptyWhen, fromOccurred, toOccurred } from "../WhenPicker";
 import MapPicker, { PickedPlace } from "../../components/map/MapPicker";
+import PlaceSuggest from "./PlaceSuggest";
 import MiniMap from "../../components/map/MiniMap";
 import { MapPoint } from "../../components/map/kakaoMap";
 import { toImageUrl } from "../../shelter/animalFormat";
@@ -58,6 +59,7 @@ function MissingWriteForm() {
   const [when, setWhen] = useState<WhenValue>(emptyWhen); // 잃어버린 때 / 발견한 때 (날짜 필수)
   const [point, setPoint] = useState<MapPoint | null>(null); // 지도에서 고른 장소 (선택)
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [placeArea, setPlaceArea] = useState(""); // 지도 위치의 동네 (지도에서 골랐을 때만)
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [errors, setErrors] = useState<{petName?: string; breed?: string; color?: string; rescueLocation?: string; when?: string; content?: string; photos?: string; submit?: string}>({});
   const [submitting, setSubmitting] = useState(false);
@@ -89,6 +91,7 @@ function MissingWriteForm() {
         });
         setWhen(fromOccurred(data.occurredAt, data.occurredTime));
         setPoint(data.lat != null && data.lng != null ? {lat: data.lat, lng: data.lng} : null);
+        setPlaceArea(data.placeArea ?? "");
         setExistingPhotos((data.mediaUrls ?? []).map((url) => toImageUrl(url)).filter((url): url is string => Boolean(url)));
         setEditState("ready");
       })
@@ -169,6 +172,7 @@ function MissingWriteForm() {
           ...toOccurred(when),
           lat: point?.lat ?? null,
           lng: point?.lng ?? null,
+          placeArea: point ? placeArea || null : null,
           content: form.content.trim()
         });
         queueToast("글을 고쳤어요");
@@ -195,6 +199,7 @@ function MissingWriteForm() {
         ...toOccurred(when),
         lat: point?.lat ?? null,
         lng: point?.lng ?? null,
+        placeArea: point ? placeArea || null : null,
         content: form.content.trim()
       };
 
@@ -360,12 +365,12 @@ function MissingWriteForm() {
 
       <S.WriteField>
         <S.WriteLabel htmlFor="mw-place">{placeLabel(kind)}</S.WriteLabel>
-        {/* 지도에서 고르면 작은 지도(보기만)가 생기고, 장소 칸에 주소가 채워짐 (고칠 수 있음) */}
+        {/* 지도에서 고르면 작은 지도(보기만)가 생김. 장소 칸은 사람이 읽을 이름 (검색해서 고른 곳이면 그 이름, 비어 있으면 주소) */}
         {point && <MiniMap point={point} label={form.rescueLocation || placeLabel(kind)}/>}
         <S.SignupInputRow>
           <S.WriteInput
           id="mw-place"
-          placeholder="동네, 가까운 건물"
+          placeholder="예: 도산공원 근처, OO아파트 정문"
           value={form.rescueLocation}
           $invalid={Boolean(errors.rescueLocation)}
           aria-invalid={Boolean(errors.rescueLocation)}
@@ -375,9 +380,25 @@ function MissingWriteForm() {
           </S.SignupSideButton>
         </S.SignupInputRow>
         {errors.rescueLocation && <S.WriteError>{errors.rescueLocation}</S.WriteError>}
+        {!point && (
+          <PlaceSuggest
+          text={form.rescueLocation}
+          onPick={(place) => {
+            setPoint({lat: place.lat, lng: place.lng});
+            setPlaceArea(place.area);
+          }}/>
+        )}
         {point && (
           <S.WhenSubLabel>
-            다른 사람에게는 이 근처(약 300m)로만 보여요. <S.WhenLink type="button" onClick={() => setPoint(null)}>지도 빼기</S.WhenLink>
+            {placeArea && <>{placeArea} · </>}다른 사람에게는 이 근처(약 300m)로만 보여요.{" "}
+            <S.WhenLink
+            type="button"
+            onClick={() => {
+              setPoint(null);
+              setPlaceArea("");
+            }}>
+              지도 빼기
+            </S.WhenLink>
           </S.WhenSubLabel>
         )}
       </S.WriteField>
@@ -420,7 +441,10 @@ function MissingWriteForm() {
       onClose={() => setPickerOpen(false)}
       onSelect={(place: PickedPlace) => {
         setPoint({lat: place.lat, lng: place.lng});
-        setField("rescueLocation", place.address);
+        setPlaceArea(place.area);
+        // 검색해서 고른 장소면 그 이름을, 아니면 적어 둔 말을 그대로 두고 비어 있을 때만 주소를 채움
+        if (place.name) setField("rescueLocation", nearText(place.name));
+        else if (!form.rescueLocation.trim()) setField("rescueLocation", place.address);
         setPickerOpen(false);
       }}/>
     )}

@@ -17,6 +17,7 @@ export interface MissingUpdateRequest {
   occurredTime: string | null;
   lat: number | null;
   lng: number | null;
+  placeArea: string | null; // 지도 위치의 동네 (좌표가 있을 때만)
   content: string;
 }
 

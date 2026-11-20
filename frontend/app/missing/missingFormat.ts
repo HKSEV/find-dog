@@ -78,6 +78,20 @@ export const shortPlace = (address?: string) => {
   return district ?? words[0] ?? "";
 };
 
+// 장소 뒤에 "근처" (이미 근처·부근·주변으로 끝나면 그대로)
+export const nearText = (place?: string | null) => {
+  const text = (place ?? "").trim();
+  if (!text) return "";
+  return /(근처|부근|주변)$/.test(text) ? text : `${text} 근처`;
+};
+
+// 주소에서 동네까지만: "서울 강남구 신사동 649-9" -> "서울 강남구 신사동" (번지는 빼서 집 위치가 드러나지 않게)
+export const areaFromAddress = (address?: string | null) => {
+  const words = (address ?? "").trim().split(/\s+/).filter(Boolean);
+  const numberAt = words.findIndex((word) => /^산?\d/.test(word));
+  return words.slice(0, numberAt < 0 ? words.length : numberAt).join(" ");
+};
+
 // 목격 글 둘째 줄 앞부분: "사직동에서 봤어요" (장소가 없으면 "")
 export const foundPlaceLine = (post: Pick<MissingAnimal, "type" | "rescueLocation">) => {
   if (post.type !== "FOUND") return "";

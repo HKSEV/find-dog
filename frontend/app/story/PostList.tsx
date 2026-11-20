@@ -22,7 +22,9 @@ export default function PostList({items, showCategory}: {items: CommunityPost[];
                 {showCategory && <S.CommunityPostKind>{categoryLabel(post.category)}</S.CommunityPostKind>}
                 <S.CommunityPostTitle>{post.title}</S.CommunityPostTitle>
                 <S.CommunityPostSummary>{post.content}</S.CommunityPostSummary>
-                <S.CommunityPostMeta>{post.authorName} · {timeAgo(post.createdAt)}</S.CommunityPostMeta>
+                <S.CommunityPostMeta>
+                  {[post.authorName, timeAgo(post.createdAt), post.likeCount > 0 ? `공감 ${post.likeCount}` : "", post.commentCount > 0 ? `댓글 ${post.commentCount}` : ""].filter(Boolean).join(" · ")}
+                </S.CommunityPostMeta>
               </S.CommunityPostBody>
               {thumb && <S.CommunityPostThumb src={thumb} alt=""/>}
             </S.CommunityPostRow>
