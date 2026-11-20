@@ -39,6 +39,8 @@ List<MissingPost> findNearbyCandidates(@Param("excludeId") Long excludeId);
 // 내가 쓴 글 (마이 > 작성한 글), 최신순
 List<MissingPost> findByAuthorEmailOrderByIdDesc(String email);
 
+long countByAuthorId(Long authorId);
+
 // 목록 거르기 (실종·제보 탭의 전체/실종/목격, 찾는 중인 글만). 값이 null이면 그 조건은 안 씀
 // 종류가 비어 있는 예전 글은 실종(LOST)으로 봄
 @Query("SELECT p FROM MissingPost p WHERE (:cursorId IS NULL OR p.id < :cursorId)"

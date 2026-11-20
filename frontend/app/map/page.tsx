@@ -2,9 +2,9 @@
 
 import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
-import Header from "@/app/components/Header";
+import { useImeSafeSubmit } from "@/app/components/imeSafeSubmit";
 import { DEFAULT_CENTER, KakaoNS, loadKakaoMaps } from "@/app/components/map/kakaoMap";
 import { toImageUrl } from "../shelter/animalFormat";
 import { formatWhen, missingTitle } from "../missing/missingFormat";
@@ -12,8 +12,7 @@ import type { MissingAnimal } from "../redux/missingSlice";
 import type { Animal } from "../redux/shelterSlice";
 import type { VolunteerPost } from "../volunteer/volunteerApi";
 import * as S from "@/assets/css/Style.styles";
-import AreaSheet from "@/app/components/AreaSheet";
-import { distanceKm, formatDistance, useMyArea } from "@/lib/myArea";
+import { MyArea, distanceKm, formatDistance, searchArea, useMyArea } from "@/lib/myArea";
 
 type Kind = keyof typeof S.MAP_PIN_COLORS;
 
@@ -80,7 +79,7 @@ const spread = (places: Place[]) => {
   });
 };
 
-// 💡 지도로 보기: 실종·목격 글(지도에서 고른 장소), 보호 동물(구조 장소), 봉사 모집(장소)을 사진 마커로
+// 💡 지도로 보기 (헤더 없이 화면 전체 지도, 위에 뒤로 버튼 + 장소 검색): 실종·목격 글(지도에서 고른 장소), 보호 동물(구조 장소), 봉사 모집(장소)을 사진 마커로
 //    실종 글 위치는 서버가 약 100m 단위로 줄여서 줌 (정확한 집 위치가 드러나지 않게)
 //    /map?view=missing (실종·제보에서) , /map?view=shelter (입양·봉사에서) 로 들어오면 그 묶음만 먼저 보여줌
 export default function MapExplorePage() {
@@ -100,7 +99,8 @@ function MapExplore() {
   const [places, setPlaces] = useState<Place[] | null>(null);
   const [filter, setFilter] = useState<View>(startView === "missing" || startView === "shelter" ? startView : "all");
   const firstViewRef = useRef(filter); // 처음 지도 범위를 맞출 묶음 (칩을 바꿔도 다시 맞추지 않음)
-  const listHref = startView === "missing" ? "/missing" : startView === "shelter" ? "/shelter" : null; // 헤더 "목록" 버튼
+  const router = useRouter();
+  const backHref = startView === "missing" ? "/missing" : startView === "shelter" ? "/shelter" : "/"; // 주소로 바로 들어왔을 때 뒤로
   const [selected, setSelected] = useState<Place | null>(null);
   // 💡 내 동네: 처음엔 내 동네를 가운데로, 카드에 거리 표시, 지도에 "내 동네" 표시
   const area = useMyArea();
@@ -108,8 +108,15 @@ function MapExplore() {
   useEffect(() => {
     areaRef.current = area;
   }, [area]);
-  const [areaOpen, setAreaOpen] = useState(false);
   const [mapReady, setMapReady] = useState(false);
+  // 💡 장소 검색: 고른 곳으로 지도를 옮기고, 카드 거리도 그곳 기준
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<MyArea[] | null>(null); // null = 결과 창 닫힘
+  const [searching, setSearching] = useState(false);
+  const [searchFailed, setSearchFailed] = useState(false);
+  const [searchPoint, setSearchPoint] = useState<MyArea | null>(null);
+  const imeSafeSubmit = useImeSafeSubmit();
+  const basis = searchPoint ?? area; // 거리 기준
   const [message, setMessage] = useState("불러오는 중이에요");
 
   // 지도와 데이터를 불러와서 마커 정보 만들기
@@ -263,6 +270,41 @@ function MapExplore() {
     return () => overlay.setMap(null);
   }, [mapReady, area]);
 
+  // 검색한 장소 표시 + 그쪽으로 이동
+  useEffect(() => {
+    const map = mapRef.current;
+    const kakao = typeof window !== "undefined" ? window.kakao : null;
+    if (!mapReady || !map || !kakao || !searchPoint) return;
+    const element = document.createElement("div");
+    element.className = "fd-area fd-search";
+    element.innerHTML = '<span class="fd-area-dot"></span><span class="fd-area-label"></span>';
+    (element.querySelector(".fd-area-label") as HTMLElement).textContent = searchPoint.label;
+    const position = new kakao.maps.LatLng(searchPoint.lat, searchPoint.lng);
+    const overlay = new kakao.maps.CustomOverlay({position, content: element, yAnchor: 0.5, zIndex: 1});
+    overlay.setMap(map);
+    map.setLevel(6);
+    map.panTo(position);
+    return () => overlay.setMap(null);
+  }, [mapReady, searchPoint]);
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const words = query.trim();
+    if (words.length < 2 || searching) return;
+    setSearching(true);
+    try {
+      setResults(await searchArea(words));
+      setSearchFailed(false);
+    } catch {
+      setResults([]);
+      setSearchFailed(true);
+    } finally {
+      setSearching(false);
+    };
+  };
+
+  const handleBack = () => (window.history.length > 1 ? router.back() : router.push(backHref));
+
   const counts = useMemo(() => {
     const result = {} as Record<View, number>;
     views.forEach((view) => (result[view.key] = places?.filter((place) => view.kinds.includes(place.kind)).length ?? 0));
@@ -276,22 +318,71 @@ function MapExplore() {
     <S.AppWrapper>
       <S.MapPinStyle/>
       <S.Container>
-        <Header
-        title={startView === "missing" ? "실종·제보 지도" : startView === "shelter" ? "입양·봉사 지도" : "지도로 보기"}
-        action={listHref ? (
-          // 💡 들어온 목록으로 돌아가기 (목록의 "지도" 버튼과 같은 자리)
-          <S.HeaderRoundButton as={Link} href={listHref} aria-label="목록으로 보기">
-            <S.ListEntryIcon aria-hidden="true"/>
-          </S.HeaderRoundButton>
-        ) : undefined}/>
-        <S.HeaderOffset/>
         <S.MapPage>
           <S.MapCanvas ref={canvasRef}/>
 
+          {/* 💡 위: 뒤로 + 장소 검색 (헤더 대신) */}
+          <S.MapTopBar>
+            <S.MapBackButton type="button" aria-label="뒤로" onClick={handleBack}>
+              <S.MapBackIcon aria-hidden="true"/>
+            </S.MapBackButton>
+            <S.MapSearchBox>
+              <S.MapSearchForm role="search" onSubmit={handleSearch}>
+                <input
+                type="text"
+                enterKeyHint="search"
+                aria-label="장소 검색"
+                placeholder="동네, 장소 이름으로 찾기 (예: 사직동)"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  if (!e.target.value) setResults(null);
+                }}/>
+                {(query || searchPoint) && (
+                  <button
+                  type="button"
+                  aria-label="검색 지우기"
+                  onClick={() => {
+                    setQuery("");
+                    setResults(null);
+                    setSearchPoint(null);
+                  }}>
+                    <S.MapSearchClearIcon aria-hidden="true"/>
+                  </button>
+                )}
+                <button type="submit" aria-label="검색" disabled={searching} {...imeSafeSubmit}>
+                  <S.MapSearchIcon aria-hidden="true"/>
+                </button>
+              </S.MapSearchForm>
+              {results && (
+                <S.MapSearchResults>
+                  {results.length === 0 ? (
+                    <p>{searchFailed ? "지금은 장소를 찾지 못했어요. 잠시 후 다시 시도해 주세요." : "찾는 장소가 없어요. 동 이름이나 장소 이름으로 다시 찾아 보세요."}</p>
+                  ) : (
+                    <ul aria-label="검색 결과">
+                      {results.map((result) => (
+                        <li key={`${result.lat},${result.lng},${result.label}`}>
+                          <S.AreaResult
+                          type="button"
+                          onClick={() => {
+                            setSearchPoint(result);
+                            setQuery(result.label);
+                            setResults(null);
+                            setSelected(null);
+                          }}>
+                            <strong>{result.label}</strong>
+                            <span>{result.address}</span>
+                          </S.AreaResult>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </S.MapSearchResults>
+              )}
+            </S.MapSearchBox>
+          </S.MapTopBar>
+
           <S.MapFilters role="radiogroup" aria-label="보여줄 종류">
-            <S.AreaChip type="button" onClick={() => setAreaOpen(true)}>
-              <S.AreaPinIcon aria-hidden="true"/>{area ? area.label : "내 동네"}<S.AreaDownIcon aria-hidden="true"/>
-            </S.AreaChip>
             {views.map((item) => (
               <S.MapFilterChip
               key={item.key}
@@ -318,13 +409,12 @@ function MapExplore() {
               <S.MapCardBody>
                 <small style={{backgroundColor: S.MAP_PIN_COLORS[visibleSelected.kind]}}>{kindLabel[visibleSelected.kind]}</small>
                 <strong>{visibleSelected.title}</strong>
-                <p>{[area ? formatDistance(distanceKm(area, visibleSelected)) : "", visibleSelected.meta].filter(Boolean).join(" · ")}</p>
+                <p>{[basis ? formatDistance(distanceKm(basis, visibleSelected)) : "", visibleSelected.meta].filter(Boolean).join(" · ")}</p>
               </S.MapCardBody>
               <S.MapCardChevron aria-hidden="true"/>
             </S.MapCard>
           )}
         </S.MapPage>
-        {areaOpen && <AreaSheet current={area} onClose={() => setAreaOpen(false)}/>}
       </S.Container>
     </S.AppWrapper>
   );

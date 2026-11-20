@@ -35,6 +35,7 @@ public class MissingPostService {
     private final com.hbk.repository.ChatMessageRepository chatMessageRepository;
     private final com.hbk.repository.ChatReportRepository chatReportRepository;
     private final com.hbk.repository.MissingPostReportRepository postReportRepository;
+    private final NotificationService notificationService;
 
     public static final int MAX_PHOTOS = 5;
 
@@ -124,6 +125,7 @@ public class MissingPostService {
         post.setCreatedAt(LocalDateTime.now());
 
         MissingPost savePost = missingPostRepository.save(post);
+        notifyNearbyLost(savePost);
         return new MissingPostResponseDto(savePost);
     }
 
@@ -204,6 +206,21 @@ public class MissingPostService {
                 .limit(NEARBY_LIMIT)
                 .map(pair -> new MissingPostResponseDto((MissingPost) pair[0]).withDistanceKm((double) pair[1]))
                 .toList();
+    }
+
+    // 💡 목격 제보가 올라오면 근처(3km, 날짜가 맞는) 실종 글 주인에게 알림 (최대 5명)
+    private void notifyNearbyLost(MissingPost found){
+        if (found.getType() != PostType.FOUND || found.getLat() == null || found.getLng() == null) return;
+        String image = found.getMediaUrls() == null || found.getMediaUrls().isEmpty() ? null : found.getMediaUrls().get(0);
+        for (MissingPostResponseDto lost : getNearbyPosts(found.getId())) {
+            MissingPost lostPost = missingPostRepository.findById(lost.getId()).orElse(null);
+            if (lostPost == null || lostPost.getAuthor() == null) continue;
+            if (found.getAuthor() != null && lostPost.getAuthor().getId().equals(found.getAuthor().getId())) continue;
+            String name = lostPost.getPetName() != null && !lostPost.getPetName().isBlank() ? lostPost.getPetName() : "실종된 아이";
+            notificationService.notify(lostPost.getAuthor(), com.hbk.domain.NotificationType.NEARBY, "NEARBY",
+                    "'" + name + "' 실종 장소에서 " + lost.getDistanceKm() + "km 떨어진 곳에 목격 제보가 올라왔어요. 확인해 보세요.",
+                    image, "/missing/detail/?id=" + found.getId());
+        }
     }
 
     // 날짜가 맞는지: 목격은 잃어버린 날 하루 전 이후, 실종은 본 날 하루 뒤 이전 (둘 다 30일 안)

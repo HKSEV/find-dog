@@ -42,6 +42,12 @@ public class KakaoLoginHandlers {
                 response.sendRedirect(frontendUrl + "/login/?error=kakao");
                 return;
             }
+            // 이용 정지된 계정은 로그인 화면으로 (안내 문구)
+            if (member.isSuspended()) {
+                if (request.getSession(false) != null) request.getSession(false).invalidate();
+                response.sendRedirect(frontendUrl + "/login/?error=suspended");
+                return;
+            }
             String token = jwtTokenProvider.createToken(member.getEmail());
 
             // 카카오 로그인용 세션은 더 쓰지 않음 (우리 서비스는 토큰으로 로그인 유지)

@@ -43,6 +43,15 @@ public class Member {
 
 	private String profileImageUrl;
 
+	// 💡 이용 정지 (관리자 > 회원 관리). 정지되면 로그인할 수 없고, 가지고 있던 로그인도 풀림
+	@Column(nullable = false)
+	private boolean suspended = false;
+
+	@Column(length = 255)
+	private String suspendedReason;
+
+	private java.time.LocalDateTime suspendedAt;
+
 	public String getUsername(){
 		return this.name;
 	}

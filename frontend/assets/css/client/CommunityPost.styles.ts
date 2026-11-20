@@ -97,20 +97,20 @@ export const CommunityAuthor = styled.div`
   font-size: 13px;
   color: ${colors.gray500};
 
-  img,
-  > span:first-child {
-    flex: none;
-    width: 28px;
-    height: 28px;
-    border-radius: 999px;
-    object-fit: cover;
-    background-color: ${colors.bgMuted};
-  }
-
   strong {
     font-weight: ${fontWeight.semibold};
     color: ${colors.gray800};
   }
+`;
+
+// 글쓴이 사진 + 닉네임 (누르면 프로필)
+export const CommunityAuthorLink = styled.a`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
 `;
 
 // 상세 사진: 옆으로 넘기기 (여러 장일 때)

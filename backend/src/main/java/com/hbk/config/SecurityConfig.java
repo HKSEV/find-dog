@@ -25,6 +25,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final AdminAuthService adminAuthService;
     private final KakaoLoginHandlers kakaoLoginHandlers;
+    private final com.hbk.repository.MemberRepository memberRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -34,7 +35,7 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, memberRepository), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new AdminJwtAuthenticationFilter(adminAuthService), UsernamePasswordAuthenticationFilter.class)
                 // 카카오 로그인: /oauth2/authorization/kakao 로 시작해서 /login/oauth2/code/kakao 로 돌아옴
                 .oauth2Login(oauth -> oauth

@@ -27,6 +27,7 @@ public class MissingPostReportService {
     private final MissingPostReportRepository reportRepository;
     private final MissingPostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
     public void report(Long postId, MissingPostReportDtos.ReportRequest request, String email){
         Member me = memberRepository.findByEmail(email)
@@ -65,6 +66,13 @@ public class MissingPostReportService {
         report.setStatus(status);
         report.setAdminNote(note.isEmpty() ? null : note);
         report.setHandledAt(LocalDateTime.now());
+        // 신고한 회원에게 처리 결과 알림
+        String title = MemberProfileService.missingTitle(report.getPost());
+        notificationService.notify(report.getReporter(), com.hbk.domain.NotificationType.REPORT, status,
+                "RESOLVED".equals(status)
+                        ? "신고하신 '" + title + "' 글을 확인하고 조치했어요. 알려 주셔서 고마워요."
+                        : "신고하신 '" + title + "' 글을 확인했지만 운영 정책 위반은 찾지 못했어요.",
+                null, "/missing/detail/?id=" + report.getPost().getId());
         return toAdmin(report);
     }
 

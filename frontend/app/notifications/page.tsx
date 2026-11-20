@@ -46,7 +46,7 @@ export default function NotificationsPage() {
     };
     if (status === "error") return <S.MissingEmptyText>알림을 불러오지 못했어요. 잠시 후 다시 시도해 주세요</S.MissingEmptyText>;
     if (items.length === 0) {
-      return <S.MissingEmptyText>아직 받은 알림이 없어요.<br/>입양 신청이 진행되면 여기에서 알려 드려요.</S.MissingEmptyText>;
+      return <S.MissingEmptyText>아직 받은 알림이 없어요.<br/>새 채팅, 내 실종 글 근처 목격 제보,<br/>입양 신청 진행, 신고 처리 결과를 알려 드려요.</S.MissingEmptyText>;
     };
 
     return (

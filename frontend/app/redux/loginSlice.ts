@@ -27,6 +27,10 @@ export const submitLogin = createAsyncThunk(
         body: JSON.stringify({email, password})
       });
 
+      if (res.status === 403) {
+        // 💡 이용 정지된 계정: 서버 안내 문구 그대로
+        throw new Error((await res.text()) || "이용이 정지된 계정이에요.");
+      };
       if (!res.ok) {
         throw new Error("이메일 또는 비밀번호가 일치하지 않습니다.");
       };

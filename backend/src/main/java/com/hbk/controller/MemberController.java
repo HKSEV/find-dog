@@ -104,6 +104,10 @@ public class MemberController {
             Member member = memberOpt.get();
 
             if(passwordService.matches(member, loginData.getPassword())){
+                // 💡 이용 정지된 계정은 로그인 불가 (403 + 안내 문구)
+                if (member.isSuspended()) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(suspendedMessage(member));
+                }
                 String token = jwtTokenProvider.createToken(member.getEmail());
 
                 // 💡 객체 직렬화 에러를 완벽하게 피하기 위해 단순한 키-값 구조로 전달합니다.
@@ -120,6 +124,11 @@ public class MemberController {
             }
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("이메일 또는 비밀번호가 일치하지 않습니다");
+    }
+
+    public static String suspendedMessage(Member member){
+        String reason = member.getSuspendedReason();
+        return "이용이 정지된 계정이에요." + (reason != null && !reason.isBlank() ? " (사유: " + reason + ")" : "");
     }
 
     // 5. 프로필 이미지 업로드 API (가입 전에도 쓰므로 로그인 없이 받음)

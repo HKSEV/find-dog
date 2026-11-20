@@ -16,6 +16,9 @@ public interface MissingPostReportRepository extends JpaRepository<MissingPostRe
     @Query("SELECT r FROM MissingPostReport r ORDER BY CASE WHEN r.status = 'PENDING' THEN 0 ELSE 1 END, r.id DESC")
     List<MissingPostReport> findAllForAdmin();
 
+    // 회원 관리: 이 회원의 글이 받은 신고 수
+    long countByPostAuthorId(Long authorId);
+
     // 글을 지울 때 그 글의 신고도 지움
     @Modifying
     @Query("DELETE FROM MissingPostReport r WHERE r.post.id = :postId")

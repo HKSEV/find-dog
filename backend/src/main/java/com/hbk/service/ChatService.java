@@ -34,6 +34,7 @@ public class ChatService {
     private final MemberRepository memberRepository;
     private final MissingPostRepository postRepository;
     private final com.hbk.repository.ChatReportRepository reportRepository;
+    private final NotificationService notificationService;
 
     private static final java.util.Set<String> REASONS = java.util.Set.of("SPAM", "ABUSE", "FAKE", "PRIVACY", "ETC");
 
@@ -79,6 +80,7 @@ public class ChatService {
         List<ChatDtos.Message> list = messageRepository.findAfterSince(room.getId(), afterId == null ? 0L : afterId, clearedAt(room, me), PageRequest.of(0, 200))
                 .stream().map(message -> toMessage(message, me)).toList();
         markRead(room, me);
+        notificationService.readLink(me, roomLink(room)); // 대화방을 열었으면 채팅 알림은 읽음으로
         return list;
     }
 
@@ -114,7 +116,17 @@ public class ChatService {
         }
         room.setLastMessageAt(message.getCreatedAt());
         markRead(room, me);
-        return toMessage(messageRepository.save(message), me);
+        ChatMessage saved = messageRepository.save(message);
+
+        // 💡 상대에게 알림: "닉네임: 메시지" (대화방마다 안 읽은 알림 하나)
+        Member other = iAmOwner ? room.getGuest() : room.getOwner();
+        String preview = "LOCATION".equals(type) ? "📍 위치를 보냈어요" : content.length() > 60 ? content.substring(0, 60) + "…" : content;
+        MissingPost post = room.getPost();
+        notificationService.notifyLatest(other, com.hbk.domain.NotificationType.CHAT, "CHAT",
+                me.getNickname() + ": " + preview,
+                post.getMediaUrls() == null || post.getMediaUrls().isEmpty() ? null : post.getMediaUrls().get(0),
+                roomLink(room));
+        return toMessage(saved, me);
     }
 
     // 하단 탭 채팅 빨간 숫자
@@ -196,6 +208,12 @@ public class ChatService {
         report.setAdminNote(note.isEmpty() ? null : note);
         report.setHandledAt(LocalDateTime.now());
         if (Boolean.TRUE.equals(request.closeRoom())) report.getRoom().setBlocked(true);
+        // 신고한 회원에게 처리 결과 알림
+        notificationService.notify(report.getReporter(), com.hbk.domain.NotificationType.REPORT, status,
+                "RESOLVED".equals(status)
+                        ? "신고하신 대화를 확인하고 조치했어요. 알려 주셔서 고마워요."
+                        : "신고하신 대화를 확인했지만 운영 정책 위반은 찾지 못했어요.",
+                null, "/chat");
         return toAdminReport(report);
     }
 
@@ -222,6 +240,10 @@ public class ChatService {
             row.put("createdAt", room.getCreatedAt());
             return row;
         }).toList();
+    }
+
+    private static String roomLink(ChatRoom room){
+        return "/chat/room/?id=" + room.getId();
     }
 
     private static LocalDateTime clearedAt(ChatRoom room, Member me){

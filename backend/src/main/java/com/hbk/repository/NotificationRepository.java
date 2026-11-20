@@ -17,4 +17,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     // 알림 화면을 열면 모두 읽음으로
     List<Notification> findByMemberEmailAndReadFalse(String email);
+
+    // 같은 곳으로 가는 안 읽은 알림 (채팅: 대화방마다 하나만 남기기, 대화방을 열면 읽음으로)
+    List<Notification> findByMemberIdAndLinkAndReadFalse(Long memberId, String link);
 }

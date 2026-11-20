@@ -8,6 +8,7 @@ import { setEmail, setPassword, submitLogin } from "../redux/loginSlice";
 import { SIGNUP_EMAIL_KEY, safeNext } from "../components/loginLink";
 import { queueToast, showToast } from "../components/Toast";
 import { startKakaoLogin } from "../oauth/kakao/kakaoLogin";
+import { POLICY_CONTACT } from "../mypage/policyTexts";
 
 import Header from "../components/Header";
 import * as S from "@/assets/css/Style.styles";
@@ -84,8 +85,11 @@ function LoginForm() {
 
   // 카카오 로그인을 취소했거나 실패해서 돌아온 경우
   useEffect(() => {
-    if (searchParams.get("error") !== "kakao") return;
-    const timer = setTimeout(() => showToast("카카오 로그인을 하지 못했어요. 다시 시도해 주세요."), 0);
+    const error = searchParams.get("error");
+    if (error !== "kakao" && error !== "suspended") return;
+    const timer = setTimeout(() => showToast(error === "suspended"
+      ? `이용이 정지된 계정이에요. 문의: ${POLICY_CONTACT}`
+      : "카카오 로그인을 하지 못했어요. 다시 시도해 주세요."), 0);
     router.replace("/login");
     return () => clearTimeout(timer);
   }, [searchParams, router]);
@@ -107,7 +111,9 @@ function LoginForm() {
       dispatch(setPassword(""));
       router.replace(safeNext(searchParams.get("next")));
     } else {
-      setErrors({password: "이메일 또는 비밀번호가 맞지 않아요."});
+      // 이용 정지된 계정은 서버 안내 문구 + 문의처
+      const message = typeof resultAction.payload === "string" ? resultAction.payload : "";
+      setErrors({password: message.startsWith("이용이 정지") ? `${message} 문의: ${POLICY_CONTACT}` : "이메일 또는 비밀번호가 맞지 않아요."});
     };
   };
 

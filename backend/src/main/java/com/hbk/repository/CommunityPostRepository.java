@@ -20,4 +20,6 @@ public interface CommunityPostRepository extends JpaRepository<CommunityPost, Lo
 
     // 마이 > 작성한 글
     List<CommunityPost> findByAuthorEmailOrderByIdDesc(String email);
+
+    long countByAuthorId(Long authorId);
 }

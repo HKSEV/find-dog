@@ -12,6 +12,7 @@ export interface CommunityPost {
   mediaUrls: string[];
   authorName: string;
   authorImageUrl?: string | null;
+  authorId?: number | null; // 글쓴이 프로필 (/profile/?id=)
   mine: boolean;
   createdAt: string;
   updatedAt?: string;

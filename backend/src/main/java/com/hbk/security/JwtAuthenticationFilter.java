@@ -19,6 +19,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider tokenProvider;
+    private final com.hbk.repository.MemberRepository memberRepository;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -37,6 +38,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 if(tokenProvider.validateToken(token)){
                     String username = tokenProvider.getUsernameFromToken(token);
+                    // 💡 이용 정지된 회원의 토큰은 로그인 안 된 것으로 (가지고 있던 로그인도 바로 풀림)
+                    boolean suspended = memberRepository.findByEmail(username).map(com.hbk.entity.Member::isSuspended).orElse(false);
+                    if (suspended) {
+                        filterchain.doFilter(request, response);
+                        return;
+                    }
 
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());

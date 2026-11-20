@@ -1,6 +1,6 @@
 "use client";
 
-import { MapOutlined as MapIcon, ChevronRightRounded as ChevronIcon, FormatListBulletedRounded as ListIcon } from "@mui/icons-material";
+import { MapOutlined as MapIcon, ChevronRightRounded as ChevronIcon, FormatListBulletedRounded as ListIcon, ArrowBackIosNewRounded as BackIcon, SearchRounded as SearchIcon, CloseRounded as CloseIcon } from "@mui/icons-material";
 import styled, { createGlobalStyle } from "styled-components";
 import { colors, fontWeight } from "./theme";
 import { MissingWriteFab } from "./MissingBoard.styles";
@@ -106,6 +106,16 @@ export const MapPinStyle = createGlobalStyle`
     white-space: nowrap;
   }
 
+  /* 검색한 장소 (브랜드 색) */
+  .fd-search .fd-area-dot {
+    background-color: ${colors.brand};
+    box-shadow: 0 0 0 6px rgba(138, 78, 75, 0.2);
+  }
+
+  .fd-search .fd-area-label {
+    color: ${colors.brand};
+  }
+
   .fd-pin.is-selected {
     z-index: 2;
     width: 60px;
@@ -113,9 +123,10 @@ export const MapPinStyle = createGlobalStyle`
   }
 `;
 
+// 헤더 없이 화면 전체가 지도 (위에 뒤로 버튼 + 장소 검색창)
 export const MapPage = styled.div`
   position: relative;
-  height: calc(100dvh - 56px);
+  height: 100dvh;
 `;
 
 export const MapCanvas = styled.div`
@@ -126,7 +137,7 @@ export const MapCanvas = styled.div`
 
 export const MapFilters = styled.div`
   position: absolute;
-  top: 12px;
+  top: calc(66px + env(safe-area-inset-top));
   left: 12px;
   right: 12px;
   z-index: 3;
@@ -166,7 +177,7 @@ export const MapFilterChip = styled.button<{$active: boolean; $color?: string}>`
 
 export const MapStatus = styled.p`
   position: absolute;
-  top: 56px;
+  top: calc(112px + env(safe-area-inset-top));
   left: 50%;
   z-index: 3;
   margin: 0;
@@ -270,5 +281,128 @@ export const HomeMapFab = styled(MissingWriteFab)`
 
   svg {
     font-size: 24px;
+  }
+`;
+
+// ---- 위: 뒤로 버튼 + 장소 검색 ----
+export const MapTopBar = styled.div`
+  position: absolute;
+  top: calc(12px + env(safe-area-inset-top));
+  left: 12px;
+  right: 12px;
+  z-index: 4;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+`;
+
+const floating = `
+  border: 0;
+  background-color: ${colors.white};
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.16);
+`;
+
+export const MapBackButton = styled.button`
+  ${floating}
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 999px;
+  color: ${colors.gray900};
+  cursor: pointer;
+
+  svg {
+    font-size: 20px;
+  }
+`;
+
+export const MapSearchBox = styled.div`
+  position: relative;
+  flex: 1;
+  min-width: 0;
+`;
+
+export const MapSearchForm = styled.form`
+  ${floating}
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 44px;
+  padding: 0 6px 0 14px;
+  border-radius: 999px;
+
+  input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    font-size: 15px;
+    color: ${colors.gray900};
+  }
+
+  input::placeholder {
+    color: ${colors.gray400};
+  }
+
+  button {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: ${colors.gray500};
+    cursor: pointer;
+  }
+
+  svg {
+    font-size: 22px;
+  }
+`;
+
+export const MapSearchIcon = styled(SearchIcon)``;
+export const MapSearchClearIcon = styled(CloseIcon)``;
+export const MapBackIcon = styled(BackIcon)``;
+
+// 검색 결과 (검색창 바로 아래)
+export const MapSearchResults = styled.div`
+  position: absolute;
+  top: 52px;
+  left: 0;
+  right: 0;
+  max-height: min(360px, 55dvh);
+  overflow-y: auto;
+  padding: 4px 14px;
+  border-radius: 16px;
+  background-color: ${colors.white};
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.16);
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li:last-child button {
+    border-bottom: 0;
+  }
+
+  p {
+    margin: 12px 0;
+    font-size: 13px;
+    color: ${colors.gray500};
+    text-align: center;
   }
 `;

@@ -8,6 +8,7 @@ import { toImageUrl } from "../../shelter/animalFormat";
 import { timeAgo } from "../../missing/missingFormat";
 
 import Header from "@/app/components/Header";
+import ProfileAvatar from "@/app/components/ProfileAvatar";
 import ConfirmDialog from "@/app/components/ConfirmDialog";
 import { queueToast, showToast } from "@/app/components/Toast";
 import * as S from "@/assets/css/Style.styles";
@@ -64,7 +65,6 @@ export default function CommunityPostDetail({id}: {id: number}) {
   };
 
   const photos = post.mediaUrls.map((url) => toImageUrl(url)).filter((url): url is string => Boolean(url));
-  const avatar = toImageUrl(post.authorImageUrl);
   const edited = post.updatedAt && post.createdAt && post.updatedAt.substring(0, 16) !== post.createdAt.substring(0, 16);
 
   return (
@@ -77,9 +77,18 @@ export default function CommunityPostDetail({id}: {id: number}) {
             <S.CommunityPostKind>{categoryLabel(post.category)}</S.CommunityPostKind>
             <S.DetailTitle>{post.title}</S.DetailTitle>
             <S.CommunityAuthor>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              {avatar ? <img src={avatar} alt=""/> : <span aria-hidden="true"/>}
-              <strong>{post.authorName}</strong>
+              {/* 💡 글쓴이: 누르면 프로필 (쓴 글 보기) */}
+              {post.authorId != null ? (
+                <S.CommunityAuthorLink as={Link} href={`/profile/?id=${post.authorId}`} aria-label={`${post.authorName}님 프로필 보기`}>
+                  <ProfileAvatar image={post.authorImageUrl} size={28}/>
+                  <strong>{post.authorName}</strong>
+                </S.CommunityAuthorLink>
+              ) : (
+                <S.CommunityAuthorLink as="span">
+                  <ProfileAvatar image={post.authorImageUrl} size={28}/>
+                  <strong>{post.authorName}</strong>
+                </S.CommunityAuthorLink>
+              )}
               <span>· {timeAgo(post.createdAt)}{edited ? " · 고쳐짐" : ""}</span>
             </S.CommunityAuthor>
 

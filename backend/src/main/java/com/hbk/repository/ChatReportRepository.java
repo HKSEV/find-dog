@@ -14,6 +14,10 @@ public interface ChatReportRepository extends JpaRepository<ChatReport, Long> {
 
     boolean existsByRoomId(Long roomId);
 
+    // 회원 관리: 이 회원이 대화에서 받은 신고 수 (상대가 신고한 것)
+    @Query("SELECT COUNT(r) FROM ChatReport r WHERE r.reporter.id <> :memberId AND (r.room.owner.id = :memberId OR r.room.guest.id = :memberId)")
+    long countReceived(@Param("memberId") Long memberId);
+
     // 처리 안 된 신고가 먼저, 그다음 최신순
     @Query("SELECT r FROM ChatReport r ORDER BY CASE WHEN r.status = 'PENDING' THEN 0 ELSE 1 END, r.id DESC")
     List<ChatReport> findAllForAdmin();

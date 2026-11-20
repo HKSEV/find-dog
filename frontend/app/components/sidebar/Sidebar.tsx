@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import { FaBullhorn } from "react-icons/fa";
-import { FiAlertTriangle, FiCalendar, FiChevronLeft, FiChevronRight, FiClipboard, FiFlag, FiGrid, FiHeart, FiHome, FiMapPin, FiMessageSquare, FiVideo } from "react-icons/fi";
+import { FiAlertTriangle, FiCalendar, FiChevronLeft, FiChevronRight, FiClipboard, FiFlag, FiGrid, FiHeart, FiHome, FiMapPin, FiMessageSquare, FiUsers, FiVideo } from "react-icons/fi";
 import AdminLogoIcon from "../AdminLogoIcon";
 import { adminOperationHref } from "@/lib/adminOperations";
 import * as S from "@/assets/css/Style.styles";
@@ -27,7 +27,8 @@ const menuGroups = [
   {title: "커뮤니티", items: [
     {href: "/admin/intergrate", label: "보호소 소식·영상", icon: FiVideo},
     {href: adminOperationHref("community"), label: "회원 게시물", icon: FiMessageSquare}
-  ]}
+  ]},
+  {title: "회원", items: [{href: "/admin/members", label: "회원 관리", icon: FiUsers}]}
 ];
 
 export const Sidebar: React.FC = () => {

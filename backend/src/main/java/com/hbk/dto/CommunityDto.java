@@ -11,7 +11,7 @@ public class CommunityDto {
 
     // 목록·상세. authorName은 닉네임 (실명 대신), mine은 상세에서 내가 쓴 글인지
     public record Post(Long id, CommunityCategory category, String title, String content,
-                       List<String> mediaUrls, String authorName, String authorImageUrl,
+                       List<String> mediaUrls, String authorName, String authorImageUrl, Long authorId,
                        boolean mine, LocalDateTime createdAt, LocalDateTime updatedAt) {
         public static Post of(CommunityPost p, boolean mine) {
             String nickname = p.getAuthor().getNickname();
@@ -19,6 +19,7 @@ public class CommunityDto {
                     List.copyOf(p.getMediaUrls()),
                     nickname != null && !nickname.isBlank() ? nickname : "익명",
                     p.getAuthor().getProfileImageUrl(),
+                    p.getAuthor().getId(), // 글쓴이 프로필 (/profile/?id=)
                     mine, p.getCreatedAt(), p.getUpdatedAt());
         }
     }

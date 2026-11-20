@@ -32,6 +32,21 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
+    // 💡 채팅 알림: 그 대화방의 안 읽은 알림은 지우고 최신 메시지로 하나만 남김 (메시지마다 알림이 쌓이지 않게)
+    @Transactional
+    public void notifyLatest(Member member, NotificationType type, String badge, String message, String imageUrl, String link) {
+        if (member == null) return;
+        notificationRepository.deleteAll(notificationRepository.findByMemberIdAndLinkAndReadFalse(member.getId(), link));
+        notify(member, type, badge, message, imageUrl, link);
+    }
+
+    // 그 화면을 열었으면 (예: 대화방) 그곳으로 가는 알림은 읽음으로
+    @Transactional
+    public void readLink(Member member, String link) {
+        if (member == null) return;
+        notificationRepository.findByMemberIdAndLinkAndReadFalse(member.getId(), link).forEach(n -> n.setRead(true));
+    }
+
     public List<NotificationDto> getMine(String email) {
         return notificationRepository.findTop50ByMemberEmailOrderByIdDesc(email).stream()
                 .map(NotificationDto::from)
