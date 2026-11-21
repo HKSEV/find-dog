@@ -4,10 +4,7 @@ import {
   PrintRounded as PrintIcon,
   DownloadRounded as DownloadIcon,
   ChevronRightRounded as ChevronIcon,
-  DescriptionOutlined as FlyerIcon,
-  ImageOutlined as PhotoIcon,
-  RemoveRounded as MinusIcon,
-  AddRounded as PlusIcon
+  DescriptionOutlined as FlyerIcon
 } from "@mui/icons-material";
 import styled, { createGlobalStyle } from "styled-components";
 import { colors, fontWeight } from "./theme";
@@ -51,7 +48,7 @@ export const FlyerPrintStyle = createGlobalStyle`
   }
 `;
 
-// 아래 여백: 하단 버튼 줄(약 90px)에 크기 조절 줄이 가리지 않을 만큼만 (휴대폰 한 화면에 들어가게)
+// 아래 여백: 하단 버튼 줄(약 90px)에 전단지가 가리지 않게
 export const FlyerPage = styled.div`
   padding: 16px 20px 96px;
 `;
@@ -119,38 +116,33 @@ export const FlyerBody = styled.div`
   padding: 22px 44px 0;
 `;
 
-// 사진: 1:1 정사각 칸 (크기는 MissingFlyer가 정해서 width·height로 넣음)
+// 사진: 1:1 정사각 칸을 꽉 채움 (크기는 MissingFlyer가 정해서 width·height로 넣음)
 //    기본 400px, 장소·특징이 두 줄로 길어지면 300px까지 줄어 아래 글이 잘리지 않게
-//    (CSS aspect-ratio로 높이에서 너비를 구하면 Safari에서 칸 너비가 0이 되는 일이 있어서 직접 정함)
+//    넘치는 가장자리는 잘리고, 세로 사진은 얼굴이 위쪽에 있어서 가운데보다 조금 위를 보여줌
 export const FLYER_PHOTO_MAX = 400;
 export const FLYER_PHOTO_MIN = 300;
 
-export const FlyerPhotoBox = styled.div`
-  position: relative;
+export const FlyerPhoto = styled.img`
+  display: block;
   flex: none;
   margin: 0 auto;
-  overflow: hidden;
   border-radius: 16px;
+  object-fit: cover;
+  object-position: center 30%;
   background-color: ${colors.bgSubtle};
 `;
 
-export const FlyerPhotoEmpty = styled(FlyerPhotoBox)`
+export const FlyerPhotoEmpty = styled.div`
   display: flex;
+  flex: none;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 220px;
+  border-radius: 16px;
+  background-color: ${colors.bgSubtle};
   font-size: 24px;
   color: ${colors.gray400};
-`;
-
-// 칸보다 크게 그린 사진을 위치만 옮겨 보여 줌 (전단지·맞추기 화면 같은 계산)
-export const FlyerCropImg = styled.img`
-  position: absolute;
-  max-width: none;
-  user-select: none;
-  -webkit-user-drag: none;
-  pointer-events: none;
 `;
 
 // 이름이 있으면 이름을 가장 크게 (찾았을 때 부를 수 있게), 없으면(목격) 품종
@@ -271,71 +263,6 @@ export const FlyerQr = styled.figure`
     color: ${colors.gray500};
   }
 `;
-
-// 💡 사진 맞추기: 미리보기 사진 위에 겹치는 층 (전단지 밖에 있어서 인쇄·이미지 저장에는 안 찍힘)
-//    사진을 끌어 옮기고, 크기는 전단지 아래 조절 줄로
-export const FlyerPhotoOverlay = styled.div`
-  position: absolute;
-  z-index: 1;
-  cursor: grab;
-  touch-action: none; /* 사진을 끄는 동안 화면이 같이 스크롤되지 않게 */
-  border-radius: 8px;
-
-  &:active {
-    cursor: grabbing;
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${colors.brand};
-    outline-offset: 2px;
-  }
-`;
-
-// 사진 아래 크기 조절 줄 (전단지 미리보기 바로 아래, 인쇄·저장에는 안 찍힘): 사진 바꾸기 · − · 막대 · +
-export const FlyerPhotoTools = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  width: min(100%, 320px);
-  margin: 12px auto 0;
-  color: ${colors.gray500};
-
-  button {
-    display: flex;
-    flex: none;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    border: 0;
-    border-radius: 8px;
-    background: none;
-    color: inherit;
-    cursor: pointer;
-  }
-
-  button:disabled {
-    opacity: 0.4;
-    cursor: default;
-  }
-
-  svg {
-    font-size: 22px;
-  }
-
-  input {
-    flex: 1;
-    min-width: 0;
-    margin: 0 4px;
-    accent-color: ${colors.brand};
-    cursor: pointer;
-  }
-`;
-
-export const FlyerPhotoSwapIcon = styled(PhotoIcon)``;
-export const FlyerZoomOutIcon = styled(MinusIcon)``;
-export const FlyerZoomInIcon = styled(PlusIcon)``;
 
 // 전단지 화면 아래 버튼 (인쇄·PDF / 이미지 저장)
 export const FlyerPrintIcon = styled(PrintIcon)`

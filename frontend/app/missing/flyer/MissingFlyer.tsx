@@ -9,8 +9,6 @@ import { fetchMissingPost } from "../../redux/missingSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
 import { fetchMyAccount } from "../../mypage/accountApi";
 import { ageText, formatWhen, genderText, nearText, petNameOf, placeLabel, weightText, whenLabel } from "../missingFormat";
-import { DEFAULT_CROP, FlyerCrop, NaturalSize, cropStyle } from "./flyerCrop";
-import { FlyerPhotoDrag, FlyerZoomBar } from "./FlyerPhotoControls";
 import { shareUrl } from "@/lib/share";
 
 import Header from "@/app/components/Header";
@@ -55,13 +53,9 @@ export default function MissingFlyer({id}: {id: number}) {
   const [photoData, setPhotoData] = useState<{src: string; data: string} | null>(null); // 미리 받아 둔 사진
   const [scale, setScale] = useState(0.4);
   const [saving, setSaving] = useState(false);
-  const [crop, setCrop] = useState<FlyerCrop>(DEFAULT_CROP); // 사진 고르기·맞추기 (전단지에만)
-  const [natural, setNatural] = useState<{src: string; size: NaturalSize} | null>(null); // 고른 사진의 원래 크기
   const frameRef = useRef<HTMLDivElement>(null);
-  const photoBoxRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const [photoPx, setPhotoPx] = useState(S.FLYER_PHOTO_MAX); // 전단지 사진 칸 크기 (글이 길면 줄어듦)
-  const [photoBox, setPhotoBox] = useState<{left: number; top: number; size: number} | null>(null); // 전단지 안 사진 칸 (줄이기 전 px)
   const sheetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -80,25 +74,13 @@ export default function MissingFlyer({id}: {id: number}) {
   }, [post]);
 
   // 사진을 미리 data URL로 받아 둠 (못 받으면 주소 그대로 씀)
-  const photoSrc = post ? flyerPhotoUrl(post.mediaUrls?.[crop.index] ?? post.mediaUrls?.[0]) : undefined;
+  const photoSrc = post ? flyerPhotoUrl(post.mediaUrls?.[0]) : undefined;
   useEffect(() => {
     if (!photoSrc) return;
     let alive = true;
     toDataUrl(photoSrc)
       .then((data) => alive && setPhotoData({src: photoSrc, data}))
       .catch(() => {});
-    return () => {
-      alive = false;
-    };
-  }, [photoSrc]);
-
-  // 고른 사진의 원래 크기 (정사각 칸 안 위치·확대 계산에 씀)
-  useEffect(() => {
-    if (!photoSrc) return;
-    let alive = true;
-    const image = new Image();
-    image.onload = () => alive && setNatural({src: photoSrc, size: {width: image.naturalWidth, height: image.naturalHeight}});
-    image.src = photoSrc;
     return () => {
       alive = false;
     };
@@ -127,15 +109,6 @@ export default function MissingFlyer({id}: {id: number}) {
     });
     return () => cancelAnimationFrame(id);
   });
-
-  // 사진 칸 위치·크기 재기 (사진 맞추기 도구를 그 위에 겹치려고). 글이 길면 칸이 줄어서 크기가 바뀔 때마다 다시 잼
-  useEffect(() => {
-    const box = photoBoxRef.current;
-    if (!box) return;
-    const observer = new ResizeObserver(() => setPhotoBox({left: box.offsetLeft, top: box.offsetTop, size: box.offsetWidth}));
-    observer.observe(box);
-    return () => observer.disconnect();
-  }, [post, natural]);
 
   const handleSave = async () => {
     if (!sheetRef.current || !post) return;
@@ -192,7 +165,6 @@ export default function MissingFlyer({id}: {id: number}) {
   const found = post.type === "FOUND";
   const name = found ? "" : petNameOf(post); // 이름은 잃어버린 아이만
   const photoForFlyer = photoData?.src === photoSrc ? photoData?.data : photoSrc;
-  const photoSize = natural && natural.src === photoSrc ? natural.size : null;
   // 💡 생김새·때는 이름표 붙은 칸으로 (이름이 없으면 품종이 제목이라 칸에서 뺌)
   const traits = [
     {label: "품종", value: name ? (post.breed || "모름") : ""},
@@ -227,9 +199,8 @@ export default function MissingFlyer({id}: {id: number}) {
 
                 <S.FlyerBody ref={bodyRef}>
                   {photoForFlyer ? (
-                    <S.FlyerPhotoBox ref={photoBoxRef} style={{width: photoPx, height: photoPx}}>
-                      {photoSize && <S.FlyerCropImg src={photoForFlyer} alt="" crossOrigin="anonymous" style={cropStyle(crop, photoSize)}/>}
-                    </S.FlyerPhotoBox>
+                    // 💡 1:1 칸을 꽉 채움 (넘치는 가장자리는 잘림, 얼굴이 위쪽에 있는 경우가 많아 가운데보다 조금 위 기준)
+                    <S.FlyerPhoto src={photoForFlyer} alt="" crossOrigin="anonymous" style={{width: photoPx, height: photoPx}}/>
                   ) : (
                     <S.FlyerPhotoEmpty>사진 없음</S.FlyerPhotoEmpty>
                   )}
@@ -271,24 +242,7 @@ export default function MissingFlyer({id}: {id: number}) {
               </S.FlyerSheet>
             </S.FlyerScale>
 
-            {/* 💡 사진 위에 겹쳐 바로 끌기 (전단지 밖이라 인쇄·저장에는 안 찍힘) */}
-            {photoForFlyer && photoBox && (
-              <FlyerPhotoDrag
-              rect={{left: photoBox.left * scale, top: photoBox.top * scale, size: photoBox.size * scale}}
-              size={photoSize}
-              crop={crop}
-              onChange={setCrop}/>
-            )}
           </S.FlyerFrame>
-
-          {/* 💡 전단지 아래 사진 크기 조절 줄 */}
-          {photoForFlyer && (
-            <FlyerZoomBar
-            photoCount={post.mediaUrls?.length ?? 0}
-            size={photoSize}
-            crop={crop}
-            onChange={setCrop}/>
-          )}
         </S.FlyerPage>
 
         <S.DetailActionBar>
