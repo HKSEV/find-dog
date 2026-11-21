@@ -9,8 +9,7 @@ import { fetchMissingPost } from "../../redux/missingSlice";
 import { toImageUrl } from "../../shelter/animalFormat";
 import { fetchMyAccount } from "../../mypage/accountApi";
 import { ageText, formatWhen, genderText, nearText, petNameOf, placeLabel, weightText, whenLabel } from "../missingFormat";
-import { DEFAULT_CROP, FlyerCrop, NaturalSize, cropStyle } from "./flyerCrop";
-import FlyerPhotoCrop from "./FlyerPhotoCrop";
+import { DEFAULT_CROP, NaturalSize, cropStyle } from "./flyerCrop";
 import { shareUrl } from "@/lib/share";
 
 import Header from "@/app/components/Header";
@@ -55,7 +54,6 @@ export default function MissingFlyer({id}: {id: number}) {
   const [photoData, setPhotoData] = useState<{src: string; data: string} | null>(null); // 미리 받아 둔 사진
   const [scale, setScale] = useState(0.4);
   const [saving, setSaving] = useState(false);
-  const [crop, setCrop] = useState<FlyerCrop>(DEFAULT_CROP); // 사진 고르기·맞추기 (전단지에만)
   const [natural, setNatural] = useState<{src: string; size: NaturalSize} | null>(null); // 고른 사진의 원래 크기
   const frameRef = useRef<HTMLDivElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -76,7 +74,7 @@ export default function MissingFlyer({id}: {id: number}) {
   }, [post]);
 
   // 사진을 미리 data URL로 받아 둠 (못 받으면 주소 그대로 씀)
-  const photoSrc = post ? flyerPhotoUrl(post.mediaUrls?.[crop.index] ?? post.mediaUrls?.[0]) : undefined;
+  const photoSrc = post ? flyerPhotoUrl(post.mediaUrls?.[0]) : undefined;
   useEffect(() => {
     if (!photoSrc) return;
     let alive = true;
@@ -200,7 +198,7 @@ export default function MissingFlyer({id}: {id: number}) {
                 <S.FlyerBody>
                   {photoForFlyer ? (
                     <S.FlyerPhotoBox>
-                      {photoSize && <S.FlyerCropImg src={photoForFlyer} alt="" crossOrigin="anonymous" style={cropStyle(crop, photoSize)}/>}
+                      {photoSize && <S.FlyerCropImg src={photoForFlyer} alt="" crossOrigin="anonymous" style={cropStyle(DEFAULT_CROP, photoSize)}/>}
                     </S.FlyerPhotoBox>
                   ) : (
                     <S.FlyerPhotoEmpty>사진 없음</S.FlyerPhotoEmpty>
@@ -243,13 +241,6 @@ export default function MissingFlyer({id}: {id: number}) {
               </S.FlyerSheet>
             </S.FlyerScale>
           </S.FlyerFrame>
-
-          <FlyerPhotoCrop
-          photos={post.mediaUrls ?? []}
-          src={photoForFlyer}
-          size={photoSize}
-          crop={crop}
-          onChange={setCrop}/>
         </S.FlyerPage>
 
         <S.DetailActionBar>

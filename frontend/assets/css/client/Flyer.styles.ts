@@ -44,7 +44,7 @@ export const FlyerPrintStyle = createGlobalStyle`
 `;
 
 export const FlyerPage = styled.div`
-  padding: 16px 20px 120px;
+  padding: 16px 20px 96px; /* 하단 버튼 줄에 가리지 않을 만큼만 (휴대폰 한 화면에 들어가게) */
 `;
 
 export const FlyerGuide = styled.p`
@@ -110,7 +110,7 @@ export const FlyerBody = styled.div`
   padding: 22px 44px 0;
 `;
 
-// 사진: 1:1 정사각 칸. 칸 안 위치·확대는 "사진 맞추기"에서 정함 (flyerCrop.ts)
+// 사진: 1:1 정사각 칸을 꽉 채움 (flyerCrop.ts)
 //    기본 400px, 장소·특징이 두 줄로 길어지면 300px까지 줄어 아래 글이 잘리지 않게
 export const FlyerPhotoBox = styled.div`
   position: relative;
@@ -133,7 +133,7 @@ export const FlyerPhotoEmpty = styled(FlyerPhotoBox)`
   color: ${colors.gray400};
 `;
 
-// 칸보다 크게 그린 사진을 위치만 옮겨 보여 줌 (전단지·맞추기 화면 같은 계산)
+// 칸보다 크게 그린 사진을 가운데보다 조금 위 기준으로 보여 줌
 export const FlyerCropImg = styled.img`
   position: absolute;
   max-width: none;
@@ -258,86 +258,6 @@ export const FlyerQr = styled.figure`
     margin-top: 6px;
     font-size: 15px;
     color: ${colors.gray500};
-  }
-`;
-
-// 💡 사진 맞추기 (전단지 미리보기 아래): 사진 고르기 + 정사각 틀 안에서 끌어 옮기기·확대
-export const FlyerCropSection = styled.section`
-  margin-top: 20px;
-`;
-
-export const FlyerCropTitle = styled.h2`
-  margin: 0 0 4px;
-  font-size: 15px;
-  font-weight: ${fontWeight.semibold};
-  color: ${colors.gray900};
-`;
-
-export const FlyerCropNote = styled.p`
-  margin: 0 0 12px;
-  font-size: 13px;
-  color: ${colors.gray500};
-`;
-
-export const FlyerCropThumbs = styled.div`
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-  overflow-x: auto;
-`;
-
-export const FlyerCropThumb = styled.button<{$active: boolean}>`
-  flex: none;
-  width: 56px;
-  height: 56px;
-  padding: 0;
-  overflow: hidden;
-  border: 2px solid ${({$active}) => ($active ? colors.brand : "transparent")};
-  border-radius: 10px;
-  background-color: ${colors.bgSubtle};
-  cursor: pointer;
-
-  img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-`;
-
-export const FlyerCropBox = styled.div`
-  position: relative;
-  width: min(100%, 280px);
-  aspect-ratio: 1 / 1;
-  margin: 0 auto;
-  overflow: hidden;
-  border-radius: 12px;
-  background-color: ${colors.bgSubtle};
-  cursor: grab;
-  touch-action: none; /* 끄는 동안 화면이 같이 스크롤되지 않게 */
-
-  &:active {
-    cursor: grabbing;
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${colors.brand};
-    outline-offset: 2px;
-  }
-`;
-
-export const FlyerCropZoom = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: min(100%, 280px);
-  margin: 12px auto 0;
-  font-size: 13px;
-  color: ${colors.gray500};
-
-  input {
-    flex: 1;
-    accent-color: ${colors.brand};
   }
 `;
 
