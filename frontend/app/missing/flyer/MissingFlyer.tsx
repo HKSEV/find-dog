@@ -10,7 +10,7 @@ import { toImageUrl } from "../../shelter/animalFormat";
 import { fetchMyAccount } from "../../mypage/accountApi";
 import { ageText, formatWhen, genderText, nearText, petNameOf, placeLabel, weightText, whenLabel } from "../missingFormat";
 import { DEFAULT_CROP, FlyerCrop, NaturalSize, cropStyle } from "./flyerCrop";
-import FlyerPhotoCrop from "./FlyerPhotoCrop";
+import FlyerPhotoControls from "./FlyerPhotoControls";
 import { shareUrl } from "@/lib/share";
 
 import Header from "@/app/components/Header";
@@ -58,6 +58,8 @@ export default function MissingFlyer({id}: {id: number}) {
   const [crop, setCrop] = useState<FlyerCrop>(DEFAULT_CROP); // 사진 고르기·맞추기 (전단지에만)
   const [natural, setNatural] = useState<{src: string; size: NaturalSize} | null>(null); // 고른 사진의 원래 크기
   const frameRef = useRef<HTMLDivElement>(null);
+  const photoBoxRef = useRef<HTMLDivElement>(null);
+  const [photoBox, setPhotoBox] = useState<{left: number; top: number; size: number} | null>(null); // 전단지 안 사진 칸 (줄이기 전 px)
   const sheetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -108,6 +110,15 @@ export default function MissingFlyer({id}: {id: number}) {
     observer.observe(frame);
     return () => observer.disconnect();
   }, [post]);
+
+  // 사진 칸 위치·크기 재기 (사진 맞추기 도구를 그 위에 겹치려고). 글이 길면 칸이 줄어서 크기가 바뀔 때마다 다시 잼
+  useEffect(() => {
+    const box = photoBoxRef.current;
+    if (!box) return;
+    const observer = new ResizeObserver(() => setPhotoBox({left: box.offsetLeft, top: box.offsetTop, size: box.offsetWidth}));
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, [post, natural]);
 
   const handleSave = async () => {
     if (!sheetRef.current || !post) return;
@@ -199,7 +210,7 @@ export default function MissingFlyer({id}: {id: number}) {
 
                 <S.FlyerBody>
                   {photoForFlyer ? (
-                    <S.FlyerPhotoBox>
+                    <S.FlyerPhotoBox ref={photoBoxRef}>
                       {photoSize && <S.FlyerCropImg src={photoForFlyer} alt="" crossOrigin="anonymous" style={cropStyle(crop, photoSize)}/>}
                     </S.FlyerPhotoBox>
                   ) : (
@@ -242,14 +253,17 @@ export default function MissingFlyer({id}: {id: number}) {
                 </S.FlyerFoot>
               </S.FlyerSheet>
             </S.FlyerScale>
-          </S.FlyerFrame>
 
-          <FlyerPhotoCrop
-          photos={post.mediaUrls ?? []}
-          src={photoForFlyer}
-          size={photoSize}
-          crop={crop}
-          onChange={setCrop}/>
+            {/* 💡 사진 위에 겹친 맞추기 도구 (전단지 밖이라 인쇄·저장에는 안 찍힘) */}
+            {photoForFlyer && photoBox && (
+              <FlyerPhotoControls
+              rect={{left: photoBox.left * scale, top: photoBox.top * scale, size: photoBox.size * scale}}
+              photoCount={post.mediaUrls?.length ?? 0}
+              size={photoSize}
+              crop={crop}
+              onChange={setCrop}/>
+            )}
+          </S.FlyerFrame>
         </S.FlyerPage>
 
         <S.DetailActionBar>

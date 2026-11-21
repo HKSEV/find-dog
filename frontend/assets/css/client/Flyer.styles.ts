@@ -1,6 +1,14 @@
 "use client";
 
-import { PrintRounded as PrintIcon, DownloadRounded as DownloadIcon, ChevronRightRounded as ChevronIcon, DescriptionOutlined as FlyerIcon } from "@mui/icons-material";
+import {
+  PrintRounded as PrintIcon,
+  DownloadRounded as DownloadIcon,
+  ChevronRightRounded as ChevronIcon,
+  DescriptionOutlined as FlyerIcon,
+  ImageOutlined as PhotoIcon,
+  RemoveRounded as MinusIcon,
+  AddRounded as PlusIcon
+} from "@mui/icons-material";
 import styled, { createGlobalStyle } from "styled-components";
 import { colors, fontWeight } from "./theme";
 
@@ -261,60 +269,14 @@ export const FlyerQr = styled.figure`
   }
 `;
 
-// 💡 사진 맞추기 (전단지 미리보기 아래): 사진 고르기 + 정사각 틀 안에서 끌어 옮기기·확대
-export const FlyerCropSection = styled.section`
-  margin-top: 20px;
-`;
-
-export const FlyerCropTitle = styled.h2`
-  margin: 0 0 4px;
-  font-size: 15px;
-  font-weight: ${fontWeight.semibold};
-  color: ${colors.gray900};
-`;
-
-export const FlyerCropNote = styled.p`
-  margin: 0 0 12px;
-  font-size: 13px;
-  color: ${colors.gray500};
-`;
-
-export const FlyerCropThumbs = styled.div`
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-  overflow-x: auto;
-`;
-
-export const FlyerCropThumb = styled.button<{$active: boolean}>`
-  flex: none;
-  width: 56px;
-  height: 56px;
-  padding: 0;
-  overflow: hidden;
-  border: 2px solid ${({$active}) => ($active ? colors.brand : "transparent")};
-  border-radius: 10px;
-  background-color: ${colors.bgSubtle};
-  cursor: pointer;
-
-  img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-`;
-
-export const FlyerCropBox = styled.div`
-  position: relative;
-  width: min(100%, 280px);
-  aspect-ratio: 1 / 1;
-  margin: 0 auto;
-  overflow: hidden;
-  border-radius: 12px;
-  background-color: ${colors.bgSubtle};
+// 💡 사진 맞추기: 미리보기 사진 위에 겹치는 층 (전단지 밖에 있어서 인쇄·이미지 저장에는 안 찍힘)
+//    사진을 끌어 옮기고, 사진 아래쪽의 아이콘(사진 바꾸기)·−·막대·+ 로 확대
+export const FlyerPhotoOverlay = styled.div`
+  position: absolute;
+  z-index: 1;
   cursor: grab;
-  touch-action: none; /* 끄는 동안 화면이 같이 스크롤되지 않게 */
+  touch-action: none; /* 사진을 끄는 동안 화면이 같이 스크롤되지 않게 */
+  border-radius: 8px;
 
   &:active {
     cursor: grabbing;
@@ -326,20 +288,54 @@ export const FlyerCropBox = styled.div`
   }
 `;
 
-export const FlyerCropZoom = styled.label`
+// 배경 없이 흰 아이콘 + 그림자 (밝은 사진 위에서도 보이게)
+export const FlyerPhotoTools = styled.div`
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  left: 6px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  width: min(100%, 280px);
-  margin: 12px auto 0;
-  font-size: 13px;
-  color: ${colors.gray500};
+  gap: 2px;
+  color: ${colors.white};
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+  cursor: default;
+
+  button {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  svg {
+    font-size: 20px;
+  }
 
   input {
     flex: 1;
-    accent-color: ${colors.brand};
+    min-width: 0;
+    margin: 0 2px;
+    accent-color: ${colors.white};
+    cursor: pointer;
   }
 `;
+
+export const FlyerPhotoSwapIcon = styled(PhotoIcon)``;
+export const FlyerZoomOutIcon = styled(MinusIcon)``;
+export const FlyerZoomInIcon = styled(PlusIcon)``;
 
 // 전단지 화면 아래 버튼 (인쇄·PDF / 이미지 저장)
 export const FlyerPrintIcon = styled(PrintIcon)`
