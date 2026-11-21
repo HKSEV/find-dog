@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store/store";
 import { loadUserFromStorage } from "../redux/userSlice";
@@ -15,7 +14,6 @@ const HOLD_MS = 800; // 이만큼 누르고 있으면 시연 계정 고르기
 //    보호자(콩이찾는중): 실종 글·전단지·목격자와의 채팅·알림 / 목격자(사직동주민): 목격 글·채팅·입양·봉사 신청 내역
 //    서버가 데모 데이터를 켠 경우에만 동작 (아니면 "쓸 수 없어요")
 export function useDemoLogin() {
-  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const firedRef = useRef(false);
@@ -62,8 +60,9 @@ export function useDemoLogin() {
       localStorage.setItem("email", data.email);
       localStorage.removeItem("profileImage"); // 다른 계정 사진이 잠깐 보이지 않게
       dispatch(loadUserFromStorage());
-      queueToast(`시연 계정(${data.nickname})으로 둘러봐요`);
-      router.push(role === "owner" ? "/chat" : "/mypage");
+      // 💡 보던 화면에 그대로 머묾 (채팅·마이로 넘어가지 않게). 새로 읽어서 알림·채팅 배지도 로그인 상태로
+      queueToast(`시연 계정(${data.nickname})으로 둘러봐요`, {afterReload: true});
+      window.location.reload();
     } catch {
       showToast("지금은 시연 계정을 쓸 수 없어요");
     };

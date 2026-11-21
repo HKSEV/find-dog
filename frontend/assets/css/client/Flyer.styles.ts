@@ -51,8 +51,9 @@ export const FlyerPrintStyle = createGlobalStyle`
   }
 `;
 
+// 아래 여백: 하단 버튼 줄(약 90px)에 크기 조절 줄이 가리지 않을 만큼만 (휴대폰 한 화면에 들어가게)
 export const FlyerPage = styled.div`
-  padding: 16px 20px 120px;
+  padding: 16px 20px 96px;
 `;
 
 export const FlyerGuide = styled.p`
@@ -118,14 +119,16 @@ export const FlyerBody = styled.div`
   padding: 22px 44px 0;
 `;
 
-// 사진: 1:1 정사각 칸. 칸 안 위치·확대는 "사진 맞추기"에서 정함 (flyerCrop.ts)
+// 사진: 1:1 정사각 칸 (크기는 MissingFlyer가 정해서 width·height로 넣음)
 //    기본 400px, 장소·특징이 두 줄로 길어지면 300px까지 줄어 아래 글이 잘리지 않게
+//    (CSS aspect-ratio로 높이에서 너비를 구하면 Safari에서 칸 너비가 0이 되는 일이 있어서 직접 정함)
+export const FLYER_PHOTO_MAX = 400;
+export const FLYER_PHOTO_MIN = 300;
+
 export const FlyerPhotoBox = styled.div`
   position: relative;
-  flex: 0 1 400px;
-  min-height: 300px;
-  aspect-ratio: 1 / 1;
-  align-self: center;
+  flex: none;
+  margin: 0 auto;
   overflow: hidden;
   border-radius: 16px;
   background-color: ${colors.bgSubtle};
@@ -135,8 +138,8 @@ export const FlyerPhotoEmpty = styled(FlyerPhotoBox)`
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-basis: 220px;
-  min-height: 220px;
+  width: 100%;
+  height: 220px;
   font-size: 24px;
   color: ${colors.gray400};
 `;
@@ -270,7 +273,7 @@ export const FlyerQr = styled.figure`
 `;
 
 // 💡 사진 맞추기: 미리보기 사진 위에 겹치는 층 (전단지 밖에 있어서 인쇄·이미지 저장에는 안 찍힘)
-//    사진을 끌어 옮기고, 사진 아래쪽의 아이콘(사진 바꾸기)·−·막대·+ 로 확대
+//    사진을 끌어 옮기고, 크기는 전단지 아래 조절 줄로
 export const FlyerPhotoOverlay = styled.div`
   position: absolute;
   z-index: 1;
@@ -288,28 +291,25 @@ export const FlyerPhotoOverlay = styled.div`
   }
 `;
 
-// 배경 없이 흰 아이콘 + 그림자 (밝은 사진 위에서도 보이게)
+// 사진 아래 크기 조절 줄 (전단지 미리보기 바로 아래, 인쇄·저장에는 안 찍힘): 사진 바꾸기 · − · 막대 · +
 export const FlyerPhotoTools = styled.div`
-  position: absolute;
-  right: 6px;
-  bottom: 6px;
-  left: 6px;
   display: flex;
   align-items: center;
-  gap: 2px;
-  color: ${colors.white};
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
-  cursor: default;
+  gap: 4px;
+  width: min(100%, 320px);
+  margin: 12px auto 0;
+  color: ${colors.gray500};
 
   button {
     display: flex;
     flex: none;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     padding: 0;
     border: 0;
+    border-radius: 8px;
     background: none;
     color: inherit;
     cursor: pointer;
@@ -321,14 +321,14 @@ export const FlyerPhotoTools = styled.div`
   }
 
   svg {
-    font-size: 20px;
+    font-size: 22px;
   }
 
   input {
     flex: 1;
     min-width: 0;
-    margin: 0 2px;
-    accent-color: ${colors.white};
+    margin: 0 4px;
+    accent-color: ${colors.brand};
     cursor: pointer;
   }
 `;

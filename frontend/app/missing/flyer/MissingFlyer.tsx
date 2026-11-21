@@ -10,7 +10,7 @@ import { toImageUrl } from "../../shelter/animalFormat";
 import { fetchMyAccount } from "../../mypage/accountApi";
 import { ageText, formatWhen, genderText, nearText, petNameOf, placeLabel, weightText, whenLabel } from "../missingFormat";
 import { DEFAULT_CROP, FlyerCrop, NaturalSize, cropStyle } from "./flyerCrop";
-import FlyerPhotoControls from "./FlyerPhotoControls";
+import { FlyerPhotoDrag, FlyerZoomBar } from "./FlyerPhotoControls";
 import { shareUrl } from "@/lib/share";
 
 import Header from "@/app/components/Header";
@@ -59,6 +59,8 @@ export default function MissingFlyer({id}: {id: number}) {
   const [natural, setNatural] = useState<{src: string; size: NaturalSize} | null>(null); // 고른 사진의 원래 크기
   const frameRef = useRef<HTMLDivElement>(null);
   const photoBoxRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const [photoPx, setPhotoPx] = useState(S.FLYER_PHOTO_MAX); // 전단지 사진 칸 크기 (글이 길면 줄어듦)
   const [photoBox, setPhotoBox] = useState<{left: number; top: number; size: number} | null>(null); // 전단지 안 사진 칸 (줄이기 전 px)
   const sheetRef = useRef<HTMLDivElement>(null);
 
@@ -110,6 +112,21 @@ export default function MissingFlyer({id}: {id: number}) {
     observer.observe(frame);
     return () => observer.disconnect();
   }, [post]);
+
+  // 💡 사진 칸 크기 정하기: 본문(사진·이름·칸·장소·특징)이 A4 안에 들어가게 남는/모자란 만큼 사진을 키우거나 줄임
+  //    (300~400px). 그린 뒤 한 프레임 뒤에 재서 맞춤
+  useEffect(() => {
+    const body = bodyRef.current;
+    if (!body) return;
+    const id = requestAnimationFrame(() => {
+      const last = body.lastElementChild as HTMLElement | null;
+      if (!last) return;
+      const used = last.offsetTop + last.offsetHeight - body.offsetTop;
+      const next = Math.round(Math.min(S.FLYER_PHOTO_MAX, Math.max(S.FLYER_PHOTO_MIN, photoPx + body.clientHeight - used)));
+      if (Math.abs(next - photoPx) >= 1) setPhotoPx(next);
+    });
+    return () => cancelAnimationFrame(id);
+  });
 
   // 사진 칸 위치·크기 재기 (사진 맞추기 도구를 그 위에 겹치려고). 글이 길면 칸이 줄어서 크기가 바뀔 때마다 다시 잼
   useEffect(() => {
@@ -208,9 +225,9 @@ export default function MissingFlyer({id}: {id: number}) {
                   <h1>{found ? "주인을 찾습니다" : "강아지를 찾습니다"}</h1>
                 </S.FlyerHead>
 
-                <S.FlyerBody>
+                <S.FlyerBody ref={bodyRef}>
                   {photoForFlyer ? (
-                    <S.FlyerPhotoBox ref={photoBoxRef}>
+                    <S.FlyerPhotoBox ref={photoBoxRef} style={{width: photoPx, height: photoPx}}>
                       {photoSize && <S.FlyerCropImg src={photoForFlyer} alt="" crossOrigin="anonymous" style={cropStyle(crop, photoSize)}/>}
                     </S.FlyerPhotoBox>
                   ) : (
@@ -254,16 +271,24 @@ export default function MissingFlyer({id}: {id: number}) {
               </S.FlyerSheet>
             </S.FlyerScale>
 
-            {/* 💡 사진 위에 겹친 맞추기 도구 (전단지 밖이라 인쇄·저장에는 안 찍힘) */}
+            {/* 💡 사진 위에 겹쳐 바로 끌기 (전단지 밖이라 인쇄·저장에는 안 찍힘) */}
             {photoForFlyer && photoBox && (
-              <FlyerPhotoControls
+              <FlyerPhotoDrag
               rect={{left: photoBox.left * scale, top: photoBox.top * scale, size: photoBox.size * scale}}
-              photoCount={post.mediaUrls?.length ?? 0}
               size={photoSize}
               crop={crop}
               onChange={setCrop}/>
             )}
           </S.FlyerFrame>
+
+          {/* 💡 전단지 아래 사진 크기 조절 줄 */}
+          {photoForFlyer && (
+            <FlyerZoomBar
+            photoCount={post.mediaUrls?.length ?? 0}
+            size={photoSize}
+            crop={crop}
+            onChange={setCrop}/>
+          )}
         </S.FlyerPage>
 
         <S.DetailActionBar>
